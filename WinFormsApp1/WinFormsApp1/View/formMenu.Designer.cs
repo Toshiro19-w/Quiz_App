@@ -93,7 +93,6 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox9).BeginInit();
             panel13.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox10).BeginInit();
-            panelShow.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -120,6 +119,7 @@
             // panel2
             // 
             panel2.BackColor = Color.Black;
+            panel2.Controls.Add(MenuContainer2);
             panel2.Controls.Add(MenuContainer);
             panel2.Controls.Add(panel3);
             panel2.Controls.Add(panel5);
@@ -140,7 +140,7 @@
             MenuContainer.Location = new Point(3, 343);
             MenuContainer.Margin = new Padding(0);
             MenuContainer.Name = "MenuContainer";
-            MenuContainer.Size = new Size(329, 262);
+            MenuContainer.Size = new Size(329, 81);
             MenuContainer.TabIndex = 10;
             // 
             // panel8
@@ -373,10 +373,10 @@
             MenuContainer2.Controls.Add(panel11);
             MenuContainer2.Controls.Add(panel12);
             MenuContainer2.Controls.Add(panel13);
-            MenuContainer2.Location = new Point(257, 305);
+            MenuContainer2.Location = new Point(3, 427);
             MenuContainer2.Margin = new Padding(0);
             MenuContainer2.Name = "MenuContainer2";
-            MenuContainer2.Size = new Size(329, 337);
+            MenuContainer2.Size = new Size(329, 81);
             MenuContainer2.TabIndex = 11;
             MenuContainer2.Paint += MenuContainer2_Paint;
             // 
@@ -549,7 +549,6 @@
             // 
             // panelShow
             // 
-            panelShow.Controls.Add(MenuContainer2);
             panelShow.Location = new Point(335, 62);
             panelShow.Name = "panelShow";
             panelShow.Size = new Size(922, 816);
@@ -595,7 +594,6 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox9).EndInit();
             panel13.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox10).EndInit();
-            panelShow.ResumeLayout(false);
             ResumeLayout(false);
         }
 

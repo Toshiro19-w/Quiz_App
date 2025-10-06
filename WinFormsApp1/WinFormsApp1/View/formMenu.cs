@@ -115,7 +115,7 @@ namespace WinFormsApp1
             {
                 MenuContainer.Height += 10;
                 MenuContainer2.Top += 10;
-                if (MenuContainer.Height >= 336)
+                if (MenuContainer.Height >= 250)
                 {
                     menuExpand = true;
                     MenuTransition.Stop();
