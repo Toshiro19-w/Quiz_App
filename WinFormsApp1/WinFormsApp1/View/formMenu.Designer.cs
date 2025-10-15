@@ -1,4 +1,5 @@
-﻿namespace WinFormsApp1
+﻿using Guna.UI2.WinForms;
+namespace WinFormsApp1
 {
     partial class formMenu
     {
@@ -33,6 +34,19 @@
             panel1 = new Panel();
             button1 = new Button();
             panel2 = new Panel();
+            MenuContainer2 = new FlowLayoutPanel();
+            panel7 = new Panel();
+            pictureBox4 = new PictureBox();
+            TestButton = new Button();
+            panel11 = new Panel();
+            pictureBox8 = new PictureBox();
+            TestAssigned = new Button();
+            panel12 = new Panel();
+            pictureBox9 = new PictureBox();
+            TestCompletedButton = new Button();
+            panel13 = new Panel();
+            pictureBox10 = new PictureBox();
+            TestOverdueButton = new Button();
             MenuContainer = new FlowLayoutPanel();
             panel8 = new Panel();
             pictureBox5 = new PictureBox();
@@ -52,25 +66,21 @@
             panel6 = new Panel();
             pictureBox3 = new PictureBox();
             ShopButton = new Button();
-            MenuContainer2 = new FlowLayoutPanel();
-            panel7 = new Panel();
-            pictureBox4 = new PictureBox();
-            TestButton = new Button();
-            panel11 = new Panel();
-            pictureBox8 = new PictureBox();
-            TestAssigned = new Button();
-            panel12 = new Panel();
-            pictureBox9 = new PictureBox();
-            TestCompletedButton = new Button();
-            panel13 = new Panel();
-            pictureBox10 = new PictureBox();
-            TestOverdueButton = new Button();
             MenuTransition = new System.Windows.Forms.Timer(components);
             MenuTransition2 = new System.Windows.Forms.Timer(components);
             SidebarTransition = new System.Windows.Forms.Timer(components);
             panelShow = new Panel();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
+            MenuContainer2.SuspendLayout();
+            panel7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
+            panel11.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox8).BeginInit();
+            panel12.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox9).BeginInit();
+            panel13.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox10).BeginInit();
             MenuContainer.SuspendLayout();
             panel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
@@ -84,15 +94,6 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             panel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
-            MenuContainer2.SuspendLayout();
-            panel7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
-            panel11.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox8).BeginInit();
-            panel12.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox9).BeginInit();
-            panel13.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox10).BeginInit();
             SuspendLayout();
             // 
             // panel1
@@ -130,6 +131,172 @@
             panel2.Size = new Size(332, 818);
             panel2.TabIndex = 1;
             panel2.Paint += panel2_Paint;
+            // 
+            // MenuContainer2
+            // 
+            MenuContainer2.BackColor = Color.FromArgb(23, 24, 29);
+            MenuContainer2.Controls.Add(panel7);
+            MenuContainer2.Controls.Add(panel11);
+            MenuContainer2.Controls.Add(panel12);
+            MenuContainer2.Controls.Add(panel13);
+            MenuContainer2.Location = new Point(3, 427);
+            MenuContainer2.Margin = new Padding(0);
+            MenuContainer2.Name = "MenuContainer2";
+            MenuContainer2.Size = new Size(329, 81);
+            MenuContainer2.TabIndex = 11;
+            MenuContainer2.Paint += MenuContainer2_Paint;
+            // 
+            // panel7
+            // 
+            panel7.Controls.Add(pictureBox4);
+            panel7.Controls.Add(TestButton);
+            panel7.Location = new Point(0, 0);
+            panel7.Margin = new Padding(0);
+            panel7.Name = "panel7";
+            panel7.Padding = new Padding(25, 0, 0, 0);
+            panel7.Size = new Size(329, 84);
+            panel7.TabIndex = 9;
+            // 
+            // pictureBox4
+            // 
+            pictureBox4.BackColor = Color.Black;
+            pictureBox4.BackgroundImageLayout = ImageLayout.None;
+            pictureBox4.Image = (Image)resources.GetObject("pictureBox4.Image");
+            pictureBox4.Location = new Point(14, 19);
+            pictureBox4.Name = "pictureBox4";
+            pictureBox4.Size = new Size(45, 45);
+            pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox4.TabIndex = 7;
+            pictureBox4.TabStop = false;
+            // 
+            // TestButton
+            // 
+            TestButton.BackColor = Color.Black;
+            TestButton.FlatStyle = FlatStyle.Flat;
+            TestButton.ForeColor = Color.Transparent;
+            TestButton.ImageAlign = ContentAlignment.MiddleLeft;
+            TestButton.Location = new Point(-22, -36);
+            TestButton.Margin = new Padding(0);
+            TestButton.Name = "TestButton";
+            TestButton.Size = new Size(366, 154);
+            TestButton.TabIndex = 3;
+            TestButton.Text = "Test";
+            TestButton.UseVisualStyleBackColor = false;
+            TestButton.Click += TestButton_Click;
+            // 
+            // panel11
+            // 
+            panel11.Controls.Add(pictureBox8);
+            panel11.Controls.Add(TestAssigned);
+            panel11.Location = new Point(0, 84);
+            panel11.Margin = new Padding(0);
+            panel11.Name = "panel11";
+            panel11.Padding = new Padding(25, 0, 0, 0);
+            panel11.Size = new Size(329, 84);
+            panel11.TabIndex = 8;
+            // 
+            // pictureBox8
+            // 
+            pictureBox8.BackColor = Color.Black;
+            pictureBox8.BackgroundImageLayout = ImageLayout.None;
+            pictureBox8.Image = (Image)resources.GetObject("pictureBox8.Image");
+            pictureBox8.Location = new Point(14, 19);
+            pictureBox8.Name = "pictureBox8";
+            pictureBox8.Size = new Size(45, 45);
+            pictureBox8.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox8.TabIndex = 7;
+            pictureBox8.TabStop = false;
+            // 
+            // TestAssigned
+            // 
+            TestAssigned.BackColor = Color.FromArgb(23, 24, 29);
+            TestAssigned.FlatStyle = FlatStyle.Flat;
+            TestAssigned.ForeColor = Color.Transparent;
+            TestAssigned.ImageAlign = ContentAlignment.MiddleLeft;
+            TestAssigned.Location = new Point(-22, -36);
+            TestAssigned.Margin = new Padding(0);
+            TestAssigned.Name = "TestAssigned";
+            TestAssigned.Size = new Size(366, 154);
+            TestAssigned.TabIndex = 3;
+            TestAssigned.Text = "Assigned";
+            TestAssigned.UseVisualStyleBackColor = false;
+            TestAssigned.Click += TestAssigned_Click;
+            // 
+            // panel12
+            // 
+            panel12.Controls.Add(pictureBox9);
+            panel12.Controls.Add(TestCompletedButton);
+            panel12.Location = new Point(0, 168);
+            panel12.Margin = new Padding(0);
+            panel12.Name = "panel12";
+            panel12.Padding = new Padding(25, 0, 0, 0);
+            panel12.Size = new Size(329, 84);
+            panel12.TabIndex = 9;
+            // 
+            // pictureBox9
+            // 
+            pictureBox9.BackColor = Color.Black;
+            pictureBox9.BackgroundImageLayout = ImageLayout.None;
+            pictureBox9.Image = (Image)resources.GetObject("pictureBox9.Image");
+            pictureBox9.Location = new Point(14, 19);
+            pictureBox9.Name = "pictureBox9";
+            pictureBox9.Size = new Size(45, 45);
+            pictureBox9.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox9.TabIndex = 7;
+            pictureBox9.TabStop = false;
+            // 
+            // TestCompletedButton
+            // 
+            TestCompletedButton.BackColor = Color.FromArgb(23, 24, 29);
+            TestCompletedButton.FlatStyle = FlatStyle.Flat;
+            TestCompletedButton.ForeColor = Color.Transparent;
+            TestCompletedButton.ImageAlign = ContentAlignment.MiddleLeft;
+            TestCompletedButton.Location = new Point(-22, -36);
+            TestCompletedButton.Margin = new Padding(0);
+            TestCompletedButton.Name = "TestCompletedButton";
+            TestCompletedButton.Size = new Size(366, 154);
+            TestCompletedButton.TabIndex = 3;
+            TestCompletedButton.Text = "Completed";
+            TestCompletedButton.UseVisualStyleBackColor = false;
+            TestCompletedButton.Click += TestCompletedButton_Click;
+            // 
+            // panel13
+            // 
+            panel13.Controls.Add(pictureBox10);
+            panel13.Controls.Add(TestOverdueButton);
+            panel13.Location = new Point(0, 252);
+            panel13.Margin = new Padding(0);
+            panel13.Name = "panel13";
+            panel13.Padding = new Padding(25, 0, 0, 0);
+            panel13.Size = new Size(329, 84);
+            panel13.TabIndex = 10;
+            // 
+            // pictureBox10
+            // 
+            pictureBox10.BackColor = Color.Black;
+            pictureBox10.BackgroundImageLayout = ImageLayout.None;
+            pictureBox10.Image = (Image)resources.GetObject("pictureBox10.Image");
+            pictureBox10.Location = new Point(14, 19);
+            pictureBox10.Name = "pictureBox10";
+            pictureBox10.Size = new Size(45, 45);
+            pictureBox10.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox10.TabIndex = 7;
+            pictureBox10.TabStop = false;
+            // 
+            // TestOverdueButton
+            // 
+            TestOverdueButton.BackColor = Color.FromArgb(23, 24, 29);
+            TestOverdueButton.FlatStyle = FlatStyle.Flat;
+            TestOverdueButton.ForeColor = Color.Transparent;
+            TestOverdueButton.ImageAlign = ContentAlignment.MiddleLeft;
+            TestOverdueButton.Location = new Point(-22, -36);
+            TestOverdueButton.Margin = new Padding(0);
+            TestOverdueButton.Name = "TestOverdueButton";
+            TestOverdueButton.Size = new Size(366, 154);
+            TestOverdueButton.TabIndex = 3;
+            TestOverdueButton.Text = "Overdue";
+            TestOverdueButton.UseVisualStyleBackColor = false;
+            TestOverdueButton.Click += TestOverdueButton_Click;
             // 
             // MenuContainer
             // 
@@ -366,172 +533,6 @@
             ShopButton.UseVisualStyleBackColor = false;
             ShopButton.Click += ShopButton_Click;
             // 
-            // MenuContainer2
-            // 
-            MenuContainer2.BackColor = Color.FromArgb(23, 24, 29);
-            MenuContainer2.Controls.Add(panel7);
-            MenuContainer2.Controls.Add(panel11);
-            MenuContainer2.Controls.Add(panel12);
-            MenuContainer2.Controls.Add(panel13);
-            MenuContainer2.Location = new Point(3, 427);
-            MenuContainer2.Margin = new Padding(0);
-            MenuContainer2.Name = "MenuContainer2";
-            MenuContainer2.Size = new Size(329, 81);
-            MenuContainer2.TabIndex = 11;
-            MenuContainer2.Paint += MenuContainer2_Paint;
-            // 
-            // panel7
-            // 
-            panel7.Controls.Add(pictureBox4);
-            panel7.Controls.Add(TestButton);
-            panel7.Location = new Point(0, 0);
-            panel7.Margin = new Padding(0);
-            panel7.Name = "panel7";
-            panel7.Padding = new Padding(25, 0, 0, 0);
-            panel7.Size = new Size(329, 84);
-            panel7.TabIndex = 9;
-            // 
-            // pictureBox4
-            // 
-            pictureBox4.BackColor = Color.Black;
-            pictureBox4.BackgroundImageLayout = ImageLayout.None;
-            pictureBox4.Image = (Image)resources.GetObject("pictureBox4.Image");
-            pictureBox4.Location = new Point(14, 19);
-            pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(45, 45);
-            pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox4.TabIndex = 7;
-            pictureBox4.TabStop = false;
-            // 
-            // TestButton
-            // 
-            TestButton.BackColor = Color.Black;
-            TestButton.FlatStyle = FlatStyle.Flat;
-            TestButton.ForeColor = Color.Transparent;
-            TestButton.ImageAlign = ContentAlignment.MiddleLeft;
-            TestButton.Location = new Point(-22, -36);
-            TestButton.Margin = new Padding(0);
-            TestButton.Name = "TestButton";
-            TestButton.Size = new Size(366, 154);
-            TestButton.TabIndex = 3;
-            TestButton.Text = "Test";
-            TestButton.UseVisualStyleBackColor = false;
-            TestButton.Click += TestButton_Click;
-            // 
-            // panel11
-            // 
-            panel11.Controls.Add(pictureBox8);
-            panel11.Controls.Add(TestAssigned);
-            panel11.Location = new Point(0, 84);
-            panel11.Margin = new Padding(0);
-            panel11.Name = "panel11";
-            panel11.Padding = new Padding(25, 0, 0, 0);
-            panel11.Size = new Size(329, 84);
-            panel11.TabIndex = 8;
-            // 
-            // pictureBox8
-            // 
-            pictureBox8.BackColor = Color.Black;
-            pictureBox8.BackgroundImageLayout = ImageLayout.None;
-            pictureBox8.Image = (Image)resources.GetObject("pictureBox8.Image");
-            pictureBox8.Location = new Point(14, 19);
-            pictureBox8.Name = "pictureBox8";
-            pictureBox8.Size = new Size(45, 45);
-            pictureBox8.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox8.TabIndex = 7;
-            pictureBox8.TabStop = false;
-            // 
-            // TestAssigned
-            // 
-            TestAssigned.BackColor = Color.FromArgb(23, 24, 29);
-            TestAssigned.FlatStyle = FlatStyle.Flat;
-            TestAssigned.ForeColor = Color.Transparent;
-            TestAssigned.ImageAlign = ContentAlignment.MiddleLeft;
-            TestAssigned.Location = new Point(-22, -36);
-            TestAssigned.Margin = new Padding(0);
-            TestAssigned.Name = "TestAssigned";
-            TestAssigned.Size = new Size(366, 154);
-            TestAssigned.TabIndex = 3;
-            TestAssigned.Text = "Assigned";
-            TestAssigned.UseVisualStyleBackColor = false;
-            TestAssigned.Click += TestAssigned_Click;
-            // 
-            // panel12
-            // 
-            panel12.Controls.Add(pictureBox9);
-            panel12.Controls.Add(TestCompletedButton);
-            panel12.Location = new Point(0, 168);
-            panel12.Margin = new Padding(0);
-            panel12.Name = "panel12";
-            panel12.Padding = new Padding(25, 0, 0, 0);
-            panel12.Size = new Size(329, 84);
-            panel12.TabIndex = 9;
-            // 
-            // pictureBox9
-            // 
-            pictureBox9.BackColor = Color.Black;
-            pictureBox9.BackgroundImageLayout = ImageLayout.None;
-            pictureBox9.Image = (Image)resources.GetObject("pictureBox9.Image");
-            pictureBox9.Location = new Point(14, 19);
-            pictureBox9.Name = "pictureBox9";
-            pictureBox9.Size = new Size(45, 45);
-            pictureBox9.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox9.TabIndex = 7;
-            pictureBox9.TabStop = false;
-            // 
-            // TestCompletedButton
-            // 
-            TestCompletedButton.BackColor = Color.FromArgb(23, 24, 29);
-            TestCompletedButton.FlatStyle = FlatStyle.Flat;
-            TestCompletedButton.ForeColor = Color.Transparent;
-            TestCompletedButton.ImageAlign = ContentAlignment.MiddleLeft;
-            TestCompletedButton.Location = new Point(-22, -36);
-            TestCompletedButton.Margin = new Padding(0);
-            TestCompletedButton.Name = "TestCompletedButton";
-            TestCompletedButton.Size = new Size(366, 154);
-            TestCompletedButton.TabIndex = 3;
-            TestCompletedButton.Text = "Completed";
-            TestCompletedButton.UseVisualStyleBackColor = false;
-            TestCompletedButton.Click += TestCompletedButton_Click;
-            // 
-            // panel13
-            // 
-            panel13.Controls.Add(pictureBox10);
-            panel13.Controls.Add(TestOverdueButton);
-            panel13.Location = new Point(0, 252);
-            panel13.Margin = new Padding(0);
-            panel13.Name = "panel13";
-            panel13.Padding = new Padding(25, 0, 0, 0);
-            panel13.Size = new Size(329, 84);
-            panel13.TabIndex = 10;
-            // 
-            // pictureBox10
-            // 
-            pictureBox10.BackColor = Color.Black;
-            pictureBox10.BackgroundImageLayout = ImageLayout.None;
-            pictureBox10.Image = (Image)resources.GetObject("pictureBox10.Image");
-            pictureBox10.Location = new Point(14, 19);
-            pictureBox10.Name = "pictureBox10";
-            pictureBox10.Size = new Size(45, 45);
-            pictureBox10.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox10.TabIndex = 7;
-            pictureBox10.TabStop = false;
-            // 
-            // TestOverdueButton
-            // 
-            TestOverdueButton.BackColor = Color.FromArgb(23, 24, 29);
-            TestOverdueButton.FlatStyle = FlatStyle.Flat;
-            TestOverdueButton.ForeColor = Color.Transparent;
-            TestOverdueButton.ImageAlign = ContentAlignment.MiddleLeft;
-            TestOverdueButton.Location = new Point(-22, -36);
-            TestOverdueButton.Margin = new Padding(0);
-            TestOverdueButton.Name = "TestOverdueButton";
-            TestOverdueButton.Size = new Size(366, 154);
-            TestOverdueButton.TabIndex = 3;
-            TestOverdueButton.Text = "Overdue";
-            TestOverdueButton.UseVisualStyleBackColor = false;
-            TestOverdueButton.Click += TestOverdueButton_Click;
-            // 
             // MenuTransition
             // 
             MenuTransition.Interval = 10;
@@ -572,6 +573,15 @@
             Load += TrangChu_Load_1;
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
+            MenuContainer2.ResumeLayout(false);
+            panel7.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
+            panel11.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox8).EndInit();
+            panel12.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox9).EndInit();
+            panel13.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox10).EndInit();
             MenuContainer.ResumeLayout(false);
             panel8.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
@@ -585,15 +595,6 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             panel6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
-            MenuContainer2.ResumeLayout(false);
-            panel7.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
-            panel11.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox8).EndInit();
-            panel12.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox9).EndInit();
-            panel13.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox10).EndInit();
             ResumeLayout(false);
         }
 

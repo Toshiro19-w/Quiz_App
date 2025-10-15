@@ -16,15 +16,5 @@ namespace WinFormsApp1.View
         {
             InitializeComponent();
         }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void formHome_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }

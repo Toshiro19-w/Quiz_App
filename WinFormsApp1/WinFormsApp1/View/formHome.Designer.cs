@@ -28,35 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
-            SuspendLayout();
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.BackColor = SystemColors.ActiveCaptionText;
-            label1.Location = new Point(34, 27);
-            label1.Name = "label1";
-            label1.Size = new Size(61, 25);
-            label1.TabIndex = 0;
-            label1.Text = "Home";
-            label1.Click += label1_Click;
-            // 
-            // formHome
-            // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(label1);
-            Name = "formHome";
-            Text = "Home";
-            Load += formHome_Load;
-            ResumeLayout(false);
-            PerformLayout();
+            this.components = new System.ComponentModel.Container();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Text = "formHome";
         }
 
         #endregion
-
-        private Label label1;
     }
 }
