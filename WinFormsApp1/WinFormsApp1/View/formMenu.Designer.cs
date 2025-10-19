@@ -33,7 +33,7 @@ namespace WinFormsApp1
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(formMenu));
             panel1 = new Panel();
             button1 = new Button();
-            panel2 = new Panel();
+            sideBarPanel = new Panel();
             MenuContainer2 = new FlowLayoutPanel();
             panel7 = new Panel();
             pictureBox4 = new PictureBox();
@@ -71,7 +71,7 @@ namespace WinFormsApp1
             SidebarTransition = new System.Windows.Forms.Timer(components);
             panelShow = new Panel();
             panel1.SuspendLayout();
-            panel2.SuspendLayout();
+            sideBarPanel.SuspendLayout();
             MenuContainer2.SuspendLayout();
             panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
@@ -102,35 +102,39 @@ namespace WinFormsApp1
             panel1.Controls.Add(button1);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
+            panel1.Margin = new Padding(2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1257, 60);
+            panel1.Size = new Size(1426, 48);
             panel1.TabIndex = 0;
             panel1.Paint += panel1_Paint;
             // 
             // button1
             // 
-            button1.Location = new Point(17, 12);
+            button1.ForeColor = Color.Black;
+            button1.Location = new Point(14, 10);
+            button1.Margin = new Padding(2);
             button1.Name = "button1";
-            button1.Size = new Size(45, 45);
+            button1.Size = new Size(36, 36);
             button1.TabIndex = 0;
             button1.Text = "button1";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click_1;
             // 
-            // panel2
+            // sideBarPanel
             // 
-            panel2.BackColor = Color.Black;
-            panel2.Controls.Add(MenuContainer2);
-            panel2.Controls.Add(MenuContainer);
-            panel2.Controls.Add(panel3);
-            panel2.Controls.Add(panel5);
-            panel2.Controls.Add(panel6);
-            panel2.Dock = DockStyle.Left;
-            panel2.Location = new Point(0, 60);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(332, 818);
-            panel2.TabIndex = 1;
-            panel2.Paint += panel2_Paint;
+            sideBarPanel.BackColor = Color.Black;
+            sideBarPanel.Controls.Add(MenuContainer2);
+            sideBarPanel.Controls.Add(MenuContainer);
+            sideBarPanel.Controls.Add(panel3);
+            sideBarPanel.Controls.Add(panel5);
+            sideBarPanel.Controls.Add(panel6);
+            sideBarPanel.Dock = DockStyle.Left;
+            sideBarPanel.Location = new Point(0, 48);
+            sideBarPanel.Margin = new Padding(2);
+            sideBarPanel.Name = "sideBarPanel";
+            sideBarPanel.Size = new Size(266, 673);
+            sideBarPanel.TabIndex = 1;
+            sideBarPanel.Paint += panel2_Paint;
             // 
             // MenuContainer2
             // 
@@ -139,10 +143,10 @@ namespace WinFormsApp1
             MenuContainer2.Controls.Add(panel11);
             MenuContainer2.Controls.Add(panel12);
             MenuContainer2.Controls.Add(panel13);
-            MenuContainer2.Location = new Point(3, 427);
+            MenuContainer2.Location = new Point(2, 342);
             MenuContainer2.Margin = new Padding(0);
             MenuContainer2.Name = "MenuContainer2";
-            MenuContainer2.Size = new Size(329, 81);
+            MenuContainer2.Size = new Size(263, 65);
             MenuContainer2.TabIndex = 11;
             MenuContainer2.Paint += MenuContainer2_Paint;
             // 
@@ -153,8 +157,8 @@ namespace WinFormsApp1
             panel7.Location = new Point(0, 0);
             panel7.Margin = new Padding(0);
             panel7.Name = "panel7";
-            panel7.Padding = new Padding(25, 0, 0, 0);
-            panel7.Size = new Size(329, 84);
+            panel7.Padding = new Padding(20, 0, 0, 0);
+            panel7.Size = new Size(263, 67);
             panel7.TabIndex = 9;
             // 
             // pictureBox4
@@ -162,9 +166,10 @@ namespace WinFormsApp1
             pictureBox4.BackColor = Color.Black;
             pictureBox4.BackgroundImageLayout = ImageLayout.None;
             pictureBox4.Image = (Image)resources.GetObject("pictureBox4.Image");
-            pictureBox4.Location = new Point(14, 19);
+            pictureBox4.Location = new Point(11, 15);
+            pictureBox4.Margin = new Padding(2);
             pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(45, 45);
+            pictureBox4.Size = new Size(36, 36);
             pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox4.TabIndex = 7;
             pictureBox4.TabStop = false;
@@ -175,10 +180,10 @@ namespace WinFormsApp1
             TestButton.FlatStyle = FlatStyle.Flat;
             TestButton.ForeColor = Color.Transparent;
             TestButton.ImageAlign = ContentAlignment.MiddleLeft;
-            TestButton.Location = new Point(-22, -36);
+            TestButton.Location = new Point(-18, -29);
             TestButton.Margin = new Padding(0);
             TestButton.Name = "TestButton";
-            TestButton.Size = new Size(366, 154);
+            TestButton.Size = new Size(293, 123);
             TestButton.TabIndex = 3;
             TestButton.Text = "Test";
             TestButton.UseVisualStyleBackColor = false;
@@ -188,11 +193,11 @@ namespace WinFormsApp1
             // 
             panel11.Controls.Add(pictureBox8);
             panel11.Controls.Add(TestAssigned);
-            panel11.Location = new Point(0, 84);
+            panel11.Location = new Point(0, 67);
             panel11.Margin = new Padding(0);
             panel11.Name = "panel11";
-            panel11.Padding = new Padding(25, 0, 0, 0);
-            panel11.Size = new Size(329, 84);
+            panel11.Padding = new Padding(20, 0, 0, 0);
+            panel11.Size = new Size(263, 67);
             panel11.TabIndex = 8;
             // 
             // pictureBox8
@@ -200,9 +205,10 @@ namespace WinFormsApp1
             pictureBox8.BackColor = Color.Black;
             pictureBox8.BackgroundImageLayout = ImageLayout.None;
             pictureBox8.Image = (Image)resources.GetObject("pictureBox8.Image");
-            pictureBox8.Location = new Point(14, 19);
+            pictureBox8.Location = new Point(11, 15);
+            pictureBox8.Margin = new Padding(2);
             pictureBox8.Name = "pictureBox8";
-            pictureBox8.Size = new Size(45, 45);
+            pictureBox8.Size = new Size(36, 36);
             pictureBox8.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox8.TabIndex = 7;
             pictureBox8.TabStop = false;
@@ -213,10 +219,10 @@ namespace WinFormsApp1
             TestAssigned.FlatStyle = FlatStyle.Flat;
             TestAssigned.ForeColor = Color.Transparent;
             TestAssigned.ImageAlign = ContentAlignment.MiddleLeft;
-            TestAssigned.Location = new Point(-22, -36);
+            TestAssigned.Location = new Point(-18, -29);
             TestAssigned.Margin = new Padding(0);
             TestAssigned.Name = "TestAssigned";
-            TestAssigned.Size = new Size(366, 154);
+            TestAssigned.Size = new Size(293, 123);
             TestAssigned.TabIndex = 3;
             TestAssigned.Text = "Assigned";
             TestAssigned.UseVisualStyleBackColor = false;
@@ -226,11 +232,11 @@ namespace WinFormsApp1
             // 
             panel12.Controls.Add(pictureBox9);
             panel12.Controls.Add(TestCompletedButton);
-            panel12.Location = new Point(0, 168);
+            panel12.Location = new Point(0, 134);
             panel12.Margin = new Padding(0);
             panel12.Name = "panel12";
-            panel12.Padding = new Padding(25, 0, 0, 0);
-            panel12.Size = new Size(329, 84);
+            panel12.Padding = new Padding(20, 0, 0, 0);
+            panel12.Size = new Size(263, 67);
             panel12.TabIndex = 9;
             // 
             // pictureBox9
@@ -238,9 +244,10 @@ namespace WinFormsApp1
             pictureBox9.BackColor = Color.Black;
             pictureBox9.BackgroundImageLayout = ImageLayout.None;
             pictureBox9.Image = (Image)resources.GetObject("pictureBox9.Image");
-            pictureBox9.Location = new Point(14, 19);
+            pictureBox9.Location = new Point(11, 15);
+            pictureBox9.Margin = new Padding(2);
             pictureBox9.Name = "pictureBox9";
-            pictureBox9.Size = new Size(45, 45);
+            pictureBox9.Size = new Size(36, 36);
             pictureBox9.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox9.TabIndex = 7;
             pictureBox9.TabStop = false;
@@ -251,10 +258,10 @@ namespace WinFormsApp1
             TestCompletedButton.FlatStyle = FlatStyle.Flat;
             TestCompletedButton.ForeColor = Color.Transparent;
             TestCompletedButton.ImageAlign = ContentAlignment.MiddleLeft;
-            TestCompletedButton.Location = new Point(-22, -36);
+            TestCompletedButton.Location = new Point(-18, -29);
             TestCompletedButton.Margin = new Padding(0);
             TestCompletedButton.Name = "TestCompletedButton";
-            TestCompletedButton.Size = new Size(366, 154);
+            TestCompletedButton.Size = new Size(293, 123);
             TestCompletedButton.TabIndex = 3;
             TestCompletedButton.Text = "Completed";
             TestCompletedButton.UseVisualStyleBackColor = false;
@@ -264,11 +271,11 @@ namespace WinFormsApp1
             // 
             panel13.Controls.Add(pictureBox10);
             panel13.Controls.Add(TestOverdueButton);
-            panel13.Location = new Point(0, 252);
+            panel13.Location = new Point(0, 201);
             panel13.Margin = new Padding(0);
             panel13.Name = "panel13";
-            panel13.Padding = new Padding(25, 0, 0, 0);
-            panel13.Size = new Size(329, 84);
+            panel13.Padding = new Padding(20, 0, 0, 0);
+            panel13.Size = new Size(263, 67);
             panel13.TabIndex = 10;
             // 
             // pictureBox10
@@ -276,9 +283,10 @@ namespace WinFormsApp1
             pictureBox10.BackColor = Color.Black;
             pictureBox10.BackgroundImageLayout = ImageLayout.None;
             pictureBox10.Image = (Image)resources.GetObject("pictureBox10.Image");
-            pictureBox10.Location = new Point(14, 19);
+            pictureBox10.Location = new Point(11, 15);
+            pictureBox10.Margin = new Padding(2);
             pictureBox10.Name = "pictureBox10";
-            pictureBox10.Size = new Size(45, 45);
+            pictureBox10.Size = new Size(36, 36);
             pictureBox10.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox10.TabIndex = 7;
             pictureBox10.TabStop = false;
@@ -289,10 +297,10 @@ namespace WinFormsApp1
             TestOverdueButton.FlatStyle = FlatStyle.Flat;
             TestOverdueButton.ForeColor = Color.Transparent;
             TestOverdueButton.ImageAlign = ContentAlignment.MiddleLeft;
-            TestOverdueButton.Location = new Point(-22, -36);
+            TestOverdueButton.Location = new Point(-18, -29);
             TestOverdueButton.Margin = new Padding(0);
             TestOverdueButton.Name = "TestOverdueButton";
-            TestOverdueButton.Size = new Size(366, 154);
+            TestOverdueButton.Size = new Size(293, 123);
             TestOverdueButton.TabIndex = 3;
             TestOverdueButton.Text = "Overdue";
             TestOverdueButton.UseVisualStyleBackColor = false;
@@ -304,10 +312,10 @@ namespace WinFormsApp1
             MenuContainer.Controls.Add(panel8);
             MenuContainer.Controls.Add(panel4);
             MenuContainer.Controls.Add(panel9);
-            MenuContainer.Location = new Point(3, 343);
+            MenuContainer.Location = new Point(2, 274);
             MenuContainer.Margin = new Padding(0);
             MenuContainer.Name = "MenuContainer";
-            MenuContainer.Size = new Size(329, 81);
+            MenuContainer.Size = new Size(263, 65);
             MenuContainer.TabIndex = 10;
             // 
             // panel8
@@ -317,8 +325,8 @@ namespace WinFormsApp1
             panel8.Location = new Point(0, 0);
             panel8.Margin = new Padding(0);
             panel8.Name = "panel8";
-            panel8.Padding = new Padding(25, 0, 0, 0);
-            panel8.Size = new Size(329, 84);
+            panel8.Padding = new Padding(20, 0, 0, 0);
+            panel8.Size = new Size(263, 67);
             panel8.TabIndex = 9;
             // 
             // pictureBox5
@@ -326,9 +334,10 @@ namespace WinFormsApp1
             pictureBox5.BackColor = Color.Black;
             pictureBox5.BackgroundImageLayout = ImageLayout.None;
             pictureBox5.Image = (Image)resources.GetObject("pictureBox5.Image");
-            pictureBox5.Location = new Point(14, 19);
+            pictureBox5.Location = new Point(11, 15);
+            pictureBox5.Margin = new Padding(2);
             pictureBox5.Name = "pictureBox5";
-            pictureBox5.Size = new Size(45, 45);
+            pictureBox5.Size = new Size(36, 36);
             pictureBox5.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox5.TabIndex = 7;
             pictureBox5.TabStop = false;
@@ -339,10 +348,10 @@ namespace WinFormsApp1
             LessonButton.FlatStyle = FlatStyle.Flat;
             LessonButton.ForeColor = Color.Transparent;
             LessonButton.ImageAlign = ContentAlignment.MiddleLeft;
-            LessonButton.Location = new Point(-22, -36);
+            LessonButton.Location = new Point(-18, -29);
             LessonButton.Margin = new Padding(0);
             LessonButton.Name = "LessonButton";
-            LessonButton.Size = new Size(366, 154);
+            LessonButton.Size = new Size(293, 123);
             LessonButton.TabIndex = 3;
             LessonButton.Text = "Lesson";
             LessonButton.UseVisualStyleBackColor = false;
@@ -352,11 +361,11 @@ namespace WinFormsApp1
             // 
             panel4.Controls.Add(pictureBox1);
             panel4.Controls.Add(LessonCreationButton);
-            panel4.Location = new Point(0, 84);
+            panel4.Location = new Point(0, 67);
             panel4.Margin = new Padding(0);
             panel4.Name = "panel4";
-            panel4.Padding = new Padding(25, 0, 0, 0);
-            panel4.Size = new Size(329, 84);
+            panel4.Padding = new Padding(20, 0, 0, 0);
+            panel4.Size = new Size(263, 67);
             panel4.TabIndex = 8;
             // 
             // pictureBox1
@@ -364,9 +373,10 @@ namespace WinFormsApp1
             pictureBox1.BackColor = Color.Black;
             pictureBox1.BackgroundImageLayout = ImageLayout.None;
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(14, 19);
+            pictureBox1.Location = new Point(11, 15);
+            pictureBox1.Margin = new Padding(2);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(45, 45);
+            pictureBox1.Size = new Size(36, 36);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 7;
             pictureBox1.TabStop = false;
@@ -377,10 +387,10 @@ namespace WinFormsApp1
             LessonCreationButton.FlatStyle = FlatStyle.Flat;
             LessonCreationButton.ForeColor = Color.Transparent;
             LessonCreationButton.ImageAlign = ContentAlignment.MiddleLeft;
-            LessonCreationButton.Location = new Point(-22, -36);
+            LessonCreationButton.Location = new Point(-18, -29);
             LessonCreationButton.Margin = new Padding(0);
             LessonCreationButton.Name = "LessonCreationButton";
-            LessonCreationButton.Size = new Size(366, 154);
+            LessonCreationButton.Size = new Size(293, 123);
             LessonCreationButton.TabIndex = 3;
             LessonCreationButton.Text = "Create a new lesson";
             LessonCreationButton.UseVisualStyleBackColor = false;
@@ -390,11 +400,11 @@ namespace WinFormsApp1
             // 
             panel9.Controls.Add(pictureBox6);
             panel9.Controls.Add(LessonInProgressButton);
-            panel9.Location = new Point(0, 168);
+            panel9.Location = new Point(0, 134);
             panel9.Margin = new Padding(0);
             panel9.Name = "panel9";
-            panel9.Padding = new Padding(25, 0, 0, 0);
-            panel9.Size = new Size(329, 84);
+            panel9.Padding = new Padding(20, 0, 0, 0);
+            panel9.Size = new Size(263, 67);
             panel9.TabIndex = 9;
             // 
             // pictureBox6
@@ -402,9 +412,10 @@ namespace WinFormsApp1
             pictureBox6.BackColor = Color.Black;
             pictureBox6.BackgroundImageLayout = ImageLayout.None;
             pictureBox6.Image = (Image)resources.GetObject("pictureBox6.Image");
-            pictureBox6.Location = new Point(14, 19);
+            pictureBox6.Location = new Point(11, 15);
+            pictureBox6.Margin = new Padding(2);
             pictureBox6.Name = "pictureBox6";
-            pictureBox6.Size = new Size(45, 45);
+            pictureBox6.Size = new Size(36, 36);
             pictureBox6.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox6.TabIndex = 7;
             pictureBox6.TabStop = false;
@@ -415,10 +426,10 @@ namespace WinFormsApp1
             LessonInProgressButton.FlatStyle = FlatStyle.Flat;
             LessonInProgressButton.ForeColor = Color.Transparent;
             LessonInProgressButton.ImageAlign = ContentAlignment.MiddleLeft;
-            LessonInProgressButton.Location = new Point(-22, -36);
+            LessonInProgressButton.Location = new Point(-18, -29);
             LessonInProgressButton.Margin = new Padding(0);
             LessonInProgressButton.Name = "LessonInProgressButton";
-            LessonInProgressButton.Size = new Size(366, 154);
+            LessonInProgressButton.Size = new Size(293, 123);
             LessonInProgressButton.TabIndex = 3;
             LessonInProgressButton.Text = "In progress";
             LessonInProgressButton.UseVisualStyleBackColor = false;
@@ -428,10 +439,11 @@ namespace WinFormsApp1
             // 
             panel3.Controls.Add(PicHome);
             panel3.Controls.Add(HomeButton);
-            panel3.Location = new Point(3, 70);
+            panel3.Location = new Point(2, 56);
+            panel3.Margin = new Padding(2);
             panel3.Name = "panel3";
-            panel3.Padding = new Padding(25, 0, 0, 0);
-            panel3.Size = new Size(329, 84);
+            panel3.Padding = new Padding(20, 0, 0, 0);
+            panel3.Size = new Size(263, 67);
             panel3.TabIndex = 6;
             panel3.Paint += panel3_Paint;
             // 
@@ -440,9 +452,10 @@ namespace WinFormsApp1
             PicHome.BackColor = Color.Black;
             PicHome.BackgroundImageLayout = ImageLayout.None;
             PicHome.Image = (Image)resources.GetObject("PicHome.Image");
-            PicHome.Location = new Point(14, 19);
+            PicHome.Location = new Point(11, 15);
+            PicHome.Margin = new Padding(2);
             PicHome.Name = "PicHome";
-            PicHome.Size = new Size(45, 45);
+            PicHome.Size = new Size(36, 36);
             PicHome.SizeMode = PictureBoxSizeMode.Zoom;
             PicHome.TabIndex = 7;
             PicHome.TabStop = false;
@@ -453,9 +466,10 @@ namespace WinFormsApp1
             HomeButton.FlatStyle = FlatStyle.Flat;
             HomeButton.ForeColor = Color.Transparent;
             HomeButton.ImageAlign = ContentAlignment.MiddleLeft;
-            HomeButton.Location = new Point(-22, -36);
+            HomeButton.Location = new Point(-18, -29);
+            HomeButton.Margin = new Padding(2);
             HomeButton.Name = "HomeButton";
-            HomeButton.Size = new Size(366, 154);
+            HomeButton.Size = new Size(293, 123);
             HomeButton.TabIndex = 3;
             HomeButton.Text = "Home";
             HomeButton.UseVisualStyleBackColor = false;
@@ -465,10 +479,11 @@ namespace WinFormsApp1
             // 
             panel5.Controls.Add(pictureBox2);
             panel5.Controls.Add(LibraryButton);
-            panel5.Location = new Point(3, 166);
+            panel5.Location = new Point(2, 133);
+            panel5.Margin = new Padding(2);
             panel5.Name = "panel5";
-            panel5.Padding = new Padding(25, 0, 0, 0);
-            panel5.Size = new Size(329, 84);
+            panel5.Padding = new Padding(20, 0, 0, 0);
+            panel5.Size = new Size(263, 67);
             panel5.TabIndex = 7;
             // 
             // pictureBox2
@@ -476,9 +491,10 @@ namespace WinFormsApp1
             pictureBox2.BackColor = Color.Black;
             pictureBox2.BackgroundImageLayout = ImageLayout.None;
             pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(14, 19);
+            pictureBox2.Location = new Point(11, 15);
+            pictureBox2.Margin = new Padding(2);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(45, 45);
+            pictureBox2.Size = new Size(36, 36);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 7;
             pictureBox2.TabStop = false;
@@ -489,9 +505,10 @@ namespace WinFormsApp1
             LibraryButton.FlatStyle = FlatStyle.Flat;
             LibraryButton.ForeColor = Color.Transparent;
             LibraryButton.ImageAlign = ContentAlignment.MiddleLeft;
-            LibraryButton.Location = new Point(-22, -36);
+            LibraryButton.Location = new Point(-18, -29);
+            LibraryButton.Margin = new Padding(2);
             LibraryButton.Name = "LibraryButton";
-            LibraryButton.Size = new Size(366, 154);
+            LibraryButton.Size = new Size(293, 123);
             LibraryButton.TabIndex = 3;
             LibraryButton.Text = "Library";
             LibraryButton.UseVisualStyleBackColor = false;
@@ -501,10 +518,11 @@ namespace WinFormsApp1
             // 
             panel6.Controls.Add(pictureBox3);
             panel6.Controls.Add(ShopButton);
-            panel6.Location = new Point(3, 256);
+            panel6.Location = new Point(2, 205);
+            panel6.Margin = new Padding(2);
             panel6.Name = "panel6";
-            panel6.Padding = new Padding(25, 0, 0, 0);
-            panel6.Size = new Size(329, 84);
+            panel6.Padding = new Padding(20, 0, 0, 0);
+            panel6.Size = new Size(263, 67);
             panel6.TabIndex = 8;
             // 
             // pictureBox3
@@ -512,9 +530,10 @@ namespace WinFormsApp1
             pictureBox3.BackColor = Color.Black;
             pictureBox3.BackgroundImageLayout = ImageLayout.None;
             pictureBox3.Image = (Image)resources.GetObject("pictureBox3.Image");
-            pictureBox3.Location = new Point(14, 19);
+            pictureBox3.Location = new Point(11, 15);
+            pictureBox3.Margin = new Padding(2);
             pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(45, 45);
+            pictureBox3.Size = new Size(36, 36);
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox3.TabIndex = 7;
             pictureBox3.TabStop = false;
@@ -525,9 +544,10 @@ namespace WinFormsApp1
             ShopButton.FlatStyle = FlatStyle.Flat;
             ShopButton.ForeColor = Color.Transparent;
             ShopButton.ImageAlign = ContentAlignment.MiddleLeft;
-            ShopButton.Location = new Point(-22, -36);
+            ShopButton.Location = new Point(-18, -29);
+            ShopButton.Margin = new Padding(2);
             ShopButton.Name = "ShopButton";
-            ShopButton.Size = new Size(366, 154);
+            ShopButton.Size = new Size(293, 123);
             ShopButton.TabIndex = 3;
             ShopButton.Text = "Shop";
             ShopButton.UseVisualStyleBackColor = false;
@@ -550,29 +570,32 @@ namespace WinFormsApp1
             // 
             // panelShow
             // 
-            panelShow.Location = new Point(335, 62);
+            panelShow.Dock = DockStyle.Fill;
+            panelShow.Location = new Point(266, 48);
+            panelShow.Margin = new Padding(2);
             panelShow.Name = "panelShow";
-            panelShow.Size = new Size(922, 816);
+            panelShow.Size = new Size(1160, 673);
             panelShow.TabIndex = 3;
             panelShow.Paint += panel10_Paint;
             // 
             // formMenu
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(1257, 878);
+            ClientSize = new Size(1426, 721);
             Controls.Add(panelShow);
-            Controls.Add(panel2);
+            Controls.Add(sideBarPanel);
             Controls.Add(panel1);
             ForeColor = Color.White;
             IsMdiContainer = true;
+            Margin = new Padding(2);
             Name = "formMenu";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "TrangChu";
             Load += TrangChu_Load_1;
             panel1.ResumeLayout(false);
-            panel2.ResumeLayout(false);
+            sideBarPanel.ResumeLayout(false);
             MenuContainer2.ResumeLayout(false);
             panel7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
@@ -601,7 +624,7 @@ namespace WinFormsApp1
         #endregion
 
         private Panel panel1;
-        private Panel panel2;
+        private Panel sideBarPanel;
         private Button HomeButton;
         private Panel panel3;
         private PictureBox PicHome;
