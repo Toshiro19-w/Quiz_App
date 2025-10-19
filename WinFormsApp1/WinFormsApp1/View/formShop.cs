@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View
 {
@@ -15,6 +16,20 @@ namespace WinFormsApp1.View
         public formShop()
         {
             InitializeComponent();
+        }
+
+        private void formShop_Load(object sender, EventArgs e)
+        {
+            // Sử dụng FormLayoutHelper để setup đầy đủ layout cho Shop
+            FormLayoutHelper.SetupShopCompleteLayout(
+                this,           // form
+                panel1,         // container panel
+                searchTB,       // search textbox
+                searchButton,   // search button
+                label1,         // title label "Các chủ đề phổ biến"
+                tagPanel,       // tag buttons panel
+                coursesPanel    // courses panel
+            );
         }
     }
 }

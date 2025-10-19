@@ -99,7 +99,7 @@ namespace WinFormsApp1
 
         private void LOGO_Click(object sender, EventArgs e)
         {
-            SidebarTransition.Start();
+            ToggleSidebar();
         }
 
         private void panel3_Paint(object sender, PaintEventArgs e)
@@ -109,33 +109,31 @@ namespace WinFormsApp1
         bool menuExpand = false;
         bool menuExpand2 = false;
         bool SidebarExpand = false;
-        private void MenuTransition_Tick(object sender, EventArgs e)
+        
+        private void ToggleMenuContainer()
         {
             if (!menuExpand)
             {
-                MenuContainer.Height += 10;
-                MenuContainer2.Top += 10;
-                if (MenuContainer.Height >= 250)
-                {
-                    menuExpand = true;
-                    MenuTransition.Stop();
-                }
+                MenuContainer.Height = 250;
+                MenuContainer2.Top = MenuContainer.Bottom + 10;
+                menuExpand = true;
             }
             else
             {
-                MenuContainer.Height -= 10;
-                MenuContainer2.Top -= 10;
-                if (MenuContainer.Height <= 84)
-                {
-                    menuExpand = false;
-                    MenuTransition.Stop();
-                }
+                MenuContainer.Height = 65;
+                MenuContainer2.Top = MenuContainer.Bottom + 10;
+                menuExpand = false;
             }
+        }
+        
+        private void MenuTransition_Tick(object sender, EventArgs e)
+        {
+            // This method is kept for compatibility but no longer used for animation
         }
 
         private void LessonButton_Click(object sender, EventArgs e)
         {
-            MenuTransition.Start();
+            ToggleMenuContainer();
             panelShow.Controls.Clear();
             if (formLesson == null)
             {
@@ -158,7 +156,25 @@ namespace WinFormsApp1
 
         private void TestButton_Click(object sender, EventArgs e)
         {
-            MenuTransition2.Start();
+            ToggleMenuContainer2();
+            panelShow.Controls.Clear();
+            if (formTest == null)
+            {
+                formTest = new formTest();
+                formTest.TopLevel = false;
+                formTest.FormBorderStyle = FormBorderStyle.None;
+                formTest.Dock = DockStyle.Fill;
+                panelShow.Controls.Add(formTest);
+                formTest.Show();
+            }
+            else
+            {
+                formTest.TopLevel = false;
+                formTest.FormBorderStyle = FormBorderStyle.None;
+                formTest.Dock = DockStyle.Fill;
+                panelShow.Controls.Add(formTest);
+                formTest.Show();
+            }
         }
 
         private void TestCompletedButton_Click(object sender, EventArgs e)
@@ -188,57 +204,52 @@ namespace WinFormsApp1
 
         }
 
-        private void MenuTransition2_Tick(object sender, EventArgs e)
+        private void ToggleMenuContainer2()
         {
             if (!menuExpand2)
             {
-                MenuContainer2.Height += 10;
-                if (MenuContainer2.Height >= 336)
-                {
-                    menuExpand2 = true;
-                    MenuTransition2.Stop();
-                }
+                MenuContainer2.Height = 336;
+                menuExpand2 = true;
             }
             else
             {
-                MenuContainer2.Height -= 10;
-                if (MenuContainer2.Height <= 84)
-                {
-                    menuExpand2 = false;
-                    MenuTransition2.Stop();
-                }
+                MenuContainer2.Height = 65;
+                menuExpand2 = false;
             }
         }
+        
+        private void MenuTransition2_Tick(object sender, EventArgs e)
+        {
+            // This method is kept for compatibility but no longer used for animation
+        }
 
-        private void SidebarTransition_Tick(object sender, EventArgs e)
+        private void ToggleSidebar()
         {
             if (!SidebarExpand)
             {
-                panel2.Width -= 10;
-                panelShow.Left -= 10;
-                panelShow.Width += 10;
-                if (panel2.Width <= 84)
-                {
-                    SidebarExpand = true;
-                    SidebarTransition.Stop();
-                }
+                sideBarPanel.Width = 84;
+                panelShow.Left = 84;
+                panelShow.Width = this.ClientSize.Width - 84;
+                SidebarExpand = true;
             }
             else
             {
-                panel2.Width += 10;
-                panelShow.Left += 10;
-                panelShow.Width -= 10;
-                if (panel2.Width >= 332)
-                {
-                    SidebarExpand = false;
-                    SidebarTransition.Stop();
-                }
+                sideBarPanel.Width = 266;
+                panelShow.Left = 266;
+                panelShow.Width = this.ClientSize.Width - 266;
+                SidebarExpand = false;
             }
         }
+        
+        private void SidebarTransition_Tick(object sender, EventArgs e) 
+        { 
+            // This method is kept for compatibility but no longer used for animation
+        }
+
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            SidebarTransition.Start();
+            ToggleSidebar();
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
@@ -369,7 +380,7 @@ namespace WinFormsApp1
                 formTestOverDue = new formTestOverDue();
                 formTestOverDue.TopLevel = false;
                 formTestOverDue.FormBorderStyle = FormBorderStyle.None;
-                formTestAssign.Dock = DockStyle.Fill;
+                formTestOverDue.Dock = DockStyle.Fill;
                 panelShow.Controls.Add(formTestOverDue);
                 formTestOverDue.Show();
             }
