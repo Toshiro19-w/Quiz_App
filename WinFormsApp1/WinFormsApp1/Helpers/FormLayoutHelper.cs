@@ -454,5 +454,402 @@ namespace WinFormsApp1.Helpers
             form.SizeChanged += layoutHandler;
             containerPanel.Resize += layoutHandler;
         }
+
+        /// <summary>
+        /// Tạo thẻ thống kê cho admin dashboard
+        /// </summary>
+        /// <param name="title">Tiêu đề thẻ</param>
+        /// <param name="value">Giá trị hiển thị</param>
+        /// <param name="color">Màu nền của thẻ</param>
+        /// <param name="location">Vị trí của thẻ</param>
+        /// <param name="size">Kích thước của thẻ</param>
+        /// <returns>Panel chứa thẻ thống kê</returns>
+        public static Panel CreateStatsCard(string title, string value, Color color, Point location, Size size)
+        {
+            var cardPanel = new Panel
+            {
+                Size = size,
+                Location = location,
+                BackColor = color,
+                Padding = new Padding(20)
+            };
+
+            var valueLabel = new Label
+            {
+                Text = value,
+                Font = new Font("Segoe UI", 28, FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(20, 20),
+                AutoSize = true
+            };
+
+            var titleLabel = new Label
+            {
+                Text = title,
+                Font = new Font("Segoe UI", 12),
+                ForeColor = Color.White,
+                Location = new Point(20, 70),
+                AutoSize = true
+            };
+
+            cardPanel.Controls.AddRange(new Control[] { valueLabel, titleLabel });
+            
+            return cardPanel;
+        }
+
+        // ==================== UI/UX COMPONENTS ====================
+
+        /// <summary>
+        /// Tạo Button hiện đại với style tùy chỉnh
+        /// </summary>
+        public static Button CreateModernButton(string text, Color backColor, Color foreColor, Size size, EventHandler clickHandler = null)
+        {
+            var button = new Button
+            {
+                Text = text,
+                Size = size,
+                BackColor = backColor,
+                ForeColor = foreColor,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            button.FlatAppearance.BorderSize = 0;
+            button.FlatAppearance.MouseOverBackColor = ControlPaint.Light(backColor, 0.2f);
+            button.FlatAppearance.MouseDownBackColor = ControlPaint.Dark(backColor, 0.1f);
+            
+            if (clickHandler != null)
+                button.Click += clickHandler;
+            
+            return button;
+        }
+
+        /// <summary>
+        /// Tạo TextBox hiện đại với placeholder
+        /// </summary>
+        public static TextBox CreateModernTextBox(string placeholder, Size size)
+        {
+            var textBox = new TextBox
+            {
+                Size = size,
+                Font = new Font("Segoe UI", 10),
+                BorderStyle = BorderStyle.FixedSingle,
+                ForeColor = Color.Gray,
+                Text = placeholder,
+                Tag = placeholder
+            };
+
+            textBox.GotFocus += (s, e) =>
+            {
+                if (textBox.Text == placeholder)
+                {
+                    textBox.Text = "";
+                    textBox.ForeColor = Color.Black;
+                }
+            };
+
+            textBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(textBox.Text))
+                {
+                    textBox.Text = placeholder;
+                    textBox.ForeColor = Color.Gray;
+                }
+            };
+
+            return textBox;
+        }
+
+        /// <summary>
+        /// Tạo DataGridView hiện đại với style đẹp
+        /// </summary>
+        public static DataGridView CreateModernDataGridView()
+        {
+            var dgv = new DataGridView
+            {
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
+                ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None,
+                EnableHeadersVisualStyles = false,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect = false,
+                ReadOnly = true,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                AllowUserToResizeRows = false,
+                RowHeadersVisible = false,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                Font = new Font("Segoe UI", 9)
+            };
+
+            // Header style
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 144, 220);
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(10);
+            dgv.ColumnHeadersHeight = 40;
+
+            // Row style
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(220, 237, 250);
+            dgv.DefaultCellStyle.SelectionForeColor = Color.Black;
+            dgv.DefaultCellStyle.Padding = new Padding(5);
+            dgv.RowTemplate.Height = 35;
+
+            // Alternating row color
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
+
+            return dgv;
+        }
+
+        /// <summary>
+        /// Tạo Panel chứa form nhập liệu với label và textbox
+        /// </summary>
+        public static Panel CreateFormField(string labelText, out TextBox textBox, int yPosition, int width = 400)
+        {
+            var panel = new Panel
+            {
+                Size = new Size(width, 70),
+                Location = new Point(0, yPosition)
+            };
+
+            var label = new Label
+            {
+                Text = labelText,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Location = new Point(0, 0),
+                AutoSize = true,
+                ForeColor = Color.FromArgb(45, 55, 72)
+            };
+
+            textBox = new TextBox
+            {
+                Size = new Size(width, 30),
+                Location = new Point(0, 25),
+                Font = new Font("Segoe UI", 10),
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            panel.Controls.AddRange(new Control[] { label, textBox });
+            return panel;
+        }
+
+        /// <summary>
+        /// Tạo ComboBox hiện đại
+        /// </summary>
+        public static ComboBox CreateModernComboBox(string[] items, Size size)
+        {
+            var comboBox = new ComboBox
+            {
+                Size = size,
+                Font = new Font("Segoe UI", 10),
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FlatStyle = FlatStyle.Flat
+            };
+
+            if (items != null && items.Length > 0)
+            {
+                comboBox.Items.AddRange(items);
+                comboBox.SelectedIndex = 0;
+            }
+
+            return comboBox;
+        }
+
+        /// <summary>
+        /// Tạo Panel card container với shadow effect
+        /// </summary>
+        public static Panel CreateCardPanel(Size size, Point location)
+        {
+            var panel = new Panel
+            {
+                Size = size,
+                Location = location,
+                BackColor = Color.White,
+                Padding = new Padding(20)
+            };
+
+            // Add border
+            panel.Paint += (s, e) =>
+            {
+                ControlPaint.DrawBorder(e.Graphics, panel.ClientRectangle,
+                    Color.FromArgb(226, 232, 240), 1, ButtonBorderStyle.Solid,
+                    Color.FromArgb(226, 232, 240), 1, ButtonBorderStyle.Solid,
+                    Color.FromArgb(226, 232, 240), 1, ButtonBorderStyle.Solid,
+                    Color.FromArgb(226, 232, 240), 1, ButtonBorderStyle.Solid);
+            };
+
+            return panel;
+        }
+
+        /// <summary>
+        /// Tạo search panel với icon
+        /// </summary>
+        public static Panel CreateSearchPanel(out TextBox searchBox, out Button searchButton, int width = 400)
+        {
+            var panel = new Panel
+            {
+                Size = new Size(width, 40)
+            };
+
+            searchBox = new TextBox
+            {
+                Size = new Size(width - 100, 30),
+                Location = new Point(0, 5),
+                Font = new Font("Segoe UI", 10),
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            searchButton = CreateModernButton("🔍 Tìm", 
+                Color.FromArgb(52, 144, 220), 
+                Color.White, 
+                new Size(90, 30));
+            searchButton.Location = new Point(width - 90, 5);
+
+            panel.Controls.AddRange(new Control[] { searchBox, searchButton });
+            return panel;
+        }
+
+        /// <summary>
+        /// Setup responsive cho DataGridView
+        /// </summary>
+        public static void MakeDataGridViewResponsive(Form form, DataGridView dgv, Panel container)
+        {
+            EventHandler resizeHandler = (s, e) =>
+            {
+                if (container != null)
+                {
+                    dgv.Width = container.Width - 40;
+                    dgv.Height = container.Height - dgv.Top - 20;
+                }
+            };
+
+            form.Resize += resizeHandler;
+            form.Load += resizeHandler;
+            container.Resize += resizeHandler;
+        }
+
+        /// <summary>
+        /// Tạo action buttons panel (Edit, Delete, View)
+        /// </summary>
+        public static Panel CreateActionButtonsPanel(EventHandler editHandler, EventHandler deleteHandler, EventHandler viewHandler = null)
+        {
+            var panel = new Panel
+            {
+                Size = new Size(viewHandler != null ? 180 : 120, 35)
+            };
+
+            int xPos = 0;
+
+            if (viewHandler != null)
+            {
+                var viewBtn = CreateModernButton("👁️", Color.FromArgb(52, 144, 220), Color.White, new Size(35, 30), viewHandler);
+                viewBtn.Location = new Point(xPos, 0);
+                panel.Controls.Add(viewBtn);
+                xPos += 40;
+            }
+
+            var editBtn = CreateModernButton("✏️", Color.FromArgb(34, 197, 94), Color.White, new Size(35, 30), editHandler);
+            editBtn.Location = new Point(xPos, 0);
+            panel.Controls.Add(editBtn);
+            xPos += 40;
+
+            var deleteBtn = CreateModernButton("🗑️", Color.FromArgb(239, 68, 68), Color.White, new Size(35, 30), deleteHandler);
+            deleteBtn.Location = new Point(xPos, 0);
+            panel.Controls.Add(deleteBtn);
+
+            return panel;
+        }
+
+        /// <summary>
+        /// Tạo modal dialog panel
+        /// </summary>
+        public static Form CreateModalDialog(string title, Size size)
+        {
+            var dialog = new Form
+            {
+                Text = title,
+                Size = size,
+                StartPosition = FormStartPosition.CenterParent,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                BackColor = Color.White,
+                Font = new Font("Segoe UI", 10)
+            };
+
+            return dialog;
+        }
+
+        /// <summary>
+        /// Setup responsive layout cho toàn bộ form
+        /// </summary>
+        public static void SetupResponsiveForm(Form form, params Control[] controls)
+        {
+            EventHandler resizeHandler = (s, e) =>
+            {
+                foreach (var control in controls)
+                {
+                    if (control is Panel panel)
+                    {
+                        panel.Width = form.ClientSize.Width - 40;
+                    }
+                    else if (control is DataGridView dgv)
+                    {
+                        dgv.Width = form.ClientSize.Width - 40;
+                    }
+                }
+            };
+
+            form.Load += resizeHandler;
+            form.Resize += resizeHandler;
+        }
+
+        public static FlowLayoutPanel CreateResponsiveCardContainer(Control parent, int yPosition = 80)
+        {
+            return new FlowLayoutPanel
+            {
+                Location = new Point(20, yPosition),
+                AutoSize = true,
+                MaximumSize = new Size(parent.Width - 40, 0),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+                WrapContents = true,
+                FlowDirection = FlowDirection.LeftToRight
+            };
+        }
+
+        public static Panel CreateResponsivePanel(Point location, Size size, AnchorStyles anchor)
+        {
+            return new Panel
+            {
+                Location = location,
+                Size = size,
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                Anchor = anchor
+            };
+        }
+
+        public static Panel CreateResponsiveChartPanel(string title, Point location, Size size, AnchorStyles anchor)
+        {
+            var panel = new Panel
+            {
+                Location = location,
+                Size = size,
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                Anchor = anchor
+            };
+
+            var titleLabel = new Label
+            {
+                Text = title,
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                Location = new Point(10, 10),
+                AutoSize = true
+            };
+            panel.Controls.Add(titleLabel);
+            return panel;
+        }
     }
 }
