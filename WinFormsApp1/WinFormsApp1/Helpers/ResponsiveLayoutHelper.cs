@@ -14,14 +14,15 @@ namespace WinFormsApp1.Helpers
             var flowPanel = new FlowLayoutPanel
             {
                 Location = new Point(20, yPosition),
+                Width = parent.Width - 40,
                 AutoSize = true,
-                MaximumSize = new Size(parent.Width - 40, 0),
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
                 WrapContents = true,
                 FlowDirection = FlowDirection.LeftToRight
             };
 
-            parent.Resize += (s, e) => flowPanel.MaximumSize = new Size(parent.Width - 40, 0);
+            parent.Resize += (s, e) => flowPanel.Width = parent.Width - 40;
             return flowPanel;
         }
 

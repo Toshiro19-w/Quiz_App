@@ -8,22 +8,19 @@ using static WinFormsApp1.Helpers.UIComponentHelper;
 
 namespace WinFormsApp1.View.Admin
 {
-    public class OverviewDashboard : UserControl
+    public partial class OverviewDashboard : UserControl
     {
         private AdminController _controller;
 
         public OverviewDashboard()
         {
             _controller = new AdminController();
-            InitializeControl();
-            LoadData();
+            InitializeComponent();
         }
 
-        private void InitializeControl()
+        private void OverviewDashboard_Load(object sender, EventArgs e)
         {
-            Dock = DockStyle.Fill;
-            BackColor = Color.FromArgb(248, 249, 250);
-            AutoScroll = true;
+            LoadData();
         }
 
         private async void LoadData()
@@ -55,15 +52,14 @@ namespace WinFormsApp1.View.Admin
         private void CreateKPICards(ViewModels.DashboardStats stats)
         {
             var flowPanel = CreateResponsiveCardContainer(this, 80);
+            flowPanel.Name = "flowPanel";
 
             var cards = new[]
             {
                 new { Title = "👥 Người dùng", Value = stats.TotalUsers.ToString(), Color = Color.FromArgb(56, 178, 172) },
                 new { Title = "📚 Khóa học", Value = stats.TotalCourses.ToString(), Color = Color.FromArgb(34, 197, 94) },
-                new { Title = "🏫 Lớp học", Value = stats.TotalClasses.ToString(), Color = Color.FromArgb(168, 85, 247) },
                 new { Title = "📝 Bài kiểm tra", Value = stats.TotalTests.ToString(), Color = Color.FromArgb(251, 191, 36) },
-                new { Title = "💰 Doanh thu", Value = $"${stats.TotalRevenue:N0}", Color = Color.FromArgb(14, 165, 233) },
-                new { Title = "📊 Kết quả thi", Value = stats.TotalTestResults.ToString(), Color = Color.FromArgb(239, 68, 68) }
+                new { Title = "💰 Doanh thu", Value = $"${stats.TotalRevenue:N0}", Color = Color.FromArgb(14, 165, 233) }
             };
 
             foreach (var cardData in cards)
@@ -73,9 +69,9 @@ namespace WinFormsApp1.View.Admin
                     cardData.Value,
                     cardData.Color,
                     new Point(0, 0),
-                    new Size(280, 110)
+                    new Size(320, 130)
                 );
-                card.Margin = new Padding(0, 0, 20, 20);
+                card.Margin = new Padding(0, 0, 15, 15);
                 flowPanel.Controls.Add(card);
             }
 
@@ -84,9 +80,12 @@ namespace WinFormsApp1.View.Admin
 
         private void CreateTrendChart()
         {
+            var flowPanel = Controls.Find("flowPanel", false).FirstOrDefault();
+            int yPos = flowPanel != null ? flowPanel.Bottom + 20 : 350;
+            
             var panel = CreateResponsiveChartPanel(
                 "📈 Xu hướng doanh thu 12 tháng",
-                new Point(20, 350),
+                new Point(20, yPos),
                 new Size(Width - 60, 300),
                 AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             );

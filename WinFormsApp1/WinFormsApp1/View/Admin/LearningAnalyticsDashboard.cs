@@ -9,22 +9,19 @@ using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.View.Admin
 {
-    public class LearningAnalyticsDashboard : UserControl
+    public partial class LearningAnalyticsDashboard : UserControl
     {
         private AdminController _controller;
 
         public LearningAnalyticsDashboard()
         {
             _controller = new AdminController();
-            InitializeControl();
-            LoadData();
+            InitializeComponent();
         }
 
-        private void InitializeControl()
+        private void LearningAnalyticsDashboard_Load(object sender, EventArgs e)
         {
-            Dock = DockStyle.Fill;
-            BackColor = Color.FromArgb(248, 249, 250);
-            AutoScroll = true;
+            LoadData();
         }
 
         private async void LoadData()
@@ -56,6 +53,7 @@ namespace WinFormsApp1.View.Admin
         private void CreateLearningStatsCards(LearningAnalytics stats)
         {
             var flowPanel = CreateResponsiveCardContainer(this, 80);
+            flowPanel.Name = "flowPanel";
 
             var cards = new[]
             {
@@ -67,8 +65,8 @@ namespace WinFormsApp1.View.Admin
 
             foreach (var cardData in cards)
             {
-                var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(280, 110));
-                card.Margin = new Padding(0, 0, 20, 20);
+                var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(320, 130));
+                card.Margin = new Padding(0, 0, 15, 15);
                 flowPanel.Controls.Add(card);
             }
 
@@ -77,14 +75,25 @@ namespace WinFormsApp1.View.Admin
 
         private void CreateLearningCharts(LearningAnalytics stats)
         {
-            int yPos = 220;
-            int halfWidth = (Width - 60) / 2;
+            var flowPanel = Controls.Find("flowPanel", false).FirstOrDefault();
+            int yPos = flowPanel != null ? flowPanel.Bottom + 20 : 220;
+
+            var chartFlow = new FlowLayoutPanel
+            {
+                Location = new Point(20, yPos),
+                Width = Width - 40,
+                AutoSize = true,
+                WrapContents = true,
+                FlowDirection = FlowDirection.LeftToRight,
+                Name = "chartFlow"
+            };
 
             var completionPanel = CreateResponsiveChartPanel(
-                "✅ Tỷ lệ hoàn thành khóa học", 
-                new Point(20, yPos), 
-                new Size(halfWidth, 300),
-                AnchorStyles.Top | AnchorStyles.Left);
+                "✅ Tỷ lệ hoàn thành khóa học",
+                new Point(0, 0),
+                new Size(540, 300),
+                AnchorStyles.None);
+            completionPanel.Margin = new Padding(0, 0, 20, 20);
             var completionInfo = new Label
             {
                 Text = $"Hoàn thành: {stats.CompletionRate:F1}%\nChưa hoàn thành: {100 - stats.CompletionRate:F1}%",
@@ -101,13 +110,14 @@ namespace WinFormsApp1.View.Admin
             };
             completionPanel.Controls.Add(completionInfo);
             completionPanel.Controls.Add(progressBar);
-            Controls.Add(completionPanel);
+            chartFlow.Controls.Add(completionPanel);
 
             var testPanel = CreateResponsiveChartPanel(
-                "📝 Thống kê bài kiểm tra", 
-                new Point(halfWidth + 40, yPos), 
-                new Size(halfWidth, 300),
-                AnchorStyles.Top | AnchorStyles.Right);
+                "📝 Thống kê bài kiểm tra",
+                new Point(0, 0),
+                new Size(540, 300),
+                AnchorStyles.None);
+            testPanel.Margin = new Padding(0, 0, 0, 20);
             var testInfo = new Label
             {
                 Text = $"Tổng bài thi: {stats.TotalTests}\nBài thi tháng này: {stats.TestsThisMonth}",
@@ -116,13 +126,15 @@ namespace WinFormsApp1.View.Admin
                 AutoSize = true
             };
             testPanel.Controls.Add(testInfo);
-            Controls.Add(testPanel);
+            chartFlow.Controls.Add(testPanel);
 
-            yPos += 320;
+            Controls.Add(chartFlow);
+            Resize += (s, e) => chartFlow.Width = Width - 40;
+
             var activityPanel = CreateResponsiveChartPanel(
-                "📊 Hoạt động giảng dạy & học tập", 
-                new Point(20, yPos), 
-                new Size(Width - 60, 250),
+                "📊 Hoạt động giảng dạy & học tập",
+                new Point(20, chartFlow.Bottom + 20),
+                new Size(Width - 40, 250),
                 AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
             var activityInfo = new Label
             {
@@ -134,5 +146,7 @@ namespace WinFormsApp1.View.Admin
             activityPanel.Controls.Add(activityInfo);
             Controls.Add(activityPanel);
         }
+
+
     }
 }

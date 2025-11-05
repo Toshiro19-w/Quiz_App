@@ -175,7 +175,7 @@ namespace WinFormsApp1.Helpers
                 Text = title,
                 Font = new Font("Segoe UI", 12),
                 ForeColor = Color.White,
-                Location = new Point(20, 70),
+                Location = new Point(20, size.Height - 45),
                 AutoSize = true
             };
 

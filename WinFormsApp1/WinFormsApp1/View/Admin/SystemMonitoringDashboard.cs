@@ -8,22 +8,19 @@ using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.View.Admin
 {
-    public class SystemMonitoringDashboard : UserControl
+    public partial class SystemMonitoringDashboard : UserControl
     {
         private AdminController _controller;
 
         public SystemMonitoringDashboard()
         {
             _controller = new AdminController();
-            InitializeControl();
-            LoadData();
+            InitializeComponent();
         }
 
-        private void InitializeControl()
+        private void SystemMonitoringDashboard_Load(object sender, EventArgs e)
         {
-            Dock = DockStyle.Fill;
-            BackColor = Color.FromArgb(248, 249, 250);
-            AutoScroll = true;
+            LoadData();
         }
 
         private async void LoadData()
@@ -55,6 +52,7 @@ namespace WinFormsApp1.View.Admin
         private void CreateSystemStatsCards(SystemAnalytics stats)
         {
             var flowPanel = CreateResponsiveCardContainer(this, 80);
+            flowPanel.Name = "flowPanel";
 
             var cards = new[]
             {
@@ -66,8 +64,8 @@ namespace WinFormsApp1.View.Admin
 
             foreach (var cardData in cards)
             {
-                var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(280, 110));
-                card.Margin = new Padding(0, 0, 20, 20);
+                var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(320, 130));
+                card.Margin = new Padding(0, 0, 15, 15);
                 flowPanel.Controls.Add(card);
             }
 
@@ -76,9 +74,21 @@ namespace WinFormsApp1.View.Admin
 
         private void CreateSystemCharts(SystemAnalytics stats)
         {
-            int yPos = 220;
+            var flowPanel = Controls.Find("flowPanel", false).FirstOrDefault();
+            int yPos = flowPanel != null ? flowPanel.Bottom + 20 : 220;
 
-            var notifPanel = CreateResponsiveChartPanel("📧 Thông báo", new Point(20, yPos), new Size(540, 300), AnchorStyles.Top | AnchorStyles.Left);
+            var chartFlow = new FlowLayoutPanel
+            {
+                Location = new Point(20, yPos),
+                Width = Width - 40,
+                AutoSize = true,
+                WrapContents = true,
+                FlowDirection = FlowDirection.LeftToRight,
+                Name = "chartFlow"
+            };
+
+            var notifPanel = CreateResponsiveChartPanel("📧 Thông báo", new Point(0, 0), new Size(540, 300), AnchorStyles.None);
+            notifPanel.Margin = new Padding(0, 0, 20, 20);
             var notifInfo = new Label
             {
                 Text = $"Đã gửi: {stats.NotificationsSent}\nChờ gửi: {stats.NotificationsPending}",
@@ -87,9 +97,10 @@ namespace WinFormsApp1.View.Admin
                 AutoSize = true
             };
             notifPanel.Controls.Add(notifInfo);
-            Controls.Add(notifPanel);
+            chartFlow.Controls.Add(notifPanel);
 
-            var logPanel = CreateResponsiveChartPanel("📝 Nhật ký hoạt động", new Point(580, yPos), new Size(540, 300), AnchorStyles.Top | AnchorStyles.Right);
+            var logPanel = CreateResponsiveChartPanel("📝 Nhật ký hoạt động", new Point(0, 0), new Size(540, 300), AnchorStyles.None);
+            logPanel.Margin = new Padding(0, 0, 0, 20);
             var logInfo = new Label
             {
                 Text = $"Tổng: {stats.TotalAuditLogs}\nHôm nay: {stats.AuditLogsToday}",
@@ -98,10 +109,12 @@ namespace WinFormsApp1.View.Admin
                 AutoSize = true
             };
             logPanel.Controls.Add(logInfo);
-            Controls.Add(logPanel);
+            chartFlow.Controls.Add(logPanel);
 
-            yPos += 320;
-            var errorPanel = CreateResponsiveChartPanel("❌ Lỗi hệ thống", new Point(20, yPos), new Size(1100, 250), AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
+            Controls.Add(chartFlow);
+            Resize += (s, e) => chartFlow.Width = Width - 40;
+
+            var errorPanel = CreateResponsiveChartPanel("❌ Lỗi hệ thống", new Point(20, chartFlow.Bottom + 20), new Size(Width - 40, 250), AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
             var errorInfo = new Label
             {
                 Text = $"Lỗi hôm nay: {stats.ErrorsToday}\nLỗi tuần này: {stats.ErrorsThisWeek}",

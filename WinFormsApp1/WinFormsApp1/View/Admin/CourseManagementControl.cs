@@ -8,116 +8,64 @@ using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.Admin
 {
-    public class CourseManagementControl : UserControl
+    public partial class CourseManagementControl : UserControl
     {
         private AdminController _adminController;
-        private DataGridView dataGridView;
-        private TextBox txtTitle, txtDescription, txtPrice;
-        private CheckBox chkPublished;
-        private Button btnAdd, btnEdit, btnDelete, btnSave, btnCancel;
-        private Panel formPanel, mainContainer;
         private bool isEditing = false;
         private int editingCourseId = 0;
 
         public CourseManagementControl()
         {
             _adminController = new AdminController();
-            SetupLayout();
+            InitializeComponent();
+        }
+
+        private void CourseManagementControl_Load(object sender, EventArgs e)
+        {
+            ApplyModernStyling();
+            SetEditMode(false);
             LoadCourses();
+            dataGridView.CellClick += DataGridView_CellClick;
         }
 
-        private void SetupLayout()
+        private void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            Dock = DockStyle.Fill;
-            BackColor = Color.FromArgb(248, 249, 250);
-
-            mainContainer = new Panel
+            if (e.RowIndex >= 0)
             {
-                Dock = DockStyle.Fill,
-                Padding = new Padding(20)
-            };
+                dataGridView.Rows[e.RowIndex].Selected = true;
+            }
+        }
 
-            var titleLabel = new Label
-            {
-                Text = "Quản lý khóa học",
-                Font = new Font("Segoe UI", 20, FontStyle.Bold),
-                Location = new Point(0, 0),
-                AutoSize = true,
-                ForeColor = Color.FromArgb(45, 55, 72)
-            };
+        private void CourseManagementControl_Resize(object sender, EventArgs e)
+        {
+            AdjustResponsiveLayout();
+        }
 
-            dataGridView = FormLayoutHelper.CreateModernDataGridView();
-            dataGridView.Location = new Point(0, 50);
-            dataGridView.Size = new Size(700, 400);
-
-            formPanel = FormLayoutHelper.CreateCardPanel(new Size(380, 500), new Point(720, 50));
-
-            var titlePanel = FormLayoutHelper.CreateFormField("Tên khóa học:", out txtTitle, 0, 340);
+        private void ApplyModernStyling()
+        {
+            if (dataGridView == null || formPanel == null) return;
             
-            var descLabel = new Label
-            {
-                Text = "Mô tả:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Location = new Point(10, 80),
-                AutoSize = true,
-                ForeColor = Color.FromArgb(45, 55, 72)
-            };
-            txtDescription = new TextBox
-            {
-                Location = new Point(10, 105),
-                Size = new Size(340, 80),
-                Multiline = true,
-                Font = new Font("Segoe UI", 10),
-                BorderStyle = BorderStyle.FixedSingle
-            };
-
-            var pricePanel = FormLayoutHelper.CreateFormField("Giá:", out txtPrice, 200, 160);
-
-            chkPublished = new CheckBox
-            {
-                Text = "Đã xuất bản",
-                Location = new Point(180, 245),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                ForeColor = Color.FromArgb(45, 55, 72)
-            };
-
-            btnAdd = FormLayoutHelper.CreateModernButton("➕ Thêm", Color.FromArgb(52, 144, 220), Color.White, new Size(100, 35));
-            btnAdd.Location = new Point(10, 300);
-
-            btnEdit = FormLayoutHelper.CreateModernButton("✏️ Sửa", Color.FromArgb(34, 197, 94), Color.White, new Size(100, 35));
-            btnEdit.Location = new Point(120, 300);
-
-            btnDelete = FormLayoutHelper.CreateModernButton("🗑️ Xóa", Color.FromArgb(239, 68, 68), Color.White, new Size(100, 35));
-            btnDelete.Location = new Point(230, 300);
-
-            btnSave = FormLayoutHelper.CreateModernButton("💾 Lưu", Color.FromArgb(52, 144, 220), Color.White, new Size(155, 35));
-            btnSave.Location = new Point(10, 350);
-            btnSave.Visible = false;
-
-            btnCancel = FormLayoutHelper.CreateModernButton("❌ Hủy", Color.FromArgb(107, 114, 128), Color.White, new Size(155, 35));
-            btnCancel.Location = new Point(175, 350);
-            btnCancel.Visible = false;
-
-            formPanel.Controls.AddRange(new Control[] { 
-                titlePanel, descLabel, txtDescription, pricePanel, chkPublished,
-                btnAdd, btnEdit, btnDelete, btnSave, btnCancel 
-            });
-
-            mainContainer.Controls.AddRange(new Control[] { titleLabel, dataGridView, formPanel });
-            Controls.Add(mainContainer);
-
-            btnAdd.Click += BtnAdd_Click;
-            btnEdit.Click += BtnEdit_Click;
-            btnDelete.Click += BtnDelete_Click;
-            btnSave.Click += BtnSave_Click;
-            btnCancel.Click += BtnCancel_Click;
-
-            this.Resize += (s, e) => AdjustLayout();
+            // Apply modern styling to DataGridView
+            dataGridView.BorderStyle = BorderStyle.None;
+            dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(238, 239, 249);
+            dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridView.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 144, 220);
+            dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
+            dataGridView.BackgroundColor = Color.White;
+            dataGridView.EnableHeadersVisualStyles = false;
+            dataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 144, 220);
+            dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            
+            // Apply card styling to form panel
+            formPanel.BorderStyle = BorderStyle.FixedSingle;
         }
 
-        private void AdjustLayout()
+        private void AdjustResponsiveLayout()
         {
+            if (dataGridView == null || formPanel == null) return;
+            
             if (Width < 1150)
             {
                 dataGridView.Width = Width - 60;
@@ -126,7 +74,7 @@ namespace WinFormsApp1.View.Admin
             else
             {
                 dataGridView.Width = Width - 450;
-                formPanel.Location = new Point(dataGridView.Right + 20, 50);
+                formPanel.Location = new Point(dataGridView.Right + 20, 80);
             }
         }
 
@@ -254,7 +202,7 @@ namespace WinFormsApp1.View.Admin
             {
                 var courseId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
                 var result = MessageBox.Show("Bạn có chắc muốn xóa khóa học này?", "Xác nhận", MessageBoxButtons.YesNo);
-                
+
                 if (result == DialogResult.Yes)
                 {
                     try
@@ -291,7 +239,7 @@ namespace WinFormsApp1.View.Admin
             btnDelete.Visible = !editing;
             btnSave.Visible = editing;
             btnCancel.Visible = editing;
-            
+
             txtTitle.Enabled = editing;
             txtDescription.Enabled = editing;
             txtPrice.Enabled = editing;

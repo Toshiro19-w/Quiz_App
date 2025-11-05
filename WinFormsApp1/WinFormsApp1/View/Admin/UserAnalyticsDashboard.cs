@@ -8,22 +8,19 @@ using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.View.Admin
 {
-    public class UserAnalyticsDashboard : UserControl
+    public partial class UserAnalyticsDashboard : UserControl
     {
         private AdminController _controller;
 
         public UserAnalyticsDashboard()
         {
             _controller = new AdminController();
-            InitializeControl();
-            LoadData();
+            InitializeComponent();
         }
 
-        private void InitializeControl()
+        private void UserAnalyticsDashboard_Load(object sender, EventArgs e)
         {
-            Dock = DockStyle.Fill;
-            BackColor = Color.FromArgb(248, 249, 250);
-            AutoScroll = true;
+            LoadData();
         }
 
         private async void LoadData()
@@ -55,6 +52,7 @@ namespace WinFormsApp1.View.Admin
         private void CreateUserStatsCards(UserAnalytics stats)
         {
             var flowPanel = CreateResponsiveCardContainer(this, 80);
+            flowPanel.Name = "flowPanel";
 
             var cards = new[]
             {
@@ -66,8 +64,8 @@ namespace WinFormsApp1.View.Admin
 
             foreach (var cardData in cards)
             {
-                var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(280, 110));
-                card.Margin = new Padding(0, 0, 20, 20);
+                var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(320, 130));
+                card.Margin = new Padding(0, 0, 15, 15);
                 flowPanel.Controls.Add(card);
             }
 
@@ -76,9 +74,21 @@ namespace WinFormsApp1.View.Admin
 
         private void CreateUserCharts(UserAnalytics stats)
         {
-            int yPos = 220;
+            var flowPanel = Controls.Find("flowPanel", false).FirstOrDefault();
+            int yPos = flowPanel != null ? flowPanel.Bottom + 20 : 220;
 
-            var rolePanel = CreateResponsiveChartPanel("📊 Phân bố vai trò", new Point(20, yPos), new Size(540, 300), AnchorStyles.Top | AnchorStyles.Left);
+            var chartFlow = new FlowLayoutPanel
+            {
+                Location = new Point(20, yPos),
+                Width = Width - 40,
+                AutoSize = true,
+                WrapContents = true,
+                FlowDirection = FlowDirection.LeftToRight,
+                Name = "chartFlow"
+            };
+
+            var rolePanel = CreateResponsiveChartPanel("📊 Phân bố vai trò", new Point(0, 0), new Size(540, 300), AnchorStyles.None);
+            rolePanel.Margin = new Padding(0, 0, 20, 20);
             var roleInfo = new Label
             {
                 Text = $"Admin: {stats.AdminCount}\nGiáo viên: {stats.TeacherCount}\nHọc sinh: {stats.StudentCount}",
@@ -87,9 +97,10 @@ namespace WinFormsApp1.View.Admin
                 AutoSize = true
             };
             rolePanel.Controls.Add(roleInfo);
-            Controls.Add(rolePanel);
+            chartFlow.Controls.Add(rolePanel);
 
-            var genderPanel = CreateResponsiveChartPanel("⚧ Phân bố giới tính", new Point(580, yPos), new Size(540, 300), AnchorStyles.Top | AnchorStyles.Right);
+            var genderPanel = CreateResponsiveChartPanel("⚧ Phân bố giới tính", new Point(0, 0), new Size(540, 300), AnchorStyles.None);
+            genderPanel.Margin = new Padding(0, 0, 0, 20);
             var genderInfo = new Label
             {
                 Text = $"Nam: {stats.MaleCount}\nNữ: {stats.FemaleCount}\nKhác: {stats.OtherCount}",
@@ -98,10 +109,12 @@ namespace WinFormsApp1.View.Admin
                 AutoSize = true
             };
             genderPanel.Controls.Add(genderInfo);
-            Controls.Add(genderPanel);
+            chartFlow.Controls.Add(genderPanel);
 
-            yPos += 320;
-            var activePanel = CreateResponsiveChartPanel("🔥 Người dùng hoạt động", new Point(20, yPos), new Size(1100, 250), AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
+            Controls.Add(chartFlow);
+            Resize += (s, e) => chartFlow.Width = Width - 40;
+
+            var activePanel = CreateResponsiveChartPanel("🔥 Người dùng hoạt động", new Point(20, chartFlow.Bottom + 20), new Size(Width - 40, 250), AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
             var activeInfo = new Label
             {
                 Text = $"Hoạt động hôm nay: {stats.ActiveToday}\nHoạt động tuần này: {stats.ActiveThisWeek}",

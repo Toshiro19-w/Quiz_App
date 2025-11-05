@@ -8,22 +8,19 @@ using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.View.Admin
 {
-    public class RevenueDashboard : UserControl
+    public partial class RevenueDashboard : UserControl
     {
         private AdminController _controller;
 
         public RevenueDashboard()
         {
             _controller = new AdminController();
-            InitializeControl();
-            LoadData();
+            InitializeComponent();
         }
 
-        private void InitializeControl()
+        private void RevenueDashboard_Load(object sender, EventArgs e)
         {
-            Dock = DockStyle.Fill;
-            BackColor = Color.FromArgb(248, 249, 250);
-            AutoScroll = true;
+            LoadData();
         }
 
         private async void LoadData()
@@ -55,6 +52,7 @@ namespace WinFormsApp1.View.Admin
         private void CreateRevenueStatsCards(RevenueAnalytics stats)
         {
             var flowPanel = CreateResponsiveCardContainer(this, 80);
+            flowPanel.Name = "flowPanel";
 
             var cards = new[]
             {
@@ -66,8 +64,8 @@ namespace WinFormsApp1.View.Admin
 
             foreach (var cardData in cards)
             {
-                var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(280, 110));
-                card.Margin = new Padding(0, 0, 20, 20);
+                var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(320, 130));
+                card.Margin = new Padding(0, 0, 15, 15);
                 flowPanel.Controls.Add(card);
             }
 
@@ -76,9 +74,10 @@ namespace WinFormsApp1.View.Admin
 
         private void CreateRevenueCharts(RevenueAnalytics stats)
         {
-            int yPos = 220;
+            var flowPanel = Controls.Find("flowPanel", false).FirstOrDefault();
+            int yPos = flowPanel != null ? flowPanel.Bottom + 20 : 220;
 
-            var monthlyPanel = CreateResponsiveChartPanel("📈 Doanh thu 12 tháng", new Point(20, yPos), new Size(1100, 300), AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
+            var monthlyPanel = CreateResponsiveChartPanel("📈 Doanh thu 12 tháng", new Point(20, yPos), new Size(Width - 40, 300), AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
             var monthlyInfo = new Label
             {
                 Text = "Biểu đồ doanh thu theo tháng",
@@ -90,8 +89,17 @@ namespace WinFormsApp1.View.Admin
             monthlyPanel.Controls.Add(monthlyInfo);
             Controls.Add(monthlyPanel);
 
-            yPos += 320;
-            var statusPanel = CreateResponsiveChartPanel("💳 Trạng thái thanh toán", new Point(20, yPos), new Size(540, 300), AnchorStyles.Top | AnchorStyles.Left);
+            var chartFlow = new FlowLayoutPanel
+            {
+                Location = new Point(20, monthlyPanel.Bottom + 20),
+                Width = Width - 40,
+                AutoSize = true,
+                WrapContents = true,
+                FlowDirection = FlowDirection.LeftToRight
+            };
+
+            var statusPanel = CreateResponsiveChartPanel("💳 Trạng thái thanh toán", new Point(0, 0), new Size(540, 300), AnchorStyles.None);
+            statusPanel.Margin = new Padding(0, 0, 20, 0);
             var statusInfo = new Label
             {
                 Text = $"Hoàn thành: {stats.PaidCount}\nChờ: {stats.PendingCount}\nHoàn tiền: {stats.RefundedCount}",
@@ -100,9 +108,9 @@ namespace WinFormsApp1.View.Admin
                 AutoSize = true
             };
             statusPanel.Controls.Add(statusInfo);
-            Controls.Add(statusPanel);
+            chartFlow.Controls.Add(statusPanel);
 
-            var providerPanel = CreateResponsiveChartPanel("🏦 Nhà cung cấp thanh toán", new Point(580, yPos), new Size(540, 300), AnchorStyles.Top | AnchorStyles.Right);
+            var providerPanel = CreateResponsiveChartPanel("🏦 Nhà cung cấp thanh toán", new Point(0, 0), new Size(540, 300), AnchorStyles.None);
             var providerInfo = new Label
             {
                 Text = $"VNPay: {stats.VNPayCount}\nStripe: {stats.StripeCount}\nKhác: {stats.OtherPaymentCount}",
@@ -111,7 +119,10 @@ namespace WinFormsApp1.View.Admin
                 AutoSize = true
             };
             providerPanel.Controls.Add(providerInfo);
-            Controls.Add(providerPanel);
+            chartFlow.Controls.Add(providerPanel);
+
+            Controls.Add(chartFlow);
+            Resize += (s, e) => chartFlow.Width = Width - 40;
         }
 
 
