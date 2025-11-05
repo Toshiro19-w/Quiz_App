@@ -28,6 +28,7 @@ namespace WinFormsApp1.View.Admin
         {
             Text = "Tổng quan hệ thống - Quiz Web Admin Panel";
             Size = new Size(1400, 800);
+            MinimumSize = new Size(1200, 700);
             StartPosition = FormStartPosition.CenterScreen;
             BackColor = Color.FromArgb(248, 249, 250);
 
@@ -282,8 +283,6 @@ namespace WinFormsApp1.View.Admin
             testControl.Dock = DockStyle.Fill;
             contentPanel.Controls.Add(testControl);
         }
-
-
 
         private void LoadUserStats()
         {
