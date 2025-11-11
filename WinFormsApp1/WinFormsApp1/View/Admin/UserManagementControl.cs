@@ -145,7 +145,7 @@ namespace WinFormsApp1.View.Admin
                     return;
                 }
 
-                var user = new User
+                var user = new WinFormsApp1.Models.Entities.User
                 {
                     Email = txtEmail.Text,
                     Username = txtUsername.Text,

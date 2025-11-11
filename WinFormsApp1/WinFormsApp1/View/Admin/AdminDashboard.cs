@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using static WinFormsApp1.Helpers.ColorPalette;
 
 namespace WinFormsApp1.View.Admin
 {
@@ -37,7 +38,7 @@ namespace WinFormsApp1.View.Admin
             {
                 Dock = DockStyle.Top,
                 Height = 60,
-                BackColor = Color.FromArgb(52, 144, 220)
+                BackColor = Primary
             };
 
             var logoLabel = new Label
@@ -49,12 +50,15 @@ namespace WinFormsApp1.View.Admin
                 AutoSize = true
             };
 
+            var userName = AuthHelper.CurrentUser?.FullName ?? "Quản trị viên";
+            var userRole = AuthHelper.GetRoleName();
+            
             var userLabel = new Label
             {
-                Text = "Quản trị viên",
+                Text = $"{userName} ({userRole})",
                 Font = new Font("Segoe UI", 10),
                 ForeColor = Color.White,
-                Location = new Point(1250, 20),
+                Location = new Point(1150, 20),
                 AutoSize = true
             };
 
@@ -141,7 +145,7 @@ namespace WinFormsApp1.View.Admin
                 if (item.Tag == "overview")
                 {
                     selectedButton = btn;
-                    btn.BackColor = Color.FromArgb(74, 85, 104);
+                    btn.BackColor = PrimaryDark;
                 }
             }
 
@@ -154,7 +158,7 @@ namespace WinFormsApp1.View.Admin
                 new { Text = "📚 Khóa học", Tag = "courses" },
                 new { Text = "📝 Bài kiểm tra", Tag = "tests" },
                 new { Text = "📊 Báo cáo", Tag = "reports" },
-                new { Text = "🏠 Trở về trang chủ", Tag = "home" }
+                new { Text = "🚪 Đăng xuất", Tag = "logout" }
             };
 
             foreach (var item in otherItems)
@@ -220,9 +224,27 @@ namespace WinFormsApp1.View.Admin
                 case "tests":
                     LoadTestManagement();
                     break;
+                case "logout":
+                    Logout();
+                    break;
                 default:
                     MessageBox.Show($"Chức năng {button?.Text} đang được phát triển", "Thông báo");
                     break;
+            }
+        }
+
+        private void Logout()
+        {
+            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận đăng xuất", 
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            
+            if (result == DialogResult.Yes)
+            {
+                AuthHelper.Logout();
+                this.Hide();
+                var loginForm = new dangnhap();
+                loginForm.FormClosed += (s, args) => this.Close();
+                loginForm.Show();
             }
         }
 
