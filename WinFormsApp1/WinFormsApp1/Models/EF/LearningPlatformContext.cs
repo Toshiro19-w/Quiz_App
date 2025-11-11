@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.Models.Entities;
 using File = WinFormsApp1.Models.Entities.File;
 
-namespace Quiz_Web.Models.EF;
+namespace WinFormsApp1.Models.EF;
 
 public partial class LearningPlatformContext : DbContext
 {

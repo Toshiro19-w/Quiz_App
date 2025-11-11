@@ -1,4 +1,4 @@
-using Quiz_Web.Models.EF;
+using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.ViewModels;
