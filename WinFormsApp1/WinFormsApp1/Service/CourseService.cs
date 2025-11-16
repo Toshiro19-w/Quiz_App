@@ -14,10 +14,16 @@ namespace WinFormsApp1.Service
 	internal class CourseService : ICourseService
 	{
 		private readonly LearningPlatformContext _context;
+		private LearningPlatformContext learningPlatformContext;
 
 		public CourseService(LearningPlatformContext context, object value)
 		{
 			_context = context ?? throw new ArgumentNullException(nameof(context));
+		}
+
+		public CourseService(LearningPlatformContext learningPlatformContext)
+		{
+			this.learningPlatformContext = learningPlatformContext;
 		}
 
 		public List<Course> GetAllPublishedCourses()
