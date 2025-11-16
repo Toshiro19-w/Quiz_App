@@ -4,7 +4,6 @@ using WinFormsApp1.View.Admin;
 using WinFormsApp1.View.User;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.View;
-using formHome = WinFormsApp1.View.User.formHome;
 
 namespace WinFormsApp1
 {
