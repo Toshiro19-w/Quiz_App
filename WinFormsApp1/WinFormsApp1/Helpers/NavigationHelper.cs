@@ -31,14 +31,14 @@ namespace WinFormsApp1.Helpers
             var btnShop = CreateNavButton("🛒 Cửa hàng", 280);
             btnShop.Click += (s, e) => NavigateTo("shop");
 
-            var btnSearch = CreateNavButton("🔍 Tìm kiếm", 410);
+            var btnCourse = CreateNavButton("📚 Khóa học", 410);
+            btnCourse.Click += (s, e) => NavigateTo("course");
+
+            var btnSearch = CreateNavButton("🔍 Tìm kiếm", 540);
             btnSearch.Click += (s, e) => NavigateTo("search");
 
-            var btnTest = CreateNavButton("📝 Bài kiểm tra", 540);
+            var btnTest = CreateNavButton("📝 Bài test", 670);
             btnTest.Click += (s, e) => NavigateTo("test");
-
-            var btnLesson = CreateNavButton("📚 Bài học", 670);
-            btnLesson.Click += (s, e) => NavigateTo("lesson");
 
             var btnLogout = CreateNavButton("🚪 Đăng xuất", 1000);
             btnLogout.Click += (s, e) => Logout();
@@ -52,7 +52,7 @@ namespace WinFormsApp1.Helpers
                 AutoSize = true
             };
 
-            navPanel.Controls.AddRange(new Control[] { btnHome, btnLibrary, btnShop, btnSearch, btnTest, btnLesson, btnLogout, lblUser });
+            navPanel.Controls.AddRange(new Control[] { btnHome, btnLibrary, btnShop, btnCourse, btnSearch, btnTest, btnLogout, lblUser });
             return navPanel;
         }
 
@@ -86,6 +86,7 @@ namespace WinFormsApp1.Helpers
                 "home" => new View.User.Controls.HomeControl(),
                 "library" => new View.User.Controls.LibraryControl(),
                 "shop" => new View.User.Controls.ShopControl(),
+                "course" => new View.User.Controls.CourseControl(),
                 "search" => new View.User.Controls.SearchControl(),
                 "test" => new View.User.Controls.TestControl(),
                 "lesson" => new View.User.Controls.LessonControl(),
