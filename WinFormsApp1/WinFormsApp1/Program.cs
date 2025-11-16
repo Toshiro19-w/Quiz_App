@@ -1,3 +1,5 @@
+using WinFormsApp1.TestForm;
+
 namespace WinFormsApp1
 {
     internal static class Program
@@ -12,7 +14,7 @@ namespace WinFormsApp1
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             //Application.Run(new dangnhap());
-            Application.Run();
+            Application.Run(new FormTest());
 		}
     }
 }
