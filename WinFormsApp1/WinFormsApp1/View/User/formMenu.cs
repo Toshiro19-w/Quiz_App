@@ -22,6 +22,7 @@ namespace WinFormsApp1.View.User
         formInProgressLesson formInProgressLesson;
         formCreateLesson formCreateLesson;
         formTestOverDue formTestOverDue;
+        
         public formMenu()
         {
             InitializeComponent();
@@ -308,6 +309,13 @@ namespace WinFormsApp1.View.User
         private void ShopButton_Click(object sender, EventArgs e)
         {
             panelShow.Controls.Clear();
+            // Option 1: Load Course Control directly
+            var courseControl = new Controls.CourseControl();
+            courseControl.Dock = DockStyle.Fill;
+            panelShow.Controls.Add(courseControl);
+            
+            // Option 2: Load formShop (commented out)
+            /*
             if (formShop == null)
             {
                 formShop = new formShop();
@@ -325,6 +333,7 @@ namespace WinFormsApp1.View.User
                 panelShow.Controls.Add(formShop);
                 formShop.Show();
             }
+            */
         }
 
         private void LessonCreationButton_Click(object sender, EventArgs e)

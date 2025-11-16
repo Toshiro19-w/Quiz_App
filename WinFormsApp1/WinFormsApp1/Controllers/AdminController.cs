@@ -300,9 +300,9 @@ namespace WinFormsApp1.Controllers
                     NotificationsPending = await context.Notifications.CountAsync(n => !n.IsRead),
                     TotalAuditLogs = await context.AuditLogs.CountAsync(),
                     AuditLogsToday = await context.AuditLogs.CountAsync(a => a.CreatedAt.Date == today),
-                    TotalErrors = await context.ErrorLogs.CountAsync(),
-                    ErrorsToday = await context.ErrorLogs.CountAsync(e => e.CreatedAt.Date == today),
-                    ErrorsThisWeek = await context.ErrorLogs.CountAsync(e => e.CreatedAt >= startOfWeek),
+                    //TotalErrors = await context.ErrorLogs.CountAsync(),
+                    //ErrorsToday = await context.ErrorLogs.CountAsync(e => e.CreatedAt.Date == today),
+                    //ErrorsThisWeek = await context.ErrorLogs.CountAsync(e => e.CreatedAt >= startOfWeek),
                     RequestsToday = await context.AuditLogs.CountAsync(a => a.CreatedAt.Date == today)
                 };
             }
