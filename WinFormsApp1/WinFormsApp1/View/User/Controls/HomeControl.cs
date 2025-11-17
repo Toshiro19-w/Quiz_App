@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
 using Microsoft.EntityFrameworkCore;
+using WinFormsApp1.View.User.Controls.CourseControls;
 
 namespace WinFormsApp1.View.User.Controls
 {
@@ -151,10 +152,44 @@ namespace WinFormsApp1.View.User.Controls
                 Tag = course.CourseId
             };
             btnView.FlatAppearance.BorderSize = 0;
-            btnView.Click += (s, e) => NavigationHelper.NavigateTo("lesson");
+            btnView.Click += (s, e) => ShowCourseDetail((int)btnView.Tag);
 
             card.Controls.AddRange(new Control[] { lblTitle, lblReviews, lblPrice, btnView });
             return card;
+        }
+
+        private void ShowCourseDetail(int courseId)
+        {
+            // Try to find the main content panel by name on the parent form
+            var form = this.FindForm();
+            if (form == null) return;
+
+            var mainPanel = FindControlRecursive(form, "mainContentPanel") as Panel;
+
+            // Fallback: if not found, use this.Parent (likely the panel hosting this control)
+            if (mainPanel == null)
+            {
+                mainPanel = this.Parent as Panel;
+            }
+
+            if (mainPanel == null) return;
+
+            mainPanel.Controls.Clear();
+
+            var detail = new CourseDetailControl(courseId);
+            detail.Dock = DockStyle.Fill;
+            mainPanel.Controls.Add(detail);
+        }
+
+        private Control FindControlRecursive(Control parent, string name)
+        {
+            foreach (Control c in parent.Controls)
+            {
+                if (string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase)) return c;
+                var found = FindControlRecursive(c, name);
+                if (found != null) return found;
+            }
+            return null;
         }
     }
 }
