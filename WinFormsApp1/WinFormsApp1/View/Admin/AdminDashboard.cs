@@ -28,41 +28,83 @@ namespace WinFormsApp1.View.Admin
         private void SetupLayout()
         {
             Text = "Tổng quan hệ thống - Quiz Web Admin Panel";
-            Size = new Size(1400, 800);
+            Size = new Size(1898, 1024);
             MinimumSize = new Size(1200, 700);
             StartPosition = FormStartPosition.CenterScreen;
             BackColor = Color.FromArgb(248, 249, 250);
+            WindowState = FormWindowState.Maximized;
 
             // Top Panel
             topPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 60,
+                Height = 120,
                 BackColor = Primary
+            };
+
+            // Left logo area
+            var logoPanel = new Panel
+            {
+                Dock = DockStyle.Left,
+                Width = 233,
+                BackColor = Color.Transparent
             };
 
             var logoLabel = new Label
             {
-                Text = "Valt",
-                Font = new Font("Segoe UI", 18, FontStyle.Bold),
-                ForeColor = Color.White,
-                Location = new Point(20, 15),
-                AutoSize = true
+                Text = "YMEDU",
+                Font = new Font("Segoe UI", 24, FontStyle.Bold),
+                ForeColor = Color.FromArgb(214, 188, 132),
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(15, 0, 0, 0)
+            };
+            logoLabel.Click += (s, e) => { /* optional click */ };
+            logoPanel.Controls.Add(logoLabel);
+
+            // Right profile area
+            var profilePanel = new Panel
+            {
+                Dock = DockStyle.Right,
+                Width = 383,
+                BackColor = Color.Transparent
             };
 
-            var userName = AuthHelper.CurrentUser?.FullName ?? "Quản trị viên";
-            var userRole = AuthHelper.GetRoleName();
-            
             var userLabel = new Label
             {
-                Text = $"{userName} ({userRole})",
-                Font = new Font("Segoe UI", 10),
+                Text = AuthHelper.CurrentUser != null ? $"{AuthHelper.CurrentUser.FullName} ({AuthHelper.GetRoleName()})" : "Quản trị viên",
+                Font = new Font("Segoe UI", 12),
                 ForeColor = Color.White,
-                Location = new Point(1150, 20),
-                AutoSize = true
+                Location = new Point(15, 40),
+                AutoSize = true,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left
             };
 
-            topPanel.Controls.AddRange(new Control[] { logoLabel, userLabel });
+            var btnProfile = new Button
+            {
+                Text = AuthHelper.CurrentUser != null && !string.IsNullOrEmpty(AuthHelper.CurrentUser.FullName) ? AuthHelper.CurrentUser.FullName.Substring(0,1).ToUpper() : "A",
+                Size = new Size(60, 60),
+                BackColor = Color.FromArgb(64,64,64),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 18, FontStyle.Bold),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right
+            };
+            btnProfile.FlatAppearance.BorderSize = 0;
+            btnProfile.Click += (s, e) => { /* open profile */ };
+
+            // Use layout within profilePanel
+            profilePanel.Controls.Add(userLabel);
+            profilePanel.Controls.Add(btnProfile);
+            profilePanel.Padding = new Padding(10, 0, 20, 0);
+            profilePanel.Resize += (s, e) =>
+            {
+                // keep profile button at right edge
+                btnProfile.Location = new Point(profilePanel.ClientSize.Width - btnProfile.Width - 10, (profilePanel.ClientSize.Height - btnProfile.Height) / 2);
+                userLabel.Location = new Point(15, (profilePanel.ClientSize.Height - userLabel.Height) / 2);
+            };
+
+            topPanel.Controls.AddRange(new Control[] { logoPanel, profilePanel });
 
             // Sidebar Panel
             sidebarPanel = new Panel
@@ -111,7 +153,6 @@ namespace WinFormsApp1.View.Admin
             sidebarPanel.Controls.Add(dashboardHeader);
             yPos += 40;
 
-            // Dashboard submenu
             var dashboardItems = new[]
             {
                 new { Text = "   📋 Tổng quan", Tag = "overview" },
@@ -141,7 +182,7 @@ namespace WinFormsApp1.View.Admin
                 btn.Click += MenuButton_Click;
                 sidebarPanel.Controls.Add(btn);
                 yPos += 42;
-                
+
                 if (item.Tag == "overview")
                 {
                     selectedButton = btn;
@@ -151,7 +192,6 @@ namespace WinFormsApp1.View.Admin
 
             yPos += 10;
 
-            // Other menu items
             var otherItems = new[]
             {
                 new { Text = "👤 Người dùng", Tag = "user-management" },
@@ -188,10 +228,10 @@ namespace WinFormsApp1.View.Admin
         {
             var button = sender as Button;
             var tag = button?.Tag?.ToString();
-            
+
             if (selectedButton != null)
                 selectedButton.BackColor = Color.Transparent;
-            
+
             if (button != null)
             {
                 button.BackColor = Color.FromArgb(74, 85, 104);
@@ -228,16 +268,16 @@ namespace WinFormsApp1.View.Admin
                     Logout();
                     break;
                 default:
-                    MessageBox.Show($"Chức năng {button?.Text} đang được phát triển", "Thông báo");
+                    ToastHelper.Show(this, $"Chức năng {button?.Text} đang được phát triển");
                     break;
             }
         }
 
         private void Logout()
         {
-            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận đăng xuất", 
+            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận đăng xuất",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            
+
             if (result == DialogResult.Yes)
             {
                 AuthHelper.Logout();
@@ -245,6 +285,10 @@ namespace WinFormsApp1.View.Admin
                 var loginForm = new dangnhap();
                 loginForm.FormClosed += (s, args) => this.Close();
                 loginForm.Show();
+            }
+            else
+            {
+                ToastHelper.Show(this, "Hủy đăng xuất");
             }
         }
 
@@ -343,6 +387,7 @@ namespace WinFormsApp1.View.Admin
             _adminController?.Dispose();
             base.OnFormClosed(e);
         }
+    
     }
 
     public class DashboardStats

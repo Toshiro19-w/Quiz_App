@@ -138,7 +138,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
         {
             if (string.IsNullOrWhiteSpace(txtFullName.Text))
             {
-                MessageBox.Show("Vui lòng nhập họ tên!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ToastHelper.Show(this, "Vui lòng nhập họ tên!");
                 return;
             }
 
@@ -156,16 +156,14 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                             dbUser.Phone = txtPhone.Text.Trim();
                             context.SaveChanges();
 
-                            MessageBox.Show("Cập nhật thông tin thành công!", "Thành công",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            ToastHelper.Show(this, "Cập nhật thông tin thành công!");
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi lưu thông tin: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ToastHelper.Show(this, $"Lỗi khi lưu thông tin: {ex.Message}");
             }
         }
     }

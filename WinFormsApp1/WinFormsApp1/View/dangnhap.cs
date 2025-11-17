@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using WinFormsApp1.View.Admin;
 using WinFormsApp1.View.User;
 using WinFormsApp1.Helpers;
@@ -33,40 +35,58 @@ namespace WinFormsApp1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Chức năng quên mật khẩu đang được phát triển", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ToastHelper.Show(this, "Chức năng quên mật khẩu đang được phát triển");
         }
 
-        private void btnLogin_Click(object sender, EventArgs e)
+        private async void btnLogin_Click(object sender, EventArgs e)
         {
             string email = textTK.Text.Trim();
             string password = textBox2.Text.Trim();
 
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ thông tin!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ToastHelper.Show(this, "Vui lòng nhập đầy đủ thông tin!");
                 return;
             }
 
-            if (AuthHelper.Login(email, password))
+            var btn = sender as Button;
+            if (btn != null) btn.Enabled = false;
+
+            try
             {
-                this.Hide();
-                
-                if (AuthHelper.IsAdmin())
+                bool success = await Task.Run(() => AuthHelper.Login(email, password));
+
+                if (success)
                 {
-                    var adminDashboard = new AdminDashboard();
-                    adminDashboard.FormClosed += (s, args) => this.Close();
-                    adminDashboard.Show();
+                    Hide();
+
+                    if (AuthHelper.IsAdmin())
+                    {
+                        var adminDashboard = new AdminDashboard();
+                        adminDashboard.FormClosed += (s, args) => Close();
+                        adminDashboard.Show();
+                    }
+                    else
+                    {
+                        var userDashboard = new MainContainer();
+                        userDashboard.FormClosed += (s, args) => Close();
+                        userDashboard.Show();
+                    }
                 }
                 else
                 {
-                    var userDashboard = new MainContainer();
-                    userDashboard.FormClosed += (s, args) => this.Close();
-                    userDashboard.Show();
+                    textBox2.Clear();
+                    textBox2.Focus();
+                    ToastHelper.Show(this, "Email hoặc mật khẩu không chính xác!");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Email hoặc mật khẩu không chính xác!", "Lỗi đăng nhập", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ToastHelper.Show(this, "Lỗi khi đăng nhập: " + ex.Message);
+            }
+            finally
+            {
+                if (btn != null) btn.Enabled = true;
             }
         }
     }
