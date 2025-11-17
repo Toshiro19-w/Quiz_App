@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Models.Entities;
@@ -8,24 +9,22 @@ using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.Admin
 {
-    public partial class CourseManagementControl : UserControl
+    public partial class CourseManagementControl : AdminBaseControl
     {
-        private AdminController _adminController;
         private bool isEditing = false;
         private int editingCourseId = 0;
 
-        public CourseManagementControl()
+        public CourseManagementControl() : base()
         {
-            _adminController = new AdminController();
             InitializeComponent();
         }
 
-        private void CourseManagementControl_Load(object sender, EventArgs e)
+        private async void CourseManagementControl_Load(object sender, EventArgs e)
         {
-            ApplyModernStyling();
+            ApplyModernStyling(dataGridView, formPanel);
             SetEditMode(false);
-            LoadCourses();
             dataGridView.CellClick += DataGridView_CellClick;
+            await LoadCoursesAsync();
         }
 
         private void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -38,47 +37,10 @@ namespace WinFormsApp1.View.Admin
 
         private void CourseManagementControl_Resize(object sender, EventArgs e)
         {
-            AdjustResponsiveLayout();
+            AdjustResponsiveLayout(dataGridView, formPanel, breakpoint: 1150, rightOffset: 450);
         }
 
-        private void ApplyModernStyling()
-        {
-            if (dataGridView == null || formPanel == null) return;
-            
-            // Apply modern styling to DataGridView
-            dataGridView.BorderStyle = BorderStyle.None;
-            dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(238, 239, 249);
-            dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridView.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 144, 220);
-            dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
-            dataGridView.BackgroundColor = Color.White;
-            dataGridView.EnableHeadersVisualStyles = false;
-            dataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 144, 220);
-            dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            
-            // Apply card styling to form panel
-            formPanel.BorderStyle = BorderStyle.FixedSingle;
-        }
-
-        private void AdjustResponsiveLayout()
-        {
-            if (dataGridView == null || formPanel == null) return;
-            
-            if (Width < 1150)
-            {
-                dataGridView.Width = Width - 60;
-                formPanel.Location = new Point(20, dataGridView.Bottom + 20);
-            }
-            else
-            {
-                dataGridView.Width = Width - 450;
-                formPanel.Location = new Point(dataGridView.Right + 20, 80);
-            }
-        }
-
-        private async void LoadCourses()
+        private async Task LoadCoursesAsync()
         {
             try
             {
@@ -95,7 +57,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}", "Lỗi");
+                ToastHelper.Show(this.FindForm(), $"Lỗi tải dữ liệu: {ex.Message}");
             }
         }
 
@@ -111,14 +73,14 @@ namespace WinFormsApp1.View.Admin
             if (dataGridView.SelectedRows.Count > 0)
             {
                 var courseId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                LoadCourseForEdit(courseId);
+                _ = LoadCourseForEditAsync(courseId);
                 SetEditMode(true);
                 isEditing = true;
                 editingCourseId = courseId;
             }
         }
 
-        private async void LoadCourseForEdit(int courseId)
+        private async Task LoadCourseForEditAsync(int courseId)
         {
             try
             {
@@ -133,7 +95,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải thông tin khóa học: {ex.Message}", "Lỗi");
+                ToastHelper.Show(this.FindForm(), $"Lỗi tải thông tin khóa học: {ex.Message}");
             }
         }
 
@@ -143,14 +105,14 @@ namespace WinFormsApp1.View.Admin
             {
                 if (string.IsNullOrWhiteSpace(txtTitle.Text))
                 {
-                    MessageBox.Show("Vui lòng nhập tên khóa học", "Thông báo");
+                    ToastHelper.Show(this.FindForm(), "Vui lòng nhập tên khóa học");
                     return;
                 }
 
                 decimal price = 0;
                 if (!string.IsNullOrWhiteSpace(txtPrice.Text) && !decimal.TryParse(txtPrice.Text, out price))
                 {
-                    MessageBox.Show("Giá không hợp lệ", "Thông báo");
+                    ToastHelper.Show(this.FindForm(), "Giá không hợp lệ");
                     return;
                 }
 
@@ -180,19 +142,19 @@ namespace WinFormsApp1.View.Admin
 
                 if (success)
                 {
-                    MessageBox.Show("Lưu thành công!", "Thông báo");
-                    LoadCourses();
+                    ToastHelper.Show(this.FindForm(), "Lưu thành công!");
+                    await LoadCoursesAsync();
                     SetEditMode(false);
                     ClearForm();
                 }
                 else
                 {
-                    MessageBox.Show("Lưu thất bại!", "Lỗi");
+                    ToastHelper.Show(this.FindForm(), "Lưu thất bại!");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi lưu dữ liệu: {ex.Message}", "Lỗi");
+                ToastHelper.Show(this.FindForm(), $"Lỗi lưu dữ liệu: {ex.Message}");
             }
         }
 
@@ -210,17 +172,17 @@ namespace WinFormsApp1.View.Admin
                         var success = await _adminController.DeleteCourseAsync(courseId);
                         if (success)
                         {
-                            MessageBox.Show("Xóa thành công!", "Thông báo");
-                            LoadCourses();
+                            ToastHelper.Show(this.FindForm(), "Xóa thành công!");
+                            await LoadCoursesAsync();
                         }
                         else
                         {
-                            MessageBox.Show("Xóa thất bại!", "Lỗi");
+                            ToastHelper.Show(this.FindForm(), "Xóa thất bại!");
                         }
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Lỗi xóa dữ liệu: {ex.Message}", "Lỗi");
+                        ToastHelper.Show(this.FindForm(), $"Lỗi xóa dữ liệu: {ex.Message}");
                     }
                 }
             }
@@ -244,6 +206,36 @@ namespace WinFormsApp1.View.Admin
             txtDescription.Enabled = editing;
             txtPrice.Enabled = editing;
             chkPublished.Enabled = editing;
+
+            // ensure formPanel is visible and sized properly
+            if (formPanel != null)
+            {
+                int maxFormWidth = formPanel.MaximumSize.Width > 0 ? formPanel.MaximumSize.Width : 700;
+                int minFormWidth = 360;
+                int defaultWidth = Math.Max(minFormWidth, Math.Min(maxFormWidth, (int)(this.Width * 0.33)));
+
+                if (editing)
+                {
+                    formPanel.Width = maxFormWidth;
+                    formPanel.BringToFront();
+                    formPanel.AutoScroll = true;
+                    formPanel.AutoScrollPosition = new Point(0, 0);
+                    // shrink datagrid to accommodate
+                    if (dataGridView != null)
+                    {
+                        dataGridView.Width = Math.Max(700, this.Width - formPanel.Width - 60);
+                    }
+                }
+                else
+                {
+                    formPanel.Width = defaultWidth;
+                    formPanel.AutoScrollPosition = new Point(0, 0);
+                    if (dataGridView != null)
+                    {
+                        dataGridView.Width = Math.Max(700, this.Width - formPanel.Width - 60);
+                    }
+                }
+            }
         }
 
         private void ClearForm()

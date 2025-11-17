@@ -27,7 +27,8 @@ namespace WinFormsApp1.View.Admin
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
             this.Name = "OverviewDashboard";
-            this.Size = new System.Drawing.Size(1103, 827);
+            // enlarge to admin large layout
+            this.Size = new System.Drawing.Size(1898, 1024);
             this.Load += new System.EventHandler(this.OverviewDashboard_Load);
             this.ResumeLayout(false);
         }

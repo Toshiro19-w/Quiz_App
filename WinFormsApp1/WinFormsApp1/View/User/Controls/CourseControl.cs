@@ -128,13 +128,20 @@ namespace WinFormsApp1.View.User.Controls
                 _ => query.OrderByDescending(c => c.TotalReviews)
             };
 
-            var courses = await query.Take(20).ToListAsync();
+            try
+            {
+                var courses = await query.Take(20).ToListAsync();
 
-            // Update course count
-            lblCourseCount.Text = $"{courses.Count} khóa học";
+                // Update course count
+                lblCourseCount.Text = $"{courses.Count} khóa học";
 
-            // Display courses
-            DisplayCourses(courses);
+                // Display courses
+                DisplayCourses(courses);
+            }
+            catch (Exception ex)
+            {
+                ToastHelper.Show(this.FindForm(), $"Lỗi: {ex.Message}");
+            }
         }
 
         private void DisplayCourses(System.Collections.Generic.List<Course> courses)
@@ -285,8 +292,7 @@ namespace WinFormsApp1.View.User.Controls
             var btn = sender as Button;
             int courseId = (int)btn.Tag;
             
-            MessageBox.Show($"Xem chi tiết khóa học ID: {courseId}", "Thông báo", 
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ToastHelper.Show(this.FindForm(), $"Xem chi tiết khóa học ID: {courseId}");
         }
 
         private async void BtnAddCart_Click(object sender, EventArgs e)
@@ -297,8 +303,7 @@ namespace WinFormsApp1.View.User.Controls
 
             if (!userId.HasValue)
             {
-                MessageBox.Show("Vui lòng đăng nhập để thêm vào giỏ hàng!", "Yêu cầu đăng nhập",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ToastHelper.Show(this.FindForm(), "Vui lòng đăng nhập để thêm vào giỏ hàng!");
                 return;
             }
 
@@ -334,19 +339,16 @@ namespace WinFormsApp1.View.User.Controls
                     context.CartItems.Add(cartItem);
                     await context.SaveChangesAsync();
                     
-                    MessageBox.Show("Đã thêm khóa học vào giỏ hàng!", "Thành công",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ToastHelper.Show(this.FindForm(), "Đã thêm khóa học vào giỏ hàng!");
                 }
                 else
                 {
-                    MessageBox.Show("Khóa học đã có trong giỏ hàng!", "Thông báo",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ToastHelper.Show(this.FindForm(), "Khóa học đã có trong giỏ hàng!");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ToastHelper.Show(this.FindForm(), $"Lỗi: {ex.Message}");
             }
         }
     }
