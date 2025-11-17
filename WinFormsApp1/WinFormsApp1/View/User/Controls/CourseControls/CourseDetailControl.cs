@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Models.Entities;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.View.User.Forms; // added to open CourseBuilderForm
 
 namespace WinFormsApp1.View.User.Controls.CourseControls
 {
@@ -209,7 +210,26 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
 		private void BtnEditCourse_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("Mở trang chỉnh sửa khóa học (tác giả)", "Chỉnh sửa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			try
+			{
+				if (_courseId <= 0)
+				{
+					MessageBox.Show("Không có khóa học để chỉnh sửa", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
+				}
+
+				// Open CourseBuilderForm in edit mode
+				using var form = new CourseBuilderForm(_courseId);
+				form.StartPosition = FormStartPosition.CenterParent;
+				form.ShowDialog();
+
+				// After editing, reload course details
+				LoadCourse(_courseId);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Lỗi khi mở trình chỉnh sửa: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		private void BtnViewCourse_Click(object sender, EventArgs e)

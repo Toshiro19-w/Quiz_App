@@ -346,10 +346,11 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			lblChapterStats.AutoSize = true;
 			lblChapterStats.Font = new Font("Segoe UI", 9F);
 			lblChapterStats.ForeColor = Color.Gray;
-			lblChapterStats.Location = new Point(20, 435);
+			lblChapterStats.Location = new Point(426, 437);
 			lblChapterStats.Name = "lblChapterStats";
-			lblChapterStats.Size = new Size(0, 25);
+			lblChapterStats.Size = new Size(108, 25);
 			lblChapterStats.TabIndex = 15;
+			lblChapterStats.Text = "chapterstats";
 			// 
 			// pnlChapters
 			// 
@@ -374,10 +375,10 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			rtbDescription.BackColor = Color.FromArgb(248, 249, 250);
 			rtbDescription.BorderStyle = BorderStyle.None;
 			rtbDescription.Font = new Font("Segoe UI", 10F);
-			rtbDescription.Location = new Point(77, 750);
+			rtbDescription.Location = new Point(77, 777);
 			rtbDescription.Name = "rtbDescription";
 			rtbDescription.ReadOnly = true;
-			rtbDescription.Size = new Size(700, 100);
+			rtbDescription.Size = new Size(1194, 100);
 			rtbDescription.TabIndex = 18;
 			rtbDescription.Text = "";
 			// 
@@ -385,7 +386,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			// 
 			lblInstructorTitle.AutoSize = true;
 			lblInstructorTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-			lblInstructorTitle.Location = new Point(77, 875);
+			lblInstructorTitle.Location = new Point(77, 907);
 			lblInstructorTitle.Name = "lblInstructorTitle";
 			lblInstructorTitle.Size = new Size(179, 45);
 			lblInstructorTitle.TabIndex = 19;
@@ -395,7 +396,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			// 
 			lblInstructorName.AutoSize = true;
 			lblInstructorName.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-			lblInstructorName.Location = new Point(137, 910);
+			lblInstructorName.Location = new Point(137, 942);
 			lblInstructorName.Name = "lblInstructorName";
 			lblInstructorName.Size = new Size(0, 30);
 			lblInstructorName.TabIndex = 20;
@@ -405,7 +406,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			lblInstructorEmail.AutoSize = true;
 			lblInstructorEmail.Font = new Font("Segoe UI", 9F);
 			lblInstructorEmail.ForeColor = Color.Gray;
-			lblInstructorEmail.Location = new Point(137, 935);
+			lblInstructorEmail.Location = new Point(137, 967);
 			lblInstructorEmail.Name = "lblInstructorEmail";
 			lblInstructorEmail.Size = new Size(0, 25);
 			lblInstructorEmail.TabIndex = 21;
@@ -414,7 +415,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			// 
 			lblRatingSectionTitle.AutoSize = true;
 			lblRatingSectionTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-			lblRatingSectionTitle.Location = new Point(77, 985);
+			lblRatingSectionTitle.Location = new Point(77, 1098);
 			lblRatingSectionTitle.Name = "lblRatingSectionTitle";
 			lblRatingSectionTitle.Size = new Size(348, 45);
 			lblRatingSectionTitle.TabIndex = 22;
@@ -425,7 +426,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			lblAvgRating.AutoSize = true;
 			lblAvgRating.Font = new Font("Segoe UI", 36F, FontStyle.Bold);
 			lblAvgRating.ForeColor = Color.FromArgb(0, 102, 102);
-			lblAvgRating.Location = new Point(77, 1020);
+			lblAvgRating.Location = new Point(77, 1133);
 			lblAvgRating.Name = "lblAvgRating";
 			lblAvgRating.Size = new Size(0, 96);
 			lblAvgRating.TabIndex = 23;
@@ -435,7 +436,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			lblTotalRatingCount.AutoSize = true;
 			lblTotalRatingCount.Font = new Font("Segoe UI", 9F);
 			lblTotalRatingCount.ForeColor = Color.Gray;
-			lblTotalRatingCount.Location = new Point(77, 1100);
+			lblTotalRatingCount.Location = new Point(77, 1213);
 			lblTotalRatingCount.Name = "lblTotalRatingCount";
 			lblTotalRatingCount.Size = new Size(0, 25);
 			lblTotalRatingCount.TabIndex = 24;
@@ -444,7 +445,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			// 
 			lblStar1.AutoSize = true;
 			lblStar1.Font = new Font("Segoe UI", 9F);
-			lblStar1.Location = new Point(137, 1030);
+			lblStar1.Location = new Point(137, 1143);
 			lblStar1.Name = "lblStar1";
 			lblStar1.Size = new Size(87, 25);
 			lblStar1.TabIndex = 25;
@@ -454,7 +455,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			// 
 			lblStar2.AutoSize = true;
 			lblStar2.Font = new Font("Segoe UI", 9F);
-			lblStar2.Location = new Point(137, 1058);
+			lblStar2.Location = new Point(137, 1171);
 			lblStar2.Name = "lblStar2";
 			lblStar2.Size = new Size(87, 25);
 			lblStar2.TabIndex = 28;
@@ -464,7 +465,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			// 
 			lblStar3.AutoSize = true;
 			lblStar3.Font = new Font("Segoe UI", 9F);
-			lblStar3.Location = new Point(137, 1086);
+			lblStar3.Location = new Point(137, 1199);
 			lblStar3.Name = "lblStar3";
 			lblStar3.Size = new Size(87, 25);
 			lblStar3.TabIndex = 31;
@@ -474,7 +475,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			// 
 			lblStar4.AutoSize = true;
 			lblStar4.Font = new Font("Segoe UI", 9F);
-			lblStar4.Location = new Point(137, 1114);
+			lblStar4.Location = new Point(137, 1227);
 			lblStar4.Name = "lblStar4";
 			lblStar4.Size = new Size(87, 25);
 			lblStar4.TabIndex = 34;
@@ -484,7 +485,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			// 
 			lblStar5.AutoSize = true;
 			lblStar5.Font = new Font("Segoe UI", 9F);
-			lblStar5.Location = new Point(137, 1142);
+			lblStar5.Location = new Point(137, 1255);
 			lblStar5.Name = "lblStar5";
 			lblStar5.Size = new Size(87, 25);
 			lblStar5.TabIndex = 37;
@@ -494,7 +495,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			// 
 			flowReviews.AutoSize = true;
 			flowReviews.FlowDirection = FlowDirection.TopDown;
-			flowReviews.Location = new Point(77, 1195);
+			flowReviews.Location = new Point(77, 1308);
 			flowReviews.Name = "flowReviews";
 			flowReviews.Size = new Size(700, 300);
 			flowReviews.TabIndex = 40;

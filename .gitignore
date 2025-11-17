@@ -425,3 +425,4 @@ appsettings.Development.json
 appsettings.Staging.json
 appsettings.Test.json
 !appsettings.json
+/WinFormsApp1/WinFormsApp1/temp
