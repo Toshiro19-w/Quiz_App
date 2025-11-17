@@ -21,7 +21,7 @@ namespace WinFormsApp1.View.Admin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1400, 800);
+            this.ClientSize = new System.Drawing.Size(1898, 1024);
             this.Name = "AdminDashboard";
             this.Text = "Admin Dashboard";
             this.ResumeLayout(false);
