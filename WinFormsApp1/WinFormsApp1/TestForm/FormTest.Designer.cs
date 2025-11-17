@@ -20,26 +20,27 @@
 			base.Dispose(disposing);
 		}
 
-		#region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			SuspendLayout();
-			// 
-			// FormTest
-			// 
-			AutoScaleDimensions = new SizeF(10F, 25F);
-			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(1073, 609);
-			Name = "FormTest";
-			Text = "FormTest";
-			ResumeLayout(false);
-		}
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            SuspendLayout();
+            // 
+            // FormTest
+            // 
+            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1073, 609);
+            Name = "FormTest";
+            Text = "FormTest";
+            Load += FormTest_Load;
+            ResumeLayout(false);
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }
