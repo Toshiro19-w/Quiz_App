@@ -1,4 +1,5 @@
 using WinFormsApp1.TestForm;
+using WinFormsApp1.View.User;
 
 namespace WinFormsApp1
 {
@@ -14,7 +15,7 @@ namespace WinFormsApp1
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             //Application.Run(new dangnhap());
-            Application.Run(new FormTest());
+            Application.Run(new MainContainer());
 		}
     }
 }

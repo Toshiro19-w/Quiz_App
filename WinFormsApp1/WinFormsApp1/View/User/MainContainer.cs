@@ -9,6 +9,7 @@ namespace WinFormsApp1.View.User
     public partial class MainContainer : Form
     {
         private ProfileDropdown? profileDropdown;
+        private CartDropdown? cartDropdown;
         private UserProfile? currentUserProfile;
 
         public MainContainer()
@@ -17,6 +18,7 @@ namespace WinFormsApp1.View.User
             SetupUI();
             SetupEventHandlers();
             SetupProfileDropdown();
+            SetupCartDropdown();
         }
 
         private void SetupUI()
@@ -41,6 +43,35 @@ namespace WinFormsApp1.View.User
 
             // Navigate to home by default
             NavigateToControl(new Controls.HomeControl());
+        }
+
+        private void SetupCartDropdown()
+        {
+            cartDropdown = new CartDropdown();
+
+            // Setup checkout event
+            cartDropdown.OnCheckoutClick += (s, e) =>
+            {
+                cartDropdown.HideDropdown();
+                NavigateToControl(new Controls.ShopControl());
+            };
+
+            // Add to form
+            this.Controls.Add(cartDropdown);
+            cartDropdown.BringToFront();
+
+            // Click outside to close
+            this.Click += (s, e) =>
+            {
+                if (cartDropdown.Visible)
+                    cartDropdown.HideDropdown();
+            };
+
+            mainContentPanel.Click += (s, e) =>
+            {
+                if (cartDropdown.Visible)
+                    cartDropdown.HideDropdown();
+            };
         }
 
         private void SetupProfileDropdown()
@@ -214,13 +245,36 @@ namespace WinFormsApp1.View.User
 
         private void btnCart_Click(object sender, EventArgs e)
         {
-            NavigateToControl(new Controls.ShopControl());
+            // Toggle cart dropdown
+            if (cartDropdown != null)
+            {
+                // Close profile dropdown if open
+                if (profileDropdown != null && profileDropdown.Visible)
+                {
+                    profileDropdown.HideDropdown();
+                }
+
+                if (cartDropdown.Visible)
+                {
+                    cartDropdown.HideDropdown();
+                }
+                else
+                {
+                    cartDropdown.ShowDropdown(btnCart);
+                }
+            }
         }
 
         private void btnProfile_Click(object sender, EventArgs e)
         {
             if (profileDropdown != null)
             {
+                // Close cart dropdown if open
+                if (cartDropdown != null && cartDropdown.Visible)
+                {
+                    cartDropdown.HideDropdown();
+                }
+
                 if (profileDropdown.Visible)
                 {
                     profileDropdown.HideDropdown();
@@ -247,7 +301,7 @@ namespace WinFormsApp1.View.User
 
         private void Logout()
         {
-            var result = MessageBox.Show("Bạn có chắc chắc chắn muốn đăng xuất?", "Xác nhận",
+            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)

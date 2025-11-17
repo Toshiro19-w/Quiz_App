@@ -143,7 +143,7 @@
             searchPanel.BackColor = Color.FromArgb(248, 249, 250);
             searchPanel.Controls.Add(txtSearch);
             searchPanel.Controls.Add(btnSearch);
-            searchPanel.Location = new Point(515, 20);
+            searchPanel.Location = new Point(544, 20);
             searchPanel.Name = "searchPanel";
             searchPanel.Size = new Size(945, 72);
             searchPanel.TabIndex = 2;
