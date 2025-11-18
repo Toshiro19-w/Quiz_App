@@ -30,7 +30,8 @@ namespace WinFormsApp1.ControllersWin
                 Summary = course.Summary,
                 CoverUrl = course.CoverUrl,
                 Price = course.Price,
-                IsPublished = course.IsPublished
+                IsPublished = course.IsPublished,
+                CategoryId = course.CategoryId
             };
 
             foreach (var ch in course.CourseChapters.OrderBy(c => c.OrderIndex))
@@ -92,6 +93,8 @@ namespace WinFormsApp1.ControllersWin
                 course.Price = (decimal)vm.Price;
                 course.IsPublished = vm.IsPublished;
                 course.UpdatedAt = DateTime.Now;
+                // ensure category is persisted
+                course.CategoryId = vm.CategoryId;
 
                 await context.SaveChangesAsync();
 

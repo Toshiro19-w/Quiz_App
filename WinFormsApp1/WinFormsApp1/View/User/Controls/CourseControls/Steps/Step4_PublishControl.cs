@@ -11,11 +11,10 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
             InitializeComponent();
             btnSaveDraft.Click += (s, e) => OnSaveDraftRequested?.Invoke(this, EventArgs.Empty);
             btnPublish.Click += (s, e) => OnPublishRequested?.Invoke(this, EventArgs.Empty);
-            // wire cancel if button exists
-            if (this.Controls.ContainsKey("btnCancel"))
+            // wire cancel if button exists (check field directly since designer nests it)
+            if (btnCancel != null)
             {
-                var btn = this.Controls["btnCancel"] as Button;
-                if (btn != null) btn.Click += (s, e) => OnCancelRequested?.Invoke(this, EventArgs.Empty);
+                btnCancel.Click += (s, e) => OnCancelRequested?.Invoke(this, EventArgs.Empty);
             }
         }
 

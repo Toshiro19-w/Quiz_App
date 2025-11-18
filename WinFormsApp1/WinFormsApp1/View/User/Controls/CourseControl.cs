@@ -7,6 +7,8 @@ using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using static WinFormsApp1.Helpers.ColorPalette;
+using WinFormsApp1.View.User.Controls.CourseControls;
+using WinFormsApp1.View.User;
 
 namespace WinFormsApp1.View.User.Controls
 {
@@ -292,7 +294,17 @@ namespace WinFormsApp1.View.User.Controls
             var btn = sender as Button;
             int courseId = (int)btn.Tag;
             
-            ToastHelper.Show(this.FindForm(), $"Xem chi tiết khóa học ID: {courseId}");
+            // Tìm MainContainer form
+            var mainContainer = this.FindForm() as MainContainer;
+            if (mainContainer != null)
+            {
+                // Gọi method NavigateToCourseDetail
+                mainContainer.NavigateToCourseDetail(courseId);
+            }
+            else
+            {
+                ToastHelper.Show(this.FindForm(), "Không thể điều hướng đến trang chi tiết");
+            }
         }
 
         private async void BtnAddCart_Click(object sender, EventArgs e)

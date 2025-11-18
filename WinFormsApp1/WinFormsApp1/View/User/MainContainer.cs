@@ -193,6 +193,25 @@ namespace WinFormsApp1.View.User
             }
         }
 
+        // Public method để có thể gọi từ các control khác
+        public void NavigateToCourseDetail(int courseId)
+        {
+            var courseDetailControl = new Controls.CourseControls.CourseDetailControl(courseId);
+            NavigateToControl(courseDetailControl);
+        }
+
+        // Public method để navigate về home
+        public void NavigateToHome()
+        {
+            NavigateToControl(new Controls.HomeControl());
+        }
+
+        // Public method để navigate sang FlashcardControl
+        public void NavigateToFlashcards()
+        {
+            NavigateToControl(new Controls.FlashcardControl());
+        }
+
         // Event Handlers
 
         private void logoPanel_Click(object sender, EventArgs e)

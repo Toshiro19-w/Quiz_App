@@ -213,6 +213,7 @@
 			picCover.Location = new Point(627, 92);
 			picCover.Name = "picCover";
 			picCover.Size = new Size(224, 208);
+			picCover.SizeMode = PictureBoxSizeMode.Zoom;
 			picCover.TabIndex = 7;
 			picCover.TabStop = false;
 			// 
