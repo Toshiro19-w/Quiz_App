@@ -17,421 +17,452 @@ namespace WinFormsApp1.View.User.Controls
 
         private void InitializeComponent()
         {
-            this.pnlMain = new System.Windows.Forms.Panel();
-            this.pnlContent = new System.Windows.Forms.Panel();
-            this.pnlSidebar = new System.Windows.Forms.Panel();
-            this.lblSidebarTitle = new System.Windows.Forms.Label();
-            this.flowLessons = new System.Windows.Forms.FlowLayoutPanel();
-            this.pnlHeader = new System.Windows.Forms.Panel();
-            this.lblCourseTitle = new System.Windows.Forms.Label();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.lblProgress = new System.Windows.Forms.Label();
-            this.pnlContentArea = new System.Windows.Forms.Panel();
-            this.pnlVideo = new System.Windows.Forms.Panel();
-            this.lblVideoPlaceholder = new System.Windows.Forms.Label();
-            this.pnlTheory = new System.Windows.Forms.Panel();
-            this.webBrowser = new System.Windows.Forms.WebBrowser();
-            this.pnlFlashcard = new System.Windows.Forms.Panel();
-            this.lblFlashcardFront = new System.Windows.Forms.Label();
-            this.lblFlashcardBack = new System.Windows.Forms.Label();
-            this.btnFlipCard = new System.Windows.Forms.Button();
-            this.btnPrevCard = new System.Windows.Forms.Button();
-            this.btnNextCard = new System.Windows.Forms.Button();
-            this.btnCompleteFlashcard = new System.Windows.Forms.Button();
-            this.pnlTest = new System.Windows.Forms.Panel();
-            this.lblTestTitle = new System.Windows.Forms.Label();
-            this.flowQuestions = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnSubmitTest = new System.Windows.Forms.Button();
-            this.pnlNavigation = new System.Windows.Forms.Panel();
-            this.btnPrevLesson = new System.Windows.Forms.Button();
-            this.btnNextLesson = new System.Windows.Forms.Button();
-            this.btnMarkComplete = new System.Windows.Forms.Button();
-            this.pnlMain.SuspendLayout();
-            this.pnlContent.SuspendLayout();
-            this.pnlSidebar.SuspendLayout();
-            this.pnlHeader.SuspendLayout();
-            this.pnlContentArea.SuspendLayout();
-            this.pnlVideo.SuspendLayout();
-            this.pnlTheory.SuspendLayout();
-            this.pnlFlashcard.SuspendLayout();
-            this.pnlTest.SuspendLayout();
-            this.pnlNavigation.SuspendLayout();
-            this.SuspendLayout();
+            pnlMain = new Panel();
+            pnlContent = new Panel();
+            pnlContentArea = new Panel();
+            pnlVideo = new Panel();
+            lblVideoPlaceholder = new Label();
+            pnlTheory = new Panel();
+            webBrowser = new WebBrowser();
+            pnlFlashcard = new Panel();
+            btnCompleteFlashcard = new Button();
+            btnNextCard = new Button();
+            btnPrevCard = new Button();
+            btnFlipCard = new Button();
+            lblFlashcardBack = new Label();
+            lblFlashcardFront = new Label();
+            pnlTest = new Panel();
+            btnSubmitTest = new Button();
+            flowQuestions = new FlowLayoutPanel();
+            lblTestTitle = new Label();
+            pnlNavigation = new Panel();
+            btnMarkComplete = new Button();
+            btnNextLesson = new Button();
+            btnPrevLesson = new Button();
+            pnlHeader = new Panel();
+            lblProgress = new Label();
+            progressBar = new ProgressBar();
+            lblCourseTitle = new Label();
+            pnlSidebar = new Panel();
+            flowLessons = new FlowLayoutPanel();
+            lblSidebarTitle = new Label();
+            pnlMain.SuspendLayout();
+            pnlContent.SuspendLayout();
+            pnlContentArea.SuspendLayout();
+            pnlVideo.SuspendLayout();
+            pnlTheory.SuspendLayout();
+            pnlFlashcard.SuspendLayout();
+            pnlTest.SuspendLayout();
+            pnlNavigation.SuspendLayout();
+            pnlHeader.SuspendLayout();
+            pnlSidebar.SuspendLayout();
+            SuspendLayout();
             // 
             // pnlMain
             // 
-            this.pnlMain.Controls.Add(this.pnlContent);
-            this.pnlMain.Controls.Add(this.pnlSidebar);
-            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 0);
-            this.pnlMain.Name = "pnlMain";
-            this.pnlMain.Padding = new System.Windows.Forms.Padding(0, 70, 0, 0);
-            this.pnlMain.Size = new System.Drawing.Size(1200, 700);
-            this.pnlMain.TabIndex = 0;
+            pnlMain.Controls.Add(pnlContent);
+            pnlMain.Controls.Add(pnlSidebar);
+            pnlMain.Dock = DockStyle.Fill;
+            pnlMain.Location = new Point(0, 0);
+            pnlMain.Margin = new Padding(4, 5, 4, 5);
+            pnlMain.Name = "pnlMain";
+            pnlMain.Padding = new Padding(0, 117, 0, 0);
+            pnlMain.Size = new Size(1714, 1167);
+            pnlMain.TabIndex = 0;
             // 
             // pnlContent
             // 
-            this.pnlContent.Controls.Add(this.pnlContentArea);
-            this.pnlContent.Controls.Add(this.pnlNavigation);
-            this.pnlContent.Controls.Add(this.pnlHeader);
-            this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlContent.Location = new System.Drawing.Point(0, 70);
-            this.pnlContent.Name = "pnlContent";
-            this.pnlContent.Size = new System.Drawing.Size(850, 630);
-            this.pnlContent.TabIndex = 0;
-            // 
-            // pnlSidebar
-            // 
-            this.pnlSidebar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
-            this.pnlSidebar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlSidebar.Controls.Add(this.flowLessons);
-            this.pnlSidebar.Controls.Add(this.lblSidebarTitle);
-            this.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnlSidebar.Location = new System.Drawing.Point(850, 70);
-            this.pnlSidebar.Name = "pnlSidebar";
-            this.pnlSidebar.Size = new System.Drawing.Size(350, 630);
-            this.pnlSidebar.TabIndex = 1;
-            // 
-            // lblSidebarTitle
-            // 
-            this.lblSidebarTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(144)))), ((int)(((byte)(220)))));
-            this.lblSidebarTitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblSidebarTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.lblSidebarTitle.ForeColor = System.Drawing.Color.White;
-            this.lblSidebarTitle.Location = new System.Drawing.Point(0, 0);
-            this.lblSidebarTitle.Name = "lblSidebarTitle";
-            this.lblSidebarTitle.Padding = new System.Windows.Forms.Padding(15, 10, 15, 10);
-            this.lblSidebarTitle.Size = new System.Drawing.Size(348, 50);
-            this.lblSidebarTitle.TabIndex = 0;
-            this.lblSidebarTitle.Text = "N?i dung bài h?c";
-            // 
-            // flowLessons
-            // 
-            this.flowLessons.AutoScroll = true;
-            this.flowLessons.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLessons.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLessons.Location = new System.Drawing.Point(0, 50);
-            this.flowLessons.Name = "flowLessons";
-            this.flowLessons.Padding = new System.Windows.Forms.Padding(10);
-            this.flowLessons.Size = new System.Drawing.Size(348, 578);
-            this.flowLessons.TabIndex = 1;
-            this.flowLessons.WrapContents = false;
-            // 
-            // pnlHeader
-            // 
-            this.pnlHeader.BackColor = System.Drawing.Color.White;
-            this.pnlHeader.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlHeader.Controls.Add(this.lblProgress);
-            this.pnlHeader.Controls.Add(this.progressBar);
-            this.pnlHeader.Controls.Add(this.lblCourseTitle);
-            this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlHeader.Location = new System.Drawing.Point(0, 0);
-            this.pnlHeader.Name = "pnlHeader";
-            this.pnlHeader.Padding = new System.Windows.Forms.Padding(20);
-            this.pnlHeader.Size = new System.Drawing.Size(850, 100);
-            this.pnlHeader.TabIndex = 0;
-            // 
-            // lblCourseTitle
-            // 
-            this.lblCourseTitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblCourseTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
-            this.lblCourseTitle.Location = new System.Drawing.Point(20, 20);
-            this.lblCourseTitle.Name = "lblCourseTitle";
-            this.lblCourseTitle.Size = new System.Drawing.Size(808, 30);
-            this.lblCourseTitle.TabIndex = 0;
-            this.lblCourseTitle.Text = "Tên khóa h?c";
-            // 
-            // progressBar
-            // 
-            this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBar.Location = new System.Drawing.Point(20, 55);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(808, 10);
-            this.progressBar.TabIndex = 1;
-            // 
-            // lblProgress
-            // 
-            this.lblProgress.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lblProgress.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblProgress.ForeColor = System.Drawing.Color.Gray;
-            this.lblProgress.Location = new System.Drawing.Point(20, 65);
-            this.lblProgress.Name = "lblProgress";
-            this.lblProgress.Size = new System.Drawing.Size(808, 13);
-            this.lblProgress.TabIndex = 2;
-            this.lblProgress.Text = "Ti?n ??: 0%";
+            pnlContent.Controls.Add(pnlContentArea);
+            pnlContent.Controls.Add(pnlNavigation);
+            pnlContent.Controls.Add(pnlHeader);
+            pnlContent.Dock = DockStyle.Fill;
+            pnlContent.Location = new Point(0, 117);
+            pnlContent.Margin = new Padding(4, 5, 4, 5);
+            pnlContent.Name = "pnlContent";
+            pnlContent.Size = new Size(1215, 1050);
+            pnlContent.TabIndex = 0;
             // 
             // pnlContentArea
             // 
-            this.pnlContentArea.Controls.Add(this.pnlVideo);
-            this.pnlContentArea.Controls.Add(this.pnlTheory);
-            this.pnlContentArea.Controls.Add(this.pnlFlashcard);
-            this.pnlContentArea.Controls.Add(this.pnlTest);
-            this.pnlContentArea.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlContentArea.Location = new System.Drawing.Point(0, 100);
-            this.pnlContentArea.Name = "pnlContentArea";
-            this.pnlContentArea.Padding = new System.Windows.Forms.Padding(20);
-            this.pnlContentArea.Size = new System.Drawing.Size(850, 470);
-            this.pnlContentArea.TabIndex = 1;
+            pnlContentArea.Controls.Add(pnlVideo);
+            pnlContentArea.Controls.Add(pnlTheory);
+            pnlContentArea.Controls.Add(pnlFlashcard);
+            pnlContentArea.Controls.Add(pnlTest);
+            pnlContentArea.Dock = DockStyle.Fill;
+            pnlContentArea.Location = new Point(0, 165);
+            pnlContentArea.Margin = new Padding(4, 5, 4, 5);
+            pnlContentArea.Name = "pnlContentArea";
+            pnlContentArea.Padding = new Padding(29, 33, 29, 33);
+            pnlContentArea.Size = new Size(1215, 786);
+            pnlContentArea.TabIndex = 1;
             // 
             // pnlVideo
             // 
-            this.pnlVideo.BackColor = System.Drawing.Color.Black;
-            this.pnlVideo.Controls.Add(this.lblVideoPlaceholder);
-            this.pnlVideo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlVideo.Location = new System.Drawing.Point(20, 20);
-            this.pnlVideo.Name = "pnlVideo";
-            this.pnlVideo.Size = new System.Drawing.Size(810, 430);
-            this.pnlVideo.TabIndex = 0;
-            this.pnlVideo.Visible = false;
+            pnlVideo.BackColor = Color.Black;
+            pnlVideo.Controls.Add(lblVideoPlaceholder);
+            pnlVideo.Dock = DockStyle.Fill;
+            pnlVideo.Location = new Point(29, 33);
+            pnlVideo.Margin = new Padding(4, 5, 4, 5);
+            pnlVideo.Name = "pnlVideo";
+            pnlVideo.Size = new Size(1157, 720);
+            pnlVideo.TabIndex = 0;
+            pnlVideo.Visible = false;
             // 
             // lblVideoPlaceholder
             // 
-            this.lblVideoPlaceholder.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblVideoPlaceholder.Font = new System.Drawing.Font("Segoe UI", 16F);
-            this.lblVideoPlaceholder.ForeColor = System.Drawing.Color.White;
-            this.lblVideoPlaceholder.Location = new System.Drawing.Point(0, 0);
-            this.lblVideoPlaceholder.Name = "lblVideoPlaceholder";
-            this.lblVideoPlaceholder.Size = new System.Drawing.Size(810, 430);
-            this.lblVideoPlaceholder.TabIndex = 0;
-            this.lblVideoPlaceholder.Text = "? Video Player\r\n(C?n cài ??t Windows Media Player)";
-            this.lblVideoPlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            lblVideoPlaceholder.Dock = DockStyle.Fill;
+            lblVideoPlaceholder.Font = new Font("Segoe UI", 16F);
+            lblVideoPlaceholder.ForeColor = Color.White;
+            lblVideoPlaceholder.Location = new Point(0, 0);
+            lblVideoPlaceholder.Margin = new Padding(4, 0, 4, 0);
+            lblVideoPlaceholder.Name = "lblVideoPlaceholder";
+            lblVideoPlaceholder.Size = new Size(1157, 720);
+            lblVideoPlaceholder.TabIndex = 0;
+            lblVideoPlaceholder.Text = "? Video Player\r\n(C?n cài ??t Windows Media Player)";
+            lblVideoPlaceholder.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlTheory
             // 
-            this.pnlTheory.Controls.Add(this.webBrowser);
-            this.pnlTheory.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlTheory.Location = new System.Drawing.Point(20, 20);
-            this.pnlTheory.Name = "pnlTheory";
-            this.pnlTheory.Size = new System.Drawing.Size(810, 430);
-            this.pnlTheory.TabIndex = 1;
-            this.pnlTheory.Visible = false;
+            pnlTheory.Controls.Add(webBrowser);
+            pnlTheory.Dock = DockStyle.Fill;
+            pnlTheory.Location = new Point(29, 33);
+            pnlTheory.Margin = new Padding(4, 5, 4, 5);
+            pnlTheory.Name = "pnlTheory";
+            pnlTheory.Size = new Size(1157, 720);
+            pnlTheory.TabIndex = 1;
+            pnlTheory.Visible = false;
             // 
             // webBrowser
             // 
-            this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser.Location = new System.Drawing.Point(0, 0);
-            this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser.Name = "webBrowser";
-            this.webBrowser.Size = new System.Drawing.Size(810, 430);
-            this.webBrowser.TabIndex = 0;
+            webBrowser.Dock = DockStyle.Fill;
+            webBrowser.Location = new Point(0, 0);
+            webBrowser.Margin = new Padding(4, 5, 4, 5);
+            webBrowser.MinimumSize = new Size(29, 33);
+            webBrowser.Name = "webBrowser";
+            webBrowser.Size = new Size(1157, 720);
+            webBrowser.TabIndex = 0;
             // 
             // pnlFlashcard
             // 
-            this.pnlFlashcard.Controls.Add(this.btnCompleteFlashcard);
-            this.pnlFlashcard.Controls.Add(this.btnNextCard);
-            this.pnlFlashcard.Controls.Add(this.btnPrevCard);
-            this.pnlFlashcard.Controls.Add(this.btnFlipCard);
-            this.pnlFlashcard.Controls.Add(this.lblFlashcardBack);
-            this.pnlFlashcard.Controls.Add(this.lblFlashcardFront);
-            this.pnlFlashcard.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlFlashcard.Location = new System.Drawing.Point(20, 20);
-            this.pnlFlashcard.Name = "pnlFlashcard";
-            this.pnlFlashcard.Size = new System.Drawing.Size(810, 430);
-            this.pnlFlashcard.TabIndex = 2;
-            this.pnlFlashcard.Visible = false;
-            // 
-            // lblFlashcardFront
-            // 
-            this.lblFlashcardFront.BackColor = System.Drawing.Color.White;
-            this.lblFlashcardFront.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblFlashcardFront.Font = new System.Drawing.Font("Segoe UI", 18F);
-            this.lblFlashcardFront.Location = new System.Drawing.Point(155, 50);
-            this.lblFlashcardFront.Name = "lblFlashcardFront";
-            this.lblFlashcardFront.Size = new System.Drawing.Size(500, 200);
-            this.lblFlashcardFront.TabIndex = 0;
-            this.lblFlashcardFront.Text = "M?t tr??c th?";
-            this.lblFlashcardFront.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblFlashcardBack
-            // 
-            this.lblFlashcardBack.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.lblFlashcardBack.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblFlashcardBack.Font = new System.Drawing.Font("Segoe UI", 14F);
-            this.lblFlashcardBack.Location = new System.Drawing.Point(155, 50);
-            this.lblFlashcardBack.Name = "lblFlashcardBack";
-            this.lblFlashcardBack.Size = new System.Drawing.Size(500, 200);
-            this.lblFlashcardBack.TabIndex = 1;
-            this.lblFlashcardBack.Text = "M?t sau th?";
-            this.lblFlashcardBack.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblFlashcardBack.Visible = false;
-            // 
-            // btnFlipCard
-            // 
-            this.btnFlipCard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(144)))), ((int)(((byte)(220)))));
-            this.btnFlipCard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnFlipCard.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.btnFlipCard.ForeColor = System.Drawing.Color.White;
-            this.btnFlipCard.Location = new System.Drawing.Point(330, 270);
-            this.btnFlipCard.Name = "btnFlipCard";
-            this.btnFlipCard.Size = new System.Drawing.Size(150, 40);
-            this.btnFlipCard.TabIndex = 2;
-            this.btnFlipCard.Text = "L?t th?";
-            this.btnFlipCard.UseVisualStyleBackColor = false;
-            // 
-            // btnPrevCard
-            // 
-            this.btnPrevCard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.btnPrevCard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPrevCard.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnPrevCard.ForeColor = System.Drawing.Color.White;
-            this.btnPrevCard.Location = new System.Drawing.Point(255, 330);
-            this.btnPrevCard.Name = "btnPrevCard";
-            this.btnPrevCard.Size = new System.Drawing.Size(120, 35);
-            this.btnPrevCard.TabIndex = 3;
-            this.btnPrevCard.Text = "? Th? tr??c";
-            this.btnPrevCard.UseVisualStyleBackColor = false;
-            // 
-            // btnNextCard
-            // 
-            this.btnNextCard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.btnNextCard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNextCard.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnNextCard.ForeColor = System.Drawing.Color.White;
-            this.btnNextCard.Location = new System.Drawing.Point(435, 330);
-            this.btnNextCard.Name = "btnNextCard";
-            this.btnNextCard.Size = new System.Drawing.Size(120, 35);
-            this.btnNextCard.TabIndex = 4;
-            this.btnNextCard.Text = "Th? sau ?";
-            this.btnNextCard.UseVisualStyleBackColor = false;
+            pnlFlashcard.Controls.Add(btnCompleteFlashcard);
+            pnlFlashcard.Controls.Add(btnNextCard);
+            pnlFlashcard.Controls.Add(btnPrevCard);
+            pnlFlashcard.Controls.Add(btnFlipCard);
+            pnlFlashcard.Controls.Add(lblFlashcardBack);
+            pnlFlashcard.Controls.Add(lblFlashcardFront);
+            pnlFlashcard.Dock = DockStyle.Fill;
+            pnlFlashcard.Location = new Point(29, 33);
+            pnlFlashcard.Margin = new Padding(4, 5, 4, 5);
+            pnlFlashcard.Name = "pnlFlashcard";
+            pnlFlashcard.Size = new Size(1157, 720);
+            pnlFlashcard.TabIndex = 2;
+            pnlFlashcard.Visible = false;
             // 
             // btnCompleteFlashcard
             // 
-            this.btnCompleteFlashcard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(167)))), ((int)(((byte)(69)))));
-            this.btnCompleteFlashcard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCompleteFlashcard.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnCompleteFlashcard.ForeColor = System.Drawing.Color.White;
-            this.btnCompleteFlashcard.Location = new System.Drawing.Point(305, 380);
-            this.btnCompleteFlashcard.Name = "btnCompleteFlashcard";
-            this.btnCompleteFlashcard.Size = new System.Drawing.Size(200, 40);
-            this.btnCompleteFlashcard.TabIndex = 5;
-            this.btnCompleteFlashcard.Text = "? Hoàn thành";
-            this.btnCompleteFlashcard.UseVisualStyleBackColor = false;
-            this.btnCompleteFlashcard.Visible = false;
+            btnCompleteFlashcard.BackColor = Color.FromArgb(40, 167, 69);
+            btnCompleteFlashcard.FlatStyle = FlatStyle.Flat;
+            btnCompleteFlashcard.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnCompleteFlashcard.ForeColor = Color.White;
+            btnCompleteFlashcard.Location = new Point(436, 633);
+            btnCompleteFlashcard.Margin = new Padding(4, 5, 4, 5);
+            btnCompleteFlashcard.Name = "btnCompleteFlashcard";
+            btnCompleteFlashcard.Size = new Size(286, 67);
+            btnCompleteFlashcard.TabIndex = 5;
+            btnCompleteFlashcard.Text = "? Hoàn thành";
+            btnCompleteFlashcard.UseVisualStyleBackColor = false;
+            btnCompleteFlashcard.Visible = false;
+            // 
+            // btnNextCard
+            // 
+            btnNextCard.BackColor = Color.FromArgb(108, 117, 125);
+            btnNextCard.FlatStyle = FlatStyle.Flat;
+            btnNextCard.Font = new Font("Segoe UI", 10F);
+            btnNextCard.ForeColor = Color.White;
+            btnNextCard.Location = new Point(621, 550);
+            btnNextCard.Margin = new Padding(4, 5, 4, 5);
+            btnNextCard.Name = "btnNextCard";
+            btnNextCard.Size = new Size(171, 58);
+            btnNextCard.TabIndex = 4;
+            btnNextCard.Text = "Th? sau ?";
+            btnNextCard.UseVisualStyleBackColor = false;
+            // 
+            // btnPrevCard
+            // 
+            btnPrevCard.BackColor = Color.FromArgb(108, 117, 125);
+            btnPrevCard.FlatStyle = FlatStyle.Flat;
+            btnPrevCard.Font = new Font("Segoe UI", 10F);
+            btnPrevCard.ForeColor = Color.White;
+            btnPrevCard.Location = new Point(364, 550);
+            btnPrevCard.Margin = new Padding(4, 5, 4, 5);
+            btnPrevCard.Name = "btnPrevCard";
+            btnPrevCard.Size = new Size(171, 58);
+            btnPrevCard.TabIndex = 3;
+            btnPrevCard.Text = "? Th? tr??c";
+            btnPrevCard.UseVisualStyleBackColor = false;
+            // 
+            // btnFlipCard
+            // 
+            btnFlipCard.BackColor = Color.FromArgb(52, 144, 220);
+            btnFlipCard.FlatStyle = FlatStyle.Flat;
+            btnFlipCard.Font = new Font("Segoe UI", 11F);
+            btnFlipCard.ForeColor = Color.White;
+            btnFlipCard.Location = new Point(471, 450);
+            btnFlipCard.Margin = new Padding(4, 5, 4, 5);
+            btnFlipCard.Name = "btnFlipCard";
+            btnFlipCard.Size = new Size(214, 67);
+            btnFlipCard.TabIndex = 2;
+            btnFlipCard.Text = "L?t th?";
+            btnFlipCard.UseVisualStyleBackColor = false;
+            // 
+            // lblFlashcardBack
+            // 
+            lblFlashcardBack.BackColor = Color.FromArgb(240, 240, 240);
+            lblFlashcardBack.BorderStyle = BorderStyle.FixedSingle;
+            lblFlashcardBack.Font = new Font("Segoe UI", 14F);
+            lblFlashcardBack.Location = new Point(221, 83);
+            lblFlashcardBack.Margin = new Padding(4, 0, 4, 0);
+            lblFlashcardBack.Name = "lblFlashcardBack";
+            lblFlashcardBack.Size = new Size(713, 332);
+            lblFlashcardBack.TabIndex = 1;
+            lblFlashcardBack.Text = "M?t sau th?";
+            lblFlashcardBack.TextAlign = ContentAlignment.MiddleCenter;
+            lblFlashcardBack.Visible = false;
+            // 
+            // lblFlashcardFront
+            // 
+            lblFlashcardFront.BackColor = Color.White;
+            lblFlashcardFront.BorderStyle = BorderStyle.FixedSingle;
+            lblFlashcardFront.Font = new Font("Segoe UI", 18F);
+            lblFlashcardFront.Location = new Point(221, 83);
+            lblFlashcardFront.Margin = new Padding(4, 0, 4, 0);
+            lblFlashcardFront.Name = "lblFlashcardFront";
+            lblFlashcardFront.Size = new Size(713, 332);
+            lblFlashcardFront.TabIndex = 0;
+            lblFlashcardFront.Text = "M?t tr??c th?";
+            lblFlashcardFront.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlTest
             // 
-            this.pnlTest.AutoScroll = true;
-            this.pnlTest.Controls.Add(this.btnSubmitTest);
-            this.pnlTest.Controls.Add(this.flowQuestions);
-            this.pnlTest.Controls.Add(this.lblTestTitle);
-            this.pnlTest.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlTest.Location = new System.Drawing.Point(20, 20);
-            this.pnlTest.Name = "pnlTest";
-            this.pnlTest.Size = new System.Drawing.Size(810, 430);
-            this.pnlTest.TabIndex = 3;
-            this.pnlTest.Visible = false;
-            // 
-            // lblTestTitle
-            // 
-            this.lblTestTitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblTestTitle.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
-            this.lblTestTitle.Location = new System.Drawing.Point(0, 0);
-            this.lblTestTitle.Name = "lblTestTitle";
-            this.lblTestTitle.Padding = new System.Windows.Forms.Padding(10);
-            this.lblTestTitle.Size = new System.Drawing.Size(810, 50);
-            this.lblTestTitle.TabIndex = 0;
-            this.lblTestTitle.Text = "Bài ki?m tra";
-            // 
-            // flowQuestions
-            // 
-            this.flowQuestions.AutoScroll = true;
-            this.flowQuestions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowQuestions.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowQuestions.Location = new System.Drawing.Point(0, 50);
-            this.flowQuestions.Name = "flowQuestions";
-            this.flowQuestions.Padding = new System.Windows.Forms.Padding(10);
-            this.flowQuestions.Size = new System.Drawing.Size(810, 330);
-            this.flowQuestions.TabIndex = 1;
-            this.flowQuestions.WrapContents = false;
+            pnlTest.AutoScroll = true;
+            pnlTest.Controls.Add(btnSubmitTest);
+            pnlTest.Controls.Add(flowQuestions);
+            pnlTest.Controls.Add(lblTestTitle);
+            pnlTest.Dock = DockStyle.Fill;
+            pnlTest.Location = new Point(29, 33);
+            pnlTest.Margin = new Padding(4, 5, 4, 5);
+            pnlTest.Name = "pnlTest";
+            pnlTest.Size = new Size(1157, 720);
+            pnlTest.TabIndex = 3;
+            pnlTest.Visible = false;
             // 
             // btnSubmitTest
             // 
-            this.btnSubmitTest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(53)))), ((int)(((byte)(69)))));
-            this.btnSubmitTest.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.btnSubmitTest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSubmitTest.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.btnSubmitTest.ForeColor = System.Drawing.Color.White;
-            this.btnSubmitTest.Location = new System.Drawing.Point(0, 380);
-            this.btnSubmitTest.Name = "btnSubmitTest";
-            this.btnSubmitTest.Size = new System.Drawing.Size(810, 50);
-            this.btnSubmitTest.TabIndex = 2;
-            this.btnSubmitTest.Text = "N?p bài";
-            this.btnSubmitTest.UseVisualStyleBackColor = false;
+            btnSubmitTest.BackColor = Color.FromArgb(220, 53, 69);
+            btnSubmitTest.Dock = DockStyle.Bottom;
+            btnSubmitTest.FlatStyle = FlatStyle.Flat;
+            btnSubmitTest.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            btnSubmitTest.ForeColor = Color.White;
+            btnSubmitTest.Location = new Point(0, 637);
+            btnSubmitTest.Margin = new Padding(4, 5, 4, 5);
+            btnSubmitTest.Name = "btnSubmitTest";
+            btnSubmitTest.Size = new Size(1157, 83);
+            btnSubmitTest.TabIndex = 2;
+            btnSubmitTest.Text = "N?p bài";
+            btnSubmitTest.UseVisualStyleBackColor = false;
+            // 
+            // flowQuestions
+            // 
+            flowQuestions.AutoScroll = true;
+            flowQuestions.Dock = DockStyle.Fill;
+            flowQuestions.FlowDirection = FlowDirection.TopDown;
+            flowQuestions.Location = new Point(0, 83);
+            flowQuestions.Margin = new Padding(4, 5, 4, 5);
+            flowQuestions.Name = "flowQuestions";
+            flowQuestions.Padding = new Padding(14, 17, 14, 17);
+            flowQuestions.Size = new Size(1157, 637);
+            flowQuestions.TabIndex = 1;
+            flowQuestions.WrapContents = false;
+            // 
+            // lblTestTitle
+            // 
+            lblTestTitle.Dock = DockStyle.Top;
+            lblTestTitle.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            lblTestTitle.Location = new Point(0, 0);
+            lblTestTitle.Margin = new Padding(4, 0, 4, 0);
+            lblTestTitle.Name = "lblTestTitle";
+            lblTestTitle.Padding = new Padding(14, 17, 14, 17);
+            lblTestTitle.Size = new Size(1157, 83);
+            lblTestTitle.TabIndex = 0;
+            lblTestTitle.Text = "Bài ki?m tra";
             // 
             // pnlNavigation
             // 
-            this.pnlNavigation.BackColor = System.Drawing.Color.White;
-            this.pnlNavigation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlNavigation.Controls.Add(this.btnMarkComplete);
-            this.pnlNavigation.Controls.Add(this.btnNextLesson);
-            this.pnlNavigation.Controls.Add(this.btnPrevLesson);
-            this.pnlNavigation.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlNavigation.Location = new System.Drawing.Point(0, 570);
-            this.pnlNavigation.Name = "pnlNavigation";
-            this.pnlNavigation.Padding = new System.Windows.Forms.Padding(20, 10, 20, 10);
-            this.pnlNavigation.Size = new System.Drawing.Size(850, 60);
-            this.pnlNavigation.TabIndex = 2;
-            // 
-            // btnPrevLesson
-            // 
-            this.btnPrevLesson.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.btnPrevLesson.Dock = System.Windows.Forms.DockStyle.Left;
-            this.btnPrevLesson.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPrevLesson.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnPrevLesson.ForeColor = System.Drawing.Color.White;
-            this.btnPrevLesson.Location = new System.Drawing.Point(20, 10);
-            this.btnPrevLesson.Name = "btnPrevLesson";
-            this.btnPrevLesson.Size = new System.Drawing.Size(150, 38);
-            this.btnPrevLesson.TabIndex = 0;
-            this.btnPrevLesson.Text = "? Bài tr??c";
-            this.btnPrevLesson.UseVisualStyleBackColor = false;
-            // 
-            // btnNextLesson
-            // 
-            this.btnNextLesson.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(144)))), ((int)(((byte)(220)))));
-            this.btnNextLesson.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnNextLesson.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNextLesson.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnNextLesson.ForeColor = System.Drawing.Color.White;
-            this.btnNextLesson.Location = new System.Drawing.Point(678, 10);
-            this.btnNextLesson.Name = "btnNextLesson";
-            this.btnNextLesson.Size = new System.Drawing.Size(150, 38);
-            this.btnNextLesson.TabIndex = 1;
-            this.btnNextLesson.Text = "Bài sau ?";
-            this.btnNextLesson.UseVisualStyleBackColor = false;
+            pnlNavigation.BackColor = Color.White;
+            pnlNavigation.BorderStyle = BorderStyle.FixedSingle;
+            pnlNavigation.Controls.Add(btnMarkComplete);
+            pnlNavigation.Controls.Add(btnNextLesson);
+            pnlNavigation.Controls.Add(btnPrevLesson);
+            pnlNavigation.Dock = DockStyle.Bottom;
+            pnlNavigation.Location = new Point(0, 951);
+            pnlNavigation.Margin = new Padding(4, 5, 4, 5);
+            pnlNavigation.Name = "pnlNavigation";
+            pnlNavigation.Padding = new Padding(29, 17, 29, 17);
+            pnlNavigation.Size = new Size(1215, 99);
+            pnlNavigation.TabIndex = 2;
             // 
             // btnMarkComplete
             // 
-            this.btnMarkComplete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(167)))), ((int)(((byte)(69)))));
-            this.btnMarkComplete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMarkComplete.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.btnMarkComplete.ForeColor = System.Drawing.Color.White;
-            this.btnMarkComplete.Location = new System.Drawing.Point(350, 10);
-            this.btnMarkComplete.Name = "btnMarkComplete";
-            this.btnMarkComplete.Size = new System.Drawing.Size(150, 38);
-            this.btnMarkComplete.TabIndex = 2;
-            this.btnMarkComplete.Text = "? ?ánh d?u hoàn thành";
-            this.btnMarkComplete.UseVisualStyleBackColor = false;
+            btnMarkComplete.BackColor = Color.FromArgb(40, 167, 69);
+            btnMarkComplete.FlatStyle = FlatStyle.Flat;
+            btnMarkComplete.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnMarkComplete.ForeColor = Color.White;
+            btnMarkComplete.Location = new Point(500, 17);
+            btnMarkComplete.Margin = new Padding(4, 5, 4, 5);
+            btnMarkComplete.Name = "btnMarkComplete";
+            btnMarkComplete.Size = new Size(214, 63);
+            btnMarkComplete.TabIndex = 2;
+            btnMarkComplete.Text = "? ?ánh d?u hoàn thành";
+            btnMarkComplete.UseVisualStyleBackColor = false;
+            // 
+            // btnNextLesson
+            // 
+            btnNextLesson.BackColor = Color.FromArgb(52, 144, 220);
+            btnNextLesson.Dock = DockStyle.Right;
+            btnNextLesson.FlatStyle = FlatStyle.Flat;
+            btnNextLesson.Font = new Font("Segoe UI", 10F);
+            btnNextLesson.ForeColor = Color.White;
+            btnNextLesson.Location = new Point(970, 17);
+            btnNextLesson.Margin = new Padding(4, 5, 4, 5);
+            btnNextLesson.Name = "btnNextLesson";
+            btnNextLesson.Size = new Size(214, 63);
+            btnNextLesson.TabIndex = 1;
+            btnNextLesson.Text = "Bài sau ?";
+            btnNextLesson.UseVisualStyleBackColor = false;
+            // 
+            // btnPrevLesson
+            // 
+            btnPrevLesson.BackColor = Color.FromArgb(108, 117, 125);
+            btnPrevLesson.Dock = DockStyle.Left;
+            btnPrevLesson.FlatStyle = FlatStyle.Flat;
+            btnPrevLesson.Font = new Font("Segoe UI", 10F);
+            btnPrevLesson.ForeColor = Color.White;
+            btnPrevLesson.Location = new Point(29, 17);
+            btnPrevLesson.Margin = new Padding(4, 5, 4, 5);
+            btnPrevLesson.Name = "btnPrevLesson";
+            btnPrevLesson.Size = new Size(214, 63);
+            btnPrevLesson.TabIndex = 0;
+            btnPrevLesson.Text = "? Bài tr??c";
+            btnPrevLesson.UseVisualStyleBackColor = false;
+            // 
+            // pnlHeader
+            // 
+            pnlHeader.BackColor = Color.White;
+            pnlHeader.BorderStyle = BorderStyle.FixedSingle;
+            pnlHeader.Controls.Add(lblProgress);
+            pnlHeader.Controls.Add(progressBar);
+            pnlHeader.Controls.Add(lblCourseTitle);
+            pnlHeader.Dock = DockStyle.Top;
+            pnlHeader.Location = new Point(0, 0);
+            pnlHeader.Margin = new Padding(4, 5, 4, 5);
+            pnlHeader.Name = "pnlHeader";
+            pnlHeader.Padding = new Padding(29, 33, 29, 33);
+            pnlHeader.Size = new Size(1215, 165);
+            pnlHeader.TabIndex = 0;
+            // 
+            // lblProgress
+            // 
+            lblProgress.Dock = DockStyle.Bottom;
+            lblProgress.Font = new Font("Segoe UI", 9F);
+            lblProgress.ForeColor = Color.Gray;
+            lblProgress.Location = new Point(29, 91);
+            lblProgress.Margin = new Padding(4, 0, 4, 0);
+            lblProgress.Name = "lblProgress";
+            lblProgress.Size = new Size(1155, 22);
+            lblProgress.TabIndex = 2;
+            lblProgress.Text = "Ti?n ??: 0%";
+            // 
+            // progressBar
+            // 
+            progressBar.Dock = DockStyle.Bottom;
+            progressBar.Location = new Point(29, 113);
+            progressBar.Margin = new Padding(4, 5, 4, 5);
+            progressBar.Name = "progressBar";
+            progressBar.Size = new Size(1155, 17);
+            progressBar.TabIndex = 1;
+            // 
+            // lblCourseTitle
+            // 
+            lblCourseTitle.Dock = DockStyle.Top;
+            lblCourseTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            lblCourseTitle.Location = new Point(29, 33);
+            lblCourseTitle.Margin = new Padding(4, 0, 4, 0);
+            lblCourseTitle.Name = "lblCourseTitle";
+            lblCourseTitle.Size = new Size(1155, 50);
+            lblCourseTitle.TabIndex = 0;
+            lblCourseTitle.Text = "Tên khóa h?c";
+            lblCourseTitle.Click += lblCourseTitle_Click;
+            // 
+            // pnlSidebar
+            // 
+            pnlSidebar.BackColor = Color.FromArgb(248, 249, 250);
+            pnlSidebar.BorderStyle = BorderStyle.FixedSingle;
+            pnlSidebar.Controls.Add(flowLessons);
+            pnlSidebar.Controls.Add(lblSidebarTitle);
+            pnlSidebar.Dock = DockStyle.Right;
+            pnlSidebar.Location = new Point(1215, 117);
+            pnlSidebar.Margin = new Padding(4, 5, 4, 5);
+            pnlSidebar.Name = "pnlSidebar";
+            pnlSidebar.Size = new Size(499, 1050);
+            pnlSidebar.TabIndex = 1;
+            // 
+            // flowLessons
+            // 
+            flowLessons.AutoScroll = true;
+            flowLessons.Dock = DockStyle.Fill;
+            flowLessons.FlowDirection = FlowDirection.TopDown;
+            flowLessons.Location = new Point(0, 83);
+            flowLessons.Margin = new Padding(4, 5, 4, 5);
+            flowLessons.Name = "flowLessons";
+            flowLessons.Padding = new Padding(14, 17, 14, 17);
+            flowLessons.Size = new Size(497, 965);
+            flowLessons.TabIndex = 1;
+            flowLessons.WrapContents = false;
+            // 
+            // lblSidebarTitle
+            // 
+            lblSidebarTitle.BackColor = Color.FromArgb(52, 144, 220);
+            lblSidebarTitle.Dock = DockStyle.Top;
+            lblSidebarTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblSidebarTitle.ForeColor = Color.White;
+            lblSidebarTitle.Location = new Point(0, 0);
+            lblSidebarTitle.Margin = new Padding(4, 0, 4, 0);
+            lblSidebarTitle.Name = "lblSidebarTitle";
+            lblSidebarTitle.Padding = new Padding(21, 17, 21, 17);
+            lblSidebarTitle.Size = new Size(497, 83);
+            lblSidebarTitle.TabIndex = 0;
+            lblSidebarTitle.Text = "N?i dung bài h?c";
             // 
             // LessonDetailControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.White;
-            this.Controls.Add(this.pnlMain);
-            this.Name = "LessonDetailControl";
-            this.Size = new System.Drawing.Size(1200, 700);
-            this.pnlMain.ResumeLayout(false);
-            this.pnlContent.ResumeLayout(false);
-            this.pnlSidebar.ResumeLayout(false);
-            this.pnlHeader.ResumeLayout(false);
-            this.pnlContentArea.ResumeLayout(false);
-            this.pnlVideo.ResumeLayout(false);
-            this.pnlTheory.ResumeLayout(false);
-            this.pnlFlashcard.ResumeLayout(false);
-            this.pnlTest.ResumeLayout(false);
-            this.pnlNavigation.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.White;
+            Controls.Add(pnlMain);
+            Margin = new Padding(4, 5, 4, 5);
+            Name = "LessonDetailControl";
+            Size = new Size(1714, 1167);
+            pnlMain.ResumeLayout(false);
+            pnlContent.ResumeLayout(false);
+            pnlContentArea.ResumeLayout(false);
+            pnlVideo.ResumeLayout(false);
+            pnlTheory.ResumeLayout(false);
+            pnlFlashcard.ResumeLayout(false);
+            pnlTest.ResumeLayout(false);
+            pnlNavigation.ResumeLayout(false);
+            pnlHeader.ResumeLayout(false);
+            pnlSidebar.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         #endregion

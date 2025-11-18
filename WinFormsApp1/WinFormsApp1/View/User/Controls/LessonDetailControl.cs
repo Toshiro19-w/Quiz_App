@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -17,18 +17,18 @@ namespace WinFormsApp1.View.User.Controls
         private Lesson _currentLesson;
         private List<LessonContent> _currentContents;
         private int _currentContentIndex = 0;
-        
+
         // Flashcard state
         private List<Flashcard> _flashcards;
         private int _currentFlashcardIndex = 0;
         private bool _isFlipped = false;
-        
+
         // Test state
         private Test _currentTest;
         private List<Question> _questions;
         private Dictionary<int, int?> _selectedAnswers = new Dictionary<int, int?>();
         private DateTime _testStartTime;
-        
+
         // Video tracking
         private System.Windows.Forms.Timer _videoProgressTimer;
         private int _totalWatchedSeconds = 0;
@@ -44,16 +44,16 @@ namespace WinFormsApp1.View.User.Controls
         {
             // Video events - comment out until WMP is properly configured
             // videoPlayer.PlayStateChange += VideoPlayer_PlayStateChange;
-            
+
             // Flashcard events
             btnFlipCard.Click += BtnFlipCard_Click;
             btnPrevCard.Click += BtnPrevCard_Click;
             btnNextCard.Click += BtnNextCard_Click;
             btnCompleteFlashcard.Click += BtnCompleteFlashcard_Click;
-            
+
             // Test events
             btnSubmitTest.Click += BtnSubmitTest_Click;
-            
+
             // Navigation events
             btnPrevLesson.Click += BtnPrevLesson_Click;
             btnNextLesson.Click += BtnNextLesson_Click;
@@ -72,7 +72,7 @@ namespace WinFormsApp1.View.User.Controls
             try
             {
                 using var context = new LearningPlatformContext();
-                
+
                 // Load course with full details
                 _currentCourse = await context.Courses
                     .Include(c => c.CourseChapters.OrderBy(ch => ch.OrderIndex))
@@ -82,7 +82,7 @@ namespace WinFormsApp1.View.User.Controls
 
                 if (_currentCourse == null)
                 {
-                    MessageBox.Show("Không tìm th?y khóa h?c!", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("KhÃ´ng tÃ¬m th?y khÃ³a h?c!", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -93,12 +93,12 @@ namespace WinFormsApp1.View.User.Controls
 
                 if (_currentLesson == null)
                 {
-                    MessageBox.Show("Không tìm th?y bài h?c!", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("KhÃ´ng tÃ¬m th?y bÃ i h?c!", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
                 _currentContents = _currentLesson.LessonContents.OrderBy(lc => lc.OrderIndex).ToList();
-                
+
                 // Update UI
                 lblCourseTitle.Text = _currentCourse.Title;
                 await LoadSidebarAsync();
@@ -107,14 +107,14 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"L?i t?i bài h?c: {ex.Message}", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"L?i t?i bÃ i h?c: {ex.Message}", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private async Task LoadSidebarAsync()
         {
             flowLessons.Controls.Clear();
-            
+
             foreach (var chapter in _currentCourse.CourseChapters.OrderBy(ch => ch.OrderIndex))
             {
                 // Chapter header
@@ -128,17 +128,17 @@ namespace WinFormsApp1.View.User.Controls
                     Width = 320
                 };
                 flowLessons.Controls.Add(lblChapter);
-                
+
                 foreach (var lesson in chapter.Lessons.OrderBy(l => l.OrderIndex))
                 {
                     var isCompleted = await IsLessonCompletedAsync(lesson.LessonId);
                     var isCurrent = lesson.LessonId == _currentLesson.LessonId;
-                    
+
                     var pnlLesson = CreateLessonItem(lesson, isCompleted, isCurrent);
                     flowLessons.Controls.Add(pnlLesson);
                 }
             }
-            
+
             // Add separator
             var separator = new Panel
             {
@@ -148,7 +148,7 @@ namespace WinFormsApp1.View.User.Controls
                 Margin = new Padding(10, 20, 10, 10)
             };
             flowLessons.Controls.Add(separator);
-            
+
             // Add "Related Content" section
             await LoadRelatedContentAsync();
         }
@@ -157,7 +157,7 @@ namespace WinFormsApp1.View.User.Controls
         {
             var lblRelatedTitle = new Label
             {
-                Text = "N?i dung khác",
+                Text = "Ná»™i dung khÃ¡c",
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = ColorPalette.TextPrimary,
                 AutoSize = true,
@@ -167,12 +167,12 @@ namespace WinFormsApp1.View.User.Controls
             flowLessons.Controls.Add(lblRelatedTitle);
 
             using var context = new LearningPlatformContext();
-            
+
             // Get related lessons from the same category
             var relatedCourses = await context.Courses
                 .Include(c => c.CourseChapters.Take(1))
                     .ThenInclude(ch => ch.Lessons.Take(1))
-                .Where(c => c.CategoryId == _currentCourse.CategoryId && 
+                .Where(c => c.CategoryId == _currentCourse.CategoryId &&
                            c.CourseId != _currentCourse.CourseId &&
                            c.IsPublished)
                 .OrderByDescending(c => c.AverageRating)
@@ -201,7 +201,7 @@ namespace WinFormsApp1.View.User.Controls
             // Icon/Image placeholder
             var lblIcon = new Label
             {
-                Text = "??",
+                Text = "ðŸ“š",
                 Location = new Point(10, 10),
                 Size = new Size(40, 40),
                 Font = new Font("Segoe UI", 20),
@@ -221,7 +221,7 @@ namespace WinFormsApp1.View.User.Controls
             // Rating
             var lblRating = new Label
             {
-                Text = $"? {course.AverageRating:F1} ({course.TotalReviews} ?ánh giá)",
+                Text = $"â­ {course.AverageRating:F1} ({course.TotalReviews} Ä‘Ã¡nh giÃ¡)",
                 Location = new Point(60, 55),
                 Size = new Size(240, 20),
                 Font = new Font("Segoe UI", 8),
@@ -231,7 +231,7 @@ namespace WinFormsApp1.View.User.Controls
             // Button
             var btnView = new Button
             {
-                Text = "Xem khóa h?c",
+                Text = "Xem khÃ³a há»c",
                 Location = new Point(60, 80),
                 Size = new Size(240, 30),
                 BackColor = ColorPalette.ButtonSecondary,
@@ -253,8 +253,8 @@ namespace WinFormsApp1.View.User.Controls
         private void OnRelatedCourseClick(Course course)
         {
             var result = MessageBox.Show(
-                $"B?n có mu?n chuy?n sang khóa h?c:\n\n{course.Title}?",
-                "Chuy?n khóa h?c",
+                $"Báº¡n cÃ³ muá»‘n chuyá»ƒn sang khÃ³a há»c:\n\n{course.Title}?",
+                "Chuyá»ƒn khÃ³a há»c",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
@@ -287,9 +287,9 @@ namespace WinFormsApp1.View.User.Controls
                 .ToListAsync();
 
             var completedCount = await context.CourseProgresses
-                .Where(cp => cp.UserId == userId.Value && 
-                            cp.CourseId == _currentCourse.CourseId && 
-                            lessonContentIds.Contains(cp.ContentId) && 
+                .Where(cp => cp.UserId == userId.Value &&
+                            cp.CourseId == _currentCourse.CourseId &&
+                            lessonContentIds.Contains(cp.ContentId) &&
                             cp.IsCompleted)
                 .CountAsync();
 
@@ -310,14 +310,14 @@ namespace WinFormsApp1.View.User.Controls
                 .CountAsync();
 
             var completedContents = await context.CourseProgresses
-                .Where(cp => cp.UserId == userId.Value && 
-                            cp.CourseId == _currentCourse.CourseId && 
+                .Where(cp => cp.UserId == userId.Value &&
+                            cp.CourseId == _currentCourse.CourseId &&
                             cp.IsCompleted)
                 .CountAsync();
 
             var progress = totalContents > 0 ? (int)((double)completedContents / totalContents * 100) : 0;
             progressBar.Value = progress;
-            lblProgress.Text = $"Ti?n ??: {progress}% ({completedContents}/{totalContents} hoàn thành)";
+            lblProgress.Text = $"Ti?n ??: {progress}% ({completedContents}/{totalContents} hoÃ n thÃ nh)";
         }
 
         private async Task LoadContentAsync(int contentIndex)
@@ -356,7 +356,7 @@ namespace WinFormsApp1.View.User.Controls
         private async Task LoadVideoContentAsync(LessonContent content)
         {
             pnlVideo.Visible = true;
-            
+
             if (!string.IsNullOrEmpty(content.VideoUrl))
             {
                 var fullPath = System.IO.Path.Combine(Application.StartupPath, "wwwroot", content.VideoUrl.TrimStart('/'));
@@ -404,11 +404,11 @@ namespace WinFormsApp1.View.User.Controls
                 if (!userId.HasValue) return;
 
                 using var context = new LearningPlatformContext();
-                
+
                 var progress = await context.CourseProgresses
-                    .FirstOrDefaultAsync(cp => 
-                        cp.UserId == userId.Value && 
-                        cp.CourseId == _currentCourse.CourseId && 
+                    .FirstOrDefaultAsync(cp =>
+                        cp.UserId == userId.Value &&
+                        cp.CourseId == _currentCourse.CourseId &&
                         cp.ContentId == content.ContentId);
 
                 // TODO: Get actual duration from video player
@@ -458,8 +458,8 @@ namespace WinFormsApp1.View.User.Controls
             if (!userId.HasValue) return 0;
 
             var progress = await context.CourseProgresses
-                .FirstOrDefaultAsync(cp => 
-                    cp.UserId == userId.Value && 
+                .FirstOrDefaultAsync(cp =>
+                    cp.UserId == userId.Value &&
                     cp.ContentId == contentId);
 
             return progress?.DurationSec ?? 0;
@@ -472,7 +472,7 @@ namespace WinFormsApp1.View.User.Controls
         private async Task LoadTheoryContentAsync(LessonContent content)
         {
             pnlTheory.Visible = true;
-            
+
             var html = $@"
                 <!DOCTYPE html>
                 <html>
@@ -490,9 +490,9 @@ namespace WinFormsApp1.View.User.Controls
                     {content.Body}
                 </body>
                 </html>";
-            
+
             webBrowser.DocumentText = html;
-            
+
             // Mark as viewed
             await MarkContentViewedAsync(content.ContentId);
         }
@@ -505,10 +505,10 @@ namespace WinFormsApp1.View.User.Controls
                 if (!userId.HasValue) return;
 
                 using var context = new LearningPlatformContext();
-                
+
                 var progress = await context.CourseProgresses
-                    .FirstOrDefaultAsync(cp => 
-                        cp.UserId == userId.Value && 
+                    .FirstOrDefaultAsync(cp =>
+                        cp.UserId == userId.Value &&
                         cp.ContentId == contentId);
 
                 if (progress == null)
@@ -550,7 +550,7 @@ namespace WinFormsApp1.View.User.Controls
         private async Task LoadFlashcardContentAsync(LessonContent content)
         {
             pnlFlashcard.Visible = true;
-            
+
             if (!content.RefId.HasValue) return;
 
             using var context = new LearningPlatformContext();
@@ -569,16 +569,16 @@ namespace WinFormsApp1.View.User.Controls
             if (_flashcards == null || _flashcards.Count == 0) return;
 
             var card = _flashcards[_currentFlashcardIndex];
-            
+
             lblFlashcardFront.Text = card.FrontText;
             lblFlashcardBack.Text = card.BackText;
-            
+
             lblFlashcardFront.Visible = !_isFlipped;
             lblFlashcardBack.Visible = _isFlipped;
-            
+
             btnPrevCard.Enabled = _currentFlashcardIndex > 0;
             btnNextCard.Enabled = _currentFlashcardIndex < _flashcards.Count - 1;
-            
+
             // Show complete button on last card
             btnCompleteFlashcard.Visible = _currentFlashcardIndex == _flashcards.Count - 1 && _isFlipped;
         }
@@ -613,7 +613,7 @@ namespace WinFormsApp1.View.User.Controls
         {
             var content = _currentContents[_currentContentIndex];
             await MarkContentCompleteAsync(content.ContentId);
-            MessageBox.Show("?ã hoàn thành luy?n t?p flashcard!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("?Ã£ hoÃ n thÃ nh luy?n t?p flashcard!", "ThÃ nh cÃ´ng", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         #endregion
@@ -623,7 +623,7 @@ namespace WinFormsApp1.View.User.Controls
         private async Task LoadTestContentAsync(LessonContent content)
         {
             pnlTest.Visible = true;
-            
+
             if (!content.RefId.HasValue) return;
 
             using var context = new LearningPlatformContext();
@@ -668,7 +668,7 @@ namespace WinFormsApp1.View.User.Controls
 
             var lblQuestion = new Label
             {
-                Text = $"Câu {number}: {question.StemText}",
+                Text = $"CÃ¢u {number}: {question.StemText}",
                 Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 AutoSize = true,
                 Width = 720,
@@ -704,12 +704,12 @@ namespace WinFormsApp1.View.User.Controls
             }
             else if (question.Type == "TrueFalse")
             {
-                var trueOption = question.QuestionOptions.FirstOrDefault(o => o.OptionText.Contains("?úng"));
+                var trueOption = question.QuestionOptions.FirstOrDefault(o => o.OptionText.Contains("?Ãºng"));
                 var falseOption = question.QuestionOptions.FirstOrDefault(o => o.OptionText.Contains("Sai"));
 
                 var radioTrue = new RadioButton
                 {
-                    Text = "?úng",
+                    Text = "?Ãºng",
                     Location = new Point(20, yPos),
                     Tag = trueOption?.OptionId
                 };
@@ -746,8 +746,8 @@ namespace WinFormsApp1.View.User.Controls
             if (_selectedAnswers.Count < _questions.Count)
             {
                 var result = MessageBox.Show(
-                    $"B?n ch? tr? l?i {_selectedAnswers.Count}/{_questions.Count} câu. B?n có ch?c mu?n n?p bài?",
-                    "Xác nh?n",
+                    $"B?n ch? tr? l?i {_selectedAnswers.Count}/{_questions.Count} cÃ¢u. B?n cÃ³ ch?c mu?n n?p bÃ i?",
+                    "XÃ¡c nh?n",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
 
@@ -765,9 +765,9 @@ namespace WinFormsApp1.View.User.Controls
                 if (!userId.HasValue) return;
 
                 using var context = new LearningPlatformContext();
-                
+
                 var timeSpent = (int)(DateTime.UtcNow - _testStartTime).TotalSeconds;
-                
+
                 // Calculate score
                 decimal totalScore = 0;
                 decimal maxScore = _currentTest.MaxScore ?? _questions.Sum(q => q.Points);
@@ -832,17 +832,17 @@ namespace WinFormsApp1.View.User.Controls
                 // Show result
                 var percentage = (totalScore / maxScore) * 100;
                 MessageBox.Show(
-                    $"K?t qu? bài ki?m tra:\n\n" +
+                    $"K?t qu? bÃ i ki?m tra:\n\n" +
                     $"?i?m: {totalScore}/{maxScore} ({percentage:F1}%)\n" +
-                    $"Th?i gian: {timeSpent / 60} phút {timeSpent % 60} giây\n" +
-                    $"S? câu ?úng: {_selectedAnswers.Count(a => _questions.First(q => q.QuestionId == a.Key).QuestionOptions.Any(o => o.OptionId == a.Value && o.IsCorrect))}/{_questions.Count}",
+                    $"Th?i gian: {timeSpent / 60} phÃºt {timeSpent % 60} giÃ¢y\n" +
+                    $"S? cÃ¢u ?Ãºng: {_selectedAnswers.Count(a => _questions.First(q => q.QuestionId == a.Key).QuestionOptions.Any(o => o.OptionId == a.Value && o.IsCorrect))}/{_questions.Count}",
                     "K?t qu?",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"L?i n?p bài: {ex.Message}", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"L?i n?p bÃ i: {ex.Message}", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -882,7 +882,7 @@ namespace WinFormsApp1.View.User.Controls
         {
             var content = _currentContents[_currentContentIndex];
             await MarkContentCompleteAsync(content.ContentId);
-            MessageBox.Show("?ã ?ánh d?u hoàn thành!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("?Ã£ ?Ã¡nh d?u hoÃ n thÃ nh!", "ThÃ nh cÃ´ng", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private async Task MarkContentCompleteAsync(int contentId, decimal? score = null)
@@ -893,10 +893,10 @@ namespace WinFormsApp1.View.User.Controls
                 if (!userId.HasValue) return;
 
                 using var context = new LearningPlatformContext();
-                
+
                 var progress = await context.CourseProgresses
-                    .FirstOrDefaultAsync(cp => 
-                        cp.UserId == userId.Value && 
+                    .FirstOrDefaultAsync(cp =>
+                        cp.UserId == userId.Value &&
                         cp.ContentId == contentId);
 
                 var content = _currentContents.First(c => c.ContentId == contentId);
@@ -952,7 +952,7 @@ namespace WinFormsApp1.View.User.Controls
             // Status icon (left side)
             var lblStatus = new Label
             {
-                Text = isCompleted ? "?" : "?",
+                Text = isCompleted ? "âœ“" : "â—‹",
                 Location = new Point(15, 15),
                 Size = new Size(30, 30),
                 Font = new Font("Segoe UI", 14, FontStyle.Bold),
@@ -1003,10 +1003,10 @@ namespace WinFormsApp1.View.User.Controls
                 TextAlign = ContentAlignment.MiddleRight
             };
 
-            panel.Controls.AddRange(new Control[] { 
-                lblStatus, lblContentIcon, lblTitle, lblContentType, lblDuration 
+            panel.Controls.AddRange(new Control[] {
+                lblStatus, lblContentIcon, lblTitle, lblContentType, lblDuration
             });
-            
+
             panel.Click += async (s, e) => await LoadLessonAsync(_currentCourse.Slug, lesson.LessonId);
             lblTitle.Click += async (s, e) => await LoadLessonAsync(_currentCourse.Slug, lesson.LessonId);
 
@@ -1017,17 +1017,17 @@ namespace WinFormsApp1.View.User.Controls
         {
             // Get first content type
             var firstContent = lesson.LessonContents.OrderBy(lc => lc.OrderIndex).FirstOrDefault();
-            
+
             if (firstContent == null)
-                return ("??", ColorPalette.TextSecondary, "N?i dung");
+                return ("ðŸ“„", ColorPalette.TextSecondary, "Ná»™i dung");
 
             return firstContent.ContentType switch
             {
-                "Video" => ("??", Color.FromArgb(220, 53, 69), "Video"),
-                "Theory" => ("??", Color.FromArgb(52, 144, 220), "Lý thuy?t"),
-                "FlashcardSet" => ("???", Color.FromArgb(255, 193, 7), "Flashcard"),
-                "Test" => ("??", Color.FromArgb(40, 167, 69), "Ki?m tra"),
-                _ => ("??", ColorPalette.TextSecondary, "N?i dung")
+                "Video" => ("â–¶ï¸", Color.FromArgb(220, 53, 69), "Video"),
+                "Theory" => ("ðŸ“–", Color.FromArgb(52, 144, 220), "LÃ½ thuyáº¿t"),
+                "FlashcardSet" => ("ðŸ—‚ï¸", Color.FromArgb(255, 193, 7), "Flashcard"),
+                "Test" => ("âœï¸", Color.FromArgb(40, 167, 69), "Kiá»ƒm tra"),
+                _ => ("ðŸ“„", ColorPalette.TextSecondary, "Ná»™i dung")
             };
         }
 
@@ -1035,7 +1035,7 @@ namespace WinFormsApp1.View.User.Controls
         {
             // Calculate total duration based on content
             var totalContents = lesson.LessonContents.Count;
-            
+
             if (totalContents == 0)
                 return "";
 
@@ -1044,15 +1044,20 @@ namespace WinFormsApp1.View.User.Controls
                 var content = lesson.LessonContents.First();
                 return content.ContentType switch
                 {
-                    "Video" => "~10 phút",
-                    "Theory" => "~5 phút",
-                    "FlashcardSet" => "~15 phút",
-                    "Test" => "~20 phút",
+                    "Video" => "~10 phÃºt",
+                    "Theory" => "~5 phÃºt",
+                    "FlashcardSet" => "~15 phÃºt",
+                    "Test" => "~20 phÃºt",
                     _ => ""
                 };
             }
 
-            return $"{totalContents} n?i dung";
+            return $"{totalContents} ná»™i dung";
+        }
+
+        private void lblCourseTitle_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
