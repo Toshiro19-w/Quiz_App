@@ -33,6 +33,12 @@ namespace WinFormsApp1.Helpers
             _currentUser = null;
         }
 
+        // For testing purposes only
+        public static void SetTestUser(User user)
+        {
+            _currentUser = user;
+        }
+
         public static bool IsAdmin()
         {
             if (_currentUser == null) return false;
