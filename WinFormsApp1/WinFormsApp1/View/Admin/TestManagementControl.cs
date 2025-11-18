@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Models.Entities;
@@ -8,24 +9,22 @@ using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.Admin
 {
-    public partial class TestManagementControl : UserControl
+    public partial class TestManagementControl : AdminBaseControl
     {
-        private AdminController _adminController;
         private bool isEditing = false;
         private int editingTestId = 0;
 
-        public TestManagementControl()
+        public TestManagementControl() : base()
         {
-            _adminController = new AdminController();
             InitializeComponent();
         }
 
-        private void TestManagementControl_Load(object sender, EventArgs e)
+        private async void TestManagementControl_Load(object sender, EventArgs e)
         {
-            ApplyModernStyling();
+            ApplyModernStyling(dataGridView, formPanel);
             SetEditMode(false);
-            LoadTests();
             dataGridView.CellClick += DataGridView_CellClick;
+            await LoadTestsAsync();
         }
 
         private void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -38,47 +37,10 @@ namespace WinFormsApp1.View.Admin
 
         private void TestManagementControl_Resize(object sender, EventArgs e)
         {
-            AdjustResponsiveLayout();
+            AdjustResponsiveLayout(dataGridView, formPanel);
         }
 
-        private void ApplyModernStyling()
-        {
-            if (dataGridView == null || formPanel == null) return;
-            
-            // Apply modern styling to DataGridView
-            dataGridView.BorderStyle = BorderStyle.None;
-            dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(238, 239, 249);
-            dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridView.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 144, 220);
-            dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
-            dataGridView.BackgroundColor = Color.White;
-            dataGridView.EnableHeadersVisualStyles = false;
-            dataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 144, 220);
-            dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            
-            // Apply card styling to form panel
-            formPanel.BorderStyle = BorderStyle.FixedSingle;
-        }
-
-        private void AdjustResponsiveLayout()
-        {
-            if (dataGridView == null || formPanel == null) return;
-            
-            if (Width < 1100)
-            {
-                dataGridView.Width = Width - 60;
-                formPanel.Location = new Point(20, dataGridView.Bottom + 20);
-            }
-            else
-            {
-                dataGridView.Width = Width - 420;
-                formPanel.Location = new Point(dataGridView.Right + 20, 80);
-            }
-        }
-
-        private async void LoadTests()
+        private async Task LoadTestsAsync()
         {
             try
             {
@@ -94,7 +56,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}", "Lỗi");
+                ToastHelper.Show(this.FindForm(), $"Lỗi tải dữ liệu: {ex.Message}");
             }
         }
 
@@ -110,14 +72,14 @@ namespace WinFormsApp1.View.Admin
             if (dataGridView.SelectedRows.Count > 0)
             {
                 var testId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                LoadTestForEdit(testId);
+                _ = LoadTestForEditAsync(testId);
                 SetEditMode(true);
                 isEditing = true;
                 editingTestId = testId;
             }
         }
 
-        private async void LoadTestForEdit(int testId)
+        private async Task LoadTestForEditAsync(int testId)
         {
             try
             {
@@ -131,7 +93,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải thông tin bài kiểm tra: {ex.Message}", "Lỗi");
+                ToastHelper.Show(this.FindForm(), $"Lỗi tải thông tin bài kiểm tra: {ex.Message}");
             }
         }
 
@@ -141,14 +103,14 @@ namespace WinFormsApp1.View.Admin
             {
                 if (string.IsNullOrWhiteSpace(txtTitle.Text))
                 {
-                    MessageBox.Show("Vui lòng nhập tên bài kiểm tra", "Thông báo");
+                    ToastHelper.Show(this.FindForm(), "Vui lòng nhập tên bài kiểm tra");
                     return;
                 }
 
                 int timeLimit = 0;
                 if (!string.IsNullOrWhiteSpace(txtTimeLimit.Text) && !int.TryParse(txtTimeLimit.Text, out timeLimit))
                 {
-                    MessageBox.Show("Thời gian không hợp lệ", "Thông báo");
+                    ToastHelper.Show(this.FindForm(), "Thời gian không hợp lệ");
                     return;
                 }
 
@@ -179,19 +141,19 @@ namespace WinFormsApp1.View.Admin
 
                 if (success)
                 {
-                    MessageBox.Show("Lưu thành công!", "Thông báo");
-                    LoadTests();
+                    ToastHelper.Show(this.FindForm(), "Lưu thành công!");
+                    await LoadTestsAsync();
                     SetEditMode(false);
                     ClearForm();
                 }
                 else
                 {
-                    MessageBox.Show("Lưu thất bại!", "Lỗi");
+                    ToastHelper.Show(this.FindForm(), "Lưu thất bại!");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi lưu dữ liệu: {ex.Message}", "Lỗi");
+                ToastHelper.Show(this.FindForm(), $"Lỗi lưu dữ liệu: {ex.Message}");
             }
         }
 
@@ -201,7 +163,7 @@ namespace WinFormsApp1.View.Admin
             {
                 var testId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
                 var result = MessageBox.Show("Bạn có chắc muốn xóa bài kiểm tra này?", "Xác nhận", MessageBoxButtons.YesNo);
-                
+
                 if (result == DialogResult.Yes)
                 {
                     try
@@ -209,17 +171,17 @@ namespace WinFormsApp1.View.Admin
                         var success = await _adminController.DeleteTestAsync(testId);
                         if (success)
                         {
-                            MessageBox.Show("Xóa thành công!", "Thông báo");
-                            LoadTests();
+                            ToastHelper.Show(this.FindForm(), "Xóa thành công!");
+                            await LoadTestsAsync();
                         }
                         else
                         {
-                            MessageBox.Show("Xóa thất bại!", "Lỗi");
+                            ToastHelper.Show(this.FindForm(), "Xóa thất bại!");
                         }
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Lỗi xóa dữ liệu: {ex.Message}", "Lỗi");
+                        ToastHelper.Show(this.FindForm(), $"Lỗi xóa dữ liệu: {ex.Message}");
                     }
                 }
             }
@@ -238,7 +200,7 @@ namespace WinFormsApp1.View.Admin
             btnDelete.Visible = !editing;
             btnSave.Visible = editing;
             btnCancel.Visible = editing;
-            
+
             txtTitle.Enabled = editing;
             txtTimeLimit.Enabled = editing;
             txtDescription.Enabled = editing;

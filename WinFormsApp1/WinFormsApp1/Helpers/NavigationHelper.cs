@@ -110,6 +110,12 @@ namespace WinFormsApp1.Helpers
                 loginForm.Show();
                 Application.OpenForms[0]?.Close();
             }
+            else
+            {
+                // show a small toast to acknowledge cancellation
+                var mainForm = Application.OpenForms.Count > 0 ? Application.OpenForms[0] : null;
+                if (mainForm != null) ToastHelper.Show(mainForm, "Hủy đăng xuất");
+            }
         }
     }
 }

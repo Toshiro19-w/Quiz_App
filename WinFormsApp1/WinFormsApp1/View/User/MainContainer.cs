@@ -94,8 +94,7 @@ namespace WinFormsApp1.View.User
             profileDropdown.OnBangDieuKhienClick += (s, e) =>
             {
                 profileDropdown.HideDropdown();
-                MessageBox.Show("Chức năng Bảng điều khiển đang được phát triển", "Thông báo",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ToastHelper.Show(this, "Chức năng Bảng điều khiển đang được phát triển");
             };
 
             // Event mới: Khi click vào menu profile (Cài đặt, Chỉnh sửa, Lịch sử)
@@ -234,8 +233,7 @@ namespace WinFormsApp1.View.User
         private void btnGiangVien_Click(object sender, EventArgs e)
         {
             // TODO: Navigate to instructor page
-            MessageBox.Show("Chức năng Giảng viên đang được phát triển", "Thông báo",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ToastHelper.Show(this, "Chức năng Giảng viên đang được phát triển");
         }
 
         private void btnHocTap_Click(object sender, EventArgs e)
