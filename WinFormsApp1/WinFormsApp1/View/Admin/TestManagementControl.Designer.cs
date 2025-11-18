@@ -73,21 +73,21 @@ namespace WinFormsApp1.View.Admin
             formPanel.Controls.Add(descLabel);
             formPanel.Controls.Add(txtTimeLimit);
             formPanel.Controls.Add(txtTitle);
-            formPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            formPanel.Location = new Point(1200, 80);
+            formPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
+            formPanel.Location = new Point(1200, 60);
             formPanel.Name = "formPanel";
-            formPanel.Size = new Size(640, 860);
+            formPanel.Size = new Size(350, 880);
             formPanel.TabIndex = 2;
-            formPanel.MaximumSize = new Size(700, 2000);
+            formPanel.MaximumSize = new Size(400, 2000);
             // 
             // btnCancel
             // 
-            btnCancel.BackColor = Color.FromArgb(107, 114, 128);
+            btnCancel.BackColor = Color.FromArgb(156, 163, 175);
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.ForeColor = Color.White;
-            btnCancel.Location = new Point(340, 640);
+            btnCancel.Location = new Point(180, 280);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(280, 45);
+            btnCancel.Size = new Size(155, 40);
             btnCancel.TabIndex = 8;
             btnCancel.Text = "❌ Hủy";
             btnCancel.UseVisualStyleBackColor = false;
@@ -96,12 +96,12 @@ namespace WinFormsApp1.View.Admin
             // 
             // btnSave
             // 
-            btnSave.BackColor = Color.FromArgb(52, 144, 220);
+            btnSave.BackColor = Color.FromArgb(34, 197, 94);
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(20, 640);
+            btnSave.Location = new Point(15, 280);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(280, 45);
+            btnSave.Size = new Size(155, 40);
             btnSave.TabIndex = 7;
             btnSave.Text = "💾 Lưu";
             btnSave.UseVisualStyleBackColor = false;
@@ -113,9 +113,9 @@ namespace WinFormsApp1.View.Admin
             btnDelete.BackColor = Color.FromArgb(239, 68, 68);
             btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.ForeColor = Color.White;
-            btnDelete.Location = new Point(460, 580);
+            btnDelete.Location = new Point(180, 330);
             btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(150, 45);
+            btnDelete.Size = new Size(155, 40);
             btnDelete.TabIndex = 6;
             btnDelete.Text = "🗑️ Xóa";
             btnDelete.UseVisualStyleBackColor = false;
@@ -123,12 +123,12 @@ namespace WinFormsApp1.View.Admin
             // 
             // btnEdit
             // 
-            btnEdit.BackColor = Color.FromArgb(34, 197, 94);
+            btnEdit.BackColor = Color.FromArgb(59, 130, 246);
             btnEdit.FlatStyle = FlatStyle.Flat;
             btnEdit.ForeColor = Color.White;
-            btnEdit.Location = new Point(300, 580);
+            btnEdit.Location = new Point(15, 330);
             btnEdit.Name = "btnEdit";
-            btnEdit.Size = new Size(150, 45);
+            btnEdit.Size = new Size(155, 40);
             btnEdit.TabIndex = 5;
             btnEdit.Text = "✏️ Sửa";
             btnEdit.UseVisualStyleBackColor = false;
@@ -136,70 +136,68 @@ namespace WinFormsApp1.View.Admin
             // 
             // btnAdd
             // 
-            btnAdd.BackColor = Color.FromArgb(52, 144, 220);
+            btnAdd.BackColor = Color.FromArgb(34, 197, 94);
             btnAdd.FlatStyle = FlatStyle.Flat;
             btnAdd.ForeColor = Color.White;
-            btnAdd.Location = new Point(20, 580);
+            btnAdd.Location = new Point(15, 280);
             btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(200, 45);
+            btnAdd.Size = new Size(320, 40);
             btnAdd.TabIndex = 4;
-            btnAdd.Text = "➕ Thêm";
+            btnAdd.Text = "➕ Thêm bài kiểm tra";
             btnAdd.UseVisualStyleBackColor = false;
             btnAdd.Click += BtnAdd_Click;
             // 
             // txtDescription
             // 
-            txtDescription.Location = new Point(20, 160);
+            txtDescription.Location = new Point(15, 160);
             txtDescription.Multiline = true;
             txtDescription.Name = "txtDescription";
-            txtDescription.Size = new Size(580, 280);
+            txtDescription.Size = new Size(320, 100);
             txtDescription.TabIndex = 3;
             // 
             // descLabel
             // 
             descLabel.AutoSize = true;
-            descLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            descLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             descLabel.ForeColor = Color.FromArgb(45, 55, 72);
-            descLabel.Location = new Point(16, 120);
+            descLabel.Location = new Point(15, 135);
             descLabel.Name = "descLabel";
-            descLabel.Size = new Size(78, 28);
+            descLabel.Size = new Size(65, 23);
             descLabel.TabIndex = 2;
             descLabel.Text = "Mô tả:";
             // 
             // txtTimeLimit
             // 
-            txtTimeLimit.Location = new Point(20, 110);
+            txtTimeLimit.Location = new Point(15, 90);
             txtTimeLimit.Name = "txtTimeLimit";
-            txtTimeLimit.PlaceholderText = "Thời gian (phút)";
-            txtTimeLimit.Size = new Size(580, 35);
+            txtTimeLimit.Size = new Size(320, 35);
             txtTimeLimit.TabIndex = 1;
             // 
             // txtTitle
             // 
-            txtTitle.Location = new Point(20, 30);
+            txtTitle.Location = new Point(15, 30);
             txtTitle.Name = "txtTitle";
-            txtTitle.PlaceholderText = "Tên bài kiểm tra";
-            txtTitle.Size = new Size(580, 35);
+            txtTitle.Size = new Size(320, 35);
             txtTitle.TabIndex = 0;
             // 
             // dataGridView
             // 
             dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView.Location = new Point(20, 80);
+            dataGridView.Location = new Point(20, 60);
             dataGridView.Name = "dataGridView";
             dataGridView.RowHeadersWidth = 51;
             dataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
-            dataGridView.Size = new Size(1160, 860);
+            dataGridView.Size = new Size(1160, 880);
             dataGridView.TabIndex = 1;
             // 
             // titleLabel
             // 
             titleLabel.AutoSize = true;
-            titleLabel.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
+            titleLabel.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             titleLabel.ForeColor = Color.FromArgb(45, 55, 72);
-            titleLabel.Location = new Point(20, 20);
+            titleLabel.Location = new Point(20, 10);
             titleLabel.Name = "titleLabel";
-            titleLabel.Size = new Size(342, 62);
+            titleLabel.Size = new Size(290, 45);
             titleLabel.TabIndex = 0;
             titleLabel.Text = "Quản lý bài kiểm tra";
             // 

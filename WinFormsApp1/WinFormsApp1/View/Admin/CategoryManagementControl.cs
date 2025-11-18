@@ -9,25 +9,24 @@ using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.Admin
 {
-    public partial class UserManagementControl : AdminBaseControl
+    public partial class CategoryManagementControl : AdminBaseControl
     {
         private bool isEditing = false;
-        private int editingUserId = 0;
+        private int editingCategoryId = 0;
 
-        public UserManagementControl() : base()
+        public CategoryManagementControl() : base()
         {
             InitializeComponent();
         }
 
-        private async void UserManagementControl_Load(object sender, EventArgs e)
+        private async void CategoryManagementControl_Load(object sender, EventArgs e)
         {
             ApplyModernStyling(dataGridView, formPanel);
             ApplyModernFormStyling(formPanel);
-            SetupSearchFunctionality(dataGridView, "Email", "Họ_tên", "Username");
-            SetupPagination(dataGridView, async (page) => await LoadUsersAsync());
+            SetupSearchFunctionality(dataGridView, "Tên", "Mô_tả");
             SetEditMode(false);
             dataGridView.CellClick += DataGridView_CellClick;
-            await LoadUsersAsync();
+            await LoadCategoriesAsync();
         }
 
         private void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -38,23 +37,22 @@ namespace WinFormsApp1.View.Admin
             }
         }
 
-        private void UserManagementControl_Resize(object sender, EventArgs e)
+        private void CategoryManagementControl_Resize(object sender, EventArgs e)
         {
             AdjustResponsiveLayout(dataGridView, formPanel);
         }
 
-        private async Task LoadUsersAsync()
+        private async Task LoadCategoriesAsync()
         {
             try
             {
-                var users = await _adminController.GetUsersAsync();
-                dataGridView.DataSource = users.Select(u => new
+                var categories = await _adminController.GetCategoriesAsync();
+                dataGridView.DataSource = categories.Select(c => new
                 {
-                    ID = u.UserId,
-                    u.Email,
-                    Họ_tên = u.FullName,
-                    u.Username,
-                    Ngày_tạo = u.CreatedAt.ToString("dd/MM/yyyy")
+                    ID = c.CategoryId,
+                    Tên = c.Name,
+                    Mô_tả = c.Description?.Length > 50 ? c.Description.Substring(0, 50) + "..." : c.Description,
+                    Ngày_tạo = c.CreatedAt.ToString("dd/MM/yyyy")
                 }).ToList();
             }
             catch (Exception ex)
@@ -74,29 +72,28 @@ namespace WinFormsApp1.View.Admin
         {
             if (dataGridView.SelectedRows.Count > 0)
             {
-                var userId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                _ = LoadUserForEditAsync(userId);
+                var categoryId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
+                _ = LoadCategoryForEditAsync(categoryId);
                 SetEditMode(true);
                 isEditing = true;
-                editingUserId = userId;
+                editingCategoryId = categoryId;
             }
         }
 
-        private async Task LoadUserForEditAsync(int userId)
+        private async Task LoadCategoryForEditAsync(int categoryId)
         {
             try
             {
-                var user = await _adminController.GetUserByIdAsync(userId);
-                if (user != null)
+                var category = await _adminController.GetCategoryByIdAsync(categoryId);
+                if (category != null)
                 {
-                    SetTextValue(txtEmail, user.Email);
-                    SetTextValue(txtUsername, user.Username);
-                    SetTextValue(txtFullName, user.FullName);
+                    SetTextValue(txtName, category.Name);
+                    SetTextValue(txtDescription, category.Description);
                 }
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this.FindForm(), $"Lỗi tải thông tin người dùng: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), $"Lỗi tải thông tin danh mục: {ex.Message}");
             }
         }
 
@@ -104,40 +101,31 @@ namespace WinFormsApp1.View.Admin
         {
             try
             {
-                // Validate input
-                var validationResult = ValidationHelper.ValidateUser(txtEmail.Text, txtUsername.Text, txtFullName.Text);
+                var validationResult = ValidationHelper.ValidateTitle(txtName.Text);
                 if (!ValidateInput(validationResult)) return;
 
-                var user = new WinFormsApp1.Models.Entities.User
+                var category = new CourseCategory
                 {
-                    Email = GetTextValue(txtEmail).Trim(),
-                    Username = GetTextValue(txtUsername).Trim(),
-                    FullName = GetTextValue(txtFullName).Trim(),
-                    PasswordHash = "default",
-                    RoleId = 1,
-                    Status = 1,
+                    Name = GetTextValue(txtName).Trim(),
+                    Description = GetTextValue(txtDescription)?.Trim(),
                     CreatedAt = DateTime.UtcNow
                 };
 
                 bool success;
                 if (isEditing)
                 {
-                    user.UserId = editingUserId;
-                    success = await _adminController.UpdateUserAsync(user);
+                    category.CategoryId = editingCategoryId;
+                    success = await _adminController.UpdateCategoryAsync(category);
                 }
                 else
                 {
-                    success = await _adminController.CreateUserAsync(user);
+                    success = await _adminController.CreateCategoryAsync(category);
                 }
 
                 if (success)
                 {
-                    await LogAdminActionAsync(isEditing ? "UPDATE" : "CREATE", "User", 
-                        isEditing ? editingUserId : (int?)null, 
-                        $"{(isEditing ? "Cập nhật" : "Tạo")} người dùng: {user.Email}");
-                    
                     ToastHelper.Show(this.FindForm(), "✅ Lưu thành công!");
-                    await LoadUsersAsync();
+                    await LoadCategoriesAsync();
                     SetEditMode(false);
                     ClearForm();
                 }
@@ -156,19 +144,18 @@ namespace WinFormsApp1.View.Admin
         {
             if (dataGridView.SelectedRows.Count > 0)
             {
-                var userId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                var result = MessageBox.Show("Bạn có chắc muốn xóa người dùng này?", "Xác nhận", MessageBoxButtons.YesNo);
+                var categoryId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
+                var result = MessageBox.Show("Bạn có chắc muốn xóa danh mục này?", "Xác nhận", MessageBoxButtons.YesNo);
 
                 if (result == DialogResult.Yes)
                 {
                     try
                     {
-                        var success = await _adminController.DeleteUserAsync(userId);
+                        var success = await _adminController.DeleteCategoryAsync(categoryId);
                         if (success)
                         {
-                            await LogAdminActionAsync("DELETE", "User", userId, $"Xóa người dùng ID: {userId}");
                             ToastHelper.Show(this.FindForm(), "Xóa thành công!");
-                            await LoadUsersAsync();
+                            await LoadCategoriesAsync();
                         }
                         else
                         {
@@ -197,16 +184,14 @@ namespace WinFormsApp1.View.Admin
             btnSave.Visible = editing;
             btnCancel.Visible = editing;
 
-            txtEmail.Enabled = editing;
-            txtUsername.Enabled = editing;
-            txtFullName.Enabled = editing;
+            txtName.Enabled = editing;
+            txtDescription.Enabled = editing;
         }
 
         private void ClearForm()
         {
-            SetTextValue(txtEmail, "");
-            SetTextValue(txtUsername, "");
-            SetTextValue(txtFullName, "");
+            SetTextValue(txtName, "");
+            SetTextValue(txtDescription, "");
         }
     }
 }

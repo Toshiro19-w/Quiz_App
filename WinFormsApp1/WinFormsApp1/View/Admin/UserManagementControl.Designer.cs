@@ -71,21 +71,21 @@ namespace WinFormsApp1.View.Admin
             formPanel.Controls.Add(txtFullName);
             formPanel.Controls.Add(txtUsername);
             formPanel.Controls.Add(txtEmail);
-            formPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            formPanel.Location = new Point(1200, 80);
+            formPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
+            formPanel.Location = new Point(1200, 60);
             formPanel.Name = "formPanel";
-            formPanel.Size = new Size(640, 860);
+            formPanel.Size = new Size(350, 880);
             formPanel.TabIndex = 2;
-            formPanel.MaximumSize = new Size(700, 2000);
+            formPanel.MaximumSize = new Size(400, 2000);
             // 
             // btnCancel
             // 
-            btnCancel.BackColor = Color.FromArgb(107, 114, 128);
+            btnCancel.BackColor = Color.FromArgb(156, 163, 175);
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.ForeColor = Color.White;
-            btnCancel.Location = new Point(340, 640);
+            btnCancel.Location = new Point(180, 220);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(280, 45);
+            btnCancel.Size = new Size(155, 40);
             btnCancel.TabIndex = 7;
             btnCancel.Text = "❌ Hủy";
             btnCancel.UseVisualStyleBackColor = false;
@@ -94,12 +94,12 @@ namespace WinFormsApp1.View.Admin
             // 
             // btnSave
             // 
-            btnSave.BackColor = Color.FromArgb(52, 144, 220);
+            btnSave.BackColor = Color.FromArgb(34, 197, 94);
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(20, 640);
+            btnSave.Location = new Point(15, 220);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(280, 45);
+            btnSave.Size = new Size(155, 40);
             btnSave.TabIndex = 6;
             btnSave.Text = "💾 Lưu";
             btnSave.UseVisualStyleBackColor = false;
@@ -111,9 +111,9 @@ namespace WinFormsApp1.View.Admin
             btnDelete.BackColor = Color.FromArgb(239, 68, 68);
             btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.ForeColor = Color.White;
-            btnDelete.Location = new Point(460, 580);
+            btnDelete.Location = new Point(180, 270);
             btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(150, 45);
+            btnDelete.Size = new Size(155, 40);
             btnDelete.TabIndex = 5;
             btnDelete.Text = "🗑️ Xóa";
             btnDelete.UseVisualStyleBackColor = false;
@@ -121,12 +121,12 @@ namespace WinFormsApp1.View.Admin
             // 
             // btnEdit
             // 
-            btnEdit.BackColor = Color.FromArgb(34, 197, 94);
+            btnEdit.BackColor = Color.FromArgb(59, 130, 246);
             btnEdit.FlatStyle = FlatStyle.Flat;
             btnEdit.ForeColor = Color.White;
-            btnEdit.Location = new Point(300, 580);
+            btnEdit.Location = new Point(15, 270);
             btnEdit.Name = "btnEdit";
-            btnEdit.Size = new Size(150, 45);
+            btnEdit.Size = new Size(155, 40);
             btnEdit.TabIndex = 4;
             btnEdit.Text = "✏️ Sửa";
             btnEdit.UseVisualStyleBackColor = false;
@@ -134,59 +134,56 @@ namespace WinFormsApp1.View.Admin
             // 
             // btnAdd
             // 
-            btnAdd.BackColor = Color.FromArgb(52, 144, 220);
+            btnAdd.BackColor = Color.FromArgb(34, 197, 94);
             btnAdd.FlatStyle = FlatStyle.Flat;
             btnAdd.ForeColor = Color.White;
-            btnAdd.Location = new Point(20, 580);
+            btnAdd.Location = new Point(15, 220);
             btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(200, 45);
+            btnAdd.Size = new Size(320, 40);
             btnAdd.TabIndex = 3;
-            btnAdd.Text = "➕ Thêm";
+            btnAdd.Text = "➕ Thêm người dùng";
             btnAdd.UseVisualStyleBackColor = false;
             btnAdd.Click += BtnAdd_Click;
             // 
             // txtFullName
             // 
-            txtFullName.Location = new Point(20, 500);
+            txtFullName.Location = new Point(15, 150);
             txtFullName.Name = "txtFullName";
-            txtFullName.PlaceholderText = "Họ tên";
-            txtFullName.Size = new Size(580, 35);
+            txtFullName.Size = new Size(320, 35);
             txtFullName.TabIndex = 2;
             // 
             // txtUsername
             // 
-            txtUsername.Location = new Point(20, 360);
+            txtUsername.Location = new Point(15, 90);
             txtUsername.Name = "txtUsername";
-            txtUsername.PlaceholderText = "Username";
-            txtUsername.Size = new Size(580, 35);
+            txtUsername.Size = new Size(320, 35);
             txtUsername.TabIndex = 1;
             // 
             // txtEmail
             // 
-            txtEmail.Location = new Point(20, 30);
+            txtEmail.Location = new Point(15, 30);
             txtEmail.Name = "txtEmail";
-            txtEmail.PlaceholderText = "Email";
-            txtEmail.Size = new Size(580, 35);
+            txtEmail.Size = new Size(320, 35);
             txtEmail.TabIndex = 0;
             // 
             // dataGridView
             // 
             dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView.Location = new Point(20, 80);
+            dataGridView.Location = new Point(20, 60);
             dataGridView.Name = "dataGridView";
             dataGridView.RowHeadersWidth = 51;
             dataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
-            dataGridView.Size = new Size(1160, 860);
+            dataGridView.Size = new Size(1160, 880);
             dataGridView.TabIndex = 1;
             // 
             // titleLabel
             // 
             titleLabel.AutoSize = true;
-            titleLabel.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
+            titleLabel.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             titleLabel.ForeColor = Color.FromArgb(45, 55, 72);
-            titleLabel.Location = new Point(20, 20);
+            titleLabel.Location = new Point(20, 10);
             titleLabel.Name = "titleLabel";
-            titleLabel.Size = new Size(341, 62);
+            titleLabel.Size = new Size(280, 45);
             titleLabel.TabIndex = 0;
             titleLabel.Text = "Quản lý người dùng";
             // 

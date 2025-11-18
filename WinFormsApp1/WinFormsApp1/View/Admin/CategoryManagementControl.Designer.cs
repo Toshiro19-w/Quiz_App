@@ -3,15 +3,12 @@ using System.Windows.Forms;
 
 namespace WinFormsApp1.View.Admin
 {
-    partial class CourseManagementControl
+    partial class CategoryManagementControl
     {
         private System.ComponentModel.IContainer components = null;
         private DataGridView dataGridView;
-        private TextBox txtTitle;
+        private TextBox txtName;
         private TextBox txtDescription;
-        private TextBox txtPrice;
-        private ComboBox cmbCategory;
-        private CheckBox chkPublished;
         private Button btnAdd;
         private Button btnEdit;
         private Button btnDelete;
@@ -40,12 +37,8 @@ namespace WinFormsApp1.View.Admin
             btnDelete = new Button();
             btnEdit = new Button();
             btnAdd = new Button();
-            chkPublished = new CheckBox();
-            cmbCategory = new ComboBox();
-            txtPrice = new TextBox();
             txtDescription = new TextBox();
-
-            txtTitle = new TextBox();
+            txtName = new TextBox();
             dataGridView = new DataGridView();
             titleLabel = new Label();
             mainContainer.SuspendLayout();
@@ -73,13 +66,8 @@ namespace WinFormsApp1.View.Admin
             formPanel.Controls.Add(btnDelete);
             formPanel.Controls.Add(btnEdit);
             formPanel.Controls.Add(btnAdd);
-            formPanel.Controls.Add(chkPublished);
-            formPanel.Controls.Add(cmbCategory);
-            formPanel.Controls.Add(txtPrice);
             formPanel.Controls.Add(txtDescription);
-
-            formPanel.Controls.Add(txtTitle);
-            // make formPanel anchored to top-right and limit max width
+            formPanel.Controls.Add(txtName);
             formPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
             formPanel.Location = new Point(1200, 60);
             formPanel.Name = "formPanel";
@@ -92,10 +80,10 @@ namespace WinFormsApp1.View.Admin
             btnCancel.BackColor = Color.FromArgb(156, 163, 175);
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.ForeColor = Color.White;
-            btnCancel.Location = new Point(180, 245);
+            btnCancel.Location = new Point(180, 210);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(155, 40);
-            btnCancel.TabIndex = 9;
+            btnCancel.TabIndex = 7;
             btnCancel.Text = "❌ Hủy";
             btnCancel.UseVisualStyleBackColor = false;
             btnCancel.Visible = false;
@@ -106,10 +94,10 @@ namespace WinFormsApp1.View.Admin
             btnSave.BackColor = Color.FromArgb(34, 197, 94);
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(15, 245);
+            btnSave.Location = new Point(15, 210);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(155, 40);
-            btnSave.TabIndex = 8;
+            btnSave.TabIndex = 6;
             btnSave.Text = "💾 Lưu";
             btnSave.UseVisualStyleBackColor = false;
             btnSave.Visible = false;
@@ -120,10 +108,10 @@ namespace WinFormsApp1.View.Admin
             btnDelete.BackColor = Color.FromArgb(239, 68, 68);
             btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.ForeColor = Color.White;
-            btnDelete.Location = new Point(180, 295);
+            btnDelete.Location = new Point(180, 260);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(155, 40);
-            btnDelete.TabIndex = 7;
+            btnDelete.TabIndex = 5;
             btnDelete.Text = "🗑️ Xóa";
             btnDelete.UseVisualStyleBackColor = false;
             btnDelete.Click += BtnDelete_Click;
@@ -133,10 +121,10 @@ namespace WinFormsApp1.View.Admin
             btnEdit.BackColor = Color.FromArgb(59, 130, 246);
             btnEdit.FlatStyle = FlatStyle.Flat;
             btnEdit.ForeColor = Color.White;
-            btnEdit.Location = new Point(15, 295);
+            btnEdit.Location = new Point(15, 260);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(155, 40);
-            btnEdit.TabIndex = 6;
+            btnEdit.TabIndex = 4;
             btnEdit.Text = "✏️ Sửa";
             btnEdit.UseVisualStyleBackColor = false;
             btnEdit.Click += BtnEdit_Click;
@@ -146,57 +134,31 @@ namespace WinFormsApp1.View.Admin
             btnAdd.BackColor = Color.FromArgb(34, 197, 94);
             btnAdd.FlatStyle = FlatStyle.Flat;
             btnAdd.ForeColor = Color.White;
-            btnAdd.Location = new Point(15, 245);
+            btnAdd.Location = new Point(15, 210);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(320, 40);
-            btnAdd.TabIndex = 5;
-            btnAdd.Text = "➕ Thêm khóa học";
+            btnAdd.TabIndex = 3;
+            btnAdd.Text = "➕ Thêm danh mục";
             btnAdd.UseVisualStyleBackColor = false;
             btnAdd.Click += BtnAdd_Click;
             // 
-            // chkPublished
-            // 
-            chkPublished.AutoSize = true;
-            chkPublished.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            chkPublished.ForeColor = Color.FromArgb(45, 55, 72);
-            chkPublished.Location = new Point(15, 205);
-            chkPublished.Name = "chkPublished";
-            chkPublished.Size = new Size(130, 27);
-            chkPublished.TabIndex = 5;
-            chkPublished.Text = "Đã xuất bản";
-            // 
-            // txtPrice
-            // 
-            txtPrice.Location = new Point(15, 155);
-            txtPrice.Name = "txtPrice";
-            txtPrice.Size = new Size(155, 35);
-            txtPrice.TabIndex = 3;
-            // 
-            // cmbCategory
-            // 
-            cmbCategory.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbCategory.Location = new Point(180, 155);
-            cmbCategory.Name = "cmbCategory";
-            cmbCategory.Size = new Size(155, 35);
-            cmbCategory.TabIndex = 4;
-            // 
             // txtDescription
             // 
-            txtDescription.Location = new Point(15, 80);
+            txtDescription.Location = new Point(15, 90);
             txtDescription.Multiline = true;
             txtDescription.Name = "txtDescription";
-            txtDescription.Size = new Size(320, 60);
+            txtDescription.Size = new Size(320, 100);
             txtDescription.TabIndex = 2;
             // 
             // descLabel
             // 
             // 
-            // txtTitle
+            // txtName
             // 
-            txtTitle.Location = new Point(15, 30);
-            txtTitle.Name = "txtTitle";
-            txtTitle.Size = new Size(320, 35);
-            txtTitle.TabIndex = 0;
+            txtName.Location = new Point(15, 30);
+            txtName.Name = "txtName";
+            txtName.Size = new Size(320, 35);
+            txtName.TabIndex = 0;
             // 
             // dataGridView
             // 
@@ -215,20 +177,20 @@ namespace WinFormsApp1.View.Admin
             titleLabel.ForeColor = Color.FromArgb(45, 55, 72);
             titleLabel.Location = new Point(20, 10);
             titleLabel.Name = "titleLabel";
-            titleLabel.Size = new Size(300, 45);
+            titleLabel.Size = new Size(280, 45);
             titleLabel.TabIndex = 0;
-            titleLabel.Text = "Quản lý khóa học";
+            titleLabel.Text = "Quản lý danh mục";
             // 
-            // CourseManagementControl
+            // CategoryManagementControl
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(248, 249, 250);
             Controls.Add(mainContainer);
-            Name = "CourseManagementControl";
+            Name = "CategoryManagementControl";
             Size = new Size(1898, 1024);
-            Load += CourseManagementControl_Load;
-            Resize += CourseManagementControl_Resize;
+            Load += CategoryManagementControl_Load;
+            Resize += CategoryManagementControl_Resize;
             mainContainer.ResumeLayout(false);
             mainContainer.PerformLayout();
             formPanel.ResumeLayout(false);
