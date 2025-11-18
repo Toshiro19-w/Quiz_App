@@ -7,6 +7,7 @@ using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
 using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.View.User.Controls.CourseControls;
+using WinFormsApp1.View.User.Controls.FlashcardControls;
 using System.IO;
 
 namespace WinFormsApp1.View.User.Controls
@@ -50,9 +51,24 @@ namespace WinFormsApp1.View.User.Controls
 
         private void btnViewAllFlashcards_Click(object sender, EventArgs e)
         {
-            // TODO: Navigate to Flashcard list page (will be implemented later)
-            MessageBox.Show("Chức năng xem tất cả flashcard sẽ được thêm sau", "Thông báo", 
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Navigate to FlashcardControl
+            var form = this.FindForm();
+            if (form == null) return;
+
+            var mainPanel = FindControlRecursive(form, "mainContentPanel") as Panel;
+
+            if (mainPanel == null)
+            {
+                mainPanel = this.Parent as Panel;
+            }
+
+            if (mainPanel == null) return;
+
+            mainPanel.Controls.Clear();
+
+            var flashcardControl = new FlashcardControl();
+            flashcardControl.Dock = DockStyle.Fill;
+            mainPanel.Controls.Add(flashcardControl);
         }
 
         private void SetupWelcomeBanner()
@@ -123,23 +139,40 @@ namespace WinFormsApp1.View.User.Controls
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 
                 // Draw background circle with a nice color
-                using (var brush = new SolidBrush(Color.FromArgb(128, 128, 128)))
+                using (var brush = new SolidBrush(Color.FromArgb(124, 77, 255)))
                 {
                     g.FillEllipse(brush, 0, 0, 80, 80);
                 }
 
-                // Draw initials
-                var userName = AuthHelper.CurrentUser?.FullName ?? "TMK";
-                var initials = GetInitials(userName);
-                using (var font = new Font("Segoe UI", 24, FontStyle.Bold))
-                using (var brush = new SolidBrush(Color.White))
+                // Draw user icon instead of initials when no name available
+                var userName = AuthHelper.CurrentUser?.FullName;
+                if (!string.IsNullOrWhiteSpace(userName))
                 {
-                    var format = new StringFormat
+                    var initials = GetInitials(userName);
+                    using (var font = new Font("Segoe UI", 24, FontStyle.Bold))
+                    using (var textBrush = new SolidBrush(Color.White))
                     {
-                        Alignment = StringAlignment.Center,
-                        LineAlignment = StringAlignment.Center
-                    };
-                    g.DrawString(initials, font, brush, new RectangleF(0, 0, 80, 80), format);
+                        var format = new StringFormat
+                        {
+                            Alignment = StringAlignment.Center,
+                            LineAlignment = StringAlignment.Center
+                        };
+                        g.DrawString(initials, font, textBrush, new RectangleF(0, 0, 80, 80), format);
+                    }
+                }
+                else
+                {
+                    // Draw user icon emoji when no user name
+                    using (var font = new Font("Segoe UI Emoji", 36, FontStyle.Regular))
+                    using (var textBrush = new SolidBrush(Color.White))
+                    {
+                        var format = new StringFormat
+                        {
+                            Alignment = StringAlignment.Center,
+                            LineAlignment = StringAlignment.Center
+                        };
+                        g.DrawString("👤", font, textBrush, new RectangleF(0, 0, 80, 80), format);
+                    }
                 }
             }
 
@@ -149,7 +182,7 @@ namespace WinFormsApp1.View.User.Controls
         private string GetInitials(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                return "TMK";
+                return "?";
 
             var parts = name.Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length == 1)
@@ -180,10 +213,12 @@ namespace WinFormsApp1.View.User.Controls
         {
             using var context = new LearningPlatformContext();
 
-            // Load only popular courses
+            // Load 4 courses with best ratings (highest AverageRating)
             var popular = await context.Courses
-                .OrderByDescending(c => c.TotalReviews)
-                .Take(12)
+                .Where(c => c.IsPublished)
+                .OrderByDescending(c => c.AverageRating)
+                .ThenByDescending(c => c.TotalReviews)
+                .Take(4)
                 .ToListAsync();
 
             foreach (var course in popular)
@@ -194,20 +229,21 @@ namespace WinFormsApp1.View.User.Controls
 
         private async void LoadFlashcardSets()
         {
-            using var context = new LearningPlatformContext();
-
-            // Load public flashcard sets
-            var flashcardSets = await context.FlashcardSets
-                .Include(fs => fs.Owner)
-                .Include(fs => fs.Flashcards)
-                .Where(fs => fs.Visibility == "Public" && !fs.IsDeleted)
-                .OrderByDescending(fs => fs.CreatedAt)
-                .Take(8)
-                .ToListAsync();
-
-            foreach (var flashcardSet in flashcardSets)
+            try
             {
-                flowFlashcards.Controls.Add(CreateFlashcardCard(flashcardSet));
+                var flashcardController = new WinFormsApp1.Controllers.FlashcardController();
+                
+                // Load 4 flashcard sets with most cards (highest Flashcards count)
+                var flashcardSets = await flashcardController.GetPopularFlashcardSetsAsync(4);
+
+                foreach (var flashcardSet in flashcardSets)
+                {
+                    flowFlashcards.Controls.Add(CreateFlashcardCard(flashcardSet));
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading flashcard sets: {ex.Message}");
             }
         }
 
@@ -341,9 +377,23 @@ namespace WinFormsApp1.View.User.Controls
 
         private void ShowFlashcardDetail(int setId)
         {
-            // TODO: Navigate to flashcard detail page (will be implemented later)
-            MessageBox.Show($"Xem chi tiết flashcard set ID: {setId}\n\nChức năng sẽ được thêm sau", 
-                "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var form = this.FindForm();
+            if (form == null) return;
+
+            var mainPanel = FindControlRecursive(form, "mainContentPanel") as Panel;
+
+            if (mainPanel == null)
+            {
+                mainPanel = this.Parent as Panel;
+            }
+
+            if (mainPanel == null) return;
+
+            mainPanel.Controls.Clear();
+
+            var detail = new FlashcardDetailControl(setId);
+            detail.Dock = DockStyle.Fill;
+            mainPanel.Controls.Add(detail);
         }
 
         private Panel CreateCourseCard(Models.Entities.Course course)

@@ -9,7 +9,6 @@ namespace WinFormsApp1.View.User.Controls
 
         // UI Components
         private PictureBox pictureBoxAvatar;
-        private Label lblUserName;
         private Panel panelWelcomeBanner;
         private Label lblWelcomeText;
         private Panel panelMotivation;
@@ -36,7 +35,6 @@ namespace WinFormsApp1.View.User.Controls
         private void InitializeComponent()
         {
             pictureBoxAvatar = new PictureBox();
-            lblUserName = new Label();
             panelWelcomeBanner = new Panel();
             lblWelcomeText = new Label();
             panelMotivation = new Panel();
@@ -65,23 +63,10 @@ namespace WinFormsApp1.View.User.Controls
             pictureBoxAvatar.TabIndex = 0;
             pictureBoxAvatar.TabStop = false;
             // 
-            // lblUserName
-            // 
-            lblUserName.BackColor = Color.Transparent;
-            lblUserName.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            lblUserName.ForeColor = Color.White;
-            lblUserName.Location = new Point(33, 90);
-            lblUserName.Name = "lblUserName";
-            lblUserName.Size = new Size(95, 30);
-            lblUserName.TabIndex = 1;
-            lblUserName.Text = "TMK";
-            lblUserName.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // panelWelcomeBanner
             // 
             panelWelcomeBanner.BackColor = Color.FromArgb(230, 240, 250);
             panelWelcomeBanner.Controls.Add(lblWelcomeText);
-            panelWelcomeBanner.Controls.Add(lblUserName);
             panelWelcomeBanner.Controls.Add(pictureBoxAvatar);
             panelWelcomeBanner.Location = new Point(20, 20);
             panelWelcomeBanner.Name = "panelWelcomeBanner";
