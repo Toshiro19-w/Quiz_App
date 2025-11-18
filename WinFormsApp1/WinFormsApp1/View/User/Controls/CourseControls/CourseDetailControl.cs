@@ -8,6 +8,7 @@ using WinFormsApp1.Helpers;
 using WinFormsApp1.View.User.Forms;
 using WinFormsApp1.ControllersWin;
 using WinFormsApp1.ViewModels;
+using WinFormsApp1.View.Dialogs;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls
 {
@@ -195,11 +196,12 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			var userId = AuthHelper.CurrentUser?.UserId;
 			if (!userId.HasValue)
 			{
-				MessageBox.Show("Vui lòng đăng nhập!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show("Vui lòng đăng nhập để thêm vào giỏ hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
-			MessageBox.Show("Đã thêm vào giỏ hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			// Chuyển trực tiếp đến thanh toán thay vì giỏ hàng
+			ShowPaymentForm();
 		}
 
 		private void btnBuyNow_Click(object sender, EventArgs e)
@@ -211,7 +213,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 				return;
 			}
 
-			MessageBox.Show("Chuyển đến trang thanh toán...", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			ShowPaymentForm();
 		}
 
 		private void btnStartLearning_Click(object sender, EventArgs e)
@@ -276,6 +278,34 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 		private void BtnStatistics_Click(object sender, EventArgs e)
 		{
 			MessageBox.Show("Hiển thị thống kê khóa học (lượt mua, tiến độ)", "Thống kê", MessageBoxButtons.OK, MessageBoxIcon.Information);
+		}
+
+		private void ShowPaymentForm()
+		{
+			if (_course == null)
+			{
+				MessageBox.Show("Không thể tải thông tin khóa học", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
+			try
+			{
+				using (var paymentForm = new PaymentForm(_course))
+				{
+					var result = paymentForm.ShowDialog(this.FindForm());
+					
+					if (result == DialogResult.OK)
+					{
+						// Thanh toán thành công, cập nhật giao diện
+						UpdateActionButtons();
+						ToastHelper.Show(this.FindForm(), "Thanh toán thành công! Bạn có thể bắt đầu học ngay.");
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Lỗi khi mở form thanh toán: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		private void CourseDetailControl_Load(object sender, EventArgs e)
