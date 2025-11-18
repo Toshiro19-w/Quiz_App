@@ -5,16 +5,19 @@ using System.Windows.Forms;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
 using Microsoft.EntityFrameworkCore;
+using WinFormsApp1.Controllers;
 
 namespace WinFormsApp1.View.User.Controls
 {
     public partial class LibraryControl : UserControl
     {
         private bool showingCourses = true;
+        private readonly FlashcardController _flashcardController;
 
         public LibraryControl()
         {
             InitializeComponent();
+            _flashcardController = new FlashcardController();
             LoadPurchasedCourses();
         }
 
@@ -189,36 +192,31 @@ namespace WinFormsApp1.View.User.Controls
             return card;
         }
 
-        private void LoadFlashcards()
+        private async void LoadFlashcards()
         {
             coursesPanel.Controls.Clear();
 
             try
             {
-                using (var context = new LearningPlatformContext())
+                var user = AuthHelper.CurrentUser;
+                if (user == null) return;
+
+                // Use controller to get saved flashcard sets
+                var savedFlashcardSets = await _flashcardController.GetSavedFlashcardSetsAsync(user.UserId);
+
+                if (savedFlashcardSets.Count == 0)
                 {
-                    var user = AuthHelper.CurrentUser;
-                    if (user == null) return;
+                    ShowEmptyState(
+                        "Chưa có flashcard nào",
+                        "Bạn chưa lưu flashcard nào. Hãy bắt đầu học ngay hôm nay!"
+                    );
+                    return;
+                }
 
-                    var flashcardSets = context.SavedItems
-                        .Include(si => si.Library)
-                        .Where(si => si.Library.OwnerId == user.UserId && si.ContentType == "FlashcardSet")
-                        .ToList();
-
-                    if (flashcardSets.Count == 0)
-                    {
-                        ShowEmptyState(
-                            "Chưa có flashcard nào",
-                            "Bạn chưa lưu flashcard nào. Hãy bắt đầu học ngay hôm nay!"
-                        );
-                        return;
-                    }
-
-                    foreach (var item in flashcardSets)
-                    {
-                        var card = CreateFlashcardCard(item);
-                        coursesPanel.Controls.Add(card);
-                    }
+                foreach (var item in savedFlashcardSets)
+                {
+                    var card = CreateFlashcardCard(item);
+                    coursesPanel.Controls.Add(card);
                 }
             }
             catch (Exception ex)
