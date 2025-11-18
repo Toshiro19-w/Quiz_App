@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WinFormsApp1.Models.Entities;
 using WinFormsApp1.Service.IService;
-using WinFormsApp1.Services;
+using WinFormsApp1.Service;
 
 namespace WinFormsApp1.Controllers
 {

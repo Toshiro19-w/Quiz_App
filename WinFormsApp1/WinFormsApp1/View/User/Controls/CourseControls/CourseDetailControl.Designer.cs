@@ -213,7 +213,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			btnAddToCart.Name = "btnAddToCart";
 			btnAddToCart.Size = new Size(320, 50);
 			btnAddToCart.TabIndex = 10;
-			btnAddToCart.Text = "Thêm vào giỏ hàng";
+			btnAddToCart.Text = "Mua ngay";
 			btnAddToCart.UseVisualStyleBackColor = false;
 			// 
 			// btnBuyNow
