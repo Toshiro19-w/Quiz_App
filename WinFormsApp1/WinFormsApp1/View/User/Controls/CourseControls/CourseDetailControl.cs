@@ -5,7 +5,9 @@ using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Models.Entities;
 using WinFormsApp1.Helpers;
-using WinFormsApp1.View.User.Forms; // added to open CourseBuilderForm
+using WinFormsApp1.View.User.Forms;
+using WinFormsApp1.ControllersWin;
+using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls
 {
@@ -34,7 +36,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			InitializeComponent();
 			_controller = new CourseController();
 
-			LoadCourse(courseId);
+			// fire-and-forget load; callers should await LoadCourseAsync if they need to
+			_ = LoadCourseAsync(courseId);
 
 			btnAddToCart.Click += btnAddToCart_Click;
 			btnBuyNow.Click += btnBuyNow_Click;
@@ -46,10 +49,19 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			btnStatistics.Click += BtnStatistics_Click;
 		}
 
-		public async void LoadCourse(int courseId)
+		public async System.Threading.Tasks.Task LoadCourseAsync(int courseId)
 		{
 			_courseId = courseId;
-			_course = await _controller.GetCourseDetailAsync(courseId);
+			try
+			{
+				_course = await _controller.GetCourseDetailAsync(courseId);
+			}
+			catch (Exception ex)
+			{
+				_course = null;
+				ToastHelper.Show(this.FindForm(), $"Lỗi khi tải khóa học: {ex.Message}");
+				return;
+			}
 
 			if (_course != null)
 			{
@@ -58,6 +70,10 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 				await LoadRatingDistribution();
 				LoadChapters();
 				LoadReviews();
+			}
+			else
+			{
+				ToastHelper.Show(this.FindForm(), "Không tìm thấy khóa học");
 			}
 		}
 
@@ -208,7 +224,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			MessageBox.Show("Mở rộng tất cả chương!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
-		private void BtnEditCourse_Click(object sender, EventArgs e)
+		private async void BtnEditCourse_Click(object sender, EventArgs e)
 		{
 			try
 			{
@@ -218,13 +234,33 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 					return;
 				}
 
-				// Open CourseBuilderForm in edit mode
-				using var form = new CourseBuilderForm(_courseId);
+				// ensure course is loaded
+				if (_course == null)
+				{
+					_course = await _controller.GetCourseDetailAsync(_courseId);
+					if (_course == null)
+					{
+						MessageBox.Show("Không tìm thấy khóa học", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						return;
+					}
+				}
+
+				// convert course entity to CourseBuilderViewModel using CourseBuilderController
+				var builderCtrl = new CourseBuilderController();
+				var vm = await builderCtrl.LoadCourseAsync(_courseId);
+
+				if (vm == null)
+				{
+					MessageBox.Show("Không thể nạp dữ liệu chỉnh sửa", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+
+				using var form = new CourseBuilderForm(vm, _courseId);
 				form.StartPosition = FormStartPosition.CenterParent;
 				form.ShowDialog();
 
 				// After editing, reload course details
-				LoadCourse(_courseId);
+				await LoadCourseAsync(_courseId);
 			}
 			catch (Exception ex)
 			{

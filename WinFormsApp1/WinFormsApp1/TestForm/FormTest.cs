@@ -25,7 +25,7 @@ namespace WinFormsApp1.TestForm
         {
             // Tạo instance của CourseDetailControl
             courseDetailControl = new CourseDetailControl();
-            courseDetailControl.LoadCourse(1); // Load course với ID 1
+            //courseDetailControl.LoadCourse(1); // Load course với ID 1
                                                // Đặt Dock để fill toàn bộ Form
             courseDetailControl.Dock = DockStyle.Fill;
 

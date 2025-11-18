@@ -1,4 +1,4 @@
-namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
+﻿namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 {
     partial class Step2_StructureControl
     {
@@ -35,7 +35,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			pnlCard.Name = "pnlCard";
 			pnlCard.Padding = new Padding(18);
 			pnlCard.ShadowColor = Color.Black;
-			pnlCard.Size = new Size(760, 498);
+			pnlCard.Size = new Size(913, 554);
 			pnlCard.TabIndex = 0;
 			// 
 			// lblHeader
@@ -43,9 +43,9 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			lblHeader.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
 			lblHeader.Location = new Point(20, 10);
 			lblHeader.Name = "lblHeader";
-			lblHeader.Size = new Size(707, 55);
+			lblHeader.Size = new Size(707, 43);
 			lblHeader.TabIndex = 0;
-			lblHeader.Text = "C?u tr�c kh�a h?c";
+			lblHeader.Text = "Cấu trúc khóa học";
 			// 
 			// btnAddChapter
 			// 
@@ -55,16 +55,16 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			btnAddChapter.Location = new Point(19, 68);
 			btnAddChapter.Name = "btnAddChapter";
 			btnAddChapter.ShadowDecoration.CustomizableEdges = customizableEdges2;
-			btnAddChapter.Size = new Size(140, 36);
+			btnAddChapter.Size = new Size(171, 36);
 			btnAddChapter.TabIndex = 1;
-			btnAddChapter.Text = "Th�m ch??ng";
+			btnAddChapter.Text = "Thêm chương";
 			// 
 			// flpChapters
 			// 
 			flpChapters.AutoScroll = true;
 			flpChapters.Location = new Point(19, 118);
 			flpChapters.Name = "flpChapters";
-			flpChapters.Size = new Size(720, 300);
+			flpChapters.Size = new Size(873, 369);
 			flpChapters.TabIndex = 2;
 			// 
 			// btnPrev
@@ -72,30 +72,30 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			btnPrev.CustomizableEdges = customizableEdges3;
 			btnPrev.Font = new Font("Segoe UI", 9F);
 			btnPrev.ForeColor = Color.White;
-			btnPrev.Location = new Point(19, 438);
+			btnPrev.Location = new Point(24, 501);
 			btnPrev.Name = "btnPrev";
 			btnPrev.ShadowDecoration.CustomizableEdges = customizableEdges4;
 			btnPrev.Size = new Size(120, 36);
 			btnPrev.TabIndex = 3;
-			btnPrev.Text = "Quay l?i";
+			btnPrev.Text = "Quay lại";
 			// 
 			// btnNext
 			// 
 			btnNext.CustomizableEdges = customizableEdges5;
 			btnNext.Font = new Font("Segoe UI", 9F);
 			btnNext.ForeColor = Color.White;
-			btnNext.Location = new Point(159, 438);
+			btnNext.Location = new Point(164, 501);
 			btnNext.Name = "btnNext";
 			btnNext.ShadowDecoration.CustomizableEdges = customizableEdges6;
 			btnNext.Size = new Size(140, 36);
 			btnNext.TabIndex = 4;
-			btnNext.Text = "Ti?p t?c";
+			btnNext.Text = "Tiếp tục";
 			// 
 			// Step2_StructureControl
 			// 
 			Controls.Add(pnlCard);
 			Name = "Step2_StructureControl";
-			Size = new Size(760, 498);
+			Size = new Size(913, 554);
 			pnlCard.ResumeLayout(false);
 			ResumeLayout(false);
 		}

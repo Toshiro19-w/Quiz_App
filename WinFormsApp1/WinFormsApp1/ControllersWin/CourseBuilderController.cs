@@ -35,13 +35,13 @@ namespace WinFormsApp1.ControllersWin
 
             foreach (var ch in course.CourseChapters.OrderBy(c => c.OrderIndex))
             {
-                var chDto = new ChapterDto { Title = ch.Title, Description = ch.Description };
+                var chDto = new ChapterBuilderViewModel { Title = ch.Title, Description = ch.Description };
                 foreach (var ls in ch.Lessons.OrderBy(l => l.OrderIndex))
                 {
-                    var lsDto = new LessonDto { Title = ls.Title, Visibility = ls.Visibility };
+                    var lsDto = new LessonBuilderViewModel { Title = ls.Title, Visibility = ls.Visibility };
                     foreach (var ct in ls.LessonContents.OrderBy(cn => cn.OrderIndex))
                     {
-                        lsDto.Contents.Add(new ContentDto
+                        lsDto.Contents.Add(new LessonContentBuilderViewModel
                         {
                             ContentType = ct.ContentType,
                             Title = ct.Title,
@@ -89,7 +89,7 @@ namespace WinFormsApp1.ControllersWin
                 course.Slug = vm.Slug ?? string.Empty;
                 course.Summary = vm.Summary;
                 course.CoverUrl = vm.CoverUrl;
-                course.Price = vm.Price;
+                course.Price = (decimal)vm.Price;
                 course.IsPublished = vm.IsPublished;
                 course.UpdatedAt = DateTime.Now;
 
@@ -168,13 +168,14 @@ namespace WinFormsApp1.ControllersWin
             }
         }
 
-        public Task<bool> IsSlugUniqueAsync(string slug, int? excludeId = null)
+        public async Task<bool> IsSlugUniqueAsync(string slug, int? excludeId = null)
         {
-            if (string.IsNullOrWhiteSpace(slug)) return Task.FromResult(false);
+            if (string.IsNullOrWhiteSpace(slug)) return false;
             using var context = new LearningPlatformContext();
             var q = context.Courses.AsQueryable().Where(c => c.Slug == slug);
             if (excludeId.HasValue) q = q.Where(c => c.CourseId != excludeId.Value);
-            return q.AnyAsync().ContinueWith(t => !t.Result);
+            var exists = await q.AnyAsync();
+            return !exists;
         }
 
         // CRUD for chapters/lessons/contents can be added here if needed

@@ -14,21 +14,49 @@ namespace WinFormsApp1.View.User.Forms
         private UserControl[] steps;
         private int currentStep = 0;
         private CourseBuilderViewModel vm = new CourseBuilderViewModel();
-        private int? editingCourseId = null; // new: holds course id when editing
+        private int? editingCourseId = null; // holds course id when editing
 
         public CourseBuilderForm()
         {
             InitializeComponent();
-            InitSteps();
-            HookEvents();
+            InitializeForm();
+
+            // default behavior: load step 0 now that steps are initialized and vm is default
             LoadStep(0, animate: false);
         }
 
-        // New constructor to open form in edit mode for a given course id
+        // original constructor: load by id asynchronously
         public CourseBuilderForm(int courseId) : this()
         {
             editingCourseId = courseId;
             _ = LoadExistingCourseAsync(courseId);
+        }
+
+        // constructor that accepts a preloaded VM
+        public CourseBuilderForm(CourseBuilderViewModel preloadedVm, int courseId) : this()
+        {
+            if (preloadedVm != null)
+            {
+                // replace vm before loading UI so controls receive data
+                vm = preloadedVm;
+                editingCourseId = courseId;
+
+                // load current step synchronously from vm
+                if (pnlContent.Controls.Count > 0 && pnlContent.Controls[0] is IStepControl scCurrent)
+                {
+                    scCurrent.LoadFromViewModel(vm);
+                }
+                else
+                {
+                    LoadStep(0, animate: false);
+                }
+            }
+        }
+
+        private void InitializeForm()
+        {
+            InitSteps();
+            HookEvents();
         }
 
         private async Task LoadExistingCourseAsync(int courseId)
@@ -40,8 +68,15 @@ namespace WinFormsApp1.View.User.Forms
                 {
                     vm = loaded;
                     editingCourseId = courseId;
-                    // reload current step control with new vm
-                    LoadStep(currentStep, animate: false);
+                    // reload current step control with new vm on UI thread
+                    if (pnlContent.Controls.Count > 0 && pnlContent.Controls[0] is IStepControl existing)
+                    {
+                        this.BeginInvoke((Action)(() => existing.LoadFromViewModel(vm)));
+                    }
+                    else
+                    {
+                        this.BeginInvoke((Action)(() => LoadStep(currentStep, animate: false)));
+                    }
                 }
             }
             catch (Exception ex)
@@ -76,15 +111,11 @@ namespace WinFormsApp1.View.User.Forms
 
         private async Task StepNextRequestedAsync(int stepIndex)
         {
-            // called when a step control requests Next
             if (stepIndex != currentStep) return;
-
             var cur = steps[currentStep] as IStepControl;
             cur?.SaveToViewModel(vm);
-
             var ok = await ValidateStepAsync(currentStep);
             if (!ok) return;
-
             var next = currentStep + 1;
             LoadStep(next);
         }
@@ -109,7 +140,6 @@ namespace WinFormsApp1.View.User.Forms
             {
                 var old = pnlContent.Controls[0] as IStepControl;
                 old?.OnLeaving();
-                // also save state to vm
                 old?.SaveToViewModel(vm);
             }
 
@@ -125,7 +155,6 @@ namespace WinFormsApp1.View.User.Forms
                 oldCtrl.Left = 0;
                 newControl.Left = pnlContent.Width;
                 pnlContent.Controls.Add(newControl);
-
                 var t = new System.Windows.Forms.Timer { Interval = 15 };
                 t.Tick += (s, e) => {
                     int step = 40;
@@ -146,12 +175,10 @@ namespace WinFormsApp1.View.User.Forms
 
         private void HighlightStep(int stepIndex)
         {
-            // reset all
             var inactiveColor = System.Drawing.Color.LightGray;
-            var activeColor = System.Drawing.Color.FromArgb(88, 86, 233); // purple
+            var activeColor = System.Drawing.Color.FromArgb(88, 86, 233);
             btnStep1.FillColor = inactiveColor; btnStep2.FillColor = inactiveColor; btnStep3.FillColor = inactiveColor; btnStep4.FillColor = inactiveColor;
             sep12.FillColor = inactiveColor; sep23.FillColor = inactiveColor; sep34.FillColor = inactiveColor;
-
             switch (stepIndex)
             {
                 case 0: btnStep1.FillColor = activeColor; break;
@@ -165,58 +192,21 @@ namespace WinFormsApp1.View.User.Forms
         {
             if (stepIndex == 0)
             {
-                // basic validation for title and slug
                 var title = vm.Title?.Trim() ?? string.Empty;
                 var slug = vm.Slug?.Trim() ?? string.Empty;
-                if (string.IsNullOrEmpty(title))
-                {
-                    MessageBox.Show("Tiêu đề là bắt buộc");
-                    return false;
-                }
-                if (string.IsNullOrEmpty(slug))
-                {
-                    MessageBox.Show("Slug bắt buộc");
-                    return false;
-                }
-                if (!System.Text.RegularExpressions.Regex.IsMatch(slug, "^[a-z0-9-]+$"))
-                {
-                    MessageBox.Show("Slug không hợp lệ");
-                    return false;
-                }
-
-                // server-side slug check
+                if (string.IsNullOrEmpty(title)) { MessageBox.Show("Tiêu đề là bắt buộc"); return false; }
+                if (string.IsNullOrEmpty(slug)) { MessageBox.Show("Slug bắt buộc"); return false; }
+                if (!System.Text.RegularExpressions.Regex.IsMatch(slug, "^[a-z0-9-]+$")) { MessageBox.Show("Slug không hợp lệ"); return false; }
                 var ok = await _controller.IsSlugUniqueAsync(slug, editingCourseId);
-                if (!ok)
-                {
-                    MessageBox.Show("Slug đã tồn tại");
-                    return false;
-                }
+                if (!ok) { MessageBox.Show("Slug đã tồn tại"); return false; }
             }
 
             if (stepIndex == 1)
             {
-                // ensure at least one chapter and lesson
-                if (vm.Chapters == null || vm.Chapters.Count == 0)
-                {
-                    MessageBox.Show("Vui lòng thêm ít nhất một chương");
-                    return false;
-                }
+                if (vm.Chapters == null || vm.Chapters.Count == 0) { MessageBox.Show("Vui lòng thêm ít nhất một chương"); return false; }
                 bool hasLesson = false;
-                foreach (var ch in vm.Chapters)
-                {
-                    if (ch.Lessons != null && ch.Lessons.Count > 0) { hasLesson = true; break; }
-                }
-                if (!hasLesson)
-                {
-                    MessageBox.Show("Vui lòng thêm ít nhất một bài học");
-                    return false;
-                }
-            }
-
-            if (stepIndex == 2)
-            {
-                // content validation can be extended
-                // For now assume ok
+                foreach (var ch in vm.Chapters) { if (ch.Lessons != null && ch.Lessons.Count > 0) { hasLesson = true; break; } }
+                if (!hasLesson) { MessageBox.Show("Vui lòng thêm ít nhất một bài học"); return false; }
             }
 
             return true;
@@ -224,7 +214,6 @@ namespace WinFormsApp1.View.User.Forms
 
         private async Task SaveCourseAsync(bool publish)
         {
-            // gather data from current step
             if (pnlContent.Controls.Count > 0)
             {
                 var cur = pnlContent.Controls[0] as IStepControl;

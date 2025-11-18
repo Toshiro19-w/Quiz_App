@@ -1,4 +1,4 @@
-using System; using System.Windows.Forms; using System.Linq; using WinFormsApp1.ViewModels;
+using System; using System.Windows.Forms; using System.Linq; using WinFormsApp1.ViewModels; using WinFormsApp1.View.User.Controls.CourseControls;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 {
@@ -17,32 +17,24 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 
         private int chapterCounter = 0;
 
-        private void AddChapter(ChapterDto fromVm = null)
+        private void AddChapter(ChapterBuilderViewModel fromVm = null)
         {
             chapterCounter++;
-            var wrapper = new Guna.UI2.WinForms.Guna2ShadowPanel { Width = 700, AutoSize = true, Margin = new Padding(0, 0, 0, 10) };
-            var title = new Guna.UI2.WinForms.Guna2TextBox { Text = fromVm?.Title ?? $"Ch??ng {chapterCounter}", Width = 600, Location = new System.Drawing.Point(10, 10) };
-            var btnAddLesson = new Guna.UI2.WinForms.Guna2Button { Text = "Thêm bài h?c", Location = new System.Drawing.Point(620, 10), Size = new System.Drawing.Size(100, 28) };
-            var flpLessons = new FlowLayoutPanel { Location = new System.Drawing.Point(10, 48), Size = new System.Drawing.Size(680, 120), AutoScroll = true };
-
-            wrapper.Controls.Add(title); wrapper.Controls.Add(btnAddLesson); wrapper.Controls.Add(flpLessons);
-
-            btnAddLesson.Click += (s, e) => {
-                var tb = new Guna.UI2.WinForms.Guna2TextBox { Width = 620, Text = "Bài h?c m?i" };
-                flpLessons.Controls.Add(tb);
+            var chVm = fromVm ?? new ChapterBuilderViewModel { Title = $"Ch??ng {chapterCounter}" };
+            var chapterControl = new ChapterItemControl { Margin = new Padding(0, 0, 0, 10) };
+            chapterControl.LoadFromViewModel(chVm);
+            chapterControl.AddLessonClicked += (s, e) => {
+                // add a new lesson UI row
+                var lessonPanel = new Panel { Width = 660, Height = 36, BackColor = System.Drawing.Color.Transparent, Margin = new Padding(0, 0, 0, 6) };
+                var lbl = new Label { Text = "Bài h?c m?i", AutoSize = false, Width = 560, Height = 32, Location = new System.Drawing.Point(4, 2), TextAlign = ContentAlignment.MiddleLeft };
+                var btnDel = new Button { Text = "Xóa", Width = 80, Height = 28, Location = new System.Drawing.Point(560, 2), BackColor = System.Drawing.Color.FromArgb(242, 75, 75), ForeColor = System.Drawing.Color.White, FlatStyle = FlatStyle.Flat };
+                btnDel.FlatAppearance.BorderSize = 0;
+                btnDel.Click += (ss, ee) => { chapterControl.Controls.OfType<FlowLayoutPanel>().FirstOrDefault()?.Controls.Remove(lessonPanel); };
+                lessonPanel.Controls.Add(lbl); lessonPanel.Controls.Add(btnDel);
+                chapterControl.Controls.OfType<FlowLayoutPanel>().FirstOrDefault()?.Controls.Add(lessonPanel);
             };
 
-            // if fromVm provided, populate lessons
-            if (fromVm?.Lessons != null)
-            {
-                foreach (var ls in fromVm.Lessons)
-                {
-                    var tb = new Guna.UI2.WinForms.Guna2TextBox { Width = 620, Text = ls.Title };
-                    flpLessons.Controls.Add(tb);
-                }
-            }
-
-            flpChapters.Controls.Add(wrapper);
+            flpChapters.Controls.Add(chapterControl);
         }
 
         public void LoadFromViewModel(CourseBuilderViewModel vm)
@@ -61,19 +53,9 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
         public void SaveToViewModel(CourseBuilderViewModel vm)
         {
             vm.Chapters.Clear();
-            foreach (var chPanel in flpChapters.Controls.OfType<Guna.UI2.WinForms.Guna2ShadowPanel>())
+            foreach (var chControl in flpChapters.Controls.OfType<ChapterItemControl>())
             {
-                var titleBox = chPanel.Controls.OfType<Guna.UI2.WinForms.Guna2TextBox>().FirstOrDefault();
-                var lessonsPanel = chPanel.Controls.OfType<FlowLayoutPanel>().FirstOrDefault();
-                var ch = new ChapterDto { Title = titleBox?.Text ?? string.Empty };
-                if (lessonsPanel != null)
-                {
-                    foreach (var l in lessonsPanel.Controls.OfType<Guna.UI2.WinForms.Guna2TextBox>())
-                    {
-                        ch.Lessons.Add(new LessonDto { Title = l.Text });
-                    }
-                }
-                vm.Chapters.Add(ch);
+                vm.Chapters.Add(chControl.ToViewModel());
             }
         }
 
