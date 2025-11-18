@@ -64,6 +64,7 @@
 			btnSaveDraft.Size = new Size(140, 36);
 			btnSaveDraft.TabIndex = 2;
 			btnSaveDraft.Text = "Lưu nháp";
+			btnSaveDraft.DialogResult = System.Windows.Forms.DialogResult.None;
 			// 
 			// btnPublish
 			// 
@@ -76,6 +77,7 @@
 			btnPublish.Size = new Size(140, 36);
 			btnPublish.TabIndex = 3;
 			btnPublish.Text = "Xuất bản";
+			btnPublish.DialogResult = System.Windows.Forms.DialogResult.None;
 			// 
 			// btnCancel
 			// 
@@ -88,6 +90,7 @@
 			btnCancel.Size = new Size(140, 36);
 			btnCancel.TabIndex = 4;
 			btnCancel.Text = "Hủy bỏ";
+			btnCancel.DialogResult = System.Windows.Forms.DialogResult.None;
 			// 
 			// Step4_PublishControl
 			// 

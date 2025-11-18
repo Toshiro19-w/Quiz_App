@@ -1,4 +1,4 @@
-using System; using System.Windows.Forms; using System.Linq; using WinFormsApp1.ViewModels; using WinFormsApp1.View.User.Controls.CourseControls;
+ï»¿using System; using System.Windows.Forms; using System.Linq; using WinFormsApp1.ViewModels; using WinFormsApp1.View.User.Controls.CourseControls;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 {
@@ -20,18 +20,18 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
         private void AddChapter(ChapterBuilderViewModel fromVm = null)
         {
             chapterCounter++;
-            var chVm = fromVm ?? new ChapterBuilderViewModel { Title = $"Ch??ng {chapterCounter}" };
+            var chVm = fromVm ?? new ChapterBuilderViewModel { Title = $"ChÆ°Æ¡ng {chapterCounter}" };
             var chapterControl = new ChapterItemControl { Margin = new Padding(0, 0, 0, 10) };
             chapterControl.LoadFromViewModel(chVm);
+
+            // When AddLesson is requested from the chapter control, use its API to add an editable lesson
             chapterControl.AddLessonClicked += (s, e) => {
-                // add a new lesson UI row
-                var lessonPanel = new Panel { Width = 660, Height = 36, BackColor = System.Drawing.Color.Transparent, Margin = new Padding(0, 0, 0, 6) };
-                var lbl = new Label { Text = "Bài h?c m?i", AutoSize = false, Width = 560, Height = 32, Location = new System.Drawing.Point(4, 2), TextAlign = ContentAlignment.MiddleLeft };
-                var btnDel = new Button { Text = "Xóa", Width = 80, Height = 28, Location = new System.Drawing.Point(560, 2), BackColor = System.Drawing.Color.FromArgb(242, 75, 75), ForeColor = System.Drawing.Color.White, FlatStyle = FlatStyle.Flat };
-                btnDel.FlatAppearance.BorderSize = 0;
-                btnDel.Click += (ss, ee) => { chapterControl.Controls.OfType<FlowLayoutPanel>().FirstOrDefault()?.Controls.Remove(lessonPanel); };
-                lessonPanel.Controls.Add(lbl); lessonPanel.Controls.Add(btnDel);
-                chapterControl.Controls.OfType<FlowLayoutPanel>().FirstOrDefault()?.Controls.Add(lessonPanel);
+                chapterControl.AddNewLesson();
+            };
+
+            // When chapter requests removal, remove it from the flow panel
+            chapterControl.RemoveChapterClicked += (s, e) => {
+                flpChapters.Controls.Remove(chapterControl);
             };
 
             flpChapters.Controls.Add(chapterControl);

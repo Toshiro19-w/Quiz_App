@@ -39,7 +39,7 @@
 			pnlCard.Name = "pnlCard";
 			pnlCard.Padding = new Padding(18);
 			pnlCard.ShadowColor = Color.Black;
-			pnlCard.Size = new Size(776, 538);
+			pnlCard.Size = new Size(921, 568);
 			pnlCard.TabIndex = 0;
 			// 
 			// lblHeader
@@ -84,7 +84,7 @@
 			flpContents.AutoScroll = true;
 			flpContents.Location = new Point(19, 133);
 			flpContents.Name = "flpContents";
-			flpContents.Size = new Size(720, 300);
+			flpContents.Size = new Size(881, 356);
 			flpContents.TabIndex = 3;
 			// 
 			// btnPrev
@@ -92,7 +92,7 @@
 			btnPrev.CustomizableEdges = customizableEdges5;
 			btnPrev.Font = new Font("Segoe UI", 9F);
 			btnPrev.ForeColor = Color.White;
-			btnPrev.Location = new Point(19, 453);
+			btnPrev.Location = new Point(19, 511);
 			btnPrev.Name = "btnPrev";
 			btnPrev.ShadowDecoration.CustomizableEdges = customizableEdges6;
 			btnPrev.Size = new Size(120, 36);
@@ -104,7 +104,7 @@
 			btnNext.CustomizableEdges = customizableEdges7;
 			btnNext.Font = new Font("Segoe UI", 9F);
 			btnNext.ForeColor = Color.White;
-			btnNext.Location = new Point(159, 453);
+			btnNext.Location = new Point(157, 511);
 			btnNext.Name = "btnNext";
 			btnNext.ShadowDecoration.CustomizableEdges = customizableEdges8;
 			btnNext.Size = new Size(140, 36);
@@ -115,7 +115,7 @@
 			// 
 			Controls.Add(pnlCard);
 			Name = "Step3_ContentControl";
-			Size = new Size(776, 538);
+			Size = new Size(921, 568);
 			pnlCard.ResumeLayout(false);
 			ResumeLayout(false);
 		}

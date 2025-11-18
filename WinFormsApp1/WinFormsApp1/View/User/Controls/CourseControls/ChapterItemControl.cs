@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,13 +13,34 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
         public event EventHandler? AddLessonClicked;
         public event EventHandler? RemoveChapterClicked;
 
+        private string _baseTitle = string.Empty;
+
         public ChapterItemControl()
         {
             InitializeComponent();
-            // wire designer button click to our event
+            // wire designer button click to our events
             if (btnAddLesson != null)
             {
                 btnAddLesson.Click += (s, e) => AddLessonClicked?.Invoke(this, EventArgs.Empty);
+            }
+
+            if (btnRemoveChapter != null)
+            {
+                btnRemoveChapter.Click += BtnRemoveChapter_Click;
+            }
+        }
+
+        private void BtnRemoveChapter_Click(object? sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Bạn có chắc muốn xóa chương này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                // raise event so parent can handle removal from data model
+                RemoveChapterClicked?.Invoke(this, EventArgs.Empty);
+
+                // also remove this control from parent container UI
+                this.Parent?.Controls.Remove(this);
+                this.Dispose();
             }
         }
 
@@ -28,20 +49,17 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
         {
             if (vm == null) return;
             ChapterId = vm.ChapterId;
-            lblTitle.Text = vm.Title ?? "(Kh�ng t�n)";
+            _baseTitle = vm.Title ?? "(Không tên)";
+            // keep title unchanged
+            lblTitle.Text = _baseTitle;
             flpLessons.Controls.Clear();
-
-            if (!string.IsNullOrEmpty(imageUrl))
-            {
-                try { picHeader.Load(imageUrl); } catch { /* ignore */ }
-            }
-            else
-            {
-                picHeader.Image = null;
-            }
 
             if (vm.Lessons != null && vm.Lessons.Count > 0)
             {
+                // show count label in the lessons area (do not modify the chapter title)
+                var countLabel = new Label { Text = $"({vm.Lessons.Count} bài)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "lesson-count" };
+                flpLessons.Controls.Add(countLabel);
+
                 foreach (var ls in vm.Lessons)
                 {
                     var item = CreateLessonItem(ls.Title);
@@ -50,37 +68,131 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             }
             else
             {
-                // show placeholder
-                var ph = new Label { Text = "(Ch?a c� b�i h?c)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray };
+                // show placeholder (no lessons)
+                var ph = new Label { Text = "(Chưa có bài học)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "placeholder" };
                 flpLessons.Controls.Add(ph);
             }
+
+            RefreshLessonCount();
         }
 
-        // Create a visual for a lesson (simple panel with label)
+        // Create a visual for a lesson (panel with editable textbox and delete button)
         private Control CreateLessonItem(string title)
         {
             var p = new Panel { Width = 660, Height = 36, BackColor = Color.Transparent, Margin = new Padding(0, 0, 0, 6) };
-            var lbl = new Label { Text = title ?? "(Kh�ng t�n)", AutoSize = false, Width = 560, Height = 32, Location = new Point(4, 2), TextAlign = ContentAlignment.MiddleLeft };
-            var btnDel = new Button { Text = "X�a", Width = 80, Height = 28, Location = new Point(560, 2), BackColor = Color.FromArgb(242, 75, 75), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
-            btnDel.FlatAppearance.BorderSize = 0;
-            btnDel.Click += (s, e) => { flpLessons.Controls.Remove(p); };
+            var txt = new TextBox
+            {
+                Text = title ?? "(Không tên)",
+                AutoSize = false,
+                Width = 560,
+                Height = 28,
+                Location = new Point(4, 4),
+                BorderStyle = BorderStyle.None,
+                Font = new Font("Segoe UI", 9F),
+                ForeColor = Color.Black
+            };
+            // optional: allow Enter to move focus
+            txt.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    e.SuppressKeyPress = true;
+                    p.Parent?.Focus();
+                }
+            };
 
-            p.Controls.Add(lbl);
+            var btnDel = new Button { Text = "Xóa", Width = 80, Height = 28, Location = new Point(560, 4), BackColor = Color.FromArgb(242, 75, 75), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+            btnDel.FlatAppearance.BorderSize = 0;
+            btnDel.Click += (s, e) => { flpLessons.Controls.Remove(p); RefreshLessonCount(); };
+
+            p.Controls.Add(txt);
             p.Controls.Add(btnDel);
             return p;
+        }
+
+        // Allow parent to programmatically add a new lesson item and focus its textbox
+        public void AddNewLesson(string? title = null)
+        {
+            // remove placeholder if present
+            var placeholder = flpLessons.Controls.OfType<Label>().FirstOrDefault(lbl => (lbl.Tag as string) == "placeholder");
+            if (placeholder != null) flpLessons.Controls.Remove(placeholder);
+
+            // compute sequential number
+            var currentCount = flpLessons.Controls.OfType<Panel>().Count();
+            var defaultTitle = title ?? $"Bài {currentCount + 1}";
+
+            var item = CreateLessonItem(defaultTitle);
+            flpLessons.Controls.Add(item);
+
+            // focus the newly added textbox after layout
+            var txt = item.Controls.OfType<TextBox>().FirstOrDefault();
+            if (txt != null)
+            {
+                this.BeginInvoke((Action)(() => {
+                    txt.Focus();
+                    txt.SelectAll();
+                }));
+            }
+
+            RefreshLessonCount();
         }
 
         // Convert current UI back to ChapterBuilderViewModel
         public ChapterBuilderViewModel ToViewModel()
         {
-            var ch = new ChapterBuilderViewModel { ChapterId = ChapterId, Title = lblTitle.Text };
+            var ch = new ChapterBuilderViewModel { ChapterId = ChapterId, Title = _baseTitle };
             foreach (var c in flpLessons.Controls.OfType<Panel>())
             {
-                var lbl = c.Controls.OfType<Label>().FirstOrDefault();
-                if (lbl != null)
-                    ch.Lessons.Add(new LessonBuilderViewModel { Title = lbl.Text });
+                // prefer TextBox inside the panel
+                var txt = c.Controls.OfType<TextBox>().FirstOrDefault();
+                if (txt != null)
+                    ch.Lessons.Add(new LessonBuilderViewModel { Title = txt.Text });
+                else
+                {
+                    var lbl = c.Controls.OfType<Label>().FirstOrDefault();
+                    if (lbl != null)
+                        ch.Lessons.Add(new LessonBuilderViewModel { Title = lbl.Text });
+                }
             }
             return ch;
+        }
+
+        private void RefreshLessonCount()
+        {
+            // count panels = number of lesson items
+            var count = flpLessons.Controls.OfType<Panel>().Count();
+
+            // remove any existing lesson-count label
+            var existingCountLabel = flpLessons.Controls.OfType<Label>().FirstOrDefault(lbl => (lbl.Tag as string) == "lesson-count");
+            if (existingCountLabel != null)
+                flpLessons.Controls.Remove(existingCountLabel);
+
+            // if no lessons, ensure placeholder exists
+            if (count == 0)
+            {
+                // remove any panels just in case
+                // show placeholder if not present
+                var placeholder = flpLessons.Controls.OfType<Label>().FirstOrDefault(lbl => (lbl.Tag as string) == "placeholder");
+                if (placeholder == null)
+                {
+                    var ph = new Label { Text = "(Chưa có bài học)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "placeholder" };
+                    flpLessons.Controls.Add(ph);
+                }
+            }
+            else
+            {
+                // remove placeholder if present
+                var placeholder = flpLessons.Controls.OfType<Label>().FirstOrDefault(lbl => (lbl.Tag as string) == "placeholder");
+                if (placeholder != null) flpLessons.Controls.Remove(placeholder);
+
+                // add/update count label at top
+                var countLabel = new Label { Text = $"({count} bài)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "lesson-count" };
+                flpLessons.Controls.Add(countLabel);
+                flpLessons.Controls.SetChildIndex(countLabel, 0);
+            }
+
+            // do NOT modify chapter title; keep _baseTitle as-is
+            lblTitle.Text = _baseTitle;
         }
     }
 }
