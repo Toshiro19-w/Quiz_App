@@ -1,4 +1,4 @@
-namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
+﻿namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 {
     partial class Step4_PublishControl
     {
@@ -44,7 +44,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			lblHeader.Name = "lblHeader";
 			lblHeader.Size = new Size(720, 60);
 			lblHeader.TabIndex = 0;
-			lblHeader.Text = "Xem tr??c & Xu?t b?n";
+			lblHeader.Text = "Xem trước & Xuất bản";
 			// 
 			// pnlPreview
 			// 
@@ -63,7 +63,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			btnSaveDraft.ShadowDecoration.CustomizableEdges = customizableEdges2;
 			btnSaveDraft.Size = new Size(140, 36);
 			btnSaveDraft.TabIndex = 2;
-			btnSaveDraft.Text = "L?u nh�p";
+			btnSaveDraft.Text = "Lưu nháp";
 			// 
 			// btnPublish
 			// 
@@ -75,7 +75,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			btnPublish.ShadowDecoration.CustomizableEdges = customizableEdges4;
 			btnPublish.Size = new Size(140, 36);
 			btnPublish.TabIndex = 3;
-			btnPublish.Text = "Xu?t b?n";
+			btnPublish.Text = "Xuất bản";
 			// 
 			// btnCancel
 			// 
@@ -87,7 +87,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			btnCancel.ShadowDecoration.CustomizableEdges = customizableEdges5;
 			btnCancel.Size = new Size(140, 36);
 			btnCancel.TabIndex = 4;
-			btnCancel.Text = "H?y b?";
+			btnCancel.Text = "Hủy bỏ";
 			// 
 			// Step4_PublishControl
 			// 

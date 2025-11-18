@@ -42,7 +42,7 @@ namespace WinFormsApp1.ControllersWin
             course.Slug = vm.Slug ?? string.Empty;
             course.Summary = vm.Summary;
             course.CoverUrl = vm.CoverUrl;
-            course.Price = vm.Price;
+            course.Price = (decimal)vm.Price;
             course.IsPublished = vm.IsPublished;
             course.UpdatedAt = DateTime.Now;
 

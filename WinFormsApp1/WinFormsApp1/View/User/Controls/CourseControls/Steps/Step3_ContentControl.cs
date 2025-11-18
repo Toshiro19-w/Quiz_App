@@ -55,7 +55,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
                 var tb = p.Controls.OfType<Guna.UI2.WinForms.Guna2TextBox>().FirstOrDefault();
                 if (tb != null)
                 {
-                    firstLesson.Contents.Add(new ContentDto { Title = tb.Text });
+                    firstLesson.Contents.Add(new LessonContentBuilderViewModel { Title = tb.Text });
                 }
             }
         }

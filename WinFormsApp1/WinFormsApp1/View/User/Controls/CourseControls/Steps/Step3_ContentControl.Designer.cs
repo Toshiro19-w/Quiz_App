@@ -1,4 +1,4 @@
-namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
+﻿namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 {
     partial class Step3_ContentControl
     {
@@ -49,7 +49,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			lblHeader.Name = "lblHeader";
 			lblHeader.Size = new Size(719, 51);
 			lblHeader.TabIndex = 0;
-			lblHeader.Text = "N?i dung b�i h?c";
+			lblHeader.Text = "Nội dung bài học";
 			// 
 			// cmbLessonSelector
 			// 
@@ -77,7 +77,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			btnAddContent.ShadowDecoration.CustomizableEdges = customizableEdges4;
 			btnAddContent.Size = new Size(140, 36);
 			btnAddContent.TabIndex = 2;
-			btnAddContent.Text = "Th�m n?i dung";
+			btnAddContent.Text = "Thêm nội dung";
 			// 
 			// flpContents
 			// 
@@ -97,7 +97,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			btnPrev.ShadowDecoration.CustomizableEdges = customizableEdges6;
 			btnPrev.Size = new Size(120, 36);
 			btnPrev.TabIndex = 4;
-			btnPrev.Text = "Quay l?i";
+			btnPrev.Text = "Quay lại";
 			// 
 			// btnNext
 			// 
@@ -109,7 +109,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			btnNext.ShadowDecoration.CustomizableEdges = customizableEdges8;
 			btnNext.Size = new Size(140, 36);
 			btnNext.TabIndex = 5;
-			btnNext.Text = "Xem tr??c & Xu?t b?n";
+			btnNext.Text = "Xem trước & Xuất bản";
 			// 
 			// Step3_ContentControl
 			// 

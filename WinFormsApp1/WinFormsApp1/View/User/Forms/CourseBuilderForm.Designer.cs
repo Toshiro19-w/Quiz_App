@@ -44,7 +44,7 @@ namespace WinFormsApp1.View.User.Forms
 			pnlMain.Location = new Point(0, 0);
 			pnlMain.Name = "pnlMain";
 			pnlMain.Padding = new Padding(24);
-			pnlMain.Size = new Size(962, 690);
+			pnlMain.Size = new Size(962, 722);
 			pnlMain.TabIndex = 0;
 			// 
 			// pnlContent
@@ -55,7 +55,7 @@ namespace WinFormsApp1.View.User.Forms
 			pnlContent.Location = new Point(24, 144);
 			pnlContent.Name = "pnlContent";
 			pnlContent.ShadowDecoration.CustomizableEdges = customizableEdges2;
-			pnlContent.Size = new Size(914, 522);
+			pnlContent.Size = new Size(914, 554);
 			pnlContent.TabIndex = 0;
 			// 
 			// pnlStepper
@@ -157,7 +157,7 @@ namespace WinFormsApp1.View.User.Forms
 			animation1.MosaicCoeff = (PointF)resources.GetObject("animation1.MosaicCoeff");
 			animation1.MosaicShift = (PointF)resources.GetObject("animation1.MosaicShift");
 			animation1.MosaicSize = 0;
-			animation1.Padding = new Padding(0, 0, 0, 0);
+			animation1.Padding = new Padding(0);
 			animation1.RotateCoeff = 0F;
 			animation1.RotateLimit = 0F;
 			animation1.ScaleCoeff = (PointF)resources.GetObject("animation1.ScaleCoeff");
@@ -168,7 +168,7 @@ namespace WinFormsApp1.View.User.Forms
 			// 
 			// CourseBuilderForm
 			// 
-			ClientSize = new Size(962, 690);
+			ClientSize = new Size(962, 722);
 			Controls.Add(pnlMain);
 			transition.SetDecoration(this, Guna.UI2.AnimatorNS.DecorationType.None);
 			Name = "CourseBuilderForm";
