@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using WinFormsApp1.View;
+using WinFormsApp1.View.User.Controls.CourseControls;
 using static WinFormsApp1.Helpers.ColorPalette;
 
 namespace WinFormsApp1.Helpers
@@ -87,6 +88,7 @@ namespace WinFormsApp1.Helpers
                 "library" => new View.User.Controls.LibraryControl(),
                 "shop" => new View.User.Controls.ShopControl(),
                 "course" => new View.User.Controls.CourseControl(),
+                "courseDetail" => new CourseDetailControl(),
                 "search" => new View.User.Controls.SearchControl(),
                 "test" => new View.User.Controls.TestControl(),
                 "lesson" => new View.User.Controls.LessonControl(),

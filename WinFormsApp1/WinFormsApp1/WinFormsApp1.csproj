@@ -59,6 +59,7 @@
 
   <ItemGroup>
     <Folder Include="View\User\ShowLesson\" />
+    <Folder Include="Library\Image\" />
   </ItemGroup>
 
 </Project>

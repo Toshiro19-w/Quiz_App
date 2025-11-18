@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinFormsApp1.View.User.Controls;
+using WinFormsApp1.View.User.Controls.CourseControls;
 
 namespace WinFormsApp1.TestForm
 {
@@ -24,7 +25,7 @@ namespace WinFormsApp1.TestForm
         {
             // Tạo instance của CourseDetailControl
             courseDetailControl = new CourseDetailControl();
-            courseDetailControl.LoadCourse(1); // Load course với ID 1
+            //courseDetailControl.LoadCourse(1); // Load course với ID 1
                                                // Đặt Dock để fill toàn bộ Form
             courseDetailControl.Dock = DockStyle.Fill;
 

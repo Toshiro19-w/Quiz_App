@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace WinFormsApp1.View.User.Controls
+namespace WinFormsApp1.View.User.Controls.CourseControls
 {
     partial class CourseDetailControl
     {
@@ -9,8 +9,6 @@ namespace WinFormsApp1.View.User.Controls
 
         private Label lblBreadcrumb;
         private Label lblTitle;
-        private Panel pnlBestseller;
-        private Label lblBestseller;
         private Label lblRating;
         private Label lblRatingCount;
         private Label lblStudents;
@@ -21,6 +19,11 @@ namespace WinFormsApp1.View.User.Controls
         private Button btnAddToCart;
         private Button btnBuyNow;
         private Button btnStartLearning;
+        private Button btnEditCourse;
+        private Button btnViewCourse;
+        private Button btnStatistics;
+        private FlowLayoutPanel pnlActions;
+        private FlowLayoutPanel pnlOwnerActions;
         private Label lblContentTitle;
         private LinkLabel lnkExpandAll;
         private Label lblChapterStats;
@@ -55,8 +58,6 @@ namespace WinFormsApp1.View.User.Controls
 		{
 			lblBreadcrumb = new Label();
 			lblTitle = new Label();
-			pnlBestseller = new Panel();
-			lblBestseller = new Label();
 			lblRating = new Label();
 			lblRatingCount = new Label();
 			lblStudents = new Label();
@@ -67,6 +68,11 @@ namespace WinFormsApp1.View.User.Controls
 			btnAddToCart = new Button();
 			btnBuyNow = new Button();
 			btnStartLearning = new Button();
+			btnEditCourse = new Button();
+			btnViewCourse = new Button();
+			btnStatistics = new Button();
+			pnlActions = new FlowLayoutPanel();
+			pnlOwnerActions = new FlowLayoutPanel();
 			lblContentTitle = new Label();
 			lnkExpandAll = new LinkLabel();
 			lblChapterStats = new Label();
@@ -85,8 +91,11 @@ namespace WinFormsApp1.View.User.Controls
 			lblStar4 = new Label();
 			lblStar5 = new Label();
 			flowReviews = new FlowLayoutPanel();
-			pnlBestseller.SuspendLayout();
+			panel1 = new Panel();
 			((System.ComponentModel.ISupportInitialize)picCover).BeginInit();
+			pnlActions.SuspendLayout();
+			pnlOwnerActions.SuspendLayout();
+			panel1.SuspendLayout();
 			SuspendLayout();
 			// 
 			// lblBreadcrumb
@@ -94,7 +103,7 @@ namespace WinFormsApp1.View.User.Controls
 			lblBreadcrumb.AutoSize = true;
 			lblBreadcrumb.Font = new Font("Segoe UI", 9F);
 			lblBreadcrumb.ForeColor = Color.Gray;
-			lblBreadcrumb.Location = new Point(20, 20);
+			lblBreadcrumb.Location = new Point(77, 16);
 			lblBreadcrumb.Name = "lblBreadcrumb";
 			lblBreadcrumb.Size = new Size(469, 25);
 			lblBreadcrumb.TabIndex = 0;
@@ -102,86 +111,81 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			// lblTitle
 			// 
+			lblTitle.BackColor = Color.Teal;
 			lblTitle.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
-			lblTitle.ForeColor = Color.FromArgb(0, 102, 102);
-			lblTitle.Location = new Point(20, 54);
+			lblTitle.ForeColor = Color.White;
+			lblTitle.Location = new Point(53, 10);
 			lblTitle.Name = "lblTitle";
-			lblTitle.Size = new Size(700, 72);
+			lblTitle.Size = new Size(700, 65);
 			lblTitle.TabIndex = 1;
-			// 
-			// pnlBestseller
-			// 
-			pnlBestseller.BackColor = Color.FromArgb(255, 193, 7);
-			pnlBestseller.Controls.Add(lblBestseller);
-			pnlBestseller.Location = new Point(20, 135);
-			pnlBestseller.Name = "pnlBestseller";
-			pnlBestseller.Size = new Size(90, 28);
-			pnlBestseller.TabIndex = 2;
-			// 
-			// lblBestseller
-			// 
-			lblBestseller.Dock = DockStyle.Fill;
-			lblBestseller.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-			lblBestseller.ForeColor = Color.FromArgb(102, 51, 0);
-			lblBestseller.Location = new Point(0, 0);
-			lblBestseller.Name = "lblBestseller";
-			lblBestseller.Size = new Size(90, 28);
-			lblBestseller.TabIndex = 0;
-			lblBestseller.Text = "Bestseller";
-			lblBestseller.TextAlign = ContentAlignment.MiddleCenter;
+			lblTitle.Text = "tieu de";
 			// 
 			// lblRating
 			// 
 			lblRating.AutoSize = true;
-			lblRating.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-			lblRating.Location = new Point(120, 140);
+			lblRating.BackColor = Color.Teal;
+			lblRating.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblRating.ForeColor = Color.Gold;
+			lblRating.Location = new Point(53, 120);
 			lblRating.Name = "lblRating";
-			lblRating.Size = new Size(0, 28);
+			lblRating.Size = new Size(83, 32);
 			lblRating.TabIndex = 3;
+			lblRating.Text = "rating";
 			// 
 			// lblRatingCount
 			// 
 			lblRatingCount.AutoSize = true;
-			lblRatingCount.Font = new Font("Segoe UI", 9F);
-			lblRatingCount.ForeColor = Color.Gray;
-			lblRatingCount.Location = new Point(230, 140);
+			lblRatingCount.BackColor = Color.Teal;
+			lblRatingCount.Font = new Font("Segoe UI", 11F);
+			lblRatingCount.ForeColor = Color.White;
+			lblRatingCount.Location = new Point(202, 122);
 			lblRatingCount.Name = "lblRatingCount";
-			lblRatingCount.Size = new Size(0, 25);
+			lblRatingCount.Size = new Size(69, 30);
 			lblRatingCount.TabIndex = 4;
+			lblRatingCount.Text = "rating";
 			// 
 			// lblStudents
 			// 
 			lblStudents.AutoSize = true;
-			lblStudents.Font = new Font("Segoe UI", 9F);
-			lblStudents.Location = new Point(380, 140);
+			lblStudents.BackColor = Color.Teal;
+			lblStudents.Font = new Font("Segoe UI", 11F);
+			lblStudents.ForeColor = Color.White;
+			lblStudents.Location = new Point(349, 121);
 			lblStudents.Name = "lblStudents";
-			lblStudents.Size = new Size(0, 25);
+			lblStudents.Size = new Size(120, 30);
 			lblStudents.TabIndex = 5;
+			lblStudents.Tag = "";
+			lblStudents.Text = "so hoc sinh";
 			// 
 			// lblInstructor
 			// 
 			lblInstructor.AutoSize = true;
-			lblInstructor.Font = new Font("Segoe UI", 9F);
-			lblInstructor.Location = new Point(20, 135);
+			lblInstructor.BackColor = Color.Teal;
+			lblInstructor.Font = new Font("Segoe UI", 10F);
+			lblInstructor.ForeColor = Color.White;
+			lblInstructor.Location = new Point(53, 193);
 			lblInstructor.Name = "lblInstructor";
-			lblInstructor.Size = new Size(0, 25);
+			lblInstructor.Size = new Size(250, 28);
 			lblInstructor.TabIndex = 6;
+			lblInstructor.Text = "Giảng viên: Trần Minh Khoa";
 			// 
 			// lblLastUpdated
 			// 
 			lblLastUpdated.AutoSize = true;
-			lblLastUpdated.Font = new Font("Segoe UI", 9F);
-			lblLastUpdated.ForeColor = Color.Gray;
-			lblLastUpdated.Location = new Point(20, 160);
+			lblLastUpdated.BackColor = Color.Teal;
+			lblLastUpdated.Font = new Font("Segoe UI", 10F);
+			lblLastUpdated.ForeColor = Color.White;
+			lblLastUpdated.Location = new Point(53, 227);
 			lblLastUpdated.Name = "lblLastUpdated";
-			lblLastUpdated.Size = new Size(0, 25);
+			lblLastUpdated.Size = new Size(173, 28);
 			lblLastUpdated.TabIndex = 7;
+			lblLastUpdated.Text = "Cập nhật: 11/2025";
 			// 
 			// picCover
 			// 
 			picCover.BackColor = Color.FromArgb(248, 249, 250);
 			picCover.BorderStyle = BorderStyle.FixedSingle;
-			picCover.Location = new Point(750, 80);
+			picCover.Location = new Point(1352, 72);
 			picCover.Name = "picCover";
 			picCover.Size = new Size(320, 180);
 			picCover.SizeMode = PictureBoxSizeMode.Zoom;
@@ -190,13 +194,13 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			// lblPrice
 			// 
-			lblPrice.AutoSize = true;
 			lblPrice.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
 			lblPrice.ForeColor = Color.FromArgb(0, 102, 102);
-			lblPrice.Location = new Point(750, 270);
+			lblPrice.Location = new Point(3, 0);
 			lblPrice.Name = "lblPrice";
-			lblPrice.Size = new Size(0, 74);
+			lblPrice.Size = new Size(320, 74);
 			lblPrice.TabIndex = 9;
+			lblPrice.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// btnAddToCart
 			// 
@@ -205,7 +209,7 @@ namespace WinFormsApp1.View.User.Controls
 			btnAddToCart.FlatStyle = FlatStyle.Flat;
 			btnAddToCart.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
 			btnAddToCart.ForeColor = Color.White;
-			btnAddToCart.Location = new Point(750, 330);
+			btnAddToCart.Location = new Point(3, 77);
 			btnAddToCart.Name = "btnAddToCart";
 			btnAddToCart.Size = new Size(320, 50);
 			btnAddToCart.TabIndex = 10;
@@ -217,7 +221,7 @@ namespace WinFormsApp1.View.User.Controls
 			btnBuyNow.Cursor = Cursors.Hand;
 			btnBuyNow.FlatStyle = FlatStyle.Flat;
 			btnBuyNow.Font = new Font("Segoe UI", 10F);
-			btnBuyNow.Location = new Point(750, 390);
+			btnBuyNow.Location = new Point(3, 133);
 			btnBuyNow.Name = "btnBuyNow";
 			btnBuyNow.Size = new Size(320, 40);
 			btnBuyNow.TabIndex = 11;
@@ -230,7 +234,7 @@ namespace WinFormsApp1.View.User.Controls
 			btnStartLearning.FlatStyle = FlatStyle.Flat;
 			btnStartLearning.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
 			btnStartLearning.ForeColor = Color.White;
-			btnStartLearning.Location = new Point(750, 330);
+			btnStartLearning.Location = new Point(3, 179);
 			btnStartLearning.Name = "btnStartLearning";
 			btnStartLearning.Size = new Size(320, 50);
 			btnStartLearning.TabIndex = 12;
@@ -238,11 +242,88 @@ namespace WinFormsApp1.View.User.Controls
 			btnStartLearning.UseVisualStyleBackColor = false;
 			btnStartLearning.Visible = false;
 			// 
+			// btnEditCourse
+			// 
+			btnEditCourse.BackColor = Color.FromArgb(0, 102, 102);
+			btnEditCourse.Cursor = Cursors.Hand;
+			btnEditCourse.FlatAppearance.BorderSize = 0;
+			btnEditCourse.FlatStyle = FlatStyle.Flat;
+			btnEditCourse.Font = new Font("Segoe UI", 10F);
+			btnEditCourse.ForeColor = Color.White;
+			btnEditCourse.Location = new Point(0, 5);
+			btnEditCourse.Margin = new Padding(0, 5, 0, 0);
+			btnEditCourse.Name = "btnEditCourse";
+			btnEditCourse.Size = new Size(320, 40);
+			btnEditCourse.TabIndex = 41;
+			btnEditCourse.Text = "Chỉnh sửa khóa học";
+			btnEditCourse.UseVisualStyleBackColor = false;
+			btnEditCourse.Visible = false;
+			// 
+			// btnViewCourse
+			// 
+			btnViewCourse.BackColor = Color.FromArgb(0, 153, 153);
+			btnViewCourse.Cursor = Cursors.Hand;
+			btnViewCourse.FlatAppearance.BorderSize = 0;
+			btnViewCourse.FlatStyle = FlatStyle.Flat;
+			btnViewCourse.Font = new Font("Segoe UI", 10F);
+			btnViewCourse.ForeColor = Color.White;
+			btnViewCourse.Location = new Point(0, 50);
+			btnViewCourse.Margin = new Padding(0, 5, 0, 0);
+			btnViewCourse.Name = "btnViewCourse";
+			btnViewCourse.Size = new Size(320, 40);
+			btnViewCourse.TabIndex = 42;
+			btnViewCourse.Text = "Xem khóa học";
+			btnViewCourse.UseVisualStyleBackColor = false;
+			btnViewCourse.Visible = false;
+			// 
+			// btnStatistics
+			// 
+			btnStatistics.BackColor = Color.FromArgb(255, 193, 7);
+			btnStatistics.Cursor = Cursors.Hand;
+			btnStatistics.FlatAppearance.BorderSize = 0;
+			btnStatistics.FlatStyle = FlatStyle.Flat;
+			btnStatistics.Font = new Font("Segoe UI", 10F);
+			btnStatistics.ForeColor = Color.FromArgb(102, 51, 0);
+			btnStatistics.Location = new Point(0, 95);
+			btnStatistics.Margin = new Padding(0, 5, 0, 0);
+			btnStatistics.Name = "btnStatistics";
+			btnStatistics.Size = new Size(320, 40);
+			btnStatistics.TabIndex = 43;
+			btnStatistics.Text = "Xem thống kê";
+			btnStatistics.UseVisualStyleBackColor = false;
+			btnStatistics.Visible = false;
+			// 
+			// pnlActions
+			// 
+			pnlActions.Controls.Add(lblPrice);
+			pnlActions.Controls.Add(btnAddToCart);
+			pnlActions.Controls.Add(btnBuyNow);
+			pnlActions.Controls.Add(btnStartLearning);
+			pnlActions.Controls.Add(pnlOwnerActions);
+			pnlActions.FlowDirection = FlowDirection.TopDown;
+			pnlActions.Location = new Point(1352, 262);
+			pnlActions.Name = "pnlActions";
+			pnlActions.Size = new Size(320, 260);
+			pnlActions.TabIndex = 9;
+			pnlActions.WrapContents = false;
+			// 
+			// pnlOwnerActions
+			// 
+			pnlOwnerActions.Controls.Add(btnEditCourse);
+			pnlOwnerActions.Controls.Add(btnViewCourse);
+			pnlOwnerActions.Controls.Add(btnStatistics);
+			pnlOwnerActions.FlowDirection = FlowDirection.TopDown;
+			pnlOwnerActions.Location = new Point(3, 235);
+			pnlOwnerActions.Name = "pnlOwnerActions";
+			pnlOwnerActions.Size = new Size(320, 140);
+			pnlOwnerActions.TabIndex = 13;
+			pnlOwnerActions.WrapContents = false;
+			// 
 			// lblContentTitle
 			// 
 			lblContentTitle.AutoSize = true;
 			lblContentTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-			lblContentTitle.Location = new Point(20, 400);
+			lblContentTitle.Location = new Point(80, 421);
 			lblContentTitle.Name = "lblContentTitle";
 			lblContentTitle.Size = new Size(307, 45);
 			lblContentTitle.TabIndex = 13;
@@ -253,7 +334,7 @@ namespace WinFormsApp1.View.User.Controls
 			lnkExpandAll.AutoSize = true;
 			lnkExpandAll.Font = new Font("Segoe UI", 9F);
 			lnkExpandAll.LinkColor = Color.FromArgb(0, 153, 153);
-			lnkExpandAll.Location = new Point(950, 405);
+			lnkExpandAll.Location = new Point(1552, 397);
 			lnkExpandAll.Name = "lnkExpandAll";
 			lnkExpandAll.Size = new Size(130, 25);
 			lnkExpandAll.TabIndex = 14;
@@ -265,24 +346,25 @@ namespace WinFormsApp1.View.User.Controls
 			lblChapterStats.AutoSize = true;
 			lblChapterStats.Font = new Font("Segoe UI", 9F);
 			lblChapterStats.ForeColor = Color.Gray;
-			lblChapterStats.Location = new Point(20, 435);
+			lblChapterStats.Location = new Point(426, 437);
 			lblChapterStats.Name = "lblChapterStats";
-			lblChapterStats.Size = new Size(0, 25);
+			lblChapterStats.Size = new Size(108, 25);
 			lblChapterStats.TabIndex = 15;
+			lblChapterStats.Text = "chapterstats";
 			// 
 			// pnlChapters
 			// 
 			pnlChapters.AutoSize = true;
-			pnlChapters.Location = new Point(20, 465);
+			pnlChapters.Location = new Point(80, 486);
 			pnlChapters.Name = "pnlChapters";
-			pnlChapters.Size = new Size(700, 200);
+			pnlChapters.Size = new Size(1191, 200);
 			pnlChapters.TabIndex = 16;
 			// 
 			// lblDescriptionTitle
 			// 
 			lblDescriptionTitle.AutoSize = true;
 			lblDescriptionTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-			lblDescriptionTitle.Location = new Point(20, 700);
+			lblDescriptionTitle.Location = new Point(77, 715);
 			lblDescriptionTitle.Name = "lblDescriptionTitle";
 			lblDescriptionTitle.Size = new Size(109, 45);
 			lblDescriptionTitle.TabIndex = 17;
@@ -293,10 +375,10 @@ namespace WinFormsApp1.View.User.Controls
 			rtbDescription.BackColor = Color.FromArgb(248, 249, 250);
 			rtbDescription.BorderStyle = BorderStyle.None;
 			rtbDescription.Font = new Font("Segoe UI", 10F);
-			rtbDescription.Location = new Point(20, 735);
+			rtbDescription.Location = new Point(77, 777);
 			rtbDescription.Name = "rtbDescription";
 			rtbDescription.ReadOnly = true;
-			rtbDescription.Size = new Size(700, 100);
+			rtbDescription.Size = new Size(1194, 100);
 			rtbDescription.TabIndex = 18;
 			rtbDescription.Text = "";
 			// 
@@ -304,7 +386,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			lblInstructorTitle.AutoSize = true;
 			lblInstructorTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-			lblInstructorTitle.Location = new Point(20, 860);
+			lblInstructorTitle.Location = new Point(77, 907);
 			lblInstructorTitle.Name = "lblInstructorTitle";
 			lblInstructorTitle.Size = new Size(179, 45);
 			lblInstructorTitle.TabIndex = 19;
@@ -314,7 +396,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			lblInstructorName.AutoSize = true;
 			lblInstructorName.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-			lblInstructorName.Location = new Point(80, 895);
+			lblInstructorName.Location = new Point(137, 942);
 			lblInstructorName.Name = "lblInstructorName";
 			lblInstructorName.Size = new Size(0, 30);
 			lblInstructorName.TabIndex = 20;
@@ -324,7 +406,7 @@ namespace WinFormsApp1.View.User.Controls
 			lblInstructorEmail.AutoSize = true;
 			lblInstructorEmail.Font = new Font("Segoe UI", 9F);
 			lblInstructorEmail.ForeColor = Color.Gray;
-			lblInstructorEmail.Location = new Point(80, 920);
+			lblInstructorEmail.Location = new Point(137, 967);
 			lblInstructorEmail.Name = "lblInstructorEmail";
 			lblInstructorEmail.Size = new Size(0, 25);
 			lblInstructorEmail.TabIndex = 21;
@@ -333,7 +415,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			lblRatingSectionTitle.AutoSize = true;
 			lblRatingSectionTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-			lblRatingSectionTitle.Location = new Point(20, 970);
+			lblRatingSectionTitle.Location = new Point(77, 1098);
 			lblRatingSectionTitle.Name = "lblRatingSectionTitle";
 			lblRatingSectionTitle.Size = new Size(348, 45);
 			lblRatingSectionTitle.TabIndex = 22;
@@ -344,7 +426,7 @@ namespace WinFormsApp1.View.User.Controls
 			lblAvgRating.AutoSize = true;
 			lblAvgRating.Font = new Font("Segoe UI", 36F, FontStyle.Bold);
 			lblAvgRating.ForeColor = Color.FromArgb(0, 102, 102);
-			lblAvgRating.Location = new Point(20, 1005);
+			lblAvgRating.Location = new Point(77, 1133);
 			lblAvgRating.Name = "lblAvgRating";
 			lblAvgRating.Size = new Size(0, 96);
 			lblAvgRating.TabIndex = 23;
@@ -354,7 +436,7 @@ namespace WinFormsApp1.View.User.Controls
 			lblTotalRatingCount.AutoSize = true;
 			lblTotalRatingCount.Font = new Font("Segoe UI", 9F);
 			lblTotalRatingCount.ForeColor = Color.Gray;
-			lblTotalRatingCount.Location = new Point(20, 1085);
+			lblTotalRatingCount.Location = new Point(77, 1213);
 			lblTotalRatingCount.Name = "lblTotalRatingCount";
 			lblTotalRatingCount.Size = new Size(0, 25);
 			lblTotalRatingCount.TabIndex = 24;
@@ -363,7 +445,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			lblStar1.AutoSize = true;
 			lblStar1.Font = new Font("Segoe UI", 9F);
-			lblStar1.Location = new Point(80, 1015);
+			lblStar1.Location = new Point(137, 1143);
 			lblStar1.Name = "lblStar1";
 			lblStar1.Size = new Size(87, 25);
 			lblStar1.TabIndex = 25;
@@ -373,7 +455,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			lblStar2.AutoSize = true;
 			lblStar2.Font = new Font("Segoe UI", 9F);
-			lblStar2.Location = new Point(80, 1043);
+			lblStar2.Location = new Point(137, 1171);
 			lblStar2.Name = "lblStar2";
 			lblStar2.Size = new Size(87, 25);
 			lblStar2.TabIndex = 28;
@@ -383,7 +465,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			lblStar3.AutoSize = true;
 			lblStar3.Font = new Font("Segoe UI", 9F);
-			lblStar3.Location = new Point(80, 1071);
+			lblStar3.Location = new Point(137, 1199);
 			lblStar3.Name = "lblStar3";
 			lblStar3.Size = new Size(87, 25);
 			lblStar3.TabIndex = 31;
@@ -393,7 +475,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			lblStar4.AutoSize = true;
 			lblStar4.Font = new Font("Segoe UI", 9F);
-			lblStar4.Location = new Point(80, 1099);
+			lblStar4.Location = new Point(137, 1227);
 			lblStar4.Name = "lblStar4";
 			lblStar4.Size = new Size(87, 25);
 			lblStar4.TabIndex = 34;
@@ -403,7 +485,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			lblStar5.AutoSize = true;
 			lblStar5.Font = new Font("Segoe UI", 9F);
-			lblStar5.Location = new Point(80, 1127);
+			lblStar5.Location = new Point(137, 1255);
 			lblStar5.Name = "lblStar5";
 			lblStar5.Size = new Size(87, 25);
 			lblStar5.TabIndex = 37;
@@ -413,29 +495,34 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			flowReviews.AutoSize = true;
 			flowReviews.FlowDirection = FlowDirection.TopDown;
-			flowReviews.Location = new Point(20, 1180);
+			flowReviews.Location = new Point(77, 1308);
 			flowReviews.Name = "flowReviews";
 			flowReviews.Size = new Size(700, 300);
 			flowReviews.TabIndex = 40;
 			flowReviews.WrapContents = false;
 			// 
+			// panel1
+			// 
+			panel1.BackColor = Color.Teal;
+			panel1.Controls.Add(lblTitle);
+			panel1.Controls.Add(lblRating);
+			panel1.Controls.Add(lblRatingCount);
+			panel1.Controls.Add(lblStudents);
+			panel1.Controls.Add(lblInstructor);
+			panel1.Controls.Add(lblLastUpdated);
+			panel1.Location = new Point(77, 72);
+			panel1.Name = "panel1";
+			panel1.Size = new Size(1194, 330);
+			panel1.TabIndex = 41;
+			// 
 			// CourseDetailControl
 			// 
 			AutoScroll = true;
 			BackColor = Color.White;
+			Controls.Add(panel1);
 			Controls.Add(lblBreadcrumb);
-			Controls.Add(lblTitle);
-			Controls.Add(pnlBestseller);
-			Controls.Add(lblRating);
-			Controls.Add(lblRatingCount);
-			Controls.Add(lblStudents);
-			Controls.Add(lblInstructor);
-			Controls.Add(lblLastUpdated);
 			Controls.Add(picCover);
-			Controls.Add(lblPrice);
-			Controls.Add(btnAddToCart);
-			Controls.Add(btnBuyNow);
-			Controls.Add(btnStartLearning);
+			Controls.Add(pnlActions);
 			Controls.Add(lblContentTitle);
 			Controls.Add(lnkExpandAll);
 			Controls.Add(lblChapterStats);
@@ -455,11 +542,15 @@ namespace WinFormsApp1.View.User.Controls
 			Controls.Add(lblStar5);
 			Controls.Add(flowReviews);
 			Name = "CourseDetailControl";
-			Size = new Size(1074, 774);
-			pnlBestseller.ResumeLayout(false);
+			Size = new Size(1778, 1615);
 			((System.ComponentModel.ISupportInitialize)picCover).EndInit();
+			pnlActions.ResumeLayout(false);
+			pnlOwnerActions.ResumeLayout(false);
+			panel1.ResumeLayout(false);
+			panel1.PerformLayout();
 			ResumeLayout(false);
 			PerformLayout();
 		}
+		private Panel panel1;
 	}
 }
