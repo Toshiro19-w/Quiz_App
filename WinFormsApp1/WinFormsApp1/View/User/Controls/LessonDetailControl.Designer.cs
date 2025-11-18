@@ -69,6 +69,7 @@ namespace WinFormsApp1.View.User.Controls
             pnlMain.Padding = new Padding(0, 117, 0, 0);
             pnlMain.Size = new Size(1714, 1167);
             pnlMain.TabIndex = 0;
+            pnlMain.Paint += pnlMain_Paint;
             // 
             // pnlContent
             // 

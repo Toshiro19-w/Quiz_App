@@ -232,8 +232,7 @@ namespace WinFormsApp1.View.User
 
         private void btnGiangVien_Click(object sender, EventArgs e)
         {
-            // TODO: Navigate to instructor page
-            ToastHelper.Show(this, "Chức năng Giảng viên đang được phát triển");
+            NavigateToControl(new Controls.MyCoursesControl());
         }
 
         private void btnHocTap_Click(object sender, EventArgs e)

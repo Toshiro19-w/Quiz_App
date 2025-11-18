@@ -58,6 +58,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="View\User\Controls\MyCourses\" />
     <Folder Include="View\User\ShowLesson\" />
     <Folder Include="Library\Image\" />
   </ItemGroup>

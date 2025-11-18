@@ -317,7 +317,7 @@ namespace WinFormsApp1.View.User.Controls
 
             var progress = totalContents > 0 ? (int)((double)completedContents / totalContents * 100) : 0;
             progressBar.Value = progress;
-            lblProgress.Text = $"Ti?n ??: {progress}% ({completedContents}/{totalContents} hoàn thành)";
+            lblProgress.Text = $"Tiền độ: {progress}% ({completedContents}/{totalContents} hoàn thành)";
         }
 
         private async Task LoadContentAsync(int contentIndex)
@@ -1056,6 +1056,11 @@ namespace WinFormsApp1.View.User.Controls
         }
 
         private void lblCourseTitle_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pnlMain_Paint(object sender, PaintEventArgs e)
         {
 
         }
