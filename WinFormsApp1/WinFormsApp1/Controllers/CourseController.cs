@@ -10,15 +10,39 @@ namespace WinFormsApp1.Controllers
         {
             using (var context = new LearningPlatformContext())
             {
-                return await context.Courses
+                var course = await context.Courses
                     .Include(c => c.Owner)
                     .Include(c => c.Category)
-                    .Include(c => c.CourseChapters.OrderBy(ch => ch.OrderIndex))
+                    .Include(c => c.CourseChapters)
                         .ThenInclude(ch => ch.Lessons)
-                    .Include(c => c.CourseReviews.Where(r => r.IsApproved))
+                    .Include(c => c.CourseReviews)
                         .ThenInclude(r => r.User)
                     .Include(c => c.CoursePurchases)
                     .FirstOrDefaultAsync(c => c.CourseId == courseId);
+
+                if (course != null)
+                {
+                    // Sort chapters in memory
+                    course.CourseChapters = course.CourseChapters
+                        .OrderBy(ch => ch.OrderIndex)
+                        .ToList();
+
+                    // Sort lessons for each chapter
+                    foreach (var chapter in course.CourseChapters)
+                    {
+                        chapter.Lessons = chapter.Lessons
+                            .OrderBy(l => l.OrderIndex)
+                            .ToList();
+                    }
+
+                    // Filter and sort reviews
+                    course.CourseReviews = course.CourseReviews
+                        .Where(r => r.IsApproved)
+                        .OrderByDescending(r => r.CreatedAt)
+                        .ToList();
+                }
+
+                return course;
             }
         }
 

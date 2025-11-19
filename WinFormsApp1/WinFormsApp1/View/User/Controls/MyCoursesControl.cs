@@ -226,10 +226,58 @@ namespace WinFormsApp1.View.User.Controls
             return btn;
         }
 
-        private void ViewCourse(Course course)
+        private async void ViewCourse(Course course)
         {
-            MessageBox.Show($"Xem khóa học: {course.Title}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // TODO: Navigate to course detail view
+            try
+            {
+                using var context = new LearningPlatformContext();
+
+                // Load course with chapters and lessons
+                var courseWithDetails = await context.Courses
+                    .Include(c => c.CourseChapters)
+                        .ThenInclude(ch => ch.Lessons)
+                    .FirstOrDefaultAsync(c => c.CourseId == course.CourseId);
+
+                if (courseWithDetails == null)
+                {
+                    MessageBox.Show("Không tìm thấy khóa học!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Get first lesson
+                var firstLesson = courseWithDetails.CourseChapters
+                    .OrderBy(ch => ch.OrderIndex)
+                    .SelectMany(ch => ch.Lessons.OrderBy(l => l.OrderIndex))
+                    .FirstOrDefault();
+
+                if (firstLesson == null)
+                {
+                    MessageBox.Show("Khóa học chưa có bài học nào!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Navigate to LessonDetailControl
+                var form = this.FindForm();
+                if (form is MainContainer mainContainer)
+                {
+                    var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
+                    if (mainPanel != null)
+                    {
+                        mainPanel.Controls.Clear();
+
+                        var lessonDetailControl = new LessonDetailControl();
+                        lessonDetailControl.Dock = DockStyle.Fill;
+                        mainPanel.Controls.Add(lessonDetailControl);
+
+                        // Load lesson
+                        await lessonDetailControl.LoadLessonAsync(courseWithDetails.Slug, firstLesson.LessonId);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở khóa học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void EditCourse(Course course)

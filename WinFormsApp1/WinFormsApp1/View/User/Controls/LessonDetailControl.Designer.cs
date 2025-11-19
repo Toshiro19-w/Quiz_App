@@ -1,4 +1,4 @@
-namespace WinFormsApp1.View.User.Controls
+﻿namespace WinFormsApp1.View.User.Controls
 {
     partial class LessonDetailControl
     {
@@ -119,8 +119,9 @@ namespace WinFormsApp1.View.User.Controls
             lblVideoPlaceholder.Name = "lblVideoPlaceholder";
             lblVideoPlaceholder.Size = new Size(1157, 720);
             lblVideoPlaceholder.TabIndex = 0;
-            lblVideoPlaceholder.Text = "? Video Player\r\n(C?n c�i ??t Windows Media Player)";
+            lblVideoPlaceholder.Text = "- Video Player\r\n(Cần cài đặt Windows Media Player)";
             lblVideoPlaceholder.TextAlign = ContentAlignment.MiddleCenter;
+            lblVideoPlaceholder.Click += lblVideoPlaceholder_Click;
             // 
             // pnlTheory
             // 
@@ -170,7 +171,7 @@ namespace WinFormsApp1.View.User.Controls
             btnCompleteFlashcard.Name = "btnCompleteFlashcard";
             btnCompleteFlashcard.Size = new Size(286, 67);
             btnCompleteFlashcard.TabIndex = 5;
-            btnCompleteFlashcard.Text = "? Ho�n th�nh";
+            btnCompleteFlashcard.Text = "- Hoàn thành";
             btnCompleteFlashcard.UseVisualStyleBackColor = false;
             btnCompleteFlashcard.Visible = false;
             // 
@@ -185,7 +186,7 @@ namespace WinFormsApp1.View.User.Controls
             btnNextCard.Name = "btnNextCard";
             btnNextCard.Size = new Size(171, 58);
             btnNextCard.TabIndex = 4;
-            btnNextCard.Text = "Th? sau ?";
+            btnNextCard.Text = "Thẻ sau ";
             btnNextCard.UseVisualStyleBackColor = false;
             // 
             // btnPrevCard
@@ -199,7 +200,7 @@ namespace WinFormsApp1.View.User.Controls
             btnPrevCard.Name = "btnPrevCard";
             btnPrevCard.Size = new Size(171, 58);
             btnPrevCard.TabIndex = 3;
-            btnPrevCard.Text = "? Th? tr??c";
+            btnPrevCard.Text = "- Thẻ trước";
             btnPrevCard.UseVisualStyleBackColor = false;
             // 
             // btnFlipCard
@@ -213,7 +214,7 @@ namespace WinFormsApp1.View.User.Controls
             btnFlipCard.Name = "btnFlipCard";
             btnFlipCard.Size = new Size(214, 67);
             btnFlipCard.TabIndex = 2;
-            btnFlipCard.Text = "L?t th?";
+            btnFlipCard.Text = "Lật thẻ";
             btnFlipCard.UseVisualStyleBackColor = false;
             // 
             // lblFlashcardBack
@@ -226,7 +227,7 @@ namespace WinFormsApp1.View.User.Controls
             lblFlashcardBack.Name = "lblFlashcardBack";
             lblFlashcardBack.Size = new Size(713, 332);
             lblFlashcardBack.TabIndex = 1;
-            lblFlashcardBack.Text = "M?t sau th?";
+            lblFlashcardBack.Text = "Mặt sau thẻ";
             lblFlashcardBack.TextAlign = ContentAlignment.MiddleCenter;
             lblFlashcardBack.Visible = false;
             // 
@@ -240,7 +241,7 @@ namespace WinFormsApp1.View.User.Controls
             lblFlashcardFront.Name = "lblFlashcardFront";
             lblFlashcardFront.Size = new Size(713, 332);
             lblFlashcardFront.TabIndex = 0;
-            lblFlashcardFront.Text = "M?t tr??c th?";
+            lblFlashcardFront.Text = "Mặt trước thẻ";
             lblFlashcardFront.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlTest
@@ -269,7 +270,7 @@ namespace WinFormsApp1.View.User.Controls
             btnSubmitTest.Name = "btnSubmitTest";
             btnSubmitTest.Size = new Size(1157, 83);
             btnSubmitTest.TabIndex = 2;
-            btnSubmitTest.Text = "N?p b�i";
+            btnSubmitTest.Text = "Nộp bài";
             btnSubmitTest.UseVisualStyleBackColor = false;
             // 
             // flowQuestions
@@ -295,7 +296,7 @@ namespace WinFormsApp1.View.User.Controls
             lblTestTitle.Padding = new Padding(14, 17, 14, 17);
             lblTestTitle.Size = new Size(1157, 83);
             lblTestTitle.TabIndex = 0;
-            lblTestTitle.Text = "B�i ki?m tra";
+            lblTestTitle.Text = "Bài kiểm tra";
             // 
             // pnlNavigation
             // 
@@ -321,9 +322,9 @@ namespace WinFormsApp1.View.User.Controls
             btnMarkComplete.Location = new Point(500, 17);
             btnMarkComplete.Margin = new Padding(4, 5, 4, 5);
             btnMarkComplete.Name = "btnMarkComplete";
-            btnMarkComplete.Size = new Size(214, 63);
+            btnMarkComplete.Size = new Size(250, 63);
             btnMarkComplete.TabIndex = 2;
-            btnMarkComplete.Text = "? ?�nh d?u ho�n th�nh";
+            btnMarkComplete.Text = "- Đánh dấu hoàn thành";
             btnMarkComplete.UseVisualStyleBackColor = false;
             // 
             // btnNextLesson
@@ -338,7 +339,7 @@ namespace WinFormsApp1.View.User.Controls
             btnNextLesson.Name = "btnNextLesson";
             btnNextLesson.Size = new Size(214, 63);
             btnNextLesson.TabIndex = 1;
-            btnNextLesson.Text = "B�i sau ?";
+            btnNextLesson.Text = "Bài sau >";
             btnNextLesson.UseVisualStyleBackColor = false;
             // 
             // btnPrevLesson
@@ -353,7 +354,7 @@ namespace WinFormsApp1.View.User.Controls
             btnPrevLesson.Name = "btnPrevLesson";
             btnPrevLesson.Size = new Size(214, 63);
             btnPrevLesson.TabIndex = 0;
-            btnPrevLesson.Text = "? B�i tr??c";
+            btnPrevLesson.Text = "< Bài trước";
             btnPrevLesson.UseVisualStyleBackColor = false;
             // 
             // pnlHeader
@@ -370,6 +371,7 @@ namespace WinFormsApp1.View.User.Controls
             pnlHeader.Padding = new Padding(29, 33, 29, 33);
             pnlHeader.Size = new Size(1215, 165);
             pnlHeader.TabIndex = 0;
+            pnlHeader.Paint += pnlHeader_Paint;
             // 
             // lblProgress
             // 
@@ -381,7 +383,7 @@ namespace WinFormsApp1.View.User.Controls
             lblProgress.Name = "lblProgress";
             lblProgress.Size = new Size(1155, 22);
             lblProgress.TabIndex = 2;
-            lblProgress.Text = "Ti?n ??: 0%";
+            lblProgress.Text = "Tiến độ: 0%";
             // 
             // progressBar
             // 
@@ -401,7 +403,7 @@ namespace WinFormsApp1.View.User.Controls
             lblCourseTitle.Name = "lblCourseTitle";
             lblCourseTitle.Size = new Size(1155, 50);
             lblCourseTitle.TabIndex = 0;
-            lblCourseTitle.Text = "T�n kh�a h?c";
+            lblCourseTitle.Text = "Tên khóa học";
             lblCourseTitle.Click += lblCourseTitle_Click;
             // 
             // pnlSidebar
@@ -442,7 +444,7 @@ namespace WinFormsApp1.View.User.Controls
             lblSidebarTitle.Padding = new Padding(21, 17, 21, 17);
             lblSidebarTitle.Size = new Size(497, 83);
             lblSidebarTitle.TabIndex = 0;
-            lblSidebarTitle.Text = "N?i dung b�i h?c";
+            lblSidebarTitle.Text = "Nội dung bài học";
             // 
             // LessonDetailControl
             // 
