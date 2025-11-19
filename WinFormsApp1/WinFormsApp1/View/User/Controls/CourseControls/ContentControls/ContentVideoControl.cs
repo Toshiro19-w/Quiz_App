@@ -1,73 +1,174 @@
-using System.Windows.Forms;
-using WinFormsApp1.ViewModels;
+using System;
 using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using LibVLCSharp.Shared;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 {
-    public partial class ContentVideoControl : UserControl, IContentControl
-    {
-        public event Action<object, string>? ContentTypeChanged;
-        public event Action<object>? DeleteRequested;
-        
-        public ContentVideoControl()
-        {
-            this.Width = 700; this.Height = 120; this.Margin = new Padding(0, 0, 0, 10);
-            this.BorderStyle = BorderStyle.FixedSingle;
-            InitializeComponent();
+	public partial class ContentVideoControl : UserControl, IContentControl
+	{
+		public event Action<object, string>? ContentTypeChanged;
+		public event Action<object>? DeleteRequested;
 
-            // Add delete button
-            var btnDelete = new Button
-            {
-                Text = "Xóa",
-                Size = new Size(80, 30),
-                Location = new Point(this.Width - 90, 5),
-                BackColor = Color.FromArgb(220, 53, 69),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnDelete.FlatAppearance.BorderSize = 0;
-            btnDelete.Click += (s, e) => DeleteRequested?.Invoke(this);
-            this.Controls.Add(btnDelete);
+		private LibVLC _libVLC;
+		private MediaPlayer _mediaPlayer;
 
-            // Set default selection and add event handler
-            cboContentType.SelectedIndex = 1; // Video
-            cboContentType.SelectedIndexChanged += (s, e) => {
-                var type = cboContentType.SelectedItem?.ToString();
-                if (type != null && type != "Video")
-                {
-                    ContentTypeChanged?.Invoke(this, type);
-                }
-            };
+		private string? _oldVideoPath = null;
+		public ContentVideoControl()
+		{
+			InitializeComponent();
+			Core.Initialize(); // Quan trọng
 
-            // wire default browse handler from designer field
-            btnBrowse.Click += (s, e) => {
-                using var ofd = new OpenFileDialog();
-                ofd.Filter = "Video files|*.mp4;*.webm;*.ogg;*.mov;*.avi;*.mkv";
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    var libraryPath = MediaHelper.CopyVideoToLibrary(ofd.FileName);
-                    if (libraryPath != null)
-                        txtVideoPath.Text = libraryPath;
-                }
-            };
-        }
+			// VLC init
+			_libVLC = new LibVLC();
+			_mediaPlayer = new MediaPlayer(_libVLC);
 
-        public void LoadFromViewModel(LessonContentBuilderViewModel vm)
-        {
-            if (vm == null) return;
-            txtTitle.Text = vm.Title ?? string.Empty;
-            txtVideoPath.Text = vm.VideoUrl ?? string.Empty;
-        }
+			videoView.MediaPlayer = _mediaPlayer;
 
-        public LessonContentBuilderViewModel SaveToViewModel()
-        {
-            return new LessonContentBuilderViewModel
-            {
-                ContentType = "Video",
-                Title = txtTitle.Text.Trim(),
-                VideoUrl = txtVideoPath.Text.Trim()
-            };
-        }
-    }
+			// Không auto play
+			_mediaPlayer.EnableHardwareDecoding = true;
+
+			// Nút sự kiện
+			btnPlay.Click += (s, e) => TogglePlayPause();
+			btnReplay.Click += (s, e) => ReplayVideo();
+			btnMute.Click += (s, e) => ToggleMute();
+
+			btnBrowse.Click += BtnBrowse_Click;
+			btnDelete.Click += (s, e) => DeleteRequested?.Invoke(this);
+
+			cboContentType.SelectedIndex = 1; // Video
+			cboContentType.SelectedIndexChanged += (s, e) =>
+			{
+				var type = cboContentType.SelectedItem?.ToString();
+				if (type != "Video")
+					ContentTypeChanged?.Invoke(this, type);
+			};
+		}
+
+		// ============================================================
+		// TOGGLE PLAY / PAUSE
+		// ============================================================
+		private void TogglePlayPause()
+		{
+			if (_mediaPlayer.IsPlaying)
+			{
+				_mediaPlayer.Pause();
+				btnPlay.Text = "▶ Play";
+			}
+			else
+			{
+				_mediaPlayer.Play();
+				btnPlay.Text = "⏸ Pause";
+			}
+		}
+
+		// ============================================================
+		// REPLAY
+		// ============================================================
+		private void ReplayVideo()
+		{
+			_mediaPlayer.Stop();
+			_mediaPlayer.Play();
+		}
+
+		// ============================================================
+		// MUTE / UNMUTE
+		// ============================================================
+		private void ToggleMute()
+		{
+			_mediaPlayer.Mute = !_mediaPlayer.Mute;
+			btnMute.Text = _mediaPlayer.Mute ? "🔇 Unmute" : "🔊 Mute";
+		}
+
+		// ============================================================
+		// LOAD VIDEO (KHÔNG AUTOPLAY)
+		// ============================================================
+		private void LoadVideo(string relativePath)
+		{
+			string fullPath = Path.Combine(MediaHelper.GetProjectRoot(), relativePath);
+
+			if (!File.Exists(fullPath))
+			{
+				MessageBox.Show("Không tìm thấy video:\n" + fullPath);
+				return;
+			}
+
+			var media = new Media(_libVLC, new Uri(fullPath));
+			_mediaPlayer.Media = media;
+
+			btnPlay.Text = "▶ Play";
+		}
+
+		// ============================================================
+		// BROWSE VIDEO
+		// ============================================================
+		private void BtnBrowse_Click(object? sender, EventArgs e)
+		{
+			using var ofd = new OpenFileDialog();
+			ofd.Filter = "Video files|*.mp4;*.mkv;*.webm;*.avi;*.mov";
+
+			if (ofd.ShowDialog() == DialogResult.OK)
+			{
+				// ================================
+				// 1. XÓA VIDEO CŨ TRƯỚC KHI COPY
+				// ================================
+				//if (!string.IsNullOrEmpty(txtVideoPath.Text))
+				//{
+				//	string oldPath = Path.Combine(MediaHelper.GetProjectRoot(), txtVideoPath.Text.Replace("/", "\\"));
+
+				//	try
+				//	{
+				//		if (File.Exists(oldPath))
+				//			File.Delete(oldPath);
+				//	}
+				//	catch (Exception ex)
+				//	{
+				//		MessageBox.Show($"Không thể xóa video cũ:\n{ex.Message}");
+				//	}
+				//}
+
+				// ================================
+				// 2. COPY VIDEO MỚI
+				// ================================
+				var rel = MediaHelper.CopyVideoToLibrary(ofd.FileName);
+
+				if (rel != null)
+				{
+					txtVideoPath.Text = rel;
+					LoadVideo(rel);
+				}
+			}
+		}
+
+
+		// ============================================================
+		// LOAD & SAVE VIEWMODEL
+		// ============================================================
+		public void LoadFromViewModel(LessonContentBuilderViewModel vm)
+		{
+			txtTitle.Text = vm.Title ?? "";
+			txtVideoPath.Text = vm.VideoUrl ?? "";
+			_oldVideoPath = vm.VideoUrl;
+			if (!string.IsNullOrEmpty(vm.VideoUrl))
+				LoadVideo(vm.VideoUrl);
+		}
+
+		public LessonContentBuilderViewModel SaveToViewModel()
+		{
+			if (!string.IsNullOrEmpty(_oldVideoPath) && _oldVideoPath != txtVideoPath.Text)
+			{
+				string fullPath = Path.Combine(MediaHelper.GetProjectRoot(), _oldVideoPath);
+				if (File.Exists(fullPath)) File.Delete(fullPath);
+			}
+			return new LessonContentBuilderViewModel
+			{
+				ContentType = "Video",
+				Title = txtTitle.Text.Trim(),
+				VideoUrl = txtVideoPath.Text.Trim()
+			};
+		}
+	}
 }

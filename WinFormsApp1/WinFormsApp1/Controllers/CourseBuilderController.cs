@@ -7,7 +7,7 @@ using WinFormsApp1.Models.Entities;
 using WinFormsApp1.ViewModels;
 using System.Diagnostics;
 
-namespace WinFormsApp1.ControllersWin
+namespace WinFormsApp1.Controllers
 {
     // Controller for WinForms - handles data access and business logic only
     public class CourseBuilderController
@@ -85,6 +85,60 @@ namespace WinFormsApp1.ControllersWin
 						};
 						
 						Debug.WriteLine($"LoadCourseAsync: Loading content - Type: {contentVm.ContentType}, Title: '{contentVm.Title}', Body length: {contentVm.Body?.Length ?? 0}");
+
+						// If this content references a FlashcardSet or Test, load details into VM so editor can display them
+						if (string.Equals(contentVm.ContentType, "FlashcardSet", StringComparison.OrdinalIgnoreCase) && contentVm.RefId.HasValue)
+						{
+							var set = await context.FlashcardSets
+								.Include(s => s.Flashcards)
+								.FirstOrDefaultAsync(s => s.SetId == contentVm.RefId.Value);
+							if (set != null)
+							{
+								contentVm.FlashcardSetTitle = set.Title;
+								contentVm.FlashcardSetDesc = set.Description;
+								contentVm.Flashcards = set.Flashcards
+									.OrderBy(f => f.OrderIndex)
+									.Select(f => new FlashcardBuilderViewModel
+									{
+										FrontText = f.FrontText,
+										BackText = f.BackText,
+										Hint = f.Hint,
+										OrderIndex = f.OrderIndex
+									})
+									.ToList();
+								Debug.WriteLine($"LoadCourseAsync: Loaded FlashcardSet Id={set.SetId} with {contentVm.Flashcards.Count} cards");
+							}
+						}
+
+						if (string.Equals(contentVm.ContentType, "Test", StringComparison.OrdinalIgnoreCase) && contentVm.RefId.HasValue)
+						{
+							var test = await context.Tests
+								.Include(t => t.Questions)
+									.ThenInclude(q => q.QuestionOptions)
+								.FirstOrDefaultAsync(t => t.TestId == contentVm.RefId.Value);
+							if (test != null)
+							{
+								contentVm.TestTitle = test.Title;
+								contentVm.TestDesc = test.Description;
+								contentVm.Questions = test.Questions
+									.OrderBy(q => q.OrderIndex)
+									.Select(q => new TestQuestionBuilderViewModel
+									{
+										Type = q.Type,
+										StemText = q.StemText,
+										Points = q.Points,
+										OrderIndex = q.OrderIndex,
+										Options = q.QuestionOptions.OrderBy(o => o.OrderIndex).Select(o => new TestQuestionOptionBuilderViewModel
+										{
+											OptionText = o.OptionText,
+											IsCorrect = o.IsCorrect,
+											OrderIndex = o.OrderIndex
+										}).ToList()
+									}).ToList();
+								Debug.WriteLine($"LoadCourseAsync: Loaded Test Id={test.TestId} with {contentVm.Questions.Count} questions");
+							}
+						}
+
 						lsDto.Contents.Add(contentVm);
 						Debug.WriteLine($"LoadCourseAsync: Added content to lesson. Lesson now has {lsDto.Contents.Count} contents");
 					}
@@ -198,12 +252,12 @@ namespace WinFormsApp1.ControllersWin
                         foreach (var c in lsDto.Contents)
                         {
                             // Log incoming content for diagnosis
-                            Debug.WriteLine($"SaveCourseAsync: Saving content for LessonId={lesson.LessonId} Type={c.ContentType} Title='{c.Title}' BodyLen={(c.Body?.Length ?? 0)} RefId={(c.RefId.HasValue ? c.RefId.Value.ToString() : "NULL")} VideoUrl='{c.VideoUrl}'");
+                            Debug.WriteLine($"SaveCourseAsync: Saving content for LessonId={lesson.LessonId} Type={c.ContentType} Title='{c.Title}' BodyLen={c.Body?.Length ?? 0} RefId={(c.RefId.HasValue ? c.RefId.Value.ToString() : "NULL")} VideoUrl='{c.VideoUrl}'");
 
                             // If content references another entity but RefId missing, create it now
                             if (string.Equals(c.ContentType, "FlashcardSet", StringComparison.OrdinalIgnoreCase) && !c.RefId.HasValue)
                             {
-                                if (!string.IsNullOrWhiteSpace(c.FlashcardSetTitle) || (c.Flashcards != null && c.Flashcards.Count > 0))
+                                if (!string.IsNullOrWhiteSpace(c.FlashcardSetTitle) || c.Flashcards != null && c.Flashcards.Count > 0)
                                 {
                                     var set = new FlashcardSet
                                     {
@@ -242,14 +296,23 @@ namespace WinFormsApp1.ControllersWin
 
                             if (string.Equals(c.ContentType, "Test", StringComparison.OrdinalIgnoreCase) && !c.RefId.HasValue)
                             {
-                                if (!string.IsNullOrWhiteSpace(c.TestTitle) || (c.Questions != null && c.Questions.Count > 0))
+                                if (!string.IsNullOrWhiteSpace(c.TestTitle) || c.Questions != null && c.Questions.Count > 0)
                                 {
+                                    // compute max score from provided questions (if any)
+                                    decimal totalPoints = 0;
+                                    if (c.Questions != null && c.Questions.Count > 0)
+                                    {
+                                        totalPoints = c.Questions.Sum(q => q.Points);
+                                    }
+
                                     var test = new Test
                                     {
                                         OwnerId = course.OwnerId,
                                         Title = string.IsNullOrWhiteSpace(c.TestTitle) ? c.Title ?? "Untitled Test" : c.TestTitle,
                                         Description = c.TestDesc,
                                         Visibility = "Course",
+                                        GradingMode = "Auto", // required non-nullable DB field
+                                        MaxScore = totalPoints == 0 ? null : (decimal?)totalPoints,
                                         CreatedAt = DateTime.Now
                                     };
                                     context.Tests.Add(test);
@@ -265,7 +328,7 @@ namespace WinFormsApp1.ControllersWin
                                                 TestId = test.TestId,
                                                 Type = q.Type ?? "MCQ_Single",
                                                 StemText = q.StemText ?? string.Empty,
-                                                Points = (decimal)(q.Points == 0 ? 1 : q.Points),
+                                                Points = q.Points == 0 ? 1 : q.Points,
                                                 OrderIndex = qIdx++
                                             };
                                             context.Questions.Add(question);

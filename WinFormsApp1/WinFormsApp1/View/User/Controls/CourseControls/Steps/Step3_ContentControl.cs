@@ -117,14 +117,35 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			// Only clear and rebuild if we have UI controls to save from
 			if (flpContents.Controls.Count > 0)
 			{
-				lesson.Contents.Clear();
+				var savedList = new System.Collections.Generic.List<LessonContentBuilderViewModel>();
+				int order = 0;
 				foreach (Control c in flpContents.Controls)
 				{
 					if (c is IContentControl ic)
 					{
-						lesson.Contents.Add(ic.SaveToViewModel());
+						var saved = ic.SaveToViewModel();
+
+						// If control.Tag holds original contentVm, preserve identifiers
+						if (c.Tag is LessonContentBuilderViewModel original)
+						{
+							saved.ContentId = original.ContentId;
+							saved.RefId = original.RefId;
+							// preserve original OrderIndex if present, otherwise set sequential
+							saved.OrderIndex = original.OrderIndex != 0 ? original.OrderIndex : ++order;
+						}
+						else
+						{
+							// new content created in UI
+							saved.OrderIndex = ++order;
+						}
+
+						savedList.Add(saved);
 					}
 				}
+
+				// replace lesson contents with preserved list
+				lesson.Contents.Clear();
+				lesson.Contents.AddRange(savedList);
 			}
 		}
 
@@ -140,8 +161,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			var lesson = item.Lesson ?? _vm.Chapters[item.ChapterIndex].Lessons[item.LessonIndex];
 
 			flpContents.Controls.Clear();
-
-
 
 			if (lesson.Contents.Count == 0)
 			{
@@ -162,6 +181,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				if (ctl is IContentControl ic)
 				{
 					ic.LoadFromViewModel(contentVm);
+					// attach original VM to control so we can preserve IDs later
+					ctl.Tag = contentVm;
 					ic.DeleteRequested += (s) => OnContentDeleteRequested(ctl, contentVm);
 				}
 				
@@ -211,6 +232,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 
 			var ctl = new ContentTheoryControl();
 			ctl.LoadFromViewModel(newContent);
+			// attach VM so Save can preserve metadata if user later edits
+			ctl.Tag = newContent;
 
 			// 🎯 FIX QUAN TRỌNG: GẮN EVENT CHUYỂN TYPE
 			ctl.ContentTypeChanged += (s, newType)
@@ -255,6 +278,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			if (newControl is IContentControl newIc)
 			{
 				newIc.LoadFromViewModel(contentVm);
+				// attach same VM so IDs preserved
+				newControl.Tag = contentVm;
 			}
 
 			// Add event handler for new control

@@ -109,14 +109,14 @@ namespace WinFormsApp1.ViewModels
         // For FlashcardSet content type
         public string? FlashcardSetTitle { get; set; }
         public string? FlashcardSetDesc { get; set; }
-        public List<FlashcardBuilderViewModel>? Flashcards { get; set; }
+        public List<FlashcardBuilderViewModel> Flashcards { get; set; } = new();
 
         // For Test content type
         public string? TestTitle { get; set; }
         public string? TestDesc { get; set; }
         public int? TimeLimitMinutes { get; set; }
         public int? MaxAttempts { get; set; }
-        public List<TestQuestionBuilderViewModel>? Questions { get; set; }
+        public List<TestQuestionBuilderViewModel> Questions { get; set; } = new();
     }
 
     /// <summary>
@@ -139,7 +139,7 @@ namespace WinFormsApp1.ViewModels
         public string StemText { get; set; } = string.Empty;
         public decimal Points { get; set; } = 1;
         public int OrderIndex { get; set; }
-        public List<TestQuestionOptionBuilderViewModel>? Options { get; set; }
+        public List<TestQuestionOptionBuilderViewModel> Options { get; set; } = new();
     }
 
     /// <summary>
