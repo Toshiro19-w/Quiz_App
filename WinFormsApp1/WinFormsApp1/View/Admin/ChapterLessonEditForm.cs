@@ -156,11 +156,18 @@ namespace WinFormsApp1.View.Admin
         {
             try
             {
-                // Validate
-                var validation = ValidationHelper.ValidateTitle(txtTitle.Text);
-                if (!string.IsNullOrEmpty(validation))
+                // Validate title
+                if (string.IsNullOrWhiteSpace(txtTitle.Text))
                 {
-                    ValidationHelper.ShowValidationError(this, validation);
+                    MessageBox.Show("Tiêu đề không được để trống!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtTitle.Focus();
+                    return;
+                }
+                
+                if (txtTitle.Text.Trim().Length < 3)
+                {
+                    MessageBox.Show("Tiêu đề phải có ít nhất 3 ký tự!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtTitle.Focus();
                     return;
                 }
 
@@ -201,12 +208,12 @@ namespace WinFormsApp1.View.Admin
                 }
                 else
                 {
-                    ValidationHelper.ShowValidationError(this, "Lưu thất bại");
+                    MessageBox.Show("Lưu thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                ValidationHelper.ShowValidationError(this, ex.Message);
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

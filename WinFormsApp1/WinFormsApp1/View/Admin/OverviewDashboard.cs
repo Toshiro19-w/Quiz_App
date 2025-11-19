@@ -8,19 +8,23 @@ using static WinFormsApp1.Helpers.UIComponentHelper;
 
 namespace WinFormsApp1.View.Admin
 {
-    public partial class OverviewDashboard : UserControl
+    public partial class OverviewDashboard : AdminBaseControl
     {
-        private AdminController _controller;
-
-        public OverviewDashboard()
+        public OverviewDashboard() : base()
         {
-            _controller = new AdminController();
             InitializeComponent();
         }
 
         private void OverviewDashboard_Load(object sender, EventArgs e)
         {
+            SetupLayout();
             LoadData();
+        }
+
+        private void SetupLayout()
+        {
+            var topPanel = CreateTopPanel("Tổng quan hệ thống");
+            this.Controls.Add(topPanel);
         }
 
         private async void LoadData()
@@ -39,7 +43,7 @@ namespace WinFormsApp1.View.Admin
 
             try
             {
-                var stats = await _controller.GetDashboardStatsAsync();
+                var stats = await _adminController.GetDashboardStatsAsync();
                 CreateKPICards(stats);
                 CreateTrendChart();
             }

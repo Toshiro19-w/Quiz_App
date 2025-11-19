@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.View.User;
 using static WinFormsApp1.Helpers.ColorPalette;
 
 namespace WinFormsApp1.View.Admin
@@ -186,7 +187,7 @@ namespace WinFormsApp1.View.Admin
                 new { Text = "📝 Bài kiểm tra", Tag = "tests" },
                 // new { Text = "⚙️ Cài đặt hệ thống", Tag = "system-settings" }, // Tạm ẩn
                 new { Text = "📊 Báo cáo", Tag = "reports" },
-                new { Text = "🚪 Đăng xuất", Tag = "logout" }
+                new { Text = "🏠 Trang chủ", Tag = "home" }
             };
 
             foreach (var item in otherItems)
@@ -259,8 +260,8 @@ namespace WinFormsApp1.View.Admin
                 case "system-settings":
                     LoadSystemSettings();
                     break;
-                case "logout":
-                    Logout();
+                case "home":
+                    GoToHomePage();
                     break;
                 default:
                     ToastHelper.Show(this, $"Chức năng {button?.Text} đang được phát triển");
@@ -268,22 +269,17 @@ namespace WinFormsApp1.View.Admin
             }
         }
 
-        private void Logout()
+        private void GoToHomePage()
         {
-            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận đăng xuất",
+            var result = MessageBox.Show("Bạn có muốn chuyển về trang chủ?", "Xác nhận",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {
-                AuthHelper.Logout();
                 this.Hide();
-                var loginForm = new dangnhap();
-                loginForm.FormClosed += (s, args) => this.Close();
-                loginForm.Show();
-            }
-            else
-            {
-                ToastHelper.Show(this, "Hủy đăng xuất");
+                var mainForm = new MainContainer();
+                mainForm.FormClosed += (s, args) => this.Close();
+                mainForm.Show();
             }
         }
 

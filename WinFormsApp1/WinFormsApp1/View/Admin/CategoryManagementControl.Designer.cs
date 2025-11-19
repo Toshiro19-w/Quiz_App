@@ -87,7 +87,6 @@ namespace WinFormsApp1.View.Admin
             btnCancel.Text = "❌ Hủy";
             btnCancel.UseVisualStyleBackColor = false;
             btnCancel.Visible = false;
-            btnCancel.Click += BtnCancel_Click;
             // 
             // btnSave
             // 
@@ -101,7 +100,7 @@ namespace WinFormsApp1.View.Admin
             btnSave.Text = "💾 Lưu";
             btnSave.UseVisualStyleBackColor = false;
             btnSave.Visible = false;
-            btnSave.Click += BtnSave_Click;
+            //btnSave.Click += BtnSave_Click;
             // 
             // btnDelete
             // 

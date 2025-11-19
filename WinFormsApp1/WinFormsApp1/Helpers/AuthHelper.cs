@@ -31,6 +31,7 @@ namespace WinFormsApp1.Helpers
         public static void Logout()
         {
             _currentUser = null;
+            SessionHelper.ClearSession();
         }
 
         // For testing purposes only
@@ -61,6 +62,36 @@ namespace WinFormsApp1.Helpers
             using var context = new LearningPlatformContext();
             var role = context.Roles.FirstOrDefault(r => r.RoleId == _currentUser.RoleId);
             return role?.Name ?? "Unknown";
+        }
+
+        public static bool Register(string username, string email, string fullName, string password, string phone = null)
+        {
+            using var context = new LearningPlatformContext();
+            
+            // Kiểm tra email đã tồn tại
+            if (context.Users.Any(u => u.Email == email))
+                return false;
+
+            // Kiểm tra username đã tồn tại
+            if (context.Users.Any(u => u.Username == username))
+                return false;
+
+            // Tạo user mới
+            var user = new User
+            {
+                Username = username,
+                Email = email,
+                FullName = fullName,
+                Phone = phone,
+                PasswordHash = PasswordHelper.HashPassword(password),
+                RoleId = 2, // User role
+                Status = 1, // Active
+                CreatedAt = DateTime.Now
+            };
+
+            context.Users.Add(user);
+            context.SaveChanges();
+            return true;
         }
     }
 }

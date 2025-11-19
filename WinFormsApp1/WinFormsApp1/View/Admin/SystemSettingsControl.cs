@@ -13,7 +13,17 @@ namespace WinFormsApp1.View.Admin
         public SystemSettingsControl() : base()
         {
             InitializeComponent();
+            SetupLayout();
+        }
+
+        private void SetupLayout()
+        {
+            var topPanel = CreateTopPanel("Cài đặt hệ thống");
+            
             SetupTabs();
+            
+            this.Controls.Add(tabControl);
+            this.Controls.Add(topPanel);
         }
 
         private void SetupTabs()

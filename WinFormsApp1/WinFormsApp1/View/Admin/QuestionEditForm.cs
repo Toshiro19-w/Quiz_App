@@ -244,11 +244,25 @@ namespace WinFormsApp1.View.Admin
         {
             try
             {
-                // Validate
-                var validation = ValidationHelper.ValidateTitle(txtStemText.Text);
-                if (!string.IsNullOrEmpty(validation))
+                // Validate question text
+                if (string.IsNullOrWhiteSpace(txtStemText.Text))
                 {
-                    ValidationHelper.ShowValidationError(this, validation);
+                    MessageBox.Show("Nội dung câu hỏi không được để trống!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtStemText.Focus();
+                    return;
+                }
+                
+                if (txtStemText.Text.Trim().Length < 5)
+                {
+                    MessageBox.Show("Nội dung câu hỏi phải có ít nhất 5 ký tự!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtStemText.Focus();
+                    return;
+                }
+                
+                if (cmbType.SelectedItem == null)
+                {
+                    MessageBox.Show("Vui lòng chọn loại câu hỏi!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    cmbType.Focus();
                     return;
                 }
 
@@ -278,13 +292,27 @@ namespace WinFormsApp1.View.Admin
 
                     if (_options.Count == 0)
                     {
-                        ValidationHelper.ShowValidationError(this, "Phải có ít nhất một đáp án");
+                        MessageBox.Show("Phải có ít nhất một đáp án!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
                     if (_question.Type != "short_answer" && !_options.Any(o => o.IsCorrect))
                     {
-                        ValidationHelper.ShowValidationError(this, "Phải có ít nhất một đáp án đúng");
+                        MessageBox.Show("Phải có ít nhất một đáp án đúng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    
+                    // Validate single choice has only one correct answer
+                    if (_question.Type == "single_choice" && _options.Count(o => o.IsCorrect) > 1)
+                    {
+                        MessageBox.Show("Câu hỏi một lựa chọn chỉ được có một đáp án đúng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    
+                    // Validate true/false has exactly 2 options
+                    if (_question.Type == "true_false" && _options.Count != 2)
+                    {
+                        MessageBox.Show("Câu hỏi đúng/sai phải có đúng 2 đáp án!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
                 }
@@ -308,12 +336,12 @@ namespace WinFormsApp1.View.Admin
                 }
                 else
                 {
-                    ValidationHelper.ShowValidationError(this, "Lưu thất bại");
+                    MessageBox.Show("Lưu thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                ValidationHelper.ShowValidationError(this, ex.Message);
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

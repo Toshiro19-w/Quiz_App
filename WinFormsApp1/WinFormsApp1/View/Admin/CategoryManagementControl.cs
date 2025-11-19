@@ -18,15 +18,50 @@ namespace WinFormsApp1.View.Admin
         {
             InitializeComponent();
         }
+        
+        protected override void OnAddButtonClick(object sender, EventArgs e)
+        {
+            BtnAdd_Click(sender, e);
+        }
+        
+        protected override void OnEditButtonClick(object sender, EventArgs e)
+        {
+            BtnEdit_Click(sender, e);
+        }
+        
+        protected override void OnDeleteButtonClick(object sender, EventArgs e)
+        {
+            BtnDelete_Click(sender, e);
+        }
+        
+        protected override void OnRefreshButtonClick(object sender, EventArgs e)
+        {
+            _ = LoadCategoriesAsync();
+        }
 
         private async void CategoryManagementControl_Load(object sender, EventArgs e)
         {
-            ApplyModernStyling(dataGridView, formPanel);
-            ApplyModernFormStyling(formPanel);
+            var formPanel = CreateInputForm("Thông tin danh mục",
+                ("Tên danh mục", "txtName", "Nhập tên danh mục...", true, false),
+                ("Mô tả", "txtDescription", "Nhập mô tả...", false, false)
+            );
+            
+            SetupLayoutWithForm("Quản lý danh mục", dataGridView, formPanel);
+            WireCrudEvents();
+            WireFormEvents();
             SetupSearchFunctionality(dataGridView, "Tên", "Mô_tả");
-            SetEditMode(false);
+            
             dataGridView.CellClick += DataGridView_CellClick;
             await LoadCategoriesAsync();
+        }
+        
+        private void WireFormEvents()
+        {
+            var saveBtn = this.Controls.Find("btnSave", true).FirstOrDefault() as Button;
+            if (saveBtn != null)
+            {
+                saveBtn.Click += BtnSave_Click;
+            }
         }
 
         private void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -39,7 +74,7 @@ namespace WinFormsApp1.View.Admin
 
         private void CategoryManagementControl_Resize(object sender, EventArgs e)
         {
-            AdjustResponsiveLayout(dataGridView, formPanel);
+            AdjustResponsiveLayout(dataGridView, null);
         }
 
         private async Task LoadCategoriesAsync()
@@ -47,13 +82,24 @@ namespace WinFormsApp1.View.Admin
             try
             {
                 var categories = await _adminController.GetCategoriesAsync();
-                dataGridView.DataSource = categories.Select(c => new
+                var categoryData = categories.Select(c => new
                 {
                     ID = c.CategoryId,
                     Tên = c.Name,
                     Mô_tả = c.Description?.Length > 50 ? c.Description.Substring(0, 50) + "..." : c.Description,
                     Ngày_tạo = c.CreatedAt.ToString("dd/MM/yyyy")
                 }).ToList();
+                
+                dataGridView.DataSource = categoryData;
+                ApplyModernStyling(dataGridView, null);
+                
+                UpdateDataGridHeaders(dataGridView, new Dictionary<string, string>
+                {
+                    { "ID", "Mã" },
+                    { "Tên", "Tên danh mục" },
+                    { "Mô_tả", "Mô tả" },
+                    { "Ngày_tạo", "Ngày tạo" }
+                });
             }
             catch (Exception ex)
             {
@@ -63,8 +109,9 @@ namespace WinFormsApp1.View.Admin
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            ClearForm();
-            SetEditMode(true);
+            ClearFormInputs();
+            ClearFormErrors();
+            ShowInputForm();
             isEditing = false;
         }
 
@@ -72,42 +119,45 @@ namespace WinFormsApp1.View.Admin
         {
             if (dataGridView.SelectedRows.Count > 0)
             {
-                var categoryId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                _ = LoadCategoryForEditAsync(categoryId);
-                SetEditMode(true);
+                var selectedRow = dataGridView.SelectedRows[0];
+                editingCategoryId = Convert.ToInt32(selectedRow.Cells["ID"].Value);
+                
+                SetFormValue("txtName", selectedRow.Cells["Tên"].Value?.ToString());
+                SetFormValue("txtDescription", selectedRow.Cells["Mô_tả"].Value?.ToString());
+                
+                ShowInputForm();
                 isEditing = true;
-                editingCategoryId = categoryId;
+            }
+            else
+            {
+                ToastHelper.Show(this.FindForm(), "Vui lòng chọn danh mục để sửa!");
             }
         }
-
-        private async Task LoadCategoryForEditAsync(int categoryId)
-        {
-            try
-            {
-                var category = await _adminController.GetCategoryByIdAsync(categoryId);
-                if (category != null)
-                {
-                    SetTextValue(txtName, category.Name);
-                    SetTextValue(txtDescription, category.Description);
-                }
-            }
-            catch (Exception ex)
-            {
-                ToastHelper.Show(this.FindForm(), $"Lỗi tải thông tin danh mục: {ex.Message}");
-            }
-        }
-
+        
         private async void BtnSave_Click(object sender, EventArgs e)
         {
             try
             {
-                var validationResult = ValidationHelper.ValidateTitle(txtName.Text);
-                if (!ValidateInput(validationResult)) return;
+                // Validate all fields
+                ValidateField("txtName", true, false);
+                
+                // Check if there are any visible errors
+                var errorLabels = GetAllControls(inputFormPanel).OfType<Label>()
+                    .Where(l => l.Name != null && l.Name.EndsWith("Error") && l.Visible);
+                
+                if (errorLabels.Any())
+                {
+                    ToastHelper.Show(this.FindForm(), "Vui lòng sửa các lỗi trước khi lưu!");
+                    return;
+                }
+                
+                var name = GetFormValue("txtName").Trim();
+                var description = GetFormValue("txtDescription").Trim();
 
                 var category = new CourseCategory
                 {
-                    Name = GetTextValue(txtName).Trim(),
-                    Description = GetTextValue(txtDescription)?.Trim(),
+                    Name = name,
+                    Description = string.IsNullOrEmpty(description) ? null : description,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -124,10 +174,13 @@ namespace WinFormsApp1.View.Admin
 
                 if (success)
                 {
+                    await LogAdminActionAsync(isEditing ? "UPDATE" : "CREATE", "Category", 
+                        isEditing ? editingCategoryId : (int?)null, 
+                        $"{(isEditing ? "Cập nhật" : "Tạo")} danh mục: {category.Name}");
+                    
                     ToastHelper.Show(this.FindForm(), "✅ Lưu thành công!");
                     await LoadCategoriesAsync();
-                    SetEditMode(false);
-                    ClearForm();
+                    HideInputForm();
                 }
                 else
                 {
@@ -136,9 +189,13 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                ValidationHelper.ShowValidationError(this.FindForm(), $"Lỗi lưu dữ liệu: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), $"Lỗi lưu dữ liệu: {ex.Message}");
             }
         }
+
+
+
+
 
         private async void BtnDelete_Click(object sender, EventArgs e)
         {
@@ -168,30 +225,14 @@ namespace WinFormsApp1.View.Admin
                     }
                 }
             }
+            else
+            {
+                ToastHelper.Show(this.FindForm(), "Vui lòng chọn danh mục để xóa!");
+            }
         }
+        
 
-        private void BtnCancel_Click(object sender, EventArgs e)
-        {
-            SetEditMode(false);
-            ClearForm();
-        }
 
-        private void SetEditMode(bool editing)
-        {
-            btnAdd.Visible = !editing;
-            btnEdit.Visible = !editing;
-            btnDelete.Visible = !editing;
-            btnSave.Visible = editing;
-            btnCancel.Visible = editing;
 
-            txtName.Enabled = editing;
-            txtDescription.Enabled = editing;
-        }
-
-        private void ClearForm()
-        {
-            SetTextValue(txtName, "");
-            SetTextValue(txtDescription, "");
-        }
     }
 }
