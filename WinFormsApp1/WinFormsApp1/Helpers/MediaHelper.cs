@@ -11,7 +11,7 @@ namespace WinFormsApp1.Helpers
 		// ============================================================
 		// GET PROJECT ROOT (3 cấp lên từ bin/Debug/net8.0-windows)
 		// ============================================================
-		private static string GetProjectRoot()
+		public static string GetProjectRoot()
 		{
 			string dir = AppDomain.CurrentDomain.BaseDirectory;
 			string projectRoot = Path.GetFullPath(Path.Combine(dir, @"..\..\.."));
