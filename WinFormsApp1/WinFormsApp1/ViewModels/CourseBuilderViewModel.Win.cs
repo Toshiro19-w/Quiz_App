@@ -60,7 +60,12 @@ namespace WinFormsApp1.ViewModels
 
         public int OrderIndex { get; set; }
 
-        public List<LessonBuilderViewModel> Lessons { get; set; } = new();
+        public List<LessonBuilderViewModel> Lessons { get; set; }
+        
+        public ChapterBuilderViewModel()
+        {
+            Lessons = new List<LessonBuilderViewModel>();
+        }
     }
 
     public class LessonBuilderViewModel

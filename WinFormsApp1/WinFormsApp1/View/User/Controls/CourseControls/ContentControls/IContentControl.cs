@@ -7,5 +7,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
     {
         void LoadFromViewModel(LessonContentBuilderViewModel vm);
         LessonContentBuilderViewModel SaveToViewModel();
+        event Action<object>? DeleteRequested;
     }
 }

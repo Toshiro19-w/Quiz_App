@@ -5,6 +5,7 @@ using WinFormsApp1.View.User.Controls.CourseControls.Steps;
 using WinFormsApp1.ControllersWin;
 using WinFormsApp1.View.User.Controls.CourseControls;
 using WinFormsApp1.ViewModels;
+using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.User.Forms
 {
@@ -13,7 +14,7 @@ namespace WinFormsApp1.View.User.Forms
         private readonly CourseBuilderController _controller = new CourseBuilderController();
         private UserControl[] steps;
         private int currentStep = 0;
-        private CourseBuilderViewModel vm = new CourseBuilderViewModel();
+        private CourseBuilderViewModel vm = new CourseBuilderViewModel { OwnerId = AuthHelper.CurrentUser.UserId };
         private int? editingCourseId = null; // holds course id when editing
 
         public CourseBuilderForm()
