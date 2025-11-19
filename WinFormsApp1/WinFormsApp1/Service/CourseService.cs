@@ -77,16 +77,45 @@ namespace WinFormsApp1.Service
 		{
 			try
 			{
-				return _context.Courses
+				var course = _context.Courses
 					.Include(c => c.Owner)
 					.Include(c => c.Category)
-					.Include(c => c.CourseChapters.OrderBy(ch => ch.OrderIndex))
-						.ThenInclude(ch => ch.Lessons.OrderBy(l => l.OrderIndex))
-							.ThenInclude(l => l.LessonContents.OrderBy(lc => lc.OrderIndex))
+					.Include(c => c.CourseChapters)
+						.ThenInclude(ch => ch.Lessons)
+							.ThenInclude(l => l.LessonContents)
 					.Include(c => c.CoursePurchases)
-					.Include(c => c.CourseReviews.OrderByDescending(r => r.CreatedAt))
+					.Include(c => c.CourseReviews)
 						.ThenInclude(r => r.User)
 					.FirstOrDefault(c => c.Slug == slug);
+
+				if (course != null)
+				{
+					// Sort in memory after loading
+					course.CourseChapters = course.CourseChapters
+						.OrderBy(ch => ch.OrderIndex)
+						.ToList();
+
+					foreach (var chapter in course.CourseChapters)
+					{
+						chapter.Lessons = chapter.Lessons
+							.OrderBy(l => l.OrderIndex)
+							.ToList();
+
+						foreach (var lesson in chapter.Lessons)
+						{
+							lesson.LessonContents = lesson.LessonContents
+								.OrderBy(lc => lc.OrderIndex)
+								.ToList();
+						}
+					}
+
+					course.CourseReviews = course.CourseReviews
+						.Where(r => r.IsApproved)
+						.OrderByDescending(r => r.CreatedAt)
+						.ToList();
+				}
+
+				return course;
 			}
 			catch (Exception ex)
 			{
@@ -219,7 +248,7 @@ namespace WinFormsApp1.Service
 		{
 			try
 			{
-				// Logic khuyến nghị đơn giản: dựa vào rating cao
+				// Logic khuyến nghị đơn giản: dựa vao rating cao
 				return _context.Courses
 					.Include(c => c.Owner)
 					.Include(c => c.Category)

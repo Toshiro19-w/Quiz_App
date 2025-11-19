@@ -27,7 +27,7 @@ namespace WinFormsApp1.View.User.Controls
             this.Padding = new Padding(0, 70, 0, 0);
 
             var lblTitle = new Label { Text = "🛒 Cửa hàng khóa học", Font = new Font("Segoe UI", 18, FontStyle.Bold), Location = new Point(20, 10), AutoSize = true };
-            
+
             var searchTB = new TextBox { Location = new Point(20, 50), Size = new Size(400, 30), Font = new Font("Segoe UI", 11), PlaceholderText = "Tìm kiếm khóa học..." };
             var btnSearch = new Button { Text = "🔍 Tìm", Location = new Point(430, 50), Size = new Size(100, 30), BackColor = ColorPalette.ButtonSecondary, ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Cursor = Cursors.Hand };
             btnSearch.FlatAppearance.BorderSize = 0;
@@ -86,7 +86,7 @@ namespace WinFormsApp1.View.User.Controls
             var lblTitle = new Label { Text = course.Title, Location = new Point(10, 10), Size = new Size(250, 60), Font = new Font("Segoe UI", 10, FontStyle.Bold) };
             var lblReviews = new Label { Text = $"⭐ {course.TotalReviews} đánh giá", Location = new Point(10, 75), AutoSize = true, Font = new Font("Segoe UI", 9), ForeColor = ColorPalette.TextSecondary };
             var lblPrice = new Label { Text = course.Price > 0 ? $"{course.Price:N0} VNĐ" : "Miễn phí", Location = new Point(10, 100), AutoSize = true, Font = new Font("Segoe UI", 11, FontStyle.Bold), ForeColor = ColorPalette.ButtonPrimary };
-            
+
             var btnAddCart = new Button { Text = "🛒 Thêm giỏ", Location = new Point(10, 140), Size = new Size(120, 30), BackColor = ColorPalette.ButtonPrimary, ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Cursor = Cursors.Hand, Tag = course.CourseId };
             btnAddCart.FlatAppearance.BorderSize = 0;
             btnAddCart.Click += BtnAddCart_Click;
@@ -145,6 +145,11 @@ namespace WinFormsApp1.View.User.Controls
                 card.Controls.AddRange(new Control[] { lblTitle, lblPrice, btnView });
                 coursesPanel.Controls.Add(card);
             }
+        }
+
+        private void ShopControl_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
