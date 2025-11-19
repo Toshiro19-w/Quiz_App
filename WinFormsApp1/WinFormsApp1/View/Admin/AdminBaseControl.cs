@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
@@ -7,11 +9,6 @@ using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.Admin
 {
-    /// <summary>
-    /// Base control for admin UserControls to centralize styling, layout and controller lifetime.
-    /// NOTE: AdjustResponsiveLayout has been changed to use a fixed large layout (no responsive behavior)
-    /// to match the user UI size and maximize admin controls.
-    /// </summary>
     public abstract class AdminBaseControl : UserControl
     {
         protected readonly AdminController _adminController;
@@ -28,36 +25,44 @@ namespace WinFormsApp1.View.Admin
 
         protected void ApplyModernStyling(DataGridView dataGridView, Panel formPanel)
         {
-            if (dataGridView == null || formPanel == null) return;
+            if (dataGridView == null) return;
 
-            // Cải thiện DataGridView
-            dataGridView.BorderStyle = BorderStyle.None;
-            dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
-            dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridView.DefaultCellStyle.SelectionBackColor = Color.FromArgb(59, 130, 246);
-            dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
-            dataGridView.DefaultCellStyle.BackColor = Color.White;
-            dataGridView.DefaultCellStyle.ForeColor = Color.FromArgb(55, 65, 81);
-            dataGridView.DefaultCellStyle.Font = new Font("Segoe UI", 10);
-            dataGridView.DefaultCellStyle.Padding = new Padding(8, 6, 8, 6);
+            // Modern DataGridView styling
+            dataGridView.BorderStyle = BorderStyle.FixedSingle;
             dataGridView.BackgroundColor = Color.White;
-            dataGridView.GridColor = Color.FromArgb(229, 231, 235);
+            dataGridView.GridColor = Color.FromArgb(224, 224, 224);
+            dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+            
+            // Header styling
             dataGridView.EnableHeadersVisualStyles = false;
-            dataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(75, 85, 99);
-            dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dataGridView.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            dataGridView.ColumnHeadersDefaultCellStyle.Padding = new Padding(8, 10, 8, 10);
-            dataGridView.ColumnHeadersHeight = 45;
-            dataGridView.RowTemplate.Height = 40;
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
+            dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+            dataGridView.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+            dataGridView.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView.ColumnHeadersHeight = 35;
+            
+            // Row styling
+            dataGridView.DefaultCellStyle.BackColor = Color.White;
+            dataGridView.DefaultCellStyle.ForeColor = Color.Black;
+            dataGridView.DefaultCellStyle.Font = new Font("Segoe UI", 9);
+            dataGridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
+            dataGridView.RowTemplate.Height = 35;
+            
+            // Selection styling
+            dataGridView.DefaultCellStyle.SelectionBackColor = Color.FromArgb(51, 122, 183);
+            dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
+            
+            // Behavior
             dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView.MultiSelect = false;
             dataGridView.AllowUserToAddRows = false;
             dataGridView.AllowUserToDeleteRows = false;
             dataGridView.ReadOnly = true;
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            // Format headers to remove underscores
+            // Format headers
             dataGridView.DataBindingComplete += (s, e) =>
             {
                 foreach (DataGridViewColumn column in dataGridView.Columns)
@@ -66,58 +71,522 @@ namespace WinFormsApp1.View.Admin
                 }
             };
 
-            // Cải thiện Form Panel
-            formPanel.BorderStyle = BorderStyle.None;
-            formPanel.BackColor = Color.White;
-            formPanel.Padding = new Padding(20);
-            
-            // Thêm border và shadow effect
-            formPanel.Paint += (s, e) =>
+            if (formPanel != null)
             {
-                var rect = formPanel.ClientRectangle;
-                using (var pen = new Pen(Color.FromArgb(229, 231, 235), 1))
-                {
-                    e.Graphics.DrawRectangle(pen, 0, 0, rect.Width - 1, rect.Height - 1);
-                }
+                formPanel.BorderStyle = BorderStyle.None;
+                formPanel.BackColor = Color.White;
+                formPanel.Padding = new Padding(20);
+            }
+        }
+
+        protected Panel CreateTopPanel(string title)
+        {
+            var topPanel = new Panel
+            {
+                Height = 60,
+                Dock = DockStyle.Top,
+                BackColor = Color.White,
+                Padding = new Padding(20, 10, 20, 10)
             };
+
+            var titleLabel = new Label
+            {
+                Text = title,
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = Color.Black,
+                AutoSize = true,
+                Location = new Point(20, 15)
+            };
+            topPanel.Controls.Add(titleLabel);
+
+            return topPanel;
+        }
+
+        protected Panel CreateCrudButtonPanel()
+        {
+            var buttonPanel = new Panel
+            {
+                Height = 60,
+                Dock = DockStyle.Top,
+                BackColor = Color.White,
+                Padding = new Padding(20, 10, 20, 10)
+            };
+
+            var addBtn = new Button
+            {
+                Text = "Thêm mới",
+                Size = new Size(100, 35),
+                Location = new Point(20, 12),
+                BackColor = Color.FromArgb(40, 167, 69),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Name = "btnAdd"
+            };
+            addBtn.FlatAppearance.BorderSize = 0;
+
+            var editBtn = new Button
+            {
+                Text = "Sửa",
+                Size = new Size(80, 35),
+                Location = new Point(130, 12),
+                BackColor = Color.FromArgb(52, 144, 220),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Name = "btnEdit"
+            };
+            editBtn.FlatAppearance.BorderSize = 0;
+
+            var deleteBtn = new Button
+            {
+                Text = "Xóa",
+                Size = new Size(80, 35),
+                Location = new Point(220, 12),
+                BackColor = Color.FromArgb(220, 53, 69),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Name = "btnDelete"
+            };
+            deleteBtn.FlatAppearance.BorderSize = 0;
+
+            var refreshBtn = new Button
+            {
+                Text = "Làm mới",
+                Size = new Size(90, 35),
+                Location = new Point(310, 12),
+                BackColor = Color.FromArgb(108, 117, 125),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Name = "btnRefresh"
+            };
+            refreshBtn.FlatAppearance.BorderSize = 0;
+
+            buttonPanel.Controls.AddRange(new Control[] { addBtn, editBtn, deleteBtn, refreshBtn });
+            return buttonPanel;
+        }
+
+        protected Panel CreateFilterPanel()
+        {
+            var filterPanel = new Panel
+            {
+                Height = 50,
+                Dock = DockStyle.Top,
+                BackColor = Color.White,
+                Padding = new Padding(20, 10, 20, 10)
+            };
+
+            var showLabel = new Label
+            {
+                Text = "Hiển thị",
+                Font = new Font("Segoe UI", 9),
+                AutoSize = true,
+                Location = new Point(20, 15)
+            };
+            filterPanel.Controls.Add(showLabel);
+
+            var entriesCombo = new ComboBox
+            {
+                Items = { "10", "25", "50", "100" },
+                SelectedIndex = 0,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("Segoe UI", 9),
+                Size = new Size(60, 25),
+                Location = new Point(70, 12)
+            };
+            filterPanel.Controls.Add(entriesCombo);
+
+            var entriesLabel = new Label
+            {
+                Text = "dữ liệu",
+                Font = new Font("Segoe UI", 9),
+                AutoSize = true,
+                Location = new Point(140, 15)
+            };
+            filterPanel.Controls.Add(entriesLabel);
+
+            var searchLabel = new Label
+            {
+                Text = "Tìm kiếm:",
+                Font = new Font("Segoe UI", 9),
+                AutoSize = true,
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                Location = new Point(filterPanel.Width - 300, 15)
+            };
+            filterPanel.Controls.Add(searchLabel);
+
+            searchBox = new TextBox
+            {
+                Font = new Font("Segoe UI", 9),
+                Size = new Size(200, 25),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                Location = new Point(filterPanel.Width - 220, 12),
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            filterPanel.Controls.Add(searchBox);
+
+            return filterPanel;
         }
 
         protected void SetupSearchFunctionality(DataGridView dataGridView, params string[] searchColumns)
         {
-            var exportBtn = ExportImportHelper.CreateExportButton(dataGridView, this.GetType().Name.Replace("Control", ""));
-            
-            searchBox = SearchHelper.CreateSearchBox(this, (s, e) => 
+            if (searchBox != null)
             {
-                PerformAdvancedSearch(dataGridView, searchBox.Text, searchColumns);
-            });
+                searchBox.TextChanged += (s, e) => PerformAdvancedSearch(dataGridView, searchBox.Text, searchColumns);
+            }
+        }
+
+
+
+        protected void SetupLayout(string title, DataGridView dataGridView)
+        {
+            this.SuspendLayout();
+            this.Controls.Clear();
             
-            // Áp dụng placeholder cho search box
-            string searchPlaceholder = GetSearchPlaceholder(this.GetType().Name);
-            if (!string.IsNullOrEmpty(searchPlaceholder))
+            var topPanel = CreateTopPanel(title);
+            var buttonPanel = CreateCrudButtonPanel();
+            var filterPanel = CreateFilterPanel();
+            var paginationPanel = CreatePaginationPanel();
+            
+            dataGridView.Dock = DockStyle.Fill;
+            
+            this.Controls.Add(dataGridView);
+            this.Controls.Add(paginationPanel);
+            this.Controls.Add(filterPanel);
+            this.Controls.Add(buttonPanel);
+            this.Controls.Add(topPanel);
+            
+            this.ResumeLayout();
+        }
+
+        protected void SetupLayoutWithForm(string title, DataGridView dataGridView, Panel formPanel)
+        {
+            this.SuspendLayout();
+            this.Controls.Clear();
+            
+            var topPanel = CreateTopPanel(title);
+            var buttonPanel = CreateCrudButtonPanel();
+            var filterPanel = CreateFilterPanel();
+            var paginationPanel = CreatePaginationPanel();
+            
+            dataGridView.Dock = DockStyle.Fill;
+            
+            this.Controls.Add(dataGridView);
+            this.Controls.Add(paginationPanel);
+            this.Controls.Add(filterPanel);
+            this.Controls.Add(buttonPanel);
+            this.Controls.Add(topPanel);
+            this.Controls.Add(formPanel);
+            
+            this.ResumeLayout();
+        }
+        
+        protected Panel inputFormPanel;
+        protected bool isFormVisible = false;
+
+        protected virtual void OnAddButtonClick(object sender, EventArgs e) { }
+        protected virtual void OnEditButtonClick(object sender, EventArgs e) { }
+        protected virtual void OnDeleteButtonClick(object sender, EventArgs e) { }
+        protected virtual void OnRefreshButtonClick(object sender, EventArgs e) { }
+
+        protected void WireCrudEvents()
+        {
+            var addBtn = this.Controls.Find("btnAdd", true).FirstOrDefault() as Button;
+            var editBtn = this.Controls.Find("btnEdit", true).FirstOrDefault() as Button;
+            var deleteBtn = this.Controls.Find("btnDelete", true).FirstOrDefault() as Button;
+            var refreshBtn = this.Controls.Find("btnRefresh", true).FirstOrDefault() as Button;
+
+            if (addBtn != null) addBtn.Click += OnAddButtonClick;
+            if (editBtn != null) editBtn.Click += OnEditButtonClick;
+            if (deleteBtn != null) deleteBtn.Click += OnDeleteButtonClick;
+            if (refreshBtn != null) refreshBtn.Click += OnRefreshButtonClick;
+        }
+
+        protected Panel CreateInputForm(string title, params (string label, string name, string placeholder, bool required, bool isPassword)[] fields)
+        {
+            inputFormPanel = new Panel
             {
-                if (!searchBox.IsHandleCreated)
+                Width = 350,
+                Dock = DockStyle.Left,
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                Visible = false
+            };
+
+            var headerPanel = new Panel
+            {
+                Height = 60,
+                Dock = DockStyle.Top,
+                BackColor = Color.FromArgb(248, 249, 250)
+            };
+
+            var titleLabel = new Label
+            {
+                Text = title,
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                Location = new Point(20, 18),
+                AutoSize = true
+            };
+
+            var closeBtn = new Button
+            {
+                Text = "×",
+                Size = new Size(30, 30),
+                Location = new Point(310, 15),
+                BackColor = Color.Transparent,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = Color.Gray,
+                Name = "btnCloseForm"
+            };
+            closeBtn.FlatAppearance.BorderSize = 0;
+            closeBtn.Click += (s, e) => HideInputForm();
+
+            headerPanel.Controls.AddRange(new Control[] { titleLabel, closeBtn });
+
+            var scrollPanel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                AutoScroll = true,
+                Padding = new Padding(20)
+            };
+
+            int yPos = 20;
+            foreach (var field in fields)
+            {
+                var fieldLabel = new Label
                 {
-                    searchBox.HandleCreated += (s, e) => TextBoxHelper.SetPlaceholder(searchBox, searchPlaceholder, true);
-                }
-                else
+                    Text = field.label + (field.required ? " *" : ""),
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    Location = new Point(0, yPos),
+                    Size = new Size(300, 20),
+                    ForeColor = field.required ? Color.FromArgb(220, 53, 69) : Color.Black
+                };
+
+                var textBox = new TextBox
                 {
-                    TextBoxHelper.SetPlaceholder(searchBox, searchPlaceholder, true);
+                    Name = field.name,
+                    Font = new Font("Segoe UI", 10),
+                    Size = new Size(300, 30),
+                    Location = new Point(0, yPos + 25),
+                    BorderStyle = BorderStyle.FixedSingle,
+                    UseSystemPasswordChar = field.isPassword
+                };
+                
+                // Set placeholder using TextBoxHelper
+                TextBoxHelper.SetPlaceholder(textBox, field.placeholder, true);
+                
+                // Add real-time validation
+                textBox.TextChanged += (s, e) => ValidateField(field.name, field.required, field.isPassword);
+                textBox.Leave += (s, e) => ValidateField(field.name, field.required, field.isPassword);
+
+                var errorLabel = new Label
+                {
+                    Name = field.name + "Error",
+                    Font = new Font("Segoe UI", 9),
+                    Size = new Size(300, 30),
+                    Location = new Point(0, yPos + 60),
+                    ForeColor = Color.FromArgb(220, 53, 69),
+                    Visible = false,
+                    AutoSize = false,
+                    TextAlign = ContentAlignment.MiddleLeft
+                };
+
+                scrollPanel.Controls.AddRange(new Control[] { fieldLabel, textBox, errorLabel });
+                yPos += 95;
+            }
+
+            var buttonPanel = new Panel
+            {
+                Height = 70,
+                Dock = DockStyle.Bottom,
+                BackColor = Color.FromArgb(248, 249, 250),
+                Padding = new Padding(20, 15, 20, 15)
+            };
+
+            var saveBtn = new Button
+            {
+                Text = "Lưu",
+                Size = new Size(80, 35),
+                Location = new Point(20, 15),
+                BackColor = Color.FromArgb(40, 167, 69),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Name = "btnSave"
+            };
+            saveBtn.FlatAppearance.BorderSize = 0;
+
+            var cancelBtn = new Button
+            {
+                Text = "Hủy",
+                Size = new Size(80, 35),
+                Location = new Point(110, 15),
+                BackColor = Color.FromArgb(108, 117, 125),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Name = "btnCancel"
+            };
+            cancelBtn.FlatAppearance.BorderSize = 0;
+            cancelBtn.Click += (s, e) => HideInputForm();
+
+            buttonPanel.Controls.AddRange(new Control[] { saveBtn, cancelBtn });
+
+            inputFormPanel.Controls.AddRange(new Control[] { scrollPanel, buttonPanel, headerPanel });
+            return inputFormPanel;
+        }
+
+        protected void ShowInputForm()
+        {
+            if (inputFormPanel != null)
+            {
+                inputFormPanel.Visible = true;
+                isFormVisible = true;
+                inputFormPanel.BringToFront();
+            }
+        }
+
+        protected void HideInputForm()
+        {
+            if (inputFormPanel != null)
+            {
+                inputFormPanel.Visible = false;
+                isFormVisible = false;
+                ClearFormInputs();
+                ClearFormErrors();
+            }
+        }
+
+        protected void ClearFormInputs()
+        {
+            if (inputFormPanel == null) return;
+            
+            // Get all TextBox controls recursively
+            var textBoxes = GetAllControls(inputFormPanel).OfType<TextBox>();
+            
+            foreach (var textBox in textBoxes)
+            {
+                textBox.Text = "";
+            }
+        }
+        
+        protected IEnumerable<Control> GetAllControls(Control container)
+        {
+            var controls = new List<Control>();
+            foreach (Control control in container.Controls)
+            {
+                controls.Add(control);
+                if (control.HasChildren)
+                {
+                    controls.AddRange(GetAllControls(control));
                 }
             }
-            
-            searchPanel = SearchHelper.CreateSearchPanel(searchBox, exportBtn);
-            this.Controls.Add(searchPanel);
+            return controls;
         }
-        
-        private string GetSearchPlaceholder(string controlName)
+
+        protected void ClearFormErrors()
         {
-            if (controlName?.Contains("User") == true) return "🔍 Tìm kiếm theo tên, email, username...";
-            if (controlName?.Contains("Course") == true) return "🔍 Tìm kiếm theo tên khóa học, mô tả, giá...";
-            if (controlName?.Contains("Test") == true) return "🔍 Tìm kiếm theo tên bài kiểm tra, mô tả...";
-            if (controlName?.Contains("Category") == true) return "🔍 Tìm kiếm theo tên danh mục, mô tả...";
-            return "🔍 Tìm kiếm...";
+            if (inputFormPanel == null) return;
+            
+            // Get all Label controls that are error labels
+            var errorLabels = GetAllControls(inputFormPanel).OfType<Label>()
+                .Where(l => l.Name != null && l.Name.EndsWith("Error"));
+            
+            foreach (var errorLabel in errorLabels)
+            {
+                errorLabel.Visible = false;
+                errorLabel.Text = "";
+            }
+        }
+
+        protected void ShowFieldError(string fieldName, string errorMessage)
+        {
+            if (inputFormPanel == null) return;
+            var errorLabel = inputFormPanel.Controls.Find(fieldName + "Error", true).FirstOrDefault() as Label;
+            if (errorLabel != null)
+            {
+                errorLabel.Text = errorMessage;
+                errorLabel.Visible = true;
+            }
         }
         
+        protected void HideFieldError(string fieldName)
+        {
+            if (inputFormPanel == null) return;
+            var errorLabel = inputFormPanel.Controls.Find(fieldName + "Error", true).FirstOrDefault() as Label;
+            if (errorLabel != null)
+            {
+                errorLabel.Visible = false;
+                errorLabel.Text = "";
+            }
+        }
+        
+        protected virtual void ValidateField(string fieldName, bool required, bool isPassword)
+        {
+            var value = GetFormValue(fieldName).Trim();
+            
+            // Clear previous error
+            HideFieldError(fieldName);
+            
+            // Required field validation
+            if (required && string.IsNullOrEmpty(value))
+            {
+                ShowFieldError(fieldName, GetRequiredErrorMessage(fieldName));
+                return;
+            }
+            
+            // Skip validation if field is empty and not required
+            if (string.IsNullOrEmpty(value)) return;
+            
+            // Email validation
+            if (fieldName.ToLower().Contains("email") && !value.Contains("@"))
+            {
+                ShowFieldError(fieldName, "Email không hợp lệ");
+                return;
+            }
+            
+            // Password validation
+            if (isPassword && value.Length < 6)
+            {
+                ShowFieldError(fieldName, "Mật khẩu phải có ít nhất 6 ký tự");
+                return;
+            }
+        }
+        
+        protected virtual string GetRequiredErrorMessage(string fieldName)
+        {
+            return fieldName.ToLower() switch
+            {
+                var name when name.Contains("email") => "Email không được để trống",
+                var name when name.Contains("fullname") => "Họ tên không được để trống",
+                var name when name.Contains("username") => "Tên đăng nhập không được để trống",
+                var name when name.Contains("password") => "Mật khẩu không được để trống",
+                var name when name.Contains("name") => "Tên không được để trống",
+                var name when name.Contains("title") => "Tiêu đề không được để trống",
+                _ => "Trường này không được để trống"
+            };
+        }
+
+        protected string GetFormValue(string fieldName)
+        {
+            if (inputFormPanel == null) return "";
+            var textBox = inputFormPanel.Controls.Find(fieldName, true).FirstOrDefault() as TextBox;
+            return textBox?.Text ?? "";
+        }
+
+        protected void SetFormValue(string fieldName, string value)
+        {
+            if (inputFormPanel == null) return;
+            var textBox = inputFormPanel.Controls.Find(fieldName, true).FirstOrDefault() as TextBox;
+            if (textBox != null)
+            {
+                textBox.Text = value ?? "";
+            }
+        }
+
         private void PerformAdvancedSearch(DataGridView dataGridView, string searchText, string[] searchColumns)
         {
             if (dataGridView.DataSource == null) return;
@@ -159,14 +628,60 @@ namespace WinFormsApp1.View.Admin
             }
         }
 
-        protected void SetupPagination(DataGridView dataGridView, Func<int, Task> loadDataCallback)
+        protected Panel CreatePaginationPanel()
         {
-            paginationPanel = paginationHelper.CreatePaginationPanel(async (page) => 
+            var paginationPanel = new Panel
             {
-                await loadDataCallback(page);
-            });
-            this.Controls.Add(paginationPanel);
+                Height = 50,
+                Dock = DockStyle.Bottom,
+                BackColor = Color.White,
+                Padding = new Padding(20, 10, 20, 10)
+            };
+
+            var infoLabel = new Label
+            {
+                Text = "Hiển thị 1 tới 1 của 1 dữ liệu",
+                Font = new Font("Segoe UI", 9),
+                AutoSize = true,
+                Location = new Point(20, 15)
+            };
+            paginationPanel.Controls.Add(infoLabel);
+
+            var buttonPanel = new Panel
+            {
+                Size = new Size(300, 30),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                Location = new Point(paginationPanel.Width - 320, 10)
+            };
+
+            var firstBtn = CreatePaginationButton("Đầu tiên", 0);
+            var prevBtn = CreatePaginationButton("Trước", 80);
+            var currentBtn = CreatePaginationButton("1", 140, true);
+            var nextBtn = CreatePaginationButton("Sau", 170);
+            var lastBtn = CreatePaginationButton("Cuối cùng", 220);
+
+            buttonPanel.Controls.AddRange(new Control[] { firstBtn, prevBtn, currentBtn, nextBtn, lastBtn });
+            paginationPanel.Controls.Add(buttonPanel);
+
+            return paginationPanel;
         }
+
+        private Button CreatePaginationButton(string text, int x, bool isActive = false)
+        {
+            return new Button
+            {
+                Text = text,
+                Size = new Size(text == "1" ? 25 : 70, 25),
+                Location = new Point(x, 0),
+                BackColor = isActive ? Color.FromArgb(51, 122, 183) : Color.FromArgb(108, 117, 125),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 8),
+                Enabled = !isActive
+            };
+        }
+
+
 
         protected async Task LogAdminActionAsync(string action, string entityType, int? entityId = null, string details = null)
         {
@@ -192,264 +707,41 @@ namespace WinFormsApp1.View.Admin
             return true;
         }
 
-        protected void ApplyModernFormStyling(Panel formPanel)
-        {
-            if (formPanel == null) return;
 
-            foreach (Control control in formPanel.Controls)
-            {
-                if (control is TextBox textBox)
-                {
-                    textBox.Font = new Font("Segoe UI", 11);
-                    textBox.Height = 35;
-                    textBox.BorderStyle = BorderStyle.FixedSingle;
-                    textBox.BackColor = Color.White;
-                    textBox.ForeColor = Color.FromArgb(55, 65, 81);
-                    
-                    SetupRealTimeValidation(textBox);
-                    
-                    // Áp dụng placeholder sau khi styling
-                    string placeholder = GetPlaceholderText(textBox.Name);
-                    if (!string.IsNullOrEmpty(placeholder))
-                    {
-                        if (!textBox.IsHandleCreated)
-                        {
-                            textBox.HandleCreated += (s, e) => TextBoxHelper.SetPlaceholder(textBox, placeholder, true);
-                        }
-                        else
-                        {
-                            TextBoxHelper.SetPlaceholder(textBox, placeholder, true);
-                        }
-                    }
-                }
-                else if (control is Button button)
-                {
-                    button.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-                    button.Height = 40;
-                    button.FlatStyle = FlatStyle.Flat;
-                    button.FlatAppearance.BorderSize = 0;
-                    button.Cursor = Cursors.Hand;
-                    
-                    // Màu sắc theo loại button
-                    if (button.Name?.Contains("Save") == true || button.Name?.Contains("Add") == true)
-                    {
-                        button.BackColor = Color.FromArgb(34, 197, 94);
-                        button.ForeColor = Color.White;
-                    }
-                    else if (button.Name?.Contains("Delete") == true)
-                    {
-                        button.BackColor = Color.FromArgb(239, 68, 68);
-                        button.ForeColor = Color.White;
-                    }
-                    else if (button.Name?.Contains("Edit") == true)
-                    {
-                        button.BackColor = Color.FromArgb(59, 130, 246);
-                        button.ForeColor = Color.White;
-                    }
-                    else if (button.Name?.Contains("Cancel") == true)
-                    {
-                        button.BackColor = Color.FromArgb(156, 163, 175);
-                        button.ForeColor = Color.White;
-                    }
-                    else
-                    {
-                        button.BackColor = Color.FromArgb(75, 85, 99);
-                        button.ForeColor = Color.White;
-                    }
-                }
-                else if (control is Label label && !label.Name?.Contains("lbl") == true)
-                {
-                    label.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-                    label.ForeColor = Color.FromArgb(55, 65, 81);
-                }
-                else if (control is CheckBox checkBox)
-                {
-                    checkBox.Font = new Font("Segoe UI", 10);
-                    checkBox.ForeColor = Color.FromArgb(55, 65, 81);
-                }
-            }
+
+        protected string GetTextValue(TextBox textBox)
+        {
+            return textBox?.Text ?? "";
+        }
+
+        protected void SetTextValue(TextBox textBox, string value)
+        {
+            if (textBox != null)
+                textBox.Text = value ?? "";
         }
 
         protected void AdjustResponsiveLayout(DataGridView dataGridView, Panel formPanel, int breakpoint = 1100, int rightOffset = 420)
         {
-            if (dataGridView == null || formPanel == null) return;
-
-            int padding = 20;
-            int topOffset = searchPanel != null ? 80 : 60; // Giảm header height
-            int availableWidth = Math.Max(1200, this.Width - padding * 2);
-            int availableHeight = Math.Max(700, this.Height - topOffset - padding - 30);
-
-            // Tăng tỷ lệ cho DataGridView
-            int dataGridWidth = (int)(availableWidth * 0.72);
-            int formWidth = availableWidth - dataGridWidth - 20;
-
-            dataGridView.Location = new Point(padding, topOffset);
-            dataGridView.Size = new Size(Math.Max(900, dataGridWidth), Math.Max(500, availableHeight));
-
-            formPanel.Location = new Point(dataGridView.Right + 20, topOffset);
-            formPanel.Size = new Size(Math.Max(350, formWidth), Math.Max(600, availableHeight));
-        }
-
-        protected void ApplyPlaceholdersToAllTextBoxes(Panel panel)
-        {
-            foreach (Control control in panel.Controls)
-            {
-                if (control is TextBox textBox)
-                {
-                    string placeholder = GetPlaceholderText(textBox.Name);
-                    if (!string.IsNullOrEmpty(placeholder))
-                    {
-                        // Đảm bảo TextBox đã có handle trước khi áp dụng placeholder
-                        if (!textBox.IsHandleCreated)
-                        {
-                            textBox.HandleCreated += (s, e) => TextBoxHelper.SetPlaceholder(textBox, placeholder, true);
-                        }
-                        else
-                        {
-                            TextBoxHelper.SetPlaceholder(textBox, placeholder, true);
-                        }
-                    }
-                }
-            }
-        }
-        
-        private string GetPlaceholderText(string textBoxName)
-        {
-            // Email fields
-            if (textBoxName?.Contains("Email") == true) return "📧 Nhập địa chỉ email hợp lệ (vd: user@example.com)";
-            
-            // User fields
-            if (textBoxName?.Contains("Username") == true) return "👤 Nhập tên đăng nhập (chỉ chữ, số và dấu gạch dưới, tối thiểu 3 ký tự)";
-            if (textBoxName?.Contains("FullName") == true) return "🏷️ Nhập họ và tên đầy đủ (tối thiểu 3 ký tự)";
-            if (textBoxName?.Contains("FirstName") == true) return "👤 Nhập tên (tối thiểu 2 ký tự)";
-            if (textBoxName?.Contains("LastName") == true) return "👤 Nhập họ (tối thiểu 2 ký tự)";
-            
-            // Course/Test fields
-            if (textBoxName?.Contains("Title") == true) return "📝 Nhập tiêu đề (3-200 ký tự)";
-            if (textBoxName?.Contains("Description") == true) return "📄 Nhập mô tả chi tiết (tùy chọn)";
-            if (textBoxName?.Contains("Price") == true) return "💰 Nhập giá: 0 (miễn phí) hoặc 10,000-2,000,000 VND";
-            if (textBoxName?.Contains("TimeLimit") == true) return "⏱️ Thời gian làm bài: 15-120 phút (bỏ trống = không giới hạn)";
-            
-            // Category/General name fields
-            if (textBoxName?.Contains("Name") == true) return "🏷️ Nhập tên (3-200 ký tự)";
-            
-            // Contact fields
-            if (textBoxName?.Contains("Phone") == true) return "📞 Nhập số điện thoại (vd: 0901234567)";
-            if (textBoxName?.Contains("Address") == true) return "🏠 Nhập địa chỉ (tùy chọn)";
-            
-            // Password fields
-            if (textBoxName?.Contains("Password") == true) return "🔒 Nhập mật khẩu (tối thiểu 6 ký tự)";
-            if (textBoxName?.Contains("ConfirmPassword") == true) return "🔒 Xác nhận lại mật khẩu";
-            
-            // Search fields
-            if (textBoxName?.Contains("Search") == true) return "🔍 Tìm kiếm...";
-            
-            // Numeric fields
-            if (textBoxName?.Contains("Score") == true) return "🎯 Nhập điểm số (0-100)";
-            if (textBoxName?.Contains("Duration") == true) return "⏱️ Nhập thời lượng (phút)";
-            if (textBoxName?.Contains("Order") == true) return "🔢 Nhập thứ tự sắp xếp";
-            
-            // URL/Link fields
-            if (textBoxName?.Contains("Url") == true || textBoxName?.Contains("Link") == true) return "🔗 Nhập đường dẫn (vd: https://example.com)";
-            
-            // Date fields (if using TextBox for dates)
-            if (textBoxName?.Contains("Date") == true) return "📅 Nhập ngày (dd/mm/yyyy)";
-            
-            // Default fallback
-            return "✏️ Nhập thông tin...";
-        }
-        
-        protected void SetupRealTimeValidation(TextBox textBox)
-        {
-            var errorLabel = new Label
-            {
-                ForeColor = Color.FromArgb(239, 68, 68),
-                Font = new Font("Segoe UI", 9),
-                AutoSize = true,
-                Visible = false,
-                Location = new Point(textBox.Left, textBox.Bottom + 2)
-            };
-            
-            textBox.Parent.Controls.Add(errorLabel);
-            
-            textBox.TextChanged += (s, e) =>
-            {
-                var error = ValidateTextBox(textBox);
-                if (!string.IsNullOrEmpty(error))
-                {
-                    errorLabel.Text = error;
-                    errorLabel.Visible = true;
-                    textBox.BorderStyle = BorderStyle.FixedSingle;
-                }
-                else
-                {
-                    errorLabel.Visible = false;
-                }
-            };
-        }
-        
-        protected string ValidateTextBox(TextBox textBox)
-        {
-            var text = textBox.Text;
-            var placeholder = textBox.PlaceholderText;
-            
-            if (text == placeholder || string.IsNullOrWhiteSpace(text))
-                return "";
-                
-            if (textBox.Name?.Contains("Email") == true)
-            {
-                if (!text.Contains("@") || !text.Contains("."))
-                    return "Email không hợp lệ";
-            }
-            else if (textBox.Name?.Contains("Price") == true)
-            {
-                if (!decimal.TryParse(text, out var price) || price < 0)
-                    return "Giá không hợp lệ";
-                if (price > 0 && (price < 10000 || price > 2000000))
-                    return "Giá phải từ 10,000 - 2,000,000 VND hoặc 0 (miễn phí)";
-            }
-            else if (textBox.Name?.Contains("TimeLimit") == true)
-            {
-                if (!string.IsNullOrEmpty(text))
-                {
-                    if (!int.TryParse(text, out var time) || time < 15 || time > 120)
-                        return "Thời gian phải từ 15-120 phút";
-                }
-            }
-            else if (textBox.Name?.Contains("Title") == true || textBox.Name?.Contains("Name") == true)
-            {
-                if (text.Length < 3)
-                    return "Tên phải ít nhất 3 ký tự";
-                if (text.Length > 200)
-                    return "Tên không quá 200 ký tự";
-            }
-            else if (textBox.Name?.Contains("Username") == true)
-            {
-                if (text.Length < 3)
-                    return "Username phải ít nhất 3 ký tự";
-                if (!System.Text.RegularExpressions.Regex.IsMatch(text, "^[a-zA-Z0-9_]+$"))
-                    return "Username chỉ chứa chữ, số và dấu gạch dưới";
-            }
-            
-            return "";
-        }
-
-        protected string GetTextValue(TextBox textBox)
-        {
-            return textBox.Text;
-        }
-        
-        protected void SetTextValue(TextBox textBox, string value)
-        {
-            textBox.Text = value ?? "";
+            // Layout responsive - có thể để trống hoặc implement sau
         }
 
         protected void AdjustBottomPanelLayout(Panel bottomPanel, int minHeight = 300)
         {
-            if (bottomPanel == null) return;
-            
-            int availableHeight = Math.Max(minHeight, (int)(this.Height * 0.35));
-            bottomPanel.Height = Math.Min(availableHeight, 400);
+            if (bottomPanel != null)
+            {
+                bottomPanel.Height = Math.Max(minHeight, (int)(this.Height * 0.35));
+            }
+        }
+
+        protected void UpdateDataGridHeaders(DataGridView dataGridView, Dictionary<string, string> columnHeaders)
+        {
+            foreach (DataGridViewColumn column in dataGridView.Columns)
+            {
+                if (columnHeaders.ContainsKey(column.Name))
+                {
+                    column.HeaderText = columnHeaders[column.Name];
+                }
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -460,6 +752,7 @@ namespace WinFormsApp1.View.Admin
                 searchBox?.Dispose();
                 searchPanel?.Dispose();
                 paginationPanel?.Dispose();
+                inputFormPanel?.Dispose();
             }
             base.Dispose(disposing);
         }

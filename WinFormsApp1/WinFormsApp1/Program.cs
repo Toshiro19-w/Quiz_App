@@ -1,7 +1,4 @@
 using Microsoft.Extensions.Configuration;
-using WinFormsApp1.TestForm;
-using WinFormsApp1.View.User;
-using WinFormsApp1.View.User.Controls;
 
 namespace WinFormsApp1
 {
@@ -25,7 +22,6 @@ namespace WinFormsApp1
 			// To customize application configuration such as set high DPI settings or default font,
 			// see https://aka.ms/applicationconfiguration.
 			ApplicationConfiguration.Initialize();
-            //Application.Run(new dangnhap());
             Application.Run(new dangnhap());
 		}
     }

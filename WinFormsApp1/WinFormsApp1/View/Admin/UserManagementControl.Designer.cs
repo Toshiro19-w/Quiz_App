@@ -90,7 +90,6 @@ namespace WinFormsApp1.View.Admin
             btnCancel.Text = "❌ Hủy";
             btnCancel.UseVisualStyleBackColor = false;
             btnCancel.Visible = false;
-            btnCancel.Click += BtnCancel_Click;
             // 
             // btnSave
             // 

@@ -15,6 +15,56 @@ namespace WinFormsApp1
         {
             InitializeComponent();
             SetupModernUI();
+            CheckExistingSession();
+            SetupRealTimeValidation();
+        }
+
+        private void SetupRealTimeValidation()
+        {
+            textTK.TextChanged += ValidateEmail;
+            textBox2.TextChanged += ValidatePassword;
+        }
+
+        private void ValidateEmail(object sender, EventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (string.IsNullOrEmpty(textBox.Text))
+            {
+                textBox.BackColor = Color.White;
+                lblEmailError.Text = "";
+                return;
+            }
+            
+            bool isValid = ValidationHelper.IsValidEmail(textBox.Text);
+            textBox.BackColor = isValid ? Color.FromArgb(240, 253, 244) : Color.FromArgb(254, 242, 242);
+            lblEmailError.Text = isValid ? "" : "Email không hợp lệ";
+        }
+
+        private void ValidatePassword(object sender, EventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (string.IsNullOrEmpty(textBox.Text))
+            {
+                textBox.BackColor = Color.White;
+                lblPasswordError.Text = "";
+                return;
+            }
+            
+            bool isValid = textBox.Text.Length >= 6;
+            textBox.BackColor = isValid ? Color.FromArgb(240, 253, 244) : Color.FromArgb(254, 242, 242);
+            lblPasswordError.Text = isValid ? "" : "Mật khẩu phải có ít nhất 6 ký tự";
+        }
+
+        private void CheckExistingSession()
+        {
+            var session = SessionHelper.LoadSession();
+            if (session != null)
+            {
+                // Tự động điền thông tin đăng nhập
+                textTK.Text = session.Email;
+                chkRememberMe.Checked = session.RememberMe;
+                ToastHelper.Show(this, $"Chào mừng trở lại, {session.FullName}!");
+            }
         }
 
         private void SetupModernUI()
@@ -35,7 +85,18 @@ namespace WinFormsApp1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ToastHelper.Show(this, "Chức năng quên mật khẩu đang được phát triển");
+            this.Hide();
+            var forgotPasswordForm = new quenmatkhau();
+            forgotPasswordForm.FormClosed += (s, args) => this.Show();
+            forgotPasswordForm.Show();
+        }
+
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            var registerForm = new dangky();
+            registerForm.FormClosed += (s, args) => this.Show();
+            registerForm.Show();
         }
 
         private async void btnLogin_Click(object sender, EventArgs e)
@@ -58,18 +119,30 @@ namespace WinFormsApp1
 
                 if (success)
                 {
+                    // Lưu session nếu có chọn ghi nhớ
+                    if (chkRememberMe.Checked)
+                    {
+                        SessionHelper.SaveSession(AuthHelper.CurrentUser, true);
+                    }
+
                     Hide();
 
                     if (AuthHelper.IsAdmin())
                     {
                         var adminDashboard = new AdminDashboard();
-                        adminDashboard.FormClosed += (s, args) => Close();
+                        adminDashboard.FormClosed += (s, args) => {
+                            SessionHelper.ClearSession();
+                            Close();
+                        };
                         adminDashboard.Show();
                     }
                     else
                     {
                         var userDashboard = new MainContainer();
-                        userDashboard.FormClosed += (s, args) => Close();
+                        userDashboard.FormClosed += (s, args) => {
+                            SessionHelper.ClearSession();
+                            Close();
+                        };
                         userDashboard.Show();
                     }
                 }

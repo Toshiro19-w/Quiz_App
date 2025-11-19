@@ -31,6 +31,10 @@
             groupBox1 = new GroupBox();
             button2 = new Button();
             button1 = new Button();
+            btnRegister = new Button();
+            chkRememberMe = new CheckBox();
+            lblEmailError = new Label();
+            lblPasswordError = new Label();
             textBox2 = new TextBox();
             textTK = new TextBox();
             LableMK = new Label();
@@ -45,6 +49,10 @@
             groupBox1.BackColor = Color.White;
             groupBox1.Controls.Add(button2);
             groupBox1.Controls.Add(button1);
+            groupBox1.Controls.Add(btnRegister);
+            groupBox1.Controls.Add(chkRememberMe);
+            groupBox1.Controls.Add(lblPasswordError);
+            groupBox1.Controls.Add(lblEmailError);
             groupBox1.Controls.Add(textBox2);
             groupBox1.Controls.Add(textTK);
             groupBox1.Controls.Add(LableMK);
@@ -53,7 +61,7 @@
             groupBox1.Controls.Add(lblSubtitle);
             groupBox1.Location = new Point(200, 50);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(450, 550);
+            groupBox1.Size = new Size(450, 600);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.FlatStyle = FlatStyle.Flat;
@@ -63,7 +71,7 @@
             lblTitle.AutoSize = true;
             lblTitle.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
             lblTitle.ForeColor = WinFormsApp1.Helpers.ColorPalette.ButtonPrimary;
-            lblTitle.Location = new Point(120, 40);
+            lblTitle.Location = new Point(170, 40);
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new Size(210, 54);
             lblTitle.TabIndex = 6;
@@ -74,7 +82,7 @@
             lblSubtitle.AutoSize = true;
             lblSubtitle.Font = new Font("Segoe UI", 10F);
             lblSubtitle.ForeColor = Color.Gray;
-            lblSubtitle.Location = new Point(100, 100);
+            lblSubtitle.Location = new Point(75, 100);
             lblSubtitle.Name = "lblSubtitle";
             lblSubtitle.Size = new Size(250, 23);
             lblSubtitle.TabIndex = 7;
@@ -88,7 +96,7 @@
             button2.FlatAppearance.MouseOverBackColor = WinFormsApp1.Helpers.ColorPalette.SecondaryDark;
             button2.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             button2.ForeColor = Color.White;
-            button2.Location = new Point(50, 450);
+            button2.Location = new Point(50, 490);
             button2.Name = "button2";
             button2.Size = new Size(350, 50);
             button2.TabIndex = 5;
@@ -97,6 +105,23 @@
             button2.Cursor = Cursors.Hand;
             button2.Click += btnLogin_Click;
             // 
+            // btnRegister
+            // 
+            btnRegister.BackColor = Color.Transparent;
+            btnRegister.FlatStyle = FlatStyle.Flat;
+            btnRegister.FlatAppearance.BorderSize = 1;
+            btnRegister.FlatAppearance.BorderColor = WinFormsApp1.Helpers.ColorPalette.ButtonPrimary;
+            btnRegister.Font = new Font("Segoe UI", 10F);
+            btnRegister.ForeColor = WinFormsApp1.Helpers.ColorPalette.ButtonPrimary;
+            btnRegister.Location = new Point(50, 560);
+            btnRegister.Name = "btnRegister";
+            btnRegister.Size = new Size(350, 40);
+            btnRegister.TabIndex = 6;
+            btnRegister.Text = "Chưa có tài khoản? Đăng ký ngay";
+            btnRegister.UseVisualStyleBackColor = false;
+            btnRegister.Cursor = Cursors.Hand;
+            btnRegister.Click += btnRegister_Click;
+            // 
             // button1
             // 
             button1.BackColor = Color.Transparent;
@@ -104,7 +129,7 @@
             button1.FlatAppearance.BorderSize = 0;
             button1.Font = new Font("Segoe UI", 9F);
             button1.ForeColor = WinFormsApp1.Helpers.ColorPalette.ButtonPrimary;
-            button1.Location = new Point(150, 400);
+            button1.Location = new Point(150, 440);
             button1.Name = "button1";
             button1.Size = new Size(150, 35);
             button1.TabIndex = 4;
@@ -123,6 +148,18 @@
             textBox2.Size = new Size(350, 32);
             textBox2.TabIndex = 3;
             textBox2.TextChanged += textBox2_TextChanged;
+            // 
+            // chkRememberMe
+            // 
+            chkRememberMe.AutoSize = true;
+            chkRememberMe.Font = new Font("Segoe UI", 9F);
+            chkRememberMe.ForeColor = Color.FromArgb(64, 64, 64);
+            chkRememberMe.Location = new Point(50, 380);
+            chkRememberMe.Name = "chkRememberMe";
+            chkRememberMe.Size = new Size(140, 24);
+            chkRememberMe.TabIndex = 7;
+            chkRememberMe.Text = "Ghi nhớ đăng nhập";
+            chkRememberMe.UseVisualStyleBackColor = true;
             // 
             // textTK
             // 
@@ -156,15 +193,35 @@
             LableTK.TabIndex = 0;
             LableTK.Text = "Email";
             // 
+            // lblEmailError
+            // 
+            lblEmailError.AutoSize = true;
+            lblEmailError.Font = new Font("Segoe UI", 9F);
+            lblEmailError.ForeColor = Color.Red;
+            lblEmailError.Location = new Point(50, 250);
+            lblEmailError.Name = "lblEmailError";
+            lblEmailError.Size = new Size(0, 20);
+            lblEmailError.TabIndex = 8;
+            // 
+            // lblPasswordError
+            // 
+            lblPasswordError.AutoSize = true;
+            lblPasswordError.Font = new Font("Segoe UI", 9F);
+            lblPasswordError.ForeColor = Color.Red;
+            lblPasswordError.Location = new Point(50, 350);
+            lblPasswordError.Name = "lblPasswordError";
+            lblPasswordError.Size = new Size(0, 20);
+            lblPasswordError.TabIndex = 9;
+            // 
             // dangnhap
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(240, 242, 245);
-            ClientSize = new Size(850, 650);
+            ClientSize = new Size(850, 700);
             Controls.Add(groupBox1);
             Name = "dangnhap";
-            Text = "Đăng nhập - Valt Learning Platform";
+            Text = "Đăng nhập - YMEDU Learning Platform";
             StartPosition = FormStartPosition.CenterScreen;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
@@ -180,6 +237,10 @@
         private Label LableTK;
         private Button button1;
         private Button button2;
+        private Button btnRegister;
+        private CheckBox chkRememberMe;
+        private Label lblEmailError;
+        private Label lblPasswordError;
         private Label lblTitle;
         private Label lblSubtitle;
     }

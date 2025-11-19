@@ -19,16 +19,51 @@ namespace WinFormsApp1.View.Admin
             InitializeComponent();
             SetupCourseContentPanel();
         }
+        
+        protected override void OnAddButtonClick(object sender, EventArgs e)
+        {
+            BtnAdd_Click(sender, e);
+        }
+        
+        protected override void OnEditButtonClick(object sender, EventArgs e)
+        {
+            BtnEdit_Click(sender, e);
+        }
+        
+        protected override void OnDeleteButtonClick(object sender, EventArgs e)
+        {
+            BtnDelete_Click(sender, e);
+        }
+        
+        protected override void OnRefreshButtonClick(object sender, EventArgs e)
+        {
+            _ = LoadCoursesAsync();
+        }
 
         private async void CourseManagementControl_Load(object sender, EventArgs e)
         {
-            ApplyModernStyling(dataGridView, formPanel);
-            ApplyModernFormStyling(formPanel);
+            var formPanel = CreateInputForm("Thông tin khóa học",
+                ("Tiêu đề", "txtTitle", "Nhập tiêu đề khóa học...", true, false),
+                ("Mô tả", "txtDescription", "Nhập mô tả...", false, false),
+                ("Giá (VND)", "txtPrice", "Nhập giá...", true, false)
+            );
+            
+            SetupLayoutWithForm("Quản lý khóa học", dataGridView, formPanel);
+            WireCrudEvents();
+            WireFormEvents();
             SetupSearchFunctionality(dataGridView, "Tên", "Danh_mục", "Mô_tả", "Trạng_thái");
-            SetEditMode(false);
+            
             dataGridView.CellClick += DataGridView_CellClick;
-            await LoadCategoriesAsync();
             await LoadCoursesAsync();
+        }
+        
+        private void WireFormEvents()
+        {
+            var saveBtn = this.Controls.Find("btnSave", true).FirstOrDefault() as Button;
+            if (saveBtn != null)
+            {
+                saveBtn.Click += BtnSave_Click;
+            }
         }
 
         private async void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -36,11 +71,9 @@ namespace WinFormsApp1.View.Admin
             if (e.RowIndex >= 0)
             {
                 dataGridView.Rows[e.RowIndex].Selected = true;
-                if (!isEditing)
-                {
-                    var courseId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                    await LoadCourseContentAsync(courseId);
-                }
+                var courseId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
+                await LoadCourseContentAsync(courseId);
+                courseContentPanel.Visible = true;
             }
         }
 
@@ -55,7 +88,7 @@ namespace WinFormsApp1.View.Admin
             try
             {
                 var courses = await _adminController.GetCoursesAsync();
-                dataGridView.DataSource = courses.Select(c => new
+                var courseData = courses.Select(c => new
                 {
                     ID = c.CourseId,
                     Tên = c.Title,
@@ -65,6 +98,20 @@ namespace WinFormsApp1.View.Admin
                     Trạng_thái = c.IsPublished ? "Đã xuất bản" : "Nháp",
                     Ngày_tạo = c.CreatedAt.ToString("dd/MM/yyyy")
                 }).ToList();
+                
+                dataGridView.DataSource = courseData;
+                ApplyModernStyling(dataGridView, null);
+                
+                UpdateDataGridHeaders(dataGridView, new Dictionary<string, string>
+                {
+                    { "ID", "Mã" },
+                    { "Tên", "Tiêu đề" },
+                    { "Danh_mục", "Danh mục" },
+                    { "Mô_tả", "Mô tả" },
+                    { "Giá", "Giá" },
+                    { "Trạng_thái", "Trạng thái" },
+                    { "Ngày_tạo", "Ngày tạo" }
+                });
             }
             catch (Exception ex)
             {
@@ -74,20 +121,34 @@ namespace WinFormsApp1.View.Admin
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            ClearForm();
-            SetEditMode(true);
+            ClearFormInputs();
+            ClearFormErrors();
+            ShowInputForm();
             isEditing = false;
         }
 
-        private void BtnEdit_Click(object sender, EventArgs e)
+        private async void BtnEdit_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count > 0)
             {
                 var courseId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                _ = LoadCourseForEditAsync(courseId);
-                SetEditMode(true);
-                isEditing = true;
-                editingCourseId = courseId;
+                var course = await _adminController.GetCourseByIdAsync(courseId);
+                
+                if (course != null)
+                {
+                    using (var form = new CourseDetailEditForm(course))
+                    {
+                        if (form.ShowDialog() == DialogResult.OK)
+                        {
+                            await LoadCoursesAsync();
+                            ToastHelper.Show(this.FindForm(), "✅ Cập nhật thành công!");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ToastHelper.Show(this.FindForm(), "Vui lòng chọn khóa học để sửa!");
             }
         }
 
@@ -131,26 +192,31 @@ namespace WinFormsApp1.View.Admin
         {
             try
             {
+                // Validate required fields
+                if (!ValidateFormFields()) return;
+                
                 decimal price = 0;
-                var priceText = GetTextValue(txtPrice);
+                var priceText = GetFormValue("txtPrice");
                 if (!string.IsNullOrWhiteSpace(priceText) && !decimal.TryParse(priceText, out price))
                 {
-                    ValidationHelper.ShowValidationError(this.FindForm(), "Giá không hợp lệ");
+                    ShowFieldError("txtPrice", "Giá không hợp lệ");
+                    return;
+                }
+                
+                if (price < 0)
+                {
+                    ShowFieldError("txtPrice", "Giá phải lớn hơn hoặc bằng 0");
                     return;
                 }
 
-                // Validate course data
-                var validationResult = ValidationHelper.ValidateCourse(txtTitle.Text, price);
-                if (!ValidateInput(validationResult)) return;
-
                 var course = new Course
                 {
-                    Title = GetTextValue(txtTitle).Trim(),
-                    Summary = GetTextValue(txtDescription)?.Trim(),
-                    Slug = txtTitle.Text.Trim().ToLower().Replace(" ", "-"),
+                    Title = GetFormValue("txtTitle").Trim(),
+                    Summary = GetFormValue("txtDescription")?.Trim(),
+                    Slug = GetFormValue("txtTitle").Trim().ToLower().Replace(" ", "-"),
                     Price = price,
-                    IsPublished = chkPublished.Checked,
-                    CategoryId = cmbCategory.SelectedValue != null ? (int)cmbCategory.SelectedValue : (int?)null,
+                    IsPublished = false,
+                    CategoryId = null,
                     OwnerId = 1,
                     AverageRating = 0,
                     TotalReviews = 0,
@@ -172,8 +238,8 @@ namespace WinFormsApp1.View.Admin
                 {
                     ToastHelper.Show(this.FindForm(), "✅ Lưu thành công!");
                     await LoadCoursesAsync();
-                    SetEditMode(false);
-                    ClearForm();
+                    HideInputForm();
+                    isEditing = false;
                 }
                 else
                 {
@@ -182,8 +248,31 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                ValidationHelper.ShowValidationError(this.FindForm(), $"Lỗi lưu dữ liệu: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), $"Lỗi lưu dữ liệu: {ex.Message}");
             }
+        }
+        
+        private bool ValidateFormFields()
+        {
+            bool isValid = true;
+            
+            // Clear all errors first
+            ClearFormErrors();
+            
+            // Validate title
+            var title = GetFormValue("txtTitle").Trim();
+            if (string.IsNullOrEmpty(title))
+            {
+                ShowFieldError("txtTitle", "Tiêu đề không được để trống");
+                isValid = false;
+            }
+            else if (title.Length < 3)
+            {
+                ShowFieldError("txtTitle", "Tiêu đề phải có ít nhất 3 ký tự");
+                isValid = false;
+            }
+            
+            return isValid;
         }
 
         private async void BtnDelete_Click(object sender, EventArgs e)
@@ -214,34 +303,51 @@ namespace WinFormsApp1.View.Admin
                     }
                 }
             }
-        }
-
-        private void BtnCancel_Click(object sender, EventArgs e)
-        {
-            SetEditMode(false);
-            ClearForm();
-        }
-
-        private void SetEditMode(bool editing)
-        {
-            btnAdd.Visible = !editing;
-            btnEdit.Visible = !editing;
-            btnDelete.Visible = !editing;
-            btnSave.Visible = editing;
-            btnCancel.Visible = editing;
-
-            txtTitle.Enabled = editing;
-            txtDescription.Enabled = editing;
-            txtPrice.Enabled = editing;
-            cmbCategory.Enabled = editing;
-            chkPublished.Enabled = editing;
-
-            // Show course content panel when not editing and course is selected
-            courseContentPanel.Visible = !editing && dataGridView.SelectedRows.Count > 0;
-            if (!editing && dataGridView.SelectedRows.Count > 0)
+            else
             {
-                var courseId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                _ = LoadCourseContentAsync(courseId);
+                ToastHelper.Show(this.FindForm(), "Vui lòng chọn khóa học để xóa!");
+            }
+        }
+        
+
+
+        protected override void ValidateField(string fieldName, bool required, bool isPassword)
+        {
+            var value = GetFormValue(fieldName).Trim();
+            
+            // Clear previous error
+            HideFieldError(fieldName);
+            
+            // Required field validation
+            if (required && string.IsNullOrEmpty(value))
+            {
+                ShowFieldError(fieldName, GetRequiredErrorMessage(fieldName));
+                return;
+            }
+            
+            // Skip validation if field is empty and not required
+            if (string.IsNullOrEmpty(value)) return;
+            
+            // Title validation
+            if (fieldName == "txtTitle" && value.Length < 3)
+            {
+                ShowFieldError(fieldName, "Tiêu đề phải có ít nhất 3 ký tự");
+                return;
+            }
+            
+            // Price validation
+            if (fieldName == "txtPrice")
+            {
+                if (!decimal.TryParse(value, out decimal price))
+                {
+                    ShowFieldError(fieldName, "Giá không hợp lệ");
+                    return;
+                }
+                if (price < 0)
+                {
+                    ShowFieldError(fieldName, "Giá phải lớn hơn hoặc bằng 0");
+                    return;
+                }
             }
         }
 
@@ -494,13 +600,6 @@ namespace WinFormsApp1.View.Admin
             }
         }
 
-        private void ClearForm()
-        {
-            SetTextValue(txtTitle, "");
-            SetTextValue(txtDescription, "");
-            SetTextValue(txtPrice, "");
-            cmbCategory.SelectedIndex = -1;
-            chkPublished.Checked = false;
-        }
+
     }
 }

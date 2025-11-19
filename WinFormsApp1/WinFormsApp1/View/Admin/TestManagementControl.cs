@@ -22,15 +22,51 @@ namespace WinFormsApp1.View.Admin
             InitializeComponent();
             SetupQuestionsPanel();
         }
+        
+        protected override void OnAddButtonClick(object sender, EventArgs e)
+        {
+            BtnAdd_Click(sender, e);
+        }
+        
+        protected override void OnEditButtonClick(object sender, EventArgs e)
+        {
+            BtnEdit_Click(sender, e);
+        }
+        
+        protected override void OnDeleteButtonClick(object sender, EventArgs e)
+        {
+            BtnDelete_Click(sender, e);
+        }
+        
+        protected override void OnRefreshButtonClick(object sender, EventArgs e)
+        {
+            _ = LoadTestsAsync();
+        }
 
         private async void TestManagementControl_Load(object sender, EventArgs e)
         {
-            ApplyModernStyling(dataGridView, formPanel);
-            ApplyModernFormStyling(formPanel);
+            var formPanel = CreateInputForm("Thông tin bài kiểm tra",
+                ("Tiêu đề", "txtTitle", "Nhập tiêu đề bài kiểm tra...", true, false),
+                ("Thời gian (phút)", "txtTimeLimit", "Nhập thời gian...", false, false),
+                ("Mô tả", "txtDescription", "Nhập mô tả...", false, false)
+            );
+            
+            SetupLayoutWithForm("Quản lý bài kiểm tra", dataGridView, formPanel);
+            WireCrudEvents();
+            WireFormEvents();
             SetupSearchFunctionality(dataGridView, "Tên", "Thời_gian", "Số_câu");
-            SetEditMode(false);
+            
             dataGridView.CellClick += DataGridView_CellClick;
             await LoadTestsAsync();
+        }
+        
+        private void WireFormEvents()
+        {
+            var saveBtn = this.Controls.Find("btnSave", true).FirstOrDefault() as Button;
+            if (saveBtn != null)
+            {
+                saveBtn.Click += BtnSave_Click;
+            }
         }
 
         private async void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -171,7 +207,7 @@ namespace WinFormsApp1.View.Admin
             try
             {
                 var tests = await _adminController.GetTestsAsync();
-                dataGridView.DataSource = tests.Select(t => new
+                var testData = tests.Select(t => new
                 {
                     ID = t.TestId,
                     Tên = t.Title,
@@ -179,6 +215,18 @@ namespace WinFormsApp1.View.Admin
                     Số_câu = t.Questions.Count,
                     Ngày_tạo = t.CreatedAt.ToString("dd/MM/yyyy")
                 }).ToList();
+                
+                dataGridView.DataSource = testData;
+                ApplyModernStyling(dataGridView, null);
+                
+                UpdateDataGridHeaders(dataGridView, new Dictionary<string, string>
+                {
+                    { "ID", "Mã" },
+                    { "Tên", "Tiêu đề" },
+                    { "Thời_gian", "Thời gian" },
+                    { "Số_câu", "Số câu hỏi" },
+                    { "Ngày_tạo", "Ngày tạo" }
+                });
             }
             catch (Exception ex)
             {
@@ -188,20 +236,34 @@ namespace WinFormsApp1.View.Admin
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            ClearForm();
-            SetEditMode(true);
+            ClearFormInputs();
+            ClearFormErrors();
+            ShowInputForm();
             isEditing = false;
         }
 
-        private void BtnEdit_Click(object sender, EventArgs e)
+        private async void BtnEdit_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count > 0)
             {
                 var testId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                _ = LoadTestForEditAsync(testId);
-                SetEditMode(true);
-                isEditing = true;
-                editingTestId = testId;
+                var test = await _adminController.GetTestByIdAsync(testId);
+                
+                if (test != null)
+                {
+                    using (var form = new TestDetailEditForm(test))
+                    {
+                        if (form.ShowDialog() == DialogResult.OK)
+                        {
+                            await LoadTestsAsync();
+                            ToastHelper.Show(this.FindForm(), "✅ Cập nhật thành công!");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ToastHelper.Show(this.FindForm(), "Vui lòng chọn bài kiểm tra để sửa!");
             }
         }
 
@@ -227,28 +289,27 @@ namespace WinFormsApp1.View.Admin
         {
             try
             {
-                // Validate test title
-                var validationResult = ValidationHelper.ValidateTitle(txtTitle.Text);
-                if (!ValidateInput(validationResult)) return;
-
+                // Validate required fields
+                if (!ValidateFormFields()) return;
+                
                 int timeLimit = 0;
-                var timeLimitText = GetTextValue(txtTimeLimit);
+                var timeLimitText = GetFormValue("txtTimeLimit");
                 if (!string.IsNullOrWhiteSpace(timeLimitText) && !int.TryParse(timeLimitText, out timeLimit))
                 {
-                    ValidationHelper.ShowValidationError(this.FindForm(), "Thời gian không hợp lệ");
+                    ShowFieldError("txtTimeLimit", "Thời gian không hợp lệ");
                     return;
                 }
 
                 if (timeLimit < 0)
                 {
-                    ValidationHelper.ShowValidationError(this.FindForm(), "Thời gian phải lớn hơn 0");
+                    ShowFieldError("txtTimeLimit", "Thời gian phải lớn hơn hoặc bằng 0");
                     return;
                 }
 
                 var test = new Test
                 {
-                    Title = GetTextValue(txtTitle).Trim(),
-                    Description = GetTextValue(txtDescription)?.Trim(),
+                    Title = GetFormValue("txtTitle").Trim(),
+                    Description = GetFormValue("txtDescription")?.Trim(),
                     TimeLimitSec = timeLimit > 0 ? timeLimit * 60 : null,
                     OwnerId = 1,
                     Visibility = "private",
@@ -274,8 +335,8 @@ namespace WinFormsApp1.View.Admin
                 {
                     ToastHelper.Show(this.FindForm(), "✅ Lưu thành công!");
                     await LoadTestsAsync();
-                    SetEditMode(false);
-                    ClearForm();
+                    HideInputForm();
+                    isEditing = false;
                 }
                 else
                 {
@@ -284,8 +345,31 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                ValidationHelper.ShowValidationError(this.FindForm(), $"Lỗi lưu dữ liệu: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), $"Lỗi lưu dữ liệu: {ex.Message}");
             }
+        }
+        
+        private bool ValidateFormFields()
+        {
+            bool isValid = true;
+            
+            // Clear all errors first
+            ClearFormErrors();
+            
+            // Validate title
+            var title = GetFormValue("txtTitle").Trim();
+            if (string.IsNullOrEmpty(title))
+            {
+                ShowFieldError("txtTitle", "Tiêu đề không được để trống");
+                isValid = false;
+            }
+            else if (title.Length < 3)
+            {
+                ShowFieldError("txtTitle", "Tiêu đề phải có ít nhất 3 ký tự");
+                isValid = false;
+            }
+            
+            return isValid;
         }
 
         private async void BtnDelete_Click(object sender, EventArgs e)
@@ -316,28 +400,54 @@ namespace WinFormsApp1.View.Admin
                     }
                 }
             }
+            else
+            {
+                ToastHelper.Show(this.FindForm(), "Vui lòng chọn bài kiểm tra để xóa!");
+            }
         }
+        
 
-        private void BtnCancel_Click(object sender, EventArgs e)
+
+
+
+        protected override void ValidateField(string fieldName, bool required, bool isPassword)
         {
-            SetEditMode(false);
-            ClearForm();
-        }
-
-        private void SetEditMode(bool editing)
-        {
-            btnAdd.Visible = !editing;
-            btnEdit.Visible = !editing;
-            btnDelete.Visible = !editing;
-            btnSave.Visible = editing;
-            btnCancel.Visible = editing;
-
-            txtTitle.Enabled = editing;
-            txtTimeLimit.Enabled = editing;
-            txtDescription.Enabled = editing;
+            var value = GetFormValue(fieldName).Trim();
             
-            // Show/hide questions panel based on selection
-            questionsPanel.Visible = !editing && dataGridView.SelectedRows.Count > 0;
+            // Clear previous error
+            HideFieldError(fieldName);
+            
+            // Required field validation
+            if (required && string.IsNullOrEmpty(value))
+            {
+                ShowFieldError(fieldName, GetRequiredErrorMessage(fieldName));
+                return;
+            }
+            
+            // Skip validation if field is empty and not required
+            if (string.IsNullOrEmpty(value)) return;
+            
+            // Title validation
+            if (fieldName == "txtTitle" && value.Length < 3)
+            {
+                ShowFieldError(fieldName, "Tiêu đề phải có ít nhất 3 ký tự");
+                return;
+            }
+            
+            // Time limit validation
+            if (fieldName == "txtTimeLimit")
+            {
+                if (!int.TryParse(value, out int timeLimit))
+                {
+                    ShowFieldError(fieldName, "Thời gian không hợp lệ");
+                    return;
+                }
+                if (timeLimit < 0)
+                {
+                    ShowFieldError(fieldName, "Thời gian phải lớn hơn hoặc bằng 0");
+                    return;
+                }
+            }
         }
 
         private void SetupQuestionsPanel()
@@ -447,11 +557,6 @@ namespace WinFormsApp1.View.Admin
             questionsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "OptionsCount", HeaderText = "Số đáp án", Width = 100, DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleCenter } });
         }
 
-        private void ClearForm()
-        {
-            SetTextValue(txtTitle, "");
-            SetTextValue(txtTimeLimit, "");
-            SetTextValue(txtDescription, "");
-        }
+
     }
 }
