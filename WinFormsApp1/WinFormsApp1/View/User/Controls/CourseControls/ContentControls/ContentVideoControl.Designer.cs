@@ -1,81 +1,106 @@
-namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
+﻿namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 {
     partial class ContentVideoControl
     {
         private System.ComponentModel.IContainer components = null;
         protected override void Dispose(bool disposing) { if (disposing && (components != null)) components.Dispose(); base.Dispose(disposing); }
 
-        #region Component Designer generated code
-        private void InitializeComponent()
-        {
-            this.components = new System.ComponentModel.Container();
-            this.cboContentType = new System.Windows.Forms.ComboBox();
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.txtTitle = new System.Windows.Forms.TextBox();
-            this.lblVideo = new System.Windows.Forms.Label();
-            this.txtVideoPath = new System.Windows.Forms.TextBox();
-            this.btnBrowse = new System.Windows.Forms.Button();
-            this.SuspendLayout();
-            // cboContentType
-            this.cboContentType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboContentType.FormattingEnabled = true;
-            this.cboContentType.Items.AddRange(new object[] { "Theory", "Video", "FlashcardSet", "Test" });
-            this.cboContentType.Location = new System.Drawing.Point(8, 8);
-            this.cboContentType.Name = "cboContentType";
-            this.cboContentType.Size = new System.Drawing.Size(200, 23);
-            this.cboContentType.TabIndex = 0;
-            // lblTitle
-            this.lblTitle.AutoSize = true;
-            this.lblTitle.Location = new System.Drawing.Point(8, 44);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(42, 15);
-            this.lblTitle.TabIndex = 1;
-            this.lblTitle.Text = "Ti�u ??:";
-            // txtTitle
-            this.txtTitle.Location = new System.Drawing.Point(80, 40);
-            this.txtTitle.Name = "txtTitle";
-            this.txtTitle.Size = new System.Drawing.Size(480, 23);
-            this.txtTitle.TabIndex = 2;
-            // lblVideo
-            this.lblVideo.AutoSize = true;
-            this.lblVideo.Location = new System.Drawing.Point(8, 72);
-            this.lblVideo.Name = "lblVideo";
-            this.lblVideo.Size = new System.Drawing.Size(36, 15);
-            this.lblVideo.TabIndex = 3;
-            this.lblVideo.Text = "Video:";
-            // txtVideoPath
-            this.txtVideoPath.Location = new System.Drawing.Point(80, 68);
-            this.txtVideoPath.Name = "txtVideoPath";
-            this.txtVideoPath.ReadOnly = true;
-            this.txtVideoPath.Size = new System.Drawing.Size(480, 23);
-            this.txtVideoPath.TabIndex = 4;
-            // btnBrowse
-            this.btnBrowse.Location = new System.Drawing.Point(570, 66);
-            this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(100, 25);
-            this.btnBrowse.TabIndex = 5;
-            this.btnBrowse.Text = "Ch?n video";
-            this.btnBrowse.UseVisualStyleBackColor = true;
-            // ContentVideoControl
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.Controls.Add(this.btnBrowse);
-            this.Controls.Add(this.txtVideoPath);
-            this.Controls.Add(this.lblVideo);
-            this.Controls.Add(this.txtTitle);
-            this.Controls.Add(this.lblTitle);
-            this.Controls.Add(this.cboContentType);
-            this.Name = "ContentVideoControl";
-            this.Size = new System.Drawing.Size(700, 120);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-        }
-        #endregion
+		#region Component Designer generated code
+		private void InitializeComponent()
+		{
+			cboContentType = new ComboBox();
+			lblTitle = new Label();
+			txtTitle = new TextBox();
+			lblVideo = new Label();
+			txtVideoPath = new TextBox();
+			btnBrowse = new Button();
+			label1 = new Label();
+			SuspendLayout();
+			// 
+			// cboContentType
+			// 
+			cboContentType.DropDownStyle = ComboBoxStyle.DropDownList;
+			cboContentType.FormattingEnabled = true;
+			cboContentType.Items.AddRange(new object[] { "Theory", "Video", "FlashcardSet", "Test" });
+			cboContentType.Location = new Point(28, 46);
+			cboContentType.Name = "cboContentType";
+			cboContentType.Size = new Size(200, 33);
+			cboContentType.TabIndex = 0;
+			// 
+			// lblTitle
+			// 
+			lblTitle.AutoSize = true;
+			lblTitle.Location = new Point(28, 13);
+			lblTitle.Name = "lblTitle";
+			lblTitle.Size = new Size(125, 25);
+			lblTitle.TabIndex = 1;
+			lblTitle.Text = "Loại nội dung:";
+			// 
+			// txtTitle
+			// 
+			txtTitle.Location = new Point(28, 128);
+			txtTitle.Name = "txtTitle";
+			txtTitle.Size = new Size(480, 31);
+			txtTitle.TabIndex = 2;
+			// 
+			// lblVideo
+			// 
+			lblVideo.AutoSize = true;
+			lblVideo.Location = new Point(28, 173);
+			lblVideo.Name = "lblVideo";
+			lblVideo.Size = new Size(62, 25);
+			lblVideo.TabIndex = 3;
+			lblVideo.Text = "Video:";
+			// 
+			// txtVideoPath
+			// 
+			txtVideoPath.Location = new Point(28, 207);
+			txtVideoPath.Name = "txtVideoPath";
+			txtVideoPath.ReadOnly = true;
+			txtVideoPath.Size = new Size(480, 31);
+			txtVideoPath.TabIndex = 4;
+			// 
+			// btnBrowse
+			// 
+			btnBrowse.Location = new Point(114, 173);
+			btnBrowse.Name = "btnBrowse";
+			btnBrowse.Size = new Size(114, 31);
+			btnBrowse.TabIndex = 5;
+			btnBrowse.Text = "Chọn video";
+			btnBrowse.UseVisualStyleBackColor = true;
+			// 
+			// label1
+			// 
+			label1.AutoSize = true;
+			label1.Location = new Point(28, 97);
+			label1.Name = "label1";
+			label1.Size = new Size(73, 25);
+			label1.TabIndex = 6;
+			label1.Text = "Tiêu đề:";
+			// 
+			// ContentVideoControl
+			// 
+			AutoScaleMode = AutoScaleMode.None;
+			Controls.Add(label1);
+			Controls.Add(btnBrowse);
+			Controls.Add(txtVideoPath);
+			Controls.Add(lblVideo);
+			Controls.Add(txtTitle);
+			Controls.Add(lblTitle);
+			Controls.Add(cboContentType);
+			Name = "ContentVideoControl";
+			Size = new Size(830, 270);
+			ResumeLayout(false);
+			PerformLayout();
+		}
+		#endregion
 
-        private System.Windows.Forms.ComboBox cboContentType;
+		private System.Windows.Forms.ComboBox cboContentType;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.TextBox txtTitle;
         private System.Windows.Forms.Label lblVideo;
         private System.Windows.Forms.TextBox txtVideoPath;
         private System.Windows.Forms.Button btnBrowse;
-    }
+		private Label label1;
+	}
 }

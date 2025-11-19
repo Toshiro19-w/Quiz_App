@@ -37,7 +37,7 @@
 			cboContentType.DropDownStyle = ComboBoxStyle.DropDownList;
 			cboContentType.FormattingEnabled = true;
 			cboContentType.Items.AddRange(new object[] { "Theory", "Video", "FlashcardSet", "Test" });
-			cboContentType.Location = new Point(15, 47);
+			cboContentType.Location = new Point(35, 44);
 			cboContentType.Name = "cboContentType";
 			cboContentType.Size = new Size(302, 33);
 			cboContentType.TabIndex = 0;
@@ -45,7 +45,7 @@
 			// lblTitle
 			// 
 			lblTitle.AutoSize = true;
-			lblTitle.Location = new Point(15, 96);
+			lblTitle.Location = new Point(35, 93);
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(73, 25);
 			lblTitle.TabIndex = 1;
@@ -53,15 +53,15 @@
 			// 
 			// txtTitle
 			// 
-			txtTitle.Location = new Point(15, 130);
+			txtTitle.Location = new Point(35, 127);
 			txtTitle.Name = "txtTitle";
-			txtTitle.Size = new Size(692, 31);
+			txtTitle.Size = new Size(761, 31);
 			txtTitle.TabIndex = 2;
 			// 
 			// lblBody
 			// 
 			lblBody.AutoSize = true;
-			lblBody.Location = new Point(12, 176);
+			lblBody.Location = new Point(35, 173);
 			lblBody.Name = "lblBody";
 			lblBody.Size = new Size(91, 25);
 			lblBody.TabIndex = 3;
@@ -69,7 +69,7 @@
 			// 
 			// txtBody
 			// 
-			txtBody.Location = new Point(12, 204);
+			txtBody.Location = new Point(35, 201);
 			txtBody.Multiline = true;
 			txtBody.Name = "txtBody";
 			txtBody.ScrollBars = ScrollBars.Vertical;
@@ -79,7 +79,7 @@
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(15, 13);
+			label1.Location = new Point(35, 10);
 			label1.Name = "label1";
 			label1.Size = new Size(125, 25);
 			label1.TabIndex = 5;
@@ -95,7 +95,7 @@
 			Controls.Add(lblTitle);
 			Controls.Add(cboContentType);
 			Name = "ContentTheoryControl";
-			Size = new Size(824, 337);
+			Size = new Size(830, 337);
 			ResumeLayout(false);
 			PerformLayout();
 		}

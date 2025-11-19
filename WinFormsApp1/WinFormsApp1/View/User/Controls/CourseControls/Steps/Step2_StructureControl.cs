@@ -7,9 +7,20 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
         public Step2_StructureControl()
         {
             InitializeComponent();
-            btnAddChapter.Click += (s,e)=> AddChapter();
+            
+            // Đảm bảo nút được kích hoạt
+            btnAddChapter.Enabled = true;
+            btnAddChapter.Visible = true;
+            
+            // Kết nối sự kiện với error handling
+            btnAddChapter.Click += BtnAddChapter_Click;
             btnPrev.Click += (s,e)=> OnPrevRequested?.Invoke(this, EventArgs.Empty);
             btnNext.Click += (s,e)=> OnNextRequested?.Invoke(this, EventArgs.Empty);
+        }
+        
+        private void BtnAddChapter_Click(object sender, EventArgs e)
+        {
+            AddChapter();
         }
 
         public event EventHandler? OnPrevRequested;
@@ -17,40 +28,50 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 
         private int chapterCounter = 0;
 
-        private void AddChapter(ChapterBuilderViewModel fromVm = null)
-        {
-            chapterCounter++;
-            var chVm = fromVm ?? new ChapterBuilderViewModel { Title = $"Chương {chapterCounter}" };
-            var chapterControl = new ChapterItemControl { Margin = new Padding(0, 0, 0, 10) };
-            chapterControl.LoadFromViewModel(chVm);
+        public CourseBuilderViewModel? CurrentCourse { get; set; }
+        
+		private void AddChapter(ChapterBuilderViewModel fromVm = null)
+		{
+			ChapterBuilderViewModel chVm;
 
-            // When AddLesson is requested from the chapter control, use its API to add an editable lesson
-            chapterControl.AddLessonClicked += (s, e) => {
-                chapterControl.AddNewLesson();
-            };
+			if (fromVm != null)
+			{
+				chVm = fromVm;
+			}
+			else
+			{
+				chapterCounter++;
+				chVm = new ChapterBuilderViewModel { 
+					Title = $"Chương {chapterCounter}",
+					OrderIndex = chapterCounter
+				};
+			}
 
-            // When chapter requests removal, remove it from the flow panel
-            chapterControl.RemoveChapterClicked += (s, e) => {
-                flpChapters.Controls.Remove(chapterControl);
-            };
+			var chapterControl = new ChapterItemControl();
+			chapterControl.AddLessonClicked += (s, e) => ((ChapterItemControl)s).AddNewLesson();
+			chapterControl.LoadFromViewModel(chVm);
+			flpChapters.Controls.Add(chapterControl);
+		}
 
-            flpChapters.Controls.Add(chapterControl);
-        }
 
-        public void LoadFromViewModel(CourseBuilderViewModel vm)
-        {
-            flpChapters.Controls.Clear();
-            chapterCounter = 0;
-            if (vm?.Chapters != null)
-            {
-                foreach (var ch in vm.Chapters)
-                {
-                    AddChapter(ch);
-                }
-            }
-        }
+		public void LoadFromViewModel(CourseBuilderViewModel vm)
+		{
+			flpChapters.Controls.Clear();
+			chapterCounter = 0;
 
-        public void SaveToViewModel(CourseBuilderViewModel vm)
+			if (vm?.Chapters == null || vm.Chapters.Count == 0)
+				return;
+
+			foreach (var ch in vm.Chapters)
+			{
+				// Sử dụng AddChapter để đảm bảo event được kết nối
+				AddChapter(ch);
+				chapterCounter++;
+			}
+		}
+
+
+		public void SaveToViewModel(CourseBuilderViewModel vm)
         {
             vm.Chapters.Clear();
             foreach (var chControl in flpChapters.Controls.OfType<ChapterItemControl>())

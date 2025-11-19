@@ -45,7 +45,7 @@
 			btnAddLesson.ForeColor = Color.White;
 			btnAddLesson.Location = new Point(737, 11);
 			btnAddLesson.Name = "btnAddLesson";
-			btnAddLesson.Size = new Size(80, 28);
+			btnAddLesson.Size = new Size(80, 30);
 			btnAddLesson.TabIndex = 1;
 			btnAddLesson.Text = "Thêm";
 			btnAddLesson.UseVisualStyleBackColor = false;
@@ -59,7 +59,7 @@
 			btnRemoveChapter.ForeColor = Color.White;
 			btnRemoveChapter.Location = new Point(645, 11);
 			btnRemoveChapter.Name = "btnRemoveChapter";
-			btnRemoveChapter.Size = new Size(80, 28);
+			btnRemoveChapter.Size = new Size(80, 30);
 			btnRemoveChapter.TabIndex = 3;
 			btnRemoveChapter.Text = "Xóa chương";
 			btnRemoveChapter.UseVisualStyleBackColor = false;

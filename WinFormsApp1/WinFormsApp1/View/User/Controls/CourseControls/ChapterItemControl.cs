@@ -48,6 +48,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
         public void LoadFromViewModel(ChapterBuilderViewModel vm, string? imageUrl = null)
         {
             if (vm == null) return;
+            _originalViewModel = vm; // Store reference to preserve data
             ChapterId = vm.ChapterId;
             _baseTitle = vm.Title ?? "(Không tên)";
             // keep title unchanged
@@ -137,22 +138,34 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             RefreshLessonCount();
         }
 
+        private ChapterBuilderViewModel? _originalViewModel;
+        
         // Convert current UI back to ChapterBuilderViewModel
         public ChapterBuilderViewModel ToViewModel()
         {
             var ch = new ChapterBuilderViewModel { ChapterId = ChapterId, Title = _baseTitle };
+            
+            var panelIndex = 0;
             foreach (var c in flpLessons.Controls.OfType<Panel>())
             {
                 // prefer TextBox inside the panel
                 var txt = c.Controls.OfType<TextBox>().FirstOrDefault();
-                if (txt != null)
-                    ch.Lessons.Add(new LessonBuilderViewModel { Title = txt.Text });
+                var title = txt?.Text ?? c.Controls.OfType<Label>().FirstOrDefault()?.Text ?? "";
+                
+                // Try to preserve existing lesson data if available
+                LessonBuilderViewModel lesson;
+                if (_originalViewModel?.Lessons != null && panelIndex < _originalViewModel.Lessons.Count)
+                {
+                    lesson = _originalViewModel.Lessons[panelIndex];
+                    lesson.Title = title; // Update title from UI
+                }
                 else
                 {
-                    var lbl = c.Controls.OfType<Label>().FirstOrDefault();
-                    if (lbl != null)
-                        ch.Lessons.Add(new LessonBuilderViewModel { Title = lbl.Text });
+                    lesson = new LessonBuilderViewModel { Title = title };
                 }
+                
+                ch.Lessons.Add(lesson);
+                panelIndex++;
             }
             return ch;
         }
