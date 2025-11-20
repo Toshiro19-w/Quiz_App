@@ -97,37 +97,38 @@ namespace WinFormsApp1.View.User.Components
 
             int yPos = 0;
 
-            // Menu Items
-            AddMenuItem("Học tập", ref yPos, OnHocTapClick);
-            AddMenuItem("Giỏ hàng của tôi", ref yPos, OnGioHangClick);
+            // Menu Items - create buttons then wire to events so subscribers added later are called
+            var btnHocTap = AddMenuItem("Học tập", ref yPos);
+            btnHocTap.Click += (s, e) => OnHocTapClick?.Invoke(s, e);
+
+            var btnGioHang = AddMenuItem("Giỏ hàng của tôi", ref yPos);
+            btnGioHang.Click += (s, e) => OnGioHangClick?.Invoke(s, e);
             
             // Separator for teacher/admin
             if (AuthHelper.CurrentUser != null && !AuthHelper.IsUser())
             {
                 AddSeparator(ref yPos);
-                AddMenuItem("Bảng điều khiển của giảng viên", ref yPos, OnBangDieuKhienClick);
+                var btnBangDieuKhien = AddMenuItem("Bảng điều khiển của giảng viên", ref yPos);
+                btnBangDieuKhien.Click += (s, e) => OnBangDieuKhienClick?.Invoke(s, e);
             }
 
             AddSeparator(ref yPos);
             
             // Cập nhật các menu item này để trigger event với tab index
-            var btnCaiDat = AddMenuItem("Cài đặt tài khoản", ref yPos, null);
-            btnCaiDat.Click += (s, e) =>
-            {
+            var btnCaiDat = AddMenuItem("Cài đặt tài khoản", ref yPos);
+            btnCaiDat.Click += (s, e) => {
                 OnProfileTabClick?.Invoke(this, 0); // Tab index 0
                 OnCaiDatClick?.Invoke(s, e);
             };
 
-            var btnChinhSua = AddMenuItem("Chỉnh sửa hồ sơ", ref yPos, null);
-            btnChinhSua.Click += (s, e) =>
-            {
+            var btnChinhSua = AddMenuItem("Chỉnh sửa hồ sơ", ref yPos);
+            btnChinhSua.Click += (s, e) => {
                 OnProfileTabClick?.Invoke(this, 1); // Tab index 1
                 OnChinhSuaClick?.Invoke(s, e);
             };
 
-            var btnLichSu = AddMenuItem("Lịch sử mua hàng", ref yPos, null);
-            btnLichSu.Click += (s, e) =>
-            {
+            var btnLichSu = AddMenuItem("Lịch sử mua hàng", ref yPos);
+            btnLichSu.Click += (s, e) => {
                 OnProfileTabClick?.Invoke(this, 2); // Tab index 2
                 OnLichSuMuaHangClick?.Invoke(s, e);
             };
@@ -139,9 +140,10 @@ namespace WinFormsApp1.View.User.Components
 
             AddSeparator(ref yPos);
             
-            // Logout
-            var btnLogout = AddMenuItem("Đăng xuất", ref yPos, OnDangXuatClick);
+            // Logout - ensure event invoked when button clicked even if subscribers added after construction
+            var btnLogout = AddMenuItem("Đăng xuất", ref yPos);
             btnLogout.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            btnLogout.Click += (s, e) => OnDangXuatClick?.Invoke(s, e);
 
             this.Controls.Add(menuPanel);
             this.Controls.Add(headerPanel);
@@ -206,7 +208,7 @@ namespace WinFormsApp1.View.User.Components
             pictureBox.Region = new Region(path);
         }
 
-        private Button AddMenuItem(string text, ref int yPos, EventHandler? clickHandler)
+        private Button AddMenuItem(string text, ref int yPos)
         {
             var btn = new Button
             {
@@ -225,11 +227,6 @@ namespace WinFormsApp1.View.User.Components
 
             btn.FlatAppearance.BorderSize = 0;
             btn.FlatAppearance.MouseOverBackColor = ColorPalette.Background;
-
-            if (clickHandler != null)
-            {
-                btn.Click += clickHandler;
-            }
 
             menuPanel.Controls.Add(btn);
             yPos += 50;
