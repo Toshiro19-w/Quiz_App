@@ -97,8 +97,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
 			rtbDescription.Text = _course.Summary ?? "Chưa có mô tả";
 
-			lblInstructorName.Text = _course.Owner.FullName;
-			lblInstructorEmail.Text = _course.Owner.Email;
 
 			lblAvgRating.Text = _course.AverageRating.ToString("F1");
 			lblTotalRatingCount.Text = $"({_course.TotalReviews:N0} đánh giá)";
@@ -125,7 +123,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			// Owner: show manage buttons
 			btnEditCourse.Visible = isOwner;
 			btnViewCourse.Visible = isOwner;
-			btnStatistics.Visible = isOwner;
+			//btnStatistics.Visible = isOwner;
 
 			// Buyer: show start learning
 			btnStartLearning.Visible = isBuyer;
@@ -403,9 +401,57 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			}
 		}
 
-		private void BtnViewCourse_Click(object sender, EventArgs e)
+		private async void BtnViewCourse_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("Xem khóa học như học viên (preview)", "Xem khóa học", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			try
+			{
+				if (_course == null)
+				{
+					MessageBox.Show("Không thể tải thông tin khóa học", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+
+				// Find first lesson
+				var firstLesson = _course.CourseChapters
+					.OrderBy(ch => ch.OrderIndex)
+					.SelectMany(ch => ch.Lessons.OrderBy(l => l.OrderIndex))
+					.FirstOrDefault();
+
+				if (firstLesson == null)
+				{
+					MessageBox.Show("Khóa học chưa có bài học!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					return;
+				}
+
+				var form = this.FindForm();
+				if (form is MainContainer mainContainer)
+				{
+					var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
+					if (mainPanel != null)
+					{
+						mainPanel.Controls.Clear();
+
+						var lessonDetailControl = new WinFormsApp1.View.User.Controls.LessonDetailControl();
+						lessonDetailControl.Dock = DockStyle.Fill;
+						mainPanel.Controls.Add(lessonDetailControl);
+
+						// Load lesson
+						_ = lessonDetailControl.LoadLessonAsync(_course.Slug, firstLesson.LessonId);
+					}
+					else
+					{
+						MessageBox.Show("Không thể tìm thấy vùng nội dung chính để điều hướng.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
+				}
+				else
+				{
+					MessageBox.Show("Không thể điều hướng từ context hiện tại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Lỗi khi mở khóa học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		private void BtnStatistics_Click(object sender, EventArgs e)
