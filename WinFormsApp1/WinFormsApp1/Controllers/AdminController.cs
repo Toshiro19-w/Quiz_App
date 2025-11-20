@@ -410,19 +410,42 @@ namespace WinFormsApp1.Controllers
             {
                 var now = DateTime.Now;
                 var startOfMonth = new DateTime(now.Year, now.Month, 1);
-                
+
+                // Treat both "Paid" and "Completed" as successful statuses
+                var completedStatuses = new[] { "Paid", "Completed" };
+
+                var totalRevenue = await context.Payments.AnyAsync() ? await context.Payments.SumAsync(p => p.Amount) : 0;
+                var revenueThisMonth = await context.Payments.Where(p => p.PaidAt.HasValue && p.PaidAt.Value >= startOfMonth).AnyAsync()
+                    ? await context.Payments.Where(p => p.PaidAt.HasValue && p.PaidAt.Value >= startOfMonth).SumAsync(p => p.Amount)
+                    : 0;
+
+                var paidAmount = await context.Payments.Where(p => completedStatuses.Contains(p.Status)).AnyAsync()
+                    ? await context.Payments.Where(p => completedStatuses.Contains(p.Status)).SumAsync(p => p.Amount)
+                    : 0;
+
+                var pendingAmount = await context.Payments.Where(p => p.Status == "Pending").AnyAsync()
+                    ? await context.Payments.Where(p => p.Status == "Pending").SumAsync(p => p.Amount)
+                    : 0;
+
+                var paidCount = await context.Payments.CountAsync(p => completedStatuses.Contains(p.Status));
+                var pendingCount = await context.Payments.CountAsync(p => p.Status == "Pending");
+                var refundedCount = await context.Payments.CountAsync(p => p.Status == "Refunded");
+                var vnPayCount = await context.Payments.CountAsync(p => p.Provider == "VNPay");
+                var stripeCount = await context.Payments.CountAsync(p => p.Provider == "Stripe");
+                var otherPaymentCount = await context.Payments.CountAsync(p => p.Provider != "VNPay" && p.Provider != "Stripe");
+
                 return new RevenueAnalytics
                 {
-                    TotalRevenue = await context.Payments.AnyAsync() ? await context.Payments.SumAsync(p => p.Amount) : 0,
-                    RevenueThisMonth = await context.Payments.Where(p => p.PaidAt.HasValue && p.PaidAt.Value >= startOfMonth).AnyAsync() ? await context.Payments.Where(p => p.PaidAt.HasValue && p.PaidAt.Value >= startOfMonth).SumAsync(p => p.Amount) : 0,
-                    PaidAmount = await context.Payments.Where(p => p.Status == "Completed").AnyAsync() ? await context.Payments.Where(p => p.Status == "Completed").SumAsync(p => p.Amount) : 0,
-                    PendingAmount = await context.Payments.Where(p => p.Status == "Pending").AnyAsync() ? await context.Payments.Where(p => p.Status == "Pending").SumAsync(p => p.Amount) : 0,
-                    PaidCount = await context.Payments.CountAsync(p => p.Status == "Completed"),
-                    PendingCount = await context.Payments.CountAsync(p => p.Status == "Pending"),
-                    RefundedCount = await context.Payments.CountAsync(p => p.Status == "Refunded"),
-                    VNPayCount = await context.Payments.CountAsync(p => p.Provider == "VNPay"),
-                    StripeCount = await context.Payments.CountAsync(p => p.Provider == "Stripe"),
-                    OtherPaymentCount = await context.Payments.CountAsync(p => p.Provider != "VNPay" && p.Provider != "Stripe")
+                    TotalRevenue = totalRevenue,
+                    RevenueThisMonth = revenueThisMonth,
+                    PaidAmount = paidAmount,
+                    PendingAmount = pendingAmount,
+                    PaidCount = paidCount,
+                    PendingCount = pendingCount,
+                    RefundedCount = refundedCount,
+                    VNPayCount = vnPayCount,
+                    StripeCount = stripeCount,
+                    OtherPaymentCount = otherPaymentCount
                 };
             }
         }
@@ -874,8 +897,10 @@ namespace WinFormsApp1.Controllers
                 var result = new Dictionary<int, decimal>();
                 for (int i = 1; i <= 12; i++) result[i] = 0;
 
+                var completedStatuses = new[] { "Paid", "Completed" };
+
                 var monthlyData = await context.Payments
-                    .Where(p => p.PaidAt.HasValue && p.Status == "Completed")
+                    .Where(p => p.PaidAt.HasValue && completedStatuses.Contains(p.Status))
                     .GroupBy(p => p.PaidAt.Value.Month)
                     .Select(g => new { Month = g.Key, Total = g.Sum(p => p.Amount) })
                     .ToListAsync();
