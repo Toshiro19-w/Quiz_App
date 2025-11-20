@@ -24,26 +24,6 @@ namespace WinFormsApp1.View.User.Controls
             LoadAllFlashcardSets();
         }
 
-        private void btnCreateFlashcard_Click(object sender, EventArgs e)
-        {
-            var form = this.FindForm();
-            if (form == null) return;
-
-            var mainPanel = FindControlRecursive(form, "mainContentPanel") as Panel;
-
-            if (mainPanel == null)
-            {
-                mainPanel = this.Parent as Panel;
-            }
-
-            if (mainPanel == null) return;
-
-            mainPanel.Controls.Clear();
-
-            var createControl = new CreateFlashcardControl();
-            createControl.Dock = DockStyle.Fill;
-            mainPanel.Controls.Add(createControl);
-        }
 
         private async void LoadAllFlashcardSets()
         {
