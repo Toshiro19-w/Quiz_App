@@ -624,54 +624,58 @@ namespace WinFormsApp1.View.User.Controls
 
         private async Task LoadVideoContentAsync(LessonContent content)
         {
+            // 1. Hiển thị khung nhìn
             pnlVideo.Visible = true;
             _videoView.Visible = true;
+
+            // 2. Setup bộ điều khiển (Nút play, thanh tua...)
+            SetupVideoControls();
+            _pnlControls.Visible = true;
+
+            // 3. Reset trạng thái giao diện về mặc định
+            _btnPlayPause.Text = "⏸";
+            _trackBarTime.Value = 0;
+            _lblTimeCurrent.Text = "00:00";
+            _lblTimeTotal.Text = "00:00";
+            _mediaPlayer.Volume = 100;
+            _trackBarVolume.Value = 100;
+            _btnVolume.Text = "🔊";
             _totalWatchedSeconds = 0;
 
+            // 4. Xử lý đường dẫn và phát video
             if (!string.IsNullOrEmpty(content.VideoUrl))
             {
-                SetupVideoControls();
-                _pnlControls.Visible = true;
+                // --- SỬ DỤNG MEDIAHELPER ĐỂ LẤY ĐƯỜNG DẪN GỐC ---
+                string projectRoot = MediaHelper.GetProjectRoot();
 
-                // Reset trạng thái
-                _btnPlayPause.Text = "⏸";
-                _trackBarTime.Value = 0;
-                _lblTimeCurrent.Text = "00:00";
-                _lblTimeTotal.Text = "00:00";
+                // Xử lý đường dẫn từ DB (chuyển dấu / thành \ cho đúng chuẩn Windows)
+                string relativePath = content.VideoUrl.Replace("/", "\\").TrimStart('\\');
 
-                // --- Reset Âm lượng ---
-                _mediaPlayer.Volume = 100;
-                _trackBarVolume.Value = 100;
-                _btnVolume.Text = "🔊";
-                // ---------------------
+                // Ghép đường dẫn gốc + đường dẫn tương đối
+                // Ví dụ: D:\...\WinFormsApp1 + Library\Video\abc.mp4
+                string fullPath = Path.Combine(projectRoot, relativePath);
 
-                _totalWatchedSeconds = 0;
-
-                if (!string.IsNullOrEmpty(content.VideoUrl))
+                if (System.IO.File.Exists(fullPath))
                 {
-                    // ... (Giữ nguyên phần code xử lý đường dẫn cũ của bạn ở đây) ...
-                    string dbPath = content.VideoUrl.Replace("/", "\\").TrimStart('\\');
-                    string projectRoot = @"D:\BTL web\BTL web game\APP_Quiz\Quiz_App\WinFormsApp1\WinFormsApp1";
-                    string fullPath = System.IO.Path.Combine(projectRoot, dbPath);
+                    // Tìm thấy file -> Phát video
+                    using var media = new Media(_libVLC, fullPath, FromType.FromPath);
+                    _mediaPlayer.Play(media);
 
-                    if (System.IO.File.Exists(fullPath))
+                    // Resume lại đoạn đã xem (nếu có)
+                    int watchedSec = await GetWatchedDurationAsync(content.ContentId);
+                    if (watchedSec > 0)
                     {
-                        using var media = new Media(_libVLC, fullPath, FromType.FromPath);
-                        _mediaPlayer.Play(media);
-
-                        // ... (Giữ nguyên phần Resume cũ) ...
-                        int watchedSec = await GetWatchedDurationAsync(content.ContentId);
-                        if (watchedSec > 0) _mediaPlayer.Time = (long)watchedSec * 1000;
+                        _mediaPlayer.Time = (long)watchedSec * 1000;
                     }
-                    else
-                    {
-                        // Nếu vẫn không thấy -> Báo lỗi chi tiết để bạn biết sai ở đâu
-                        MessageBox.Show(
-                            $"Không tìm thấy video!\n\n" +
-                            $"Đường dẫn phần mềm đang tìm:\n{fullPath}\n\n" +
-                            $"Hãy kiểm tra xem file '{System.IO.Path.GetFileName(fullPath)}' có thực sự nằm ở đó không?",
-                            "Lỗi File", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                }
+                else
+                {
+                    // Không tìm thấy file -> Báo lỗi chi tiết
+                    MessageBox.Show(
+                        $"Không tìm thấy video!\n\n" +
+                        $"Hệ thống đang tìm tại:\n{fullPath}\n\n" +
+                        "Vui lòng kiểm tra lại thư mục Library/Video.",
+                        "Lỗi File", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
