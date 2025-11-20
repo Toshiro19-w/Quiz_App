@@ -326,6 +326,26 @@ namespace WinFormsApp1.Controllers
             {
                 var now = DateTime.Now;
                 var startOfMonth = new DateTime(now.Year, now.Month, 1);
+                var startOfYear = new DateTime(now.Year, 1, 1);
+                
+                var newUsersByMonth = new Dictionary<int, int>();
+                for (int i = 1; i <= 12; i++) newUsersByMonth[i] = 0;
+                
+                var monthlyUsers = await context.Users
+                    .Where(u => u.CreatedAt >= startOfYear)
+                    .GroupBy(u => u.CreatedAt.Month)
+                    .Select(g => new { Month = g.Key, Count = g.Count() })
+                    .ToListAsync();
+                
+                foreach (var item in monthlyUsers)
+                    newUsersByMonth[item.Month] = item.Count;
+                
+                var recentActive = await context.Users
+                    .Where(u => u.LastLoginAt.HasValue)
+                    .OrderByDescending(u => u.LastLoginAt)
+                    .Take(10)
+                    .Select(u => new { u.Username, u.LastLoginAt })
+                    .ToListAsync();
                 
                 return new UserAnalytics
                 {
@@ -333,11 +353,10 @@ namespace WinFormsApp1.Controllers
                     TeacherCount = await context.Users.CountAsync(u => u.RoleId == 2),
                     StudentCount = await context.Users.CountAsync(u => u.RoleId == 3),
                     NewUsersThisMonth = await context.Users.CountAsync(u => u.CreatedAt >= startOfMonth),
-                    MaleCount = await context.UserProfiles.CountAsync(p => p.Gender == "Male"),
-                    FemaleCount = await context.UserProfiles.CountAsync(p => p.Gender == "Female"),
-                    OtherCount = await context.UserProfiles.CountAsync(p => p.Gender != "Male" && p.Gender != "Female"),
                     ActiveToday = await context.Users.CountAsync(u => u.LastLoginAt.HasValue && u.LastLoginAt.Value.Date == now.Date),
-                    ActiveThisWeek = await context.Users.CountAsync(u => u.LastLoginAt.HasValue && u.LastLoginAt.Value >= now.AddDays(-7))
+                    ActiveThisWeek = await context.Users.CountAsync(u => u.LastLoginAt.HasValue && u.LastLoginAt.Value >= now.AddDays(-7)),
+                    NewUsersByMonth = newUsersByMonth,
+                    RecentActiveUsers = recentActive.Select(u => (u.Username, u.LastLoginAt)).ToList()
                 };
             }
         }
@@ -348,8 +367,28 @@ namespace WinFormsApp1.Controllers
             {
                 var now = DateTime.Now;
                 var startOfMonth = new DateTime(now.Year, now.Month, 1);
+                var startOfYear = new DateTime(now.Year, 1, 1);
                 var totalEnrollments = await context.CoursePurchases.CountAsync();
                 var completedEnrollments = await context.CourseProgresses.CountAsync(e => e.IsCompleted);
+                
+                var topCourses = await context.CoursePurchases
+                    .GroupBy(cp => new { cp.CourseId, cp.Course.Title })
+                    .Select(g => new { g.Key.Title, Count = g.Count() })
+                    .OrderByDescending(x => x.Count)
+                    .Take(5)
+                    .ToListAsync();
+                
+                var testsByMonth = new Dictionary<int, int>();
+                for (int i = 1; i <= 12; i++) testsByMonth[i] = 0;
+                
+                var monthlyTests = await context.TestAttempts
+                    .Where(t => t.StartedAt >= startOfYear)
+                    .GroupBy(t => t.StartedAt.Month)
+                    .Select(g => new { Month = g.Key, Count = g.Count() })
+                    .ToListAsync();
+                
+                foreach (var item in monthlyTests)
+                    testsByMonth[item.Month] = item.Count;
                 
                 return new LearningAnalytics
                 {
@@ -359,8 +398,8 @@ namespace WinFormsApp1.Controllers
                     CompletionRate = totalEnrollments > 0 ? (completedEnrollments * 100.0 / totalEnrollments) : 0,
                     TotalTests = await context.Tests.CountAsync(),
                     TestsThisMonth = await context.Tests.CountAsync(t => t.CreatedAt >= startOfMonth),
-                    ActiveTeachers = await context.Users.CountAsync(u => u.RoleId == 2 && u.LastLoginAt.HasValue && u.LastLoginAt.Value >= now.AddDays(-30)),
-                    ActiveStudents = await context.Users.CountAsync(u => u.RoleId == 3 && u.LastLoginAt.HasValue && u.LastLoginAt.Value >= now.AddDays(-30))
+                    TopCourses = topCourses.Select(c => (c.Title, c.Count)).ToList(),
+                    TestsByMonth = testsByMonth
                 };
             }
         }
@@ -396,6 +435,13 @@ namespace WinFormsApp1.Controllers
                 var today = now.Date;
                 var startOfWeek = now.AddDays(-7);
                 
+                var recentAuditLogs = await context.AuditLogs
+                    .Include(a => a.User)
+                    .OrderByDescending(a => a.CreatedAt)
+                    .Take(10)
+                    .Select(a => new { a.Action, Username = a.User != null ? a.User.Username : "System", a.CreatedAt })
+                    .ToListAsync();
+                
                 return new SystemAnalytics
                 {
                     TotalNotifications = await context.Notifications.CountAsync(),
@@ -403,10 +449,8 @@ namespace WinFormsApp1.Controllers
                     NotificationsPending = await context.Notifications.CountAsync(n => !n.IsRead),
                     TotalAuditLogs = await context.AuditLogs.CountAsync(),
                     AuditLogsToday = await context.AuditLogs.CountAsync(a => a.CreatedAt.Date == today),
-                    //TotalErrors = await context.ErrorLogs.CountAsync(),
-                    //ErrorsToday = await context.ErrorLogs.CountAsync(e => e.CreatedAt.Date == today),
-                    //ErrorsThisWeek = await context.ErrorLogs.CountAsync(e => e.CreatedAt >= startOfWeek),
-                    RequestsToday = await context.AuditLogs.CountAsync(a => a.CreatedAt.Date == today)
+                    RequestsToday = await context.AuditLogs.CountAsync(a => a.CreatedAt.Date == today),
+                    RecentAuditLogs = recentAuditLogs.Select(a => (a.Action, a.Username, a.CreatedAt)).ToList()
                 };
             }
         }
@@ -820,6 +864,26 @@ namespace WinFormsApp1.Controllers
                 {
                     throw new Exception($"Lỗi khi xóa danh mục: {ex.Message}");
                 }
+            }
+        }
+
+        public async Task<Dictionary<int, decimal>> GetMonthlyRevenueAsync()
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                var result = new Dictionary<int, decimal>();
+                for (int i = 1; i <= 12; i++) result[i] = 0;
+
+                var monthlyData = await context.Payments
+                    .Where(p => p.PaidAt.HasValue && p.Status == "Completed")
+                    .GroupBy(p => p.PaidAt.Value.Month)
+                    .Select(g => new { Month = g.Key, Total = g.Sum(p => p.Amount) })
+                    .ToListAsync();
+
+                foreach (var item in monthlyData)
+                    result[item.Month] = item.Total;
+
+                return result;
             }
         }
 

@@ -111,6 +111,8 @@ namespace WinFormsApp1.View.Admin
             isEditing = false;
         }
 
+
+
         private void BtnEdit_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count > 0)

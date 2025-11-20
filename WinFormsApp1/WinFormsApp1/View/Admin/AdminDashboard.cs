@@ -179,29 +179,38 @@ namespace WinFormsApp1.View.Admin
 
             yPos += 10;
 
-            var otherItems = new[]
+            // Management section
+            var managementHeader = new Label
             {
-                new { Text = "👤 Người dùng", Tag = "user-management" },
-                new { Text = "📚 Khóa học", Tag = "courses" },
+                Text = "📋 Quản lý",
+                Size = new Size(230, 35),
+                Location = new Point(10, yPos),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+            sidebarPanel.Controls.Add(managementHeader);
+            yPos += 40;
+
+            var managementItems = new[]
+            {
+                new { Text = "   👤 Người dùng", Tag = "user-management" },
+                new { Text = "   📚 Khóa học", Tag = "courses" },
                 new { Text = "   📁 Danh mục", Tag = "categories" },
-                new { Text = "📝 Bài kiểm tra", Tag = "tests" },
-                // new { Text = "⚙️ Cài đặt hệ thống", Tag = "system-settings" }, // Tạm ẩn
-                new { Text = "📊 Báo cáo", Tag = "reports" },
-                new { Text = "🏠 Trang chủ", Tag = "home" }
+                new { Text = "   📝 Bài kiểm tra", Tag = "tests" }
             };
 
-            foreach (var item in otherItems)
+            foreach (var item in managementItems)
             {
-                bool isSubmenu = item.Text.StartsWith("   ");
                 var btn = new Button
                 {
                     Text = item.Text,
-                    Size = new Size(230, isSubmenu ? 40 : 45),
+                    Size = new Size(230, 40),
                     Location = new Point(10, yPos),
                     FlatStyle = FlatStyle.Flat,
                     BackColor = Color.Transparent,
-                    ForeColor = isSubmenu ? Color.FromArgb(200, 200, 200) : Color.White,
-                    Font = new Font("Segoe UI", isSubmenu ? 9 : 10),
+                    ForeColor = Color.FromArgb(200, 200, 200),
+                    Font = new Font("Segoe UI", 9),
                     TextAlign = ContentAlignment.MiddleLeft,
                     Tag = item.Tag,
                     Cursor = Cursors.Hand
@@ -210,8 +219,75 @@ namespace WinFormsApp1.View.Admin
                 btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(74, 85, 104);
                 btn.Click += MenuButton_Click;
                 sidebarPanel.Controls.Add(btn);
-                yPos += isSubmenu ? 42 : 50;
+                yPos += 42;
             }
+
+            yPos += 10;
+
+            // Reports section
+            var reportsHeader = new Label
+            {
+                Text = "📊 Báo cáo",
+                Size = new Size(230, 35),
+                Location = new Point(10, yPos),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+            sidebarPanel.Controls.Add(reportsHeader);
+            yPos += 40;
+
+            var reportItems = new[]
+            {
+                new { Text = "   📄 Báo cáo người dùng", Tag = "report-users" },
+                new { Text = "   📚 Báo cáo khóa học", Tag = "report-courses" },
+                new { Text = "   📝 Báo cáo bài kiểm tra", Tag = "report-tests" },
+                new { Text = "   💰 Báo cáo doanh thu", Tag = "report-revenue" },
+                new { Text = "   ⚙️ Báo cáo hệ thống", Tag = "report-system" }
+            };
+
+            foreach (var item in reportItems)
+            {
+                var btn = new Button
+                {
+                    Text = item.Text,
+                    Size = new Size(230, 40),
+                    Location = new Point(10, yPos),
+                    FlatStyle = FlatStyle.Flat,
+                    BackColor = Color.Transparent,
+                    ForeColor = Color.FromArgb(200, 200, 200),
+                    Font = new Font("Segoe UI", 9),
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    Tag = item.Tag,
+                    Cursor = Cursors.Hand
+                };
+                btn.FlatAppearance.BorderSize = 0;
+                btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(74, 85, 104);
+                btn.Click += MenuButton_Click;
+                sidebarPanel.Controls.Add(btn);
+                yPos += 42;
+            }
+
+            yPos += 10;
+
+            // Home button
+            var homeBtn = new Button
+            {
+                Text = "🏠 Trang chủ",
+                Size = new Size(230, 45),
+                Location = new Point(10, yPos),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.Transparent,
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 10),
+                TextAlign = ContentAlignment.MiddleLeft,
+                Tag = "home",
+                Cursor = Cursors.Hand
+            };
+            homeBtn.FlatAppearance.BorderSize = 0;
+            homeBtn.FlatAppearance.MouseOverBackColor = Color.FromArgb(74, 85, 104);
+            homeBtn.Click += MenuButton_Click;
+            sidebarPanel.Controls.Add(homeBtn);
         }
 
         private void MenuButton_Click(object sender, EventArgs e)
@@ -259,6 +335,21 @@ namespace WinFormsApp1.View.Admin
                     break;
                 case "system-settings":
                     LoadSystemSettings();
+                    break;
+                case "report-users":
+                    LoadUserReport();
+                    break;
+                case "report-courses":
+                    LoadCourseReport();
+                    break;
+                case "report-tests":
+                    LoadTestReport();
+                    break;
+                case "report-revenue":
+                    LoadRevenueReportDetail();
+                    break;
+                case "report-system":
+                    LoadSystemReport();
                     break;
                 case "home":
                     GoToHomePage();
@@ -387,6 +478,81 @@ namespace WinFormsApp1.View.Admin
             var systemSettings = new SystemSettingsControl();
             systemSettings.Dock = DockStyle.Fill;
             contentPanel.Controls.Add(systemSettings);
+        }
+
+        private async void LoadUserReport()
+        {
+            try
+            {
+                var users = await _adminController.GetUsersAsync();
+                var reportForm = new ReportViewerForm();
+                ReportHelper.GenerateUserReport(reportForm.GetReportViewer(), users);
+                reportForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                ToastHelper.Show(this, $"Lỗi tạo báo cáo: {ex.Message}");
+            }
+        }
+
+        private async void LoadCourseReport()
+        {
+            try
+            {
+                var courses = await _adminController.GetCoursesAsync();
+                var reportForm = new ReportViewerForm();
+                ReportHelper.GenerateCourseReport(reportForm.GetReportViewer(), courses);
+                reportForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                ToastHelper.Show(this, $"Lỗi tạo báo cáo: {ex.Message}");
+            }
+        }
+
+        private async void LoadTestReport()
+        {
+            try
+            {
+                var tests = await _adminController.GetTestsAsync();
+                var reportForm = new ReportViewerForm();
+                ReportHelper.GenerateTestReport(reportForm.GetReportViewer(), tests);
+                reportForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                ToastHelper.Show(this, $"Lỗi tạo báo cáo: {ex.Message}");
+            }
+        }
+
+        private async void LoadRevenueReportDetail()
+        {
+            try
+            {
+                var revenue = await _adminController.GetRevenueAnalyticsAsync();
+                var reportForm = new ReportViewerForm();
+                ReportHelper.GenerateRevenueReport(reportForm.GetReportViewer(), revenue);
+                reportForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                ToastHelper.Show(this, $"Lỗi tạo báo cáo: {ex.Message}");
+            }
+        }
+
+        private async void LoadSystemReport()
+        {
+            try
+            {
+                var system = await _adminController.GetSystemAnalyticsAsync();
+                var reportForm = new ReportViewerForm();
+                ReportHelper.GenerateSystemReport(reportForm.GetReportViewer(), system);
+                reportForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                ToastHelper.Show(this, $"Lỗi tạo báo cáo: {ex.Message}");
+            }
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)

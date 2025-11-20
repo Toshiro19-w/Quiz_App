@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Guna.Charts.WinForms;
 using WinFormsApp1.Controllers;
 using static WinFormsApp1.Helpers.ResponsiveLayoutHelper;
 using static WinFormsApp1.Helpers.UIComponentHelper;
@@ -51,31 +52,45 @@ namespace WinFormsApp1.View.Admin
 
         private void CreateSystemStatsCards(SystemAnalytics stats)
         {
-            var flowPanel = CreateResponsiveCardContainer(this, 80);
-            flowPanel.Name = "flowPanel";
+            var flowPanel = new FlowLayoutPanel
+            {
+                Location = new Point(20, 80),
+                Width = Width - 40,
+                Height = 145,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+                WrapContents = false,
+                FlowDirection = FlowDirection.LeftToRight,
+                Name = "flowPanel"
+            };
 
             var cards = new[]
             {
                 new { Title = "📧 Thông báo", Value = stats.TotalNotifications.ToString(), Color = Color.FromArgb(14, 165, 233) },
                 new { Title = "📝 Nhật ký", Value = stats.TotalAuditLogs.ToString(), Color = Color.FromArgb(34, 197, 94) },
-                new { Title = "❌ Lỗi", Value = stats.TotalErrors.ToString(), Color = Color.FromArgb(239, 68, 68) },
                 new { Title = "🔄 Yêu cầu hôm nay", Value = stats.RequestsToday.ToString(), Color = Color.FromArgb(251, 191, 36) }
             };
 
+            int cardWidth = (Width - 65) / 3;
             foreach (var cardData in cards)
             {
-                var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(320, 130));
-                card.Margin = new Padding(0, 0, 15, 15);
+                var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(cardWidth, 130));
+                card.Margin = new Padding(0, 0, 15, 0);
                 flowPanel.Controls.Add(card);
             }
 
             Controls.Add(flowPanel);
+            Resize += (s, e) => {
+                flowPanel.Width = Width - 40;
+                cardWidth = (Width - 65) / 3;
+                foreach (Control card in flowPanel.Controls)
+                    card.Width = cardWidth;
+            };
         }
 
         private void CreateSystemCharts(SystemAnalytics stats)
         {
             var flowPanel = Controls.Find("flowPanel", false).FirstOrDefault();
-            int yPos = flowPanel != null ? flowPanel.Bottom + 20 : 220;
+            int yPos = flowPanel != null ? flowPanel.Bottom + 20 : 245;
 
             var chartFlow = new FlowLayoutPanel
             {
@@ -83,50 +98,98 @@ namespace WinFormsApp1.View.Admin
                 Width = Width - 40,
                 AutoSize = true,
                 WrapContents = true,
-                FlowDirection = FlowDirection.LeftToRight,
-                Name = "chartFlow"
+                FlowDirection = FlowDirection.LeftToRight
             };
 
-            var notifPanel = CreateResponsiveChartPanel("📧 Thông báo", new Point(0, 0), new Size(540, 300), AnchorStyles.None);
-            notifPanel.Margin = new Padding(0, 0, 20, 20);
-            var notifInfo = new Label
-            {
-                Text = $"Đã gửi: {stats.NotificationsSent}\nChờ gửi: {stats.NotificationsPending}",
-                Font = new Font("Segoe UI", 11),
-                Location = new Point(10, 50),
-                AutoSize = true
-            };
-            notifPanel.Controls.Add(notifInfo);
+            var notifPanel = CreateResponsiveChartPanel("📧 Số lượng thông báo gửi ra", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
+            notifPanel.Margin = new Padding(0, 0, 20, 0);
+            var notifChart = CreateDoughnutChart(notifPanel, new[] {
+                ("Đã gửi", stats.NotificationsSent, Color.FromArgb(34, 197, 94)),
+                ("Chờ gửi", stats.NotificationsPending, Color.FromArgb(251, 191, 36))
+            });
+            notifPanel.Controls.Add(notifChart);
             chartFlow.Controls.Add(notifPanel);
 
-            var logPanel = CreateResponsiveChartPanel("📝 Nhật ký hoạt động", new Point(0, 0), new Size(540, 300), AnchorStyles.None);
-            logPanel.Margin = new Padding(0, 0, 0, 20);
-            var logInfo = new Label
-            {
-                Text = $"Tổng: {stats.TotalAuditLogs}\nHôm nay: {stats.AuditLogsToday}",
-                Font = new Font("Segoe UI", 11),
-                Location = new Point(10, 50),
-                AutoSize = true
-            };
-            logPanel.Controls.Add(logInfo);
-            chartFlow.Controls.Add(logPanel);
+            var auditPanel = CreateResponsiveChartPanel("📋 Nhật ký hoạt động người dùng", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
+            var auditList = CreateAuditLogsList(auditPanel, stats.RecentAuditLogs);
+            auditPanel.Controls.Add(auditList);
+            chartFlow.Controls.Add(auditPanel);
 
             Controls.Add(chartFlow);
             Resize += (s, e) => chartFlow.Width = Width - 40;
-
-            var errorPanel = CreateResponsiveChartPanel("❌ Lỗi hệ thống", new Point(20, chartFlow.Bottom + 20), new Size(Width - 40, 250), AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
-            var errorInfo = new Label
-            {
-                Text = $"Lỗi hôm nay: {stats.ErrorsToday}\nLỗi tuần này: {stats.ErrorsThisWeek}",
-                Font = new Font("Segoe UI", 11),
-                Location = new Point(10, 50),
-                AutoSize = true
-            };
-            errorPanel.Controls.Add(errorInfo);
-            Controls.Add(errorPanel);
         }
 
+        private GunaChart CreateDoughnutChart(Panel parent, (string Label, int Value, Color Color)[] data)
+        {
+            var chart = new GunaChart
+            {
+                Location = new Point(10, 50),
+                Size = new Size(parent.Width - 20, parent.Height - 60),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom
+            };
 
+            var dataset = new GunaDoughnutDataset();
+            foreach (var item in data)
+            {
+                dataset.DataPoints.Add(item.Label, item.Value);
+                dataset.FillColors.Add(item.Color);
+            }
+
+            chart.Datasets.Add(dataset);
+            chart.Legend.Display = true;
+            chart.XAxes.Display = false;
+            chart.YAxes.Display = false;
+            return chart;
+        }
+
+        private GunaChart CreateBarChart(Panel parent, (string Label, int Value, Color Color)[] data)
+        {
+            var chart = new GunaChart
+            {
+                Location = new Point(10, 50),
+                Size = new Size(parent.Width - 20, parent.Height - 60),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom
+            };
+
+            var dataset = new GunaBarDataset { Label = "Thống kê" };
+            foreach (var item in data)
+            {
+                dataset.DataPoints.Add(item.Label, item.Value);
+                dataset.FillColors.Add(item.Color);
+            }
+
+            chart.Datasets.Add(dataset);
+            return chart;
+        }
+
+        private Panel CreateAuditLogsList(Panel parent, List<(string Action, string Username, DateTime CreatedAt)> logs)
+        {
+            var listPanel = new Panel
+            {
+                Location = new Point(10, 50),
+                Size = new Size(parent.Width - 20, parent.Height - 60),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom,
+                AutoScroll = true,
+                BackColor = Color.White
+            };
+
+            int yPos = 10;
+            foreach (var log in logs)
+            {
+                var logLabel = new Label
+                {
+                    Text = $"{log.CreatedAt:HH:mm dd/MM} - {log.Username}: {log.Action}",
+                    Location = new Point(10, yPos),
+                    Size = new Size(listPanel.Width - 30, 20),
+                    Font = new Font("Segoe UI", 8),
+                    ForeColor = Color.FromArgb(45, 55, 72)
+                };
+                listPanel.Controls.Add(logLabel);
+                yPos += 25;
+            }
+
+            return listPanel;
+        }
 
 
     }
