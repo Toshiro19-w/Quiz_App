@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.ViewModels;
@@ -114,6 +115,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			var chapter = _vm.Chapters[_currentChapterIndex];
 			var lesson = chapter.Lessons[_currentLessonIndex];
 
+			Debug.WriteLine($"[Step3] SaveCurrentLesson: Lesson '{lesson.Title}', Controls count: {flpContents.Controls.Count}");
+
 			// Only clear and rebuild if we have UI controls to save from
 			if (flpContents.Controls.Count > 0)
 			{
@@ -124,6 +127,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 					if (c is IContentControl ic)
 					{
 						var saved = ic.SaveToViewModel();
+						Debug.WriteLine($"[Step3] Saved content: Type={saved.ContentType}, Title='{saved.Title}', Questions={saved.Questions?.Count ?? 0}");
 
 						// If control.Tag holds original contentVm, preserve identifiers
 						if (c.Tag is LessonContentBuilderViewModel original)
@@ -143,6 +147,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 					}
 				}
 
+				Debug.WriteLine($"[Step3] Total saved contents: {savedList.Count}");
 				// replace lesson contents with preserved list
 				lesson.Contents.Clear();
 				lesson.Contents.AddRange(savedList);
@@ -238,6 +243,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			// 🎯 FIX QUAN TRỌNG: GẮN EVENT CHUYỂN TYPE
 			ctl.ContentTypeChanged += (s, newType)
 				=> OnContentTypeChanged(ctl, newType, newContent);
+			ctl.DeleteRequested += (s) => OnContentDeleteRequested(ctl, newContent);
 
 			flpContents.Controls.Add(ctl);
 		}
@@ -283,6 +289,11 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			}
 
 			// Add event handler for new control
+			if (newControl is IContentControl newContentCtl)
+			{
+				newContentCtl.DeleteRequested += (s) => OnContentDeleteRequested(newControl, contentVm);
+			}
+
 			if (newControl is ContentTheoryControl theoryCtl)
 			{
 				theoryCtl.ContentTypeChanged += (s, type) => OnContentTypeChanged(newControl, type, contentVm);
