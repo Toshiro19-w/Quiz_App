@@ -285,6 +285,55 @@
             flowQuestions.Size = new Size(1157, 637);
             flowQuestions.TabIndex = 1;
             flowQuestions.WrapContents = false;
+
+
+            pnlTest.Controls.Clear();
+            pnlTest.Dock = DockStyle.Fill;
+            pnlTest.AutoScroll = false; // Tắt scroll ngoài, chỉ scroll trong flowQuestions
+
+            // 2. Tạo Footer (Chứa nút nộp bài)
+            Panel pnlTestFooter = new Panel();
+            pnlTestFooter.Height = 80; // Chiều cao footer
+            pnlTestFooter.Dock = DockStyle.Bottom; // Dính xuống đáy
+            pnlTestFooter.BackColor = Color.WhiteSmoke;
+            pnlTestFooter.Padding = new Padding(0, 15, 30, 15);
+
+            // Cấu hình nút Nộp bài
+            btnSubmitTest.Dock = DockStyle.Right;
+            btnSubmitTest.Width = 200;
+            btnSubmitTest.Height = 50;
+            btnSubmitTest.Text = "Nộp bài";
+            btnSubmitTest.BackColor = Color.FromArgb(220, 53, 69);
+            btnSubmitTest.ForeColor = Color.White;
+            btnSubmitTest.FlatStyle = FlatStyle.Flat;
+            btnSubmitTest.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnSubmitTest.Cursor = Cursors.Hand;
+            try { btnSubmitTest.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnSubmitTest.Width, btnSubmitTest.Height, 10, 10)); } catch { }
+
+            // Thêm nút vào Footer
+            pnlTestFooter.Controls.Add(btnSubmitTest);
+
+            // 3. Cấu hình Danh sách câu hỏi (flowQuestions)
+            flowQuestions.Dock = DockStyle.Fill;
+            flowQuestions.AutoScroll = true;
+
+            // --- KHẮC PHỤC LỖI BỊ CHE: Thêm Padding đáy cực lớn ---
+            // Padding(Trái, Trên, Phải, Dưới)
+            // Dưới = 50 để đảm bảo khi cuộn hết cỡ, câu cuối cùng nhích lên hẳn so với Footer
+            flowQuestions.Padding = new Padding(0, 0, 0, 100);
+
+            // 4. THỨ TỰ ADD CONTROL (RẤT QUAN TRỌNG)
+            // Trong WinForms: Add cái nào Dock=Bottom/Top trước thì nó chiếm chỗ trước.
+            // Add cái Dock=Fill sau cùng để nó lấp đầy khoảng trống còn lại.
+
+            pnlTest.Controls.Add(flowQuestions);  // Add danh sách (Fill)
+            pnlTest.Controls.Add(pnlTestFooter);  // Add Footer (Bottom)
+            pnlTest.Controls.Add(lblTestTitle);   // Add Tiêu đề (Top)
+
+            // Đảo thứ tự hiển thị để Footer luôn nổi lên trên và chiếm chỗ
+            pnlTestFooter.SendToBack(); // Đẩy Footer xuống lớp dưới cùng về mặt Docking (để nó được ưu tiên giữ chỗ)
+            lblTestTitle.SendToBack();  // Đẩy Title xuống
+            flowQuestions.BringToFront();
             // 
             // lblTestTitle
             // 
