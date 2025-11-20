@@ -229,21 +229,28 @@ namespace WinFormsApp1.View.User.Controls
                 var user = AuthHelper.CurrentUser;
                 if (user == null) return;
 
-                // Use controller to get saved flashcard sets
-                var savedFlashcardSets = await _flashcardController.GetSavedFlashcardSetsAsync(user.UserId);
+                using var context = new LearningPlatformContext();
+                
+                // Lấy flashcard sets mà user đã tạo (chỉ Public và Private, KHÔNG lấy Course)
+                var flashcardSets = await context.FlashcardSets
+                    .Where(fs => fs.OwnerId == user.UserId && 
+                                (fs.Visibility == "Public" || fs.Visibility == "Private") &&
+                                fs.Visibility != "Course")
+                    .OrderByDescending(fs => fs.CreatedAt)
+                    .ToListAsync();
 
-                if (savedFlashcardSets.Count == 0)
+                if (flashcardSets.Count == 0)
                 {
                     ShowEmptyState(
                         "Chưa có flashcard nào",
-                        "Bạn chưa lưu flashcard nào. Hãy bắt đầu học ngay hôm nay!"
+                        "Bạn chưa tạo flashcard nào. Hãy bắt đầu tạo ngay hôm nay!"
                     );
                     return;
                 }
 
-                foreach (var item in savedFlashcardSets)
+                foreach (var set in flashcardSets)
                 {
-                    var card = CreateFlashcardCard(item);
+                    var card = CreateFlashcardSetCard(set);
                     coursesPanel.Controls.Add(card);
                 }
             }
@@ -254,11 +261,11 @@ namespace WinFormsApp1.View.User.Controls
             }
         }
 
-        private Panel CreateFlashcardCard(Models.Entities.SavedItem item)
+        private Panel CreateFlashcardSetCard(Models.Entities.FlashcardSet set)
         {
             var card = new Panel
             {
-                Size = new Size(350, 150),
+                Size = new Size(350, 180),
                 BackColor = Color.White,
                 Margin = new Padding(15),
                 Cursor = Cursors.Hand
@@ -266,37 +273,68 @@ namespace WinFormsApp1.View.User.Controls
 
             var lblTitle = new Label
             {
-                Text = $"Flashcard Set #{item.ContentId}",
+                Text = set.Title,
                 Location = new Point(15, 15),
-                Size = new Size(320, 25),
+                Size = new Size(320, 30),
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = ColorPalette.TextPrimary
             };
             card.Controls.Add(lblTitle);
 
-            var lblNote = new Label
+            var lblDescription = new Label
             {
-                Text = item.Note ?? "Không có ghi chú",
+                Text = set.Description ?? "Không có mô tả",
                 Location = new Point(15, 50),
                 Size = new Size(320, 40),
                 Font = new Font("Segoe UI", 9),
                 ForeColor = Color.Gray
             };
-            card.Controls.Add(lblNote);
+            card.Controls.Add(lblDescription);
+
+            var lblCount = new Label
+            {
+                Text = $"📝 {set.Flashcards?.Count ?? 0} thẻ",
+                Location = new Point(15, 100),
+                AutoSize = true,
+                Font = new Font("Segoe UI", 9),
+                ForeColor = Color.Gray
+            };
+            card.Controls.Add(lblCount);
 
             var btnOpen = new Button
             {
                 Text = "📚 Mở",
-                Location = new Point(200, 100),
+                Location = new Point(200, 130),
                 Size = new Size(135, 35),
                 BackColor = Color.FromArgb(88, 56, 255),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
             };
             btnOpen.FlatAppearance.BorderSize = 0;
+            btnOpen.Click += (s, e) => OpenFlashcardSet(set.SetId);
             card.Controls.Add(btnOpen);
 
+            card.MouseEnter += (s, e) => card.BackColor = ColorPalette.Background;
+            card.MouseLeave += (s, e) => card.BackColor = Color.White;
+
             return card;
+        }
+
+        private void OpenFlashcardSet(int setId)
+        {
+            var form = this.FindForm();
+            if (form is MainContainer mainContainer)
+            {
+                var flashcardDetail = new FlashcardControls.FlashcardDetailControl(setId);
+                var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
+                if (mainPanel != null)
+                {
+                    mainPanel.Controls.Clear();
+                    flashcardDetail.Dock = DockStyle.Fill;
+                    mainPanel.Controls.Add(flashcardDetail);
+                }
+            }
         }
 
         private void ShowEmptyState(string title, string message)

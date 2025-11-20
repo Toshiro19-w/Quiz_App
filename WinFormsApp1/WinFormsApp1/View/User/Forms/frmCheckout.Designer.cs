@@ -28,7 +28,6 @@ namespace WinFormsApp1.View.User.Forms
             panelThanhToan = new Panel();
             lblChonPhuongThuc = new Label();
             btnThanhToanMoMo = new Button();
-            btnTheTinDung = new Button();
             panelThongBao = new Panel();
             lblThongBao = new Label();
             panelTongKet = new Panel();
@@ -153,7 +152,6 @@ namespace WinFormsApp1.View.User.Forms
             // 
             panelThanhToan.Controls.Add(lblChonPhuongThuc);
             panelThanhToan.Controls.Add(btnThanhToanMoMo);
-            panelThanhToan.Controls.Add(btnTheTinDung);
             panelThanhToan.Dock = DockStyle.Top;
             panelThanhToan.Location = new Point(29, 549);
             panelThanhToan.Margin = new Padding(4, 5, 4, 5);
@@ -180,7 +178,7 @@ namespace WinFormsApp1.View.User.Forms
             btnThanhToanMoMo.FlatStyle = FlatStyle.Flat;
             btnThanhToanMoMo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnThanhToanMoMo.ForeColor = Color.White;
-            btnThanhToanMoMo.Location = new Point(0, 75);
+            btnThanhToanMoMo.Location = new Point(115, 73);
             btnThanhToanMoMo.Margin = new Padding(4, 5, 4, 5);
             btnThanhToanMoMo.Name = "btnThanhToanMoMo";
             btnThanhToanMoMo.Size = new Size(229, 150);
@@ -188,23 +186,6 @@ namespace WinFormsApp1.View.User.Forms
             btnThanhToanMoMo.Text = "📱 Thanh toán\r\nMoMo\r\nQuét mã QR hoặc chuyển\r\nkhoản";
             btnThanhToanMoMo.UseVisualStyleBackColor = false;
             btnThanhToanMoMo.Click += btnThanhToanMoMo_Click;
-            // 
-            // btnTheTinDung
-            // 
-            btnTheTinDung.BackColor = Color.White;
-            btnTheTinDung.Cursor = Cursors.Hand;
-            btnTheTinDung.FlatAppearance.BorderColor = Color.FromArgb(200, 200, 200);
-            btnTheTinDung.FlatStyle = FlatStyle.Flat;
-            btnTheTinDung.Font = new Font("Segoe UI", 10F);
-            btnTheTinDung.ForeColor = Color.FromArgb(100, 100, 100);
-            btnTheTinDung.Location = new Point(243, 75);
-            btnTheTinDung.Margin = new Padding(4, 5, 4, 5);
-            btnTheTinDung.Name = "btnTheTinDung";
-            btnTheTinDung.Size = new Size(214, 150);
-            btnTheTinDung.TabIndex = 2;
-            btnTheTinDung.Text = "💳 Thanh toán\r\nthủ công";
-            btnTheTinDung.UseVisualStyleBackColor = false;
-            btnTheTinDung.Click += btnTheTinDung_Click;
             // 
             // panelThongBao
             // 
@@ -407,7 +388,6 @@ namespace WinFormsApp1.View.User.Forms
         private System.Windows.Forms.Panel panelThanhToan;
         private System.Windows.Forms.Label lblChonPhuongThuc;
         private System.Windows.Forms.Button btnThanhToanMoMo;
-        private System.Windows.Forms.Button btnTheTinDung;
         private System.Windows.Forms.Panel panelCamKet;
         private System.Windows.Forms.Label lblCamKetTitle;
         private System.Windows.Forms.Label lblCamKet1;

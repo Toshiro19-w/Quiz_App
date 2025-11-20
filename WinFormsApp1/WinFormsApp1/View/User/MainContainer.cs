@@ -98,7 +98,17 @@ namespace WinFormsApp1.View.User
             profileDropdown.OnBangDieuKhienClick += (s, e) =>
             {
                 profileDropdown.HideDropdown();
-                ToastHelper.Show(this, "Chức năng Bảng điều khiển đang được phát triển");
+                if (AuthHelper.IsAdmin())
+                {
+                    this.Hide();
+                    var adminDashboard = new Admin.AdminDashboard();
+                    adminDashboard.FormClosed += (s2, args) => this.Show();
+                    adminDashboard.Show();
+                }
+                else
+                {
+                    ToastHelper.Show(this, "Bạn không có quyền truy cập!");
+                }
             };
 
             // Event mới: Khi click vào menu profile (Cài đặt, Chỉnh sửa, Lịch sử)
