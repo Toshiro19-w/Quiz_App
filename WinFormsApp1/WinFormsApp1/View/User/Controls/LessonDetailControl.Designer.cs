@@ -66,7 +66,7 @@
             pnlMain.Location = new Point(0, 0);
             pnlMain.Margin = new Padding(4, 5, 4, 5);
             pnlMain.Name = "pnlMain";
-            pnlMain.Padding = new Padding(0, 117, 0, 0);
+            pnlMain.Padding = new Padding(0, 0, 0, 0);
             pnlMain.Size = new Size(1714, 1167);
             pnlMain.TabIndex = 0;
             pnlMain.Paint += pnlMain_Paint;
@@ -117,7 +117,7 @@
             lblVideoPlaceholder.Location = new Point(0, 0);
             lblVideoPlaceholder.Margin = new Padding(4, 0, 4, 0);
             lblVideoPlaceholder.Name = "lblVideoPlaceholder";
-            lblVideoPlaceholder.Size = new Size(900, 600);
+            lblVideoPlaceholder.Size = new Size(1157, 720);
             lblVideoPlaceholder.TabIndex = 0;
             lblVideoPlaceholder.Text = "- Video Player\r\n(Cần cài đặt Windows Media Player)";
             lblVideoPlaceholder.TextAlign = ContentAlignment.MiddleCenter;
