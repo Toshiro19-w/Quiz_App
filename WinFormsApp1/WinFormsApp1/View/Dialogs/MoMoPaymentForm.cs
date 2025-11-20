@@ -91,17 +91,6 @@ namespace WinFormsApp1.View.Dialogs
                 Padding = new Padding(0, 10, 0, 0)
             };
 
-            var confirmButton = new Button
-            {
-                Text = "Đã thanh toán",
-                Size = new Size(130, 35),
-                BackColor = Color.Green,
-                ForeColor = Color.White,
-                Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
-                Location = new Point(buttonPanel.Width - 270, 15)
-            };
-            confirmButton.Click += async (s, e) => await ManualConfirmPayment();
-
             var cancelButton = new Button
             {
                 Text = "Hủy",
@@ -111,7 +100,6 @@ namespace WinFormsApp1.View.Dialogs
             };
             cancelButton.Click += (s, e) => this.Close();
 
-            buttonPanel.Controls.Add(confirmButton);
             buttonPanel.Controls.Add(cancelButton);
 
             mainPanel.Controls.Add(buttonPanel);
@@ -123,36 +111,6 @@ namespace WinFormsApp1.View.Dialogs
             this.Controls.Add(mainPanel);
 
             this.Load += async (s, e) => await StartPaymentAsync();
-        }
-
-        private async Task ManualConfirmPayment()
-        {
-            if (string.IsNullOrEmpty(_currentOrderId))
-            {
-                MessageBox.Show("Chưa có đơn hàng", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            var result = MessageBox.Show(
-                "Bạn đã hoàn tất thanh toán trên MoMo?",
-                "Xác nhận",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if (result == DialogResult.Yes)
-            {
-                if (await _paymentService.CompletePaymentAsync(_currentOrderId))
-                {
-                    PaymentCompleted = true;
-                    ToastHelper.Show(this, "Xác nhận thanh toán thành công!");
-                    this.DialogResult = DialogResult.OK;
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show("Không thể xác nhận thanh toán", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
         }
 
         private async Task StartPaymentAsync()
