@@ -14,11 +14,19 @@ namespace WinFormsApp1.View.User.Controls
 {
     public partial class CourseControl : UserControl
     {
+        private string? _categoryFilterSlug = null;
+
         public CourseControl()
         {
             InitializeComponent();
             cmbSort.SelectedIndex = 0;
             LoadCourses();
+        }
+
+        public async System.Threading.Tasks.Task FilterByCategory(string categorySlug)
+        {
+            _categoryFilterSlug = categorySlug;
+            await ApplyFiltersAndLoad();
         }
 
         private async void LoadCourses()
@@ -44,6 +52,12 @@ namespace WinFormsApp1.View.User.Controls
                 .Include(c => c.Category)
                 .Where(c => c.IsPublished)
                 .AsQueryable();
+
+            // Apply external category filter if provided
+            if (!string.IsNullOrEmpty(_categoryFilterSlug))
+            {
+                query = query.Where(c => c.Category != null && c.Category.Slug == _categoryFilterSlug);
+            }
 
             // Apply rating filters
             bool hasRatingFilter = false;
