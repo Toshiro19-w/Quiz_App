@@ -47,6 +47,54 @@ namespace WinFormsApp1.Service.PaymentService
         }
 
         /// <summary>
+        /// Xử lý thanh toán nhiều khóa học từ giỏ hàng
+        /// </summary>
+        public static async Task<bool> ProcessCartPaymentAsync(int userId)
+        {
+            try
+            {
+                using var context = new LearningPlatformContext();
+                
+                var cart = await context.ShoppingCarts
+                    .Include(c => c.CartItems)
+                    .ThenInclude(ci => ci.Course)
+                    .FirstOrDefaultAsync(c => c.UserId == userId);
+                
+                if (cart == null || !cart.CartItems.Any())
+                    throw new Exception("Giỏ hàng trống");
+
+                foreach (var item in cart.CartItems)
+                {
+                    var existingPurchase = await context.CoursePurchases
+                        .FirstOrDefaultAsync(cp => cp.CourseId == item.CourseId && cp.BuyerId == userId);
+                    
+                    if (existingPurchase == null)
+                    {
+                        var coursePurchase = new CoursePurchase
+                        {
+                            CourseId = item.CourseId,
+                            BuyerId = userId,
+                            PricePaid = item.Course.Price,
+                            Currency = "VND",
+                            Status = "Paid",
+                            PurchasedAt = DateTime.Now
+                        };
+                        context.CoursePurchases.Add(coursePurchase);
+                    }
+                }
+                
+                context.CartItems.RemoveRange(cart.CartItems);
+                await context.SaveChangesAsync();
+                
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Kiểm tra người dùng đã mua khóa học chưa
         /// </summary>
         public static async Task<bool> HasUserPurchasedCourseAsync(int courseId, int userId)

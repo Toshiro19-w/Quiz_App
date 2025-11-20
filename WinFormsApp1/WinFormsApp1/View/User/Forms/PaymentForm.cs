@@ -16,14 +16,16 @@ namespace WinFormsApp1.View.User.Forms
         private decimal _totalAmount;
         private Button btnPayWithQR;
         private Button btnCancel;
+        private bool _isCartPayment;
 
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse);
 
-        public PaymentForm(Course course)
+        public PaymentForm(Course course, bool isCartPayment = false)
         {
             _course = course;
             _totalAmount = course.Price;
+            _isCartPayment = isCartPayment;
             InitializeComponent();
             SetupUI_1200x700();
         }
@@ -214,7 +216,7 @@ namespace WinFormsApp1.View.User.Forms
 
                 this.Hide();
 
-                using (var qrDialog = new PaymentQRDialog(_course.Title, _totalAmount, _course.CourseId))
+                using (var qrDialog = new PaymentQRDialog(_course.Title, _totalAmount, _course.CourseId, _isCartPayment))
                 {
                     var result = qrDialog.ShowDialog();
 
@@ -227,11 +229,18 @@ namespace WinFormsApp1.View.User.Forms
 
                         try
                         {
-                            await SimplePaymentService.ProcessCoursePaymentAsync(
-                                _course.CourseId,
-                                currentUser.UserId,
-                                _totalAmount
-                            );
+                            if (_isCartPayment)
+                            {
+                                await SimplePaymentService.ProcessCartPaymentAsync(currentUser.UserId);
+                            }
+                            else
+                            {
+                                await SimplePaymentService.ProcessCoursePaymentAsync(
+                                    _course.CourseId,
+                                    currentUser.UserId,
+                                    _totalAmount
+                                );
+                            }
 
                             MessageBox.Show("Thanh toán thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             this.DialogResult = DialogResult.OK;
