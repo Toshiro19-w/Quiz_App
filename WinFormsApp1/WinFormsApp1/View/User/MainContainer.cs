@@ -10,15 +10,17 @@ namespace WinFormsApp1.View.User
     {
         private ProfileDropdown? profileDropdown;
         private CartDropdown? cartDropdown;
+        private View.User.Components.CategoriesDropdown? categoriesDropdown;
         private UserProfile? currentUserProfile;
 
         public MainContainer()
         {
             InitializeComponent();
             SetupUI();
-            SetupEventHandlers();
+            /*SetupEventHandlers();*/
             SetupProfileDropdown();
             SetupCartDropdown();
+            SetupCategoriesDropdown();
         }
 
         private void SetupUI()
@@ -138,6 +140,29 @@ namespace WinFormsApp1.View.User
             };
         }
 
+        private void SetupCategoriesDropdown()
+        {
+            categoriesDropdown = new View.User.Components.CategoriesDropdown();
+            categoriesDropdown.OnCategorySelected += (s, cat) =>
+            {
+                // Hide dropdown and navigate to filtered home
+                categoriesDropdown.HideDropdown();
+                // Open CourseControl and filter by selected category slug
+                var courseControl = new Controls.CourseControl();
+                NavigateToControl(courseControl);
+                // fire-and-forget filter
+                _ = courseControl.FilterByCategory(cat.Slug);
+                ToastHelper.Show(this, $"Lọc danh mục: {cat.Name}");
+            };
+
+            this.Controls.Add(categoriesDropdown);
+            categoriesDropdown.BringToFront();
+
+            // Click outside to close
+            this.Click += (s, e) => { if (categoriesDropdown.Visible) categoriesDropdown.HideDropdown(); };
+            mainContentPanel.Click += (s, e) => { if (categoriesDropdown.Visible) categoriesDropdown.HideDropdown(); };
+        }
+
         private string GetInitials(string fullName)
         {
             if (string.IsNullOrWhiteSpace(fullName))
@@ -152,7 +177,7 @@ namespace WinFormsApp1.View.User
             return "U";
         }
 
-        private void SetupEventHandlers()
+        /*private void SetupEventHandlers()
         {
             // Hover effects cho các button
             SetupButtonHoverEffect(btnKhamPha);
@@ -178,7 +203,7 @@ namespace WinFormsApp1.View.User
             {
                 btn.BackColor = originalColor;
             };
-        }
+        }*/
 
         private void NavigateToControl(UserControl control)
         {
@@ -221,7 +246,18 @@ namespace WinFormsApp1.View.User
 
         private void btnKhamPha_Click(object sender, EventArgs e)
         {
-            NavigateToControl(new Controls.HomeControl());
+            // Toggle categories dropdown
+            if (categoriesDropdown != null)
+            {
+                if (categoriesDropdown.Visible)
+                    categoriesDropdown.HideDropdown();
+                else
+                    categoriesDropdown.ShowDropdown(btnKhamPha);
+            }
+            else
+            {
+                NavigateToControl(new Controls.HomeControl());
+            }
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
