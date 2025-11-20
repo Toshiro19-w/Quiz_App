@@ -11,22 +11,62 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
             InitializeComponent();
             btnSaveDraft.Click += (s, e) => OnSaveDraftRequested?.Invoke(this, EventArgs.Empty);
             btnPublish.Click += (s, e) => OnPublishRequested?.Invoke(this, EventArgs.Empty);
-            // wire cancel if button exists (check field directly since designer nests it)
-            if (btnCancel != null)
-            {
-                btnCancel.Click += (s, e) => OnCancelRequested?.Invoke(this, EventArgs.Empty);
-            }
+            btnPrev.Click += (s, e) => OnPrevRequested?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler? OnSaveDraftRequested;
         public event EventHandler? OnPublishRequested;
-        public event EventHandler? OnCancelRequested;
+        public event EventHandler? OnPrevRequested;
 
         public void LoadFromViewModel(CourseBuilderViewModel vm)
         {
-            pnlPreview.Controls.Clear();
-            var lbl = new Label { Text = $"Tiêu đề: {vm?.Title}\nSlug: {vm?.Slug}\nChương: {vm?.Chapters?.Count ?? 0}", AutoSize = true, Location = new System.Drawing.Point(10, 10) };
-            pnlPreview.Controls.Add(lbl);
+            lblTitleValue.Text = vm?.Title ?? "";
+            lblSlugValue.Text = vm?.Slug ?? "";
+            lblPriceValue.Text = $"{vm?.Price:N0} VNĐ";
+            lblStatusValue.Text = vm?.IsPublished == true ? "Đã xuất bản" : "Bản nháp";
+
+            int totalLessons = 0;
+            int totalContents = 0;
+            if (vm?.Chapters != null)
+            {
+                foreach (var ch in vm.Chapters)
+                {
+                    if (ch.Lessons != null)
+                    {
+                        totalLessons += ch.Lessons.Count;
+                        foreach (var lesson in ch.Lessons)
+                        {
+                            totalContents += lesson.Contents?.Count ?? 0;
+                        }
+                    }
+                }
+            }
+
+            lblChaptersValue.Text = (vm?.Chapters?.Count ?? 0).ToString();
+            lblLessonsValue.Text = totalLessons.ToString();
+            lblContentsValue.Text = totalContents.ToString();
+
+            pnlCourseStructure.Controls.Clear();
+            int y = 0;
+            if (vm?.Chapters != null)
+            {
+                foreach (var chapter in vm.Chapters)
+                {
+                    var lblChapter = new Label { Text = $"📚 {chapter.Title}", Font = new System.Drawing.Font("Segoe UI", 11, System.Drawing.FontStyle.Bold), ForeColor = System.Drawing.Color.Purple, Location = new System.Drawing.Point(0, y), AutoSize = true };
+                    pnlCourseStructure.Controls.Add(lblChapter);
+                    y += 35;
+
+                    if (chapter.Lessons != null)
+                    {
+                        foreach (var lesson in chapter.Lessons)
+                        {
+                            var lblLesson = new Label { Text = $"    📖 {lesson.Title} ({lesson.Contents?.Count ?? 0} nội dung)", Location = new System.Drawing.Point(20, y), AutoSize = true };
+                            pnlCourseStructure.Controls.Add(lblLesson);
+                            y += 30;
+                        }
+                    }
+                }
+            }
         }
 
         public void SaveToViewModel(CourseBuilderViewModel vm) { }
