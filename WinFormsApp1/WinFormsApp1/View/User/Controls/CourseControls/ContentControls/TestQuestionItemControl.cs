@@ -37,6 +37,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             answer.Width = pnlAnswers.Width - SystemInformation.VerticalScrollBarWidth - 4;
             answer.Location = new Point(0, _answers.Count * (answer.Height + 4));
             answer.DeleteRequested += (o) => RemoveAnswer(answer);
+            answer.CheckedChanged += (s, isChecked) => OnAnswerCheckedChanged(answer, isChecked);
             pnlAnswers.Controls.Add(answer);
             _answers.Add(answer);
         }
@@ -91,6 +92,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
                     answer.Width = pnlAnswers.Width - SystemInformation.VerticalScrollBarWidth - 4;
                     answer.Location = new Point(0, _answers.Count * (answer.Height + 4));
                     answer.DeleteRequested += (o) => RemoveAnswer(answer);
+                    answer.CheckedChanged += (s, isChecked) => OnAnswerCheckedChanged(answer, isChecked);
                     answer.SetAnswer(opt.OptionText ?? string.Empty, opt.IsCorrect);
                     pnlAnswers.Controls.Add(answer);
                     _answers.Add(answer);
@@ -103,6 +105,21 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             }
 
             RearrangeAnswers();
+        }
+
+        private void OnAnswerCheckedChanged(AnswerItemControl checkedAnswer, bool isChecked)
+        {
+            // If MCQ_Single (index 0), uncheck all other answers
+            if (cboQuestionType.SelectedIndex == 0 && isChecked)
+            {
+                foreach (var answer in _answers)
+                {
+                    if (answer != checkedAnswer)
+                    {
+                        answer.SetChecked(false);
+                    }
+                }
+            }
         }
 
         public int QuestionTypeIndex => cboQuestionType.SelectedIndex;

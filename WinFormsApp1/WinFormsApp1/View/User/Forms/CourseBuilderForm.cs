@@ -99,7 +99,7 @@ namespace WinFormsApp1.View.User.Forms
             if (steps[0] is Step1_InfoControl s1) s1.OnNextRequested += async (s, e) => await StepNextRequestedAsync(0);
             if (steps[1] is Step2_StructureControl s2) { s2.OnPrevRequested += async (s,e)=> await StepPrevRequestedAsync(1); s2.OnNextRequested += async (s,e)=> await StepNextRequestedAsync(1); }
             if (steps[2] is Step3_ContentControl s3) { s3.OnPrevRequested += async (s,e)=> await StepPrevRequestedAsync(2); s3.OnNextRequested += async (s,e)=> await StepNextRequestedAsync(2); }
-            if (steps[3] is Step4_PublishControl s4) { s4.OnSaveDraftRequested += async (s,e)=> await SaveCourseAsync(false); s4.OnPublishRequested += async (s,e)=> await SaveCourseAsync(true); s4.OnCancelRequested += (s,e)=> { this.DialogResult = DialogResult.Cancel; this.Close(); }; }
+            if (steps[3] is Step4_PublishControl s4) { s4.OnSaveDraftRequested += async (s,e)=> await SaveCourseAsync(false); s4.OnPublishRequested += async (s,e)=> await SaveCourseAsync(true); s4.OnPrevRequested += async (s,e)=> await StepPrevRequestedAsync(3); }
         }
 
         private void HookEvents()
@@ -114,7 +114,14 @@ namespace WinFormsApp1.View.User.Forms
         {
             if (stepIndex != currentStep) return;
             var cur = steps[currentStep] as IStepControl;
-            cur?.SaveToViewModel(vm);
+            try
+            {
+                cur?.SaveToViewModel(vm);
+            }
+            catch (InvalidOperationException)
+            {
+                return;
+            }
             var ok = await ValidateStepAsync(currentStep);
             if (!ok) return;
             var next = currentStep + 1;
@@ -125,7 +132,14 @@ namespace WinFormsApp1.View.User.Forms
         {
             if (stepIndex != currentStep) return;
             var cur = steps[currentStep] as IStepControl;
-            cur?.SaveToViewModel(vm);
+            try
+            {
+                cur?.SaveToViewModel(vm);
+            }
+            catch (InvalidOperationException)
+            {
+                return;
+            }
             var prev = Math.Max(0, currentStep - 1);
             LoadStep(prev);
         }
@@ -141,7 +155,14 @@ namespace WinFormsApp1.View.User.Forms
             {
                 var old = pnlContent.Controls[0] as IStepControl;
                 old?.OnLeaving();
-                old?.SaveToViewModel(vm);
+                try
+                {
+                    old?.SaveToViewModel(vm);
+                }
+                catch (InvalidOperationException)
+                {
+                    // ignore validation errors when switching steps via stepper buttons
+                }
             }
 
             // highlight stepper
@@ -225,8 +246,8 @@ namespace WinFormsApp1.View.User.Forms
             try
             {
                 var id = await _controller.SaveCourseAsync(vm, editingCourseId);
-                MessageBox.Show("Lưu thành công: " + id);
-                // close dialog when save/publish is successful
+                ToastHelper.Show(this, publish ? "Xuất bản khóa học thành công!" : "Lưu bản nháp thành công!");
+                await Task.Delay(1000);
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
