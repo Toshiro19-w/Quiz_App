@@ -13,7 +13,7 @@ namespace WinFormsApp1.View.User.Forms
     {
         private Course _course;
         private decimal _totalAmount;
-        
+
         private Label lblCourseTitle;
         private Label lblCoursePrice;
         private Label lblTotalAmount;
@@ -32,14 +32,21 @@ namespace WinFormsApp1.View.User.Forms
 
         private void InitializeComponent()
         {
-            this.Text = "Thanh toán khóa học";
-            this.Size = new Size(500, 400);
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.BackColor = Color.White;
-            this.Font = new Font("Segoe UI", 9);
+            SuspendLayout();
+            // 
+            // PaymentForm
+            // 
+            BackColor = Color.White;
+            ClientSize = new Size(478, 344);
+            Font = new Font("Segoe UI", 9F);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "PaymentForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Thanh toán khóa học";
+            Load += PaymentForm_Load;
+            ResumeLayout(false);
         }
 
         private void SetupUI()
@@ -194,28 +201,28 @@ namespace WinFormsApp1.View.User.Forms
                 using (var qrDialog = new PaymentQRDialog(_course.Title, _totalAmount, _course.CourseId))
                 {
                     var result = qrDialog.ShowDialog(this);
-                    
+
                     if (result == DialogResult.OK)
                     {
                         // Process payment
                         btnPayWithQR.Enabled = false;
                         btnPayWithQR.Text = "Đang xử lý...";
-                        
+
                         try
                         {
                             await SimplePaymentService.ProcessCoursePaymentAsync(
-                                _course.CourseId, 
-                                currentUser.UserId, 
+                                _course.CourseId,
+                                currentUser.UserId,
                                 _totalAmount
                             );
-                            
+
                             MessageBox.Show(
                                 "Thanh toán thành công! Bạn đã có thể truy cập khóa học.",
                                 "Thanh toán thành công",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Information
                             );
-                            
+
                             this.DialogResult = DialogResult.OK;
                             this.Close();
                         }
@@ -227,7 +234,7 @@ namespace WinFormsApp1.View.User.Forms
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Error
                             );
-                            
+
                             btnPayWithQR.Enabled = true;
                             btnPayWithQR.Text = "Thanh toán bằng VietQR";
                         }
@@ -254,6 +261,11 @@ namespace WinFormsApp1.View.User.Forms
                     MessageBoxIcon.Error
                 );
             }
+        }
+
+        private void PaymentForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

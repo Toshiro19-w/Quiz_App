@@ -307,6 +307,7 @@
             // 
             // flowCourses
             // 
+            flowCourses.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             flowCourses.AutoScroll = true;
             flowCourses.FlowDirection = FlowDirection.TopDown;
             flowCourses.Location = new Point(43, 98);
