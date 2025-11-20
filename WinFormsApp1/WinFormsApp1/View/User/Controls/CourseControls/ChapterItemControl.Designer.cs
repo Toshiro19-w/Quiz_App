@@ -43,11 +43,11 @@
 			btnAddLesson.FlatAppearance.BorderSize = 0;
 			btnAddLesson.FlatStyle = FlatStyle.Flat;
 			btnAddLesson.ForeColor = Color.White;
-			btnAddLesson.Location = new Point(737, 11);
+			btnAddLesson.Location = new Point(686, 11);
 			btnAddLesson.Name = "btnAddLesson";
-			btnAddLesson.Size = new Size(80, 30);
+			btnAddLesson.Size = new Size(131, 35);
 			btnAddLesson.TabIndex = 1;
-			btnAddLesson.Text = "Thêm";
+			btnAddLesson.Text = "Thêm bài học";
 			btnAddLesson.UseVisualStyleBackColor = false;
 			// 
 			// btnRemoveChapter
@@ -57,9 +57,9 @@
 			btnRemoveChapter.FlatAppearance.BorderSize = 0;
 			btnRemoveChapter.FlatStyle = FlatStyle.Flat;
 			btnRemoveChapter.ForeColor = Color.White;
-			btnRemoveChapter.Location = new Point(645, 11);
+			btnRemoveChapter.Location = new Point(526, 11);
 			btnRemoveChapter.Name = "btnRemoveChapter";
-			btnRemoveChapter.Size = new Size(80, 30);
+			btnRemoveChapter.Size = new Size(134, 35);
 			btnRemoveChapter.TabIndex = 3;
 			btnRemoveChapter.Text = "Xóa chương";
 			btnRemoveChapter.UseVisualStyleBackColor = false;

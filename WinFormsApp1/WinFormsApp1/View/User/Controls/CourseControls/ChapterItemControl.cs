@@ -102,7 +102,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
                 }
             };
 
-            var btnDel = new Button { Text = "Xóa", Width = 80, Height = 28, Location = new Point(560, 4), BackColor = Color.FromArgb(242, 75, 75), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+            var btnDel = new Button { Text = "Xóa", Width = 80, Height = 35, Location = new Point(560, 4), BackColor = Color.FromArgb(242, 75, 75), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
             btnDel.FlatAppearance.BorderSize = 0;
             btnDel.Click += (s, e) => { flpLessons.Controls.Remove(p); RefreshLessonCount(); };
 
