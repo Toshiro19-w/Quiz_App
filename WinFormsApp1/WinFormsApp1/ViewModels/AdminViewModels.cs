@@ -16,11 +16,10 @@ namespace WinFormsApp1.ViewModels
         public int TeacherCount { get; set; }
         public int StudentCount { get; set; }
         public int NewUsersThisMonth { get; set; }
-        public int MaleCount { get; set; }
-        public int FemaleCount { get; set; }
-        public int OtherCount { get; set; }
         public int ActiveToday { get; set; }
         public int ActiveThisWeek { get; set; }
+        public Dictionary<int, int> NewUsersByMonth { get; set; }
+        public List<(string Username, DateTime? LastLogin)> RecentActiveUsers { get; set; }
     }
 
     public class LearningAnalytics
@@ -31,8 +30,8 @@ namespace WinFormsApp1.ViewModels
         public double CompletionRate { get; set; }
         public int TotalTests { get; set; }
         public int TestsThisMonth { get; set; }
-        public int ActiveTeachers { get; set; }
-        public int ActiveStudents { get; set; }
+        public List<(string CourseTitle, int EnrollmentCount)> TopCourses { get; set; }
+        public Dictionary<int, int> TestsByMonth { get; set; }
     }
 
     public class RevenueAnalytics
@@ -56,9 +55,7 @@ namespace WinFormsApp1.ViewModels
         public int NotificationsPending { get; set; }
         public int TotalAuditLogs { get; set; }
         public int AuditLogsToday { get; set; }
-        public int TotalErrors { get; set; }
-        public int ErrorsToday { get; set; }
-        public int ErrorsThisWeek { get; set; }
         public int RequestsToday { get; set; }
+        public List<(string Action, string Username, DateTime CreatedAt)> RecentAuditLogs { get; set; }
     }
 }
