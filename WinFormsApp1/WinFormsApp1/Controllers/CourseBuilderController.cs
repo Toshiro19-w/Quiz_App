@@ -26,13 +26,13 @@ namespace WinFormsApp1.Controllers
 			// Debug: Check raw data from database
 			Debug.WriteLine($"Course loaded: {course.Title}");
 			Debug.WriteLine($"Chapters count: {course.CourseChapters?.Count ?? 0}");
-			foreach (var ch in course.CourseChapters ?? new List<CourseChapter>())
+			foreach (var ch in course.CourseChapters ?? new System.Collections.Generic.List<CourseChapter>())
 			{
 				Debug.WriteLine($"  Chapter: {ch.Title}, Lessons: {ch.Lessons?.Count ?? 0}");
-				foreach (var ls in ch.Lessons ?? new List<Lesson>())
+				foreach (var ls in ch.Lessons ?? new System.Collections.Generic.List<Lesson>())
 				{
 					Debug.WriteLine($"    Lesson: {ls.Title}, Contents: {ls.LessonContents?.Count ?? 0}");
-					foreach (var ct in ls.LessonContents ?? new List<LessonContent>())
+					foreach (var ct in ls.LessonContents ?? new System.Collections.Generic.List<LessonContent>())
 					{
 						Debug.WriteLine($"      Content: {ct.ContentType} - {ct.Title}");
 					}
@@ -120,6 +120,9 @@ namespace WinFormsApp1.Controllers
 							{
 								contentVm.TestTitle = test.Title;
 								contentVm.TestDesc = test.Description;
+								// map time limit (seconds -> minutes) and max attempts
+								contentVm.TimeLimitMinutes = test.TimeLimitSec.HasValue ? test.TimeLimitSec.Value / 60 : null;
+								contentVm.MaxAttempts = test.MaxAttempts;
 								contentVm.Questions = test.Questions
 									.OrderBy(q => q.OrderIndex)
 									.Select(q => new TestQuestionBuilderViewModel
@@ -328,6 +331,10 @@ namespace WinFormsApp1.Controllers
                                         
                                         test.Title = string.IsNullOrWhiteSpace(c.TestTitle) ? c.Title ?? "Untitled Test" : c.TestTitle;
                                         test.Description = c.TestDesc;
+
+                                        // Update time limit and max attempts from VM
+                                        test.TimeLimitSec = c.TimeLimitMinutes.HasValue ? c.TimeLimitMinutes.Value * 60 : null;
+                                        test.MaxAttempts = c.MaxAttempts;
                                     }
                                     else
                                     {
@@ -348,6 +355,10 @@ namespace WinFormsApp1.Controllers
                                         GradingMode = "Auto",
                                         CreatedAt = DateTime.Now
                                     };
+                                    // set time limit and max attempts from VM
+                                    test.TimeLimitSec = c.TimeLimitMinutes.HasValue ? c.TimeLimitMinutes.Value * 60 : null;
+                                    test.MaxAttempts = c.MaxAttempts;
+
                                     context.Tests.Add(test);
                                     await context.SaveChangesAsync();
                                     c.RefId = test.TestId;

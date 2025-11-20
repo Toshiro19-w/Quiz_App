@@ -27,13 +27,12 @@
 			// 
 			// lblTitle
 			// 
-			lblTitle.BackColor = Color.White;
+			lblTitle.BackColor = Color.WhiteSmoke;
 			lblTitle.BorderStyle = BorderStyle.None;
-			lblTitle.Dock = DockStyle.Top;
 			lblTitle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-			lblTitle.Location = new Point(8, 8);
+			lblTitle.Location = new Point(46, 8);
 			lblTitle.Name = "lblTitle";
-			lblTitle.Size = new Size(812, 27);
+			lblTitle.Size = new Size(1346, 27);
 			lblTitle.TabIndex = 2;
 			// 
 			// btnAddLesson
@@ -43,7 +42,7 @@
 			btnAddLesson.FlatAppearance.BorderSize = 0;
 			btnAddLesson.FlatStyle = FlatStyle.Flat;
 			btnAddLesson.ForeColor = Color.White;
-			btnAddLesson.Location = new Point(686, 11);
+			btnAddLesson.Location = new Point(1308, 4);
 			btnAddLesson.Name = "btnAddLesson";
 			btnAddLesson.Size = new Size(131, 35);
 			btnAddLesson.TabIndex = 1;
@@ -57,7 +56,7 @@
 			btnRemoveChapter.FlatAppearance.BorderSize = 0;
 			btnRemoveChapter.FlatStyle = FlatStyle.Flat;
 			btnRemoveChapter.ForeColor = Color.White;
-			btnRemoveChapter.Location = new Point(526, 11);
+			btnRemoveChapter.Location = new Point(1148, 4);
 			btnRemoveChapter.Name = "btnRemoveChapter";
 			btnRemoveChapter.Size = new Size(134, 35);
 			btnRemoveChapter.TabIndex = 3;
@@ -68,23 +67,23 @@
 			// 
 			flpLessons.AutoScroll = true;
 			flpLessons.FlowDirection = FlowDirection.TopDown;
-			flpLessons.Location = new Point(8, 60);
+			flpLessons.Location = new Point(46, 45);
 			flpLessons.Name = "flpLessons";
 			flpLessons.Padding = new Padding(4);
-			flpLessons.Size = new Size(812, 112);
+			flpLessons.Size = new Size(1393, 161);
 			flpLessons.TabIndex = 0;
 			flpLessons.WrapContents = false;
 			// 
 			// ChapterItemControl
 			// 
-			BackColor = Color.White;
+			BackColor = Color.WhiteSmoke;
 			Controls.Add(flpLessons);
 			Controls.Add(btnAddLesson);
 			Controls.Add(btnRemoveChapter);
 			Controls.Add(lblTitle);
 			Name = "ChapterItemControl";
 			Padding = new Padding(8);
-			Size = new Size(828, 183);
+			Size = new Size(1450, 217);
 			ResumeLayout(false);
 			PerformLayout();
 		}

@@ -34,23 +34,27 @@
 			pnlCard.Name = "pnlCard";
 			pnlCard.Padding = new Padding(18);
 			pnlCard.ShadowColor = Color.Black;
-			pnlCard.Size = new Size(778, 508);
+			pnlCard.Size = new Size(1530, 800);
 			pnlCard.TabIndex = 0;
 			// 
 			// lblHeader
 			// 
-			lblHeader.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-			lblHeader.Location = new Point(20, 10);
+			lblHeader.BackColor = Color.FromArgb(0, 172, 193);
+			lblHeader.Dock = DockStyle.Top;
+			lblHeader.Font = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblHeader.ForeColor = Color.White;
+			lblHeader.Location = new Point(18, 18);
 			lblHeader.Name = "lblHeader";
-			lblHeader.Size = new Size(720, 60);
+			lblHeader.Size = new Size(1494, 60);
 			lblHeader.TabIndex = 0;
-			lblHeader.Text = "Xem trước & Xuất bản";
+			lblHeader.Text = "Xem trước xuất bản";
+			lblHeader.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// pnlPreview
 			// 
 			pnlPreview.Location = new Point(20, 88);
 			pnlPreview.Name = "pnlPreview";
-			pnlPreview.Size = new Size(720, 320);
+			pnlPreview.Size = new Size(1492, 536);
 			pnlPreview.TabIndex = 1;
 			// 
 			// btnSaveDraft
@@ -58,45 +62,42 @@
 			btnSaveDraft.CustomizableEdges = customizableEdges1;
 			btnSaveDraft.Font = new Font("Segoe UI", 9F);
 			btnSaveDraft.ForeColor = Color.White;
-			btnSaveDraft.Location = new Point(20, 428);
+			btnSaveDraft.Location = new Point(33, 743);
 			btnSaveDraft.Name = "btnSaveDraft";
 			btnSaveDraft.ShadowDecoration.CustomizableEdges = customizableEdges2;
 			btnSaveDraft.Size = new Size(140, 36);
 			btnSaveDraft.TabIndex = 2;
 			btnSaveDraft.Text = "Lưu nháp";
-			btnSaveDraft.DialogResult = System.Windows.Forms.DialogResult.None;
 			// 
 			// btnPublish
 			// 
 			btnPublish.CustomizableEdges = customizableEdges3;
 			btnPublish.Font = new Font("Segoe UI", 9F);
 			btnPublish.ForeColor = Color.White;
-			btnPublish.Location = new Point(180, 428);
+			btnPublish.Location = new Point(193, 743);
 			btnPublish.Name = "btnPublish";
 			btnPublish.ShadowDecoration.CustomizableEdges = customizableEdges4;
 			btnPublish.Size = new Size(140, 36);
 			btnPublish.TabIndex = 3;
 			btnPublish.Text = "Xuất bản";
-			btnPublish.DialogResult = System.Windows.Forms.DialogResult.None;
 			// 
 			// btnCancel
 			// 
 			btnCancel.CustomizableEdges = customizableEdges5;
 			btnCancel.Font = new Font("Segoe UI", 9F);
 			btnCancel.ForeColor = Color.White;
-			btnCancel.Location = new Point(340, 428);
+			btnCancel.Location = new Point(353, 743);
 			btnCancel.Name = "btnCancel";
 			btnCancel.ShadowDecoration.CustomizableEdges = customizableEdges5;
 			btnCancel.Size = new Size(140, 36);
 			btnCancel.TabIndex = 4;
 			btnCancel.Text = "Hủy bỏ";
-			btnCancel.DialogResult = System.Windows.Forms.DialogResult.None;
 			// 
 			// Step4_PublishControl
 			// 
 			Controls.Add(pnlCard);
 			Name = "Step4_PublishControl";
-			Size = new Size(778, 508);
+			Size = new Size(1530, 800);
 			pnlCard.ResumeLayout(false);
 			ResumeLayout(false);
 		}

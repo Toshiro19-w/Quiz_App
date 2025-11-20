@@ -8,6 +8,7 @@
 		#region Component Designer generated code
 		private void InitializeComponent()
 		{
+			lblIndex = new Label();
 			txtFront = new TextBox();
 			txtBack = new TextBox();
 			txtHint = new TextBox();
@@ -17,9 +18,20 @@
 			lblHint = new Label();
 			SuspendLayout();
 			// 
+			// lblIndex
+			// 
+			lblIndex.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+			lblIndex.ForeColor = Color.DarkCyan;
+			lblIndex.Location = new Point(37, 8);
+			lblIndex.Name = "lblIndex";
+			lblIndex.Size = new Size(120, 28);
+			lblIndex.TabIndex = 0;
+			lblIndex.Text = "Thẻ #1";
+			// 
 			// txtFront
 			// 
-			txtFront.Location = new Point(8, 45);
+			txtFront.Font = new Font("Microsoft Sans Serif", 10F);
+			txtFront.Location = new Point(37, 82);
 			txtFront.Multiline = true;
 			txtFront.Name = "txtFront";
 			txtFront.Size = new Size(600, 28);
@@ -27,7 +39,8 @@
 			// 
 			// txtBack
 			// 
-			txtBack.Location = new Point(8, 107);
+			txtBack.Font = new Font("Microsoft Sans Serif", 10F);
+			txtBack.Location = new Point(756, 82);
 			txtBack.Multiline = true;
 			txtBack.Name = "txtBack";
 			txtBack.Size = new Size(600, 28);
@@ -35,17 +48,18 @@
 			// 
 			// txtHint
 			// 
-			txtHint.Location = new Point(8, 171);
+			txtHint.Font = new Font("Microsoft Sans Serif", 10F);
+			txtHint.Location = new Point(37, 149);
 			txtHint.Multiline = true;
 			txtHint.Name = "txtHint";
-			txtHint.Size = new Size(600, 20);
+			txtHint.Size = new Size(1319, 28);
 			txtHint.TabIndex = 1;
 			// 
 			// btnDelete
 			// 
 			btnDelete.FlatAppearance.BorderSize = 0;
 			btnDelete.FlatStyle = FlatStyle.Flat;
-			btnDelete.Location = new Point(613, 6);
+			btnDelete.Location = new Point(1324, 12);
 			btnDelete.Name = "btnDelete";
 			btnDelete.Size = new Size(32, 28);
 			btnDelete.TabIndex = 0;
@@ -53,25 +67,28 @@
 			// 
 			// lblFront
 			// 
-			lblFront.Location = new Point(8, 4);
+			lblFront.Font = new Font("Segoe UI", 10F);
+			lblFront.Location = new Point(37, 49);
 			lblFront.Name = "lblFront";
-			lblFront.Size = new Size(100, 30);
+			lblFront.Size = new Size(114, 30);
 			lblFront.TabIndex = 6;
 			lblFront.Text = "Mặt trước:";
 			// 
 			// lblBack
 			// 
-			lblBack.Location = new Point(18, 76);
+			lblBack.Font = new Font("Segoe UI", 10F);
+			lblBack.Location = new Point(756, 49);
 			lblBack.Name = "lblBack";
-			lblBack.Size = new Size(100, 30);
+			lblBack.Size = new Size(96, 30);
 			lblBack.TabIndex = 4;
 			lblBack.Text = "Mặt sau:";
 			// 
 			// lblHint
 			// 
-			lblHint.Location = new Point(8, 138);
+			lblHint.Font = new Font("Segoe UI", 10F);
+			lblHint.Location = new Point(37, 116);
 			lblHint.Name = "lblHint";
-			lblHint.Size = new Size(100, 30);
+			lblHint.Size = new Size(171, 30);
 			lblHint.TabIndex = 2;
 			lblHint.Text = "Gợi ý (tùy chọn):";
 			// 
@@ -85,13 +102,15 @@
 			Controls.Add(lblBack);
 			Controls.Add(txtFront);
 			Controls.Add(lblFront);
+			Controls.Add(lblIndex);
 			Name = "FlashcardItemControl";
-			Size = new Size(660, 204);
+			Size = new Size(1450, 206);
 			ResumeLayout(false);
 			PerformLayout();
 		}
 		#endregion
 
+		private System.Windows.Forms.Label lblIndex;
 		private System.Windows.Forms.TextBox txtFront;
         private System.Windows.Forms.TextBox txtBack;
         private System.Windows.Forms.TextBox txtHint;
