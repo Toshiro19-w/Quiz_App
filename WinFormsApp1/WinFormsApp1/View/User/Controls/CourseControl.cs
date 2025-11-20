@@ -15,6 +15,7 @@ namespace WinFormsApp1.View.User.Controls
     public partial class CourseControl : UserControl
     {
         private string? _categoryFilterSlug = null;
+        private string? _searchQuery = null;
 
         public CourseControl()
         {
@@ -26,6 +27,12 @@ namespace WinFormsApp1.View.User.Controls
         public async System.Threading.Tasks.Task FilterByCategory(string categorySlug)
         {
             _categoryFilterSlug = categorySlug;
+            await ApplyFiltersAndLoad();
+        }
+
+        public async System.Threading.Tasks.Task SearchCourses(string searchQuery)
+        {
+            _searchQuery = searchQuery;
             await ApplyFiltersAndLoad();
         }
 
@@ -52,6 +59,13 @@ namespace WinFormsApp1.View.User.Controls
                 .Include(c => c.Category)
                 .Where(c => c.IsPublished)
                 .AsQueryable();
+
+            // Apply search query
+            if (!string.IsNullOrEmpty(_searchQuery))
+            {
+                query = query.Where(c => c.Title.Contains(_searchQuery) || 
+                                        (c.Summary != null && c.Summary.Contains(_searchQuery)));
+            }
 
             // Apply external category filter if provided
             if (!string.IsNullOrEmpty(_categoryFilterSlug))

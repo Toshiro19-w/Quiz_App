@@ -156,6 +156,13 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                             dbUser.Phone = txtPhone.Text.Trim();
                             context.SaveChanges();
 
+                            // Cập nhật AuthHelper.CurrentUser
+                            AuthHelper.CurrentUser.FullName = dbUser.FullName;
+                            AuthHelper.CurrentUser.Phone = dbUser.Phone;
+
+                            // Cập nhật UI MainContainer
+                            UpdateMainContainerUI();
+
                             ToastHelper.Show(this, "Cập nhật thông tin thành công!");
                         }
                     }
@@ -165,6 +172,45 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             {
                 ToastHelper.Show(this, $"Lỗi khi lưu thông tin: {ex.Message}");
             }
+        }
+
+        private void UpdateMainContainerUI()
+        {
+            var mainContainer = this.FindForm() as MainContainer;
+            if (mainContainer != null)
+            {
+                // Tìm lblUserName và btnProfile
+                var lblUserName = FindControl(mainContainer, "lblUserName") as Label;
+                var btnProfile = FindControl(mainContainer, "btnProfile") as Button;
+
+                if (lblUserName != null)
+                    lblUserName.Text = AuthHelper.CurrentUser.FullName;
+
+                if (btnProfile != null)
+                    btnProfile.Text = GetInitials(AuthHelper.CurrentUser.FullName);
+            }
+        }
+
+        private Control FindControl(Control parent, string name)
+        {
+            foreach (Control c in parent.Controls)
+            {
+                if (c.Name == name) return c;
+                var found = FindControl(c, name);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        private string GetInitials(string fullName)
+        {
+            if (string.IsNullOrWhiteSpace(fullName)) return "U";
+            var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length >= 2)
+                return $"{parts[0][0]}{parts[parts.Length - 1][0]}".ToUpper();
+            else if (parts.Length == 1)
+                return parts[0][0].ToString().ToUpper();
+            return "U";
         }
     }
 }

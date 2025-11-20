@@ -84,7 +84,7 @@ namespace WinFormsApp1.View.User.Forms
 
             var iconLabel = new Label
             {
-                Text = "🛒",
+        
                 Font = new Font("Segoe UI", 72),
                 Location = new Point(150, 20),
                 AutoSize = true
@@ -142,7 +142,7 @@ namespace WinFormsApp1.View.User.Forms
 
         private void btnThanhToanMoMo_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Chức năng thanh toán MoMo đang được phát triển", "Thông báo", 
+            MessageBox.Show("Chức năng thanh toán MoMo đang được phát triển", "Thông báo",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -188,6 +188,11 @@ namespace WinFormsApp1.View.User.Forms
                 MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void panelMain_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
