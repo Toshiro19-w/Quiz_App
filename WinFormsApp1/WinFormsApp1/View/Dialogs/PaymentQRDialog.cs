@@ -40,21 +40,21 @@ namespace WinFormsApp1.View.Dialogs
             StartTimer();
         }
 
-        private void InitializeComponent()
-        {
-            SuspendLayout();
-            // 
-            // PaymentQRDialog
-            // 
-            ClientSize = new Size(815, 1000);
-            FormBorderStyle = FormBorderStyle.None;
-            Name = "PaymentQRDialog";
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "Thanh toán VietQR";
-            ResumeLayout(false);
-        }
+		private void InitializeComponent()
+		{
+			SuspendLayout();
+			// 
+			// PaymentQRDialog
+			// 
+			ClientSize = new Size(815, 1100);
+			FormBorderStyle = FormBorderStyle.None;
+			Name = "PaymentQRDialog";
+			StartPosition = FormStartPosition.CenterParent;
+			Text = "Thanh toán VietQR";
+			ResumeLayout(false);
+		}
 
-        private void SetupUI()
+		private void SetupUI()
         {
             this.BackColor = Color.White;
             this.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 25, 25));

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Models.Entities;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.View.User.Forms;
 
 namespace WinFormsApp1.View.Admin
 {
@@ -121,6 +122,16 @@ namespace WinFormsApp1.View.Admin
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
+            // Open CourseBuilderForm for creating a new course
+            using var form = new CourseBuilderForm();
+            form.StartPosition = FormStartPosition.CenterParent;
+            var result = form.ShowDialog(this.FindForm());
+            if (result == DialogResult.OK)
+            {
+                _ = LoadCoursesAsync();
+                ToastHelper.Show(this.FindForm(), "✅ Thêm khóa học thành công!");
+            }
+
             ClearFormInputs();
             ClearFormErrors();
             ShowInputForm();
@@ -132,18 +143,16 @@ namespace WinFormsApp1.View.Admin
             if (dataGridView.SelectedRows.Count > 0)
             {
                 var courseId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                var course = await _adminController.GetCourseByIdAsync(courseId);
-                
-                if (course != null)
+
+                // Open CourseBuilderForm in edit mode
+                using var form = new CourseBuilderForm(courseId);
+                form.StartPosition = FormStartPosition.CenterParent;
+                var result = form.ShowDialog(this.FindForm());
+
+                if (result == DialogResult.OK)
                 {
-                    using (var form = new CourseDetailEditForm(course))
-                    {
-                        if (form.ShowDialog() == DialogResult.OK)
-                        {
-                            await LoadCoursesAsync();
-                            ToastHelper.Show(this.FindForm(), "✅ Cập nhật thành công!");
-                        }
-                    }
+                    await LoadCoursesAsync();
+                    ToastHelper.Show(this.FindForm(), "✅ Cập nhật thành công!");
                 }
             }
             else
