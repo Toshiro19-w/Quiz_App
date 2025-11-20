@@ -130,18 +130,20 @@ namespace WinFormsApp1
                     if (AuthHelper.IsAdmin())
                     {
                         var adminDashboard = new AdminDashboard();
+                        // When admin dashboard closes, show login form again instead of closing the application
                         adminDashboard.FormClosed += (s, args) => {
                             SessionHelper.ClearSession();
-                            Close();
+                            this.Show();
                         };
                         adminDashboard.Show();
                     }
                     else
                     {
                         var userDashboard = new MainContainer();
+                        // When user dashboard closes (logout or close), show login form again
                         userDashboard.FormClosed += (s, args) => {
                             SessionHelper.ClearSession();
-                            Close();
+                            this.Show();
                         };
                         userDashboard.Show();
                     }
