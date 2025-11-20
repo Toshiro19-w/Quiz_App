@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -18,11 +18,33 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
         private int? _contentId;
         private int? _refId;
 
+        // inline error labels
+        private Label lblTitleError;
+        private Label lblTimeError;
+        private Label lblMaxAttemptsError;
+
         public ContentTestControl()
         {
             this.Width = 835; this.Height = 680; this.Margin = new Padding(0, 0, 0, 10);
             this.BorderStyle = BorderStyle.FixedSingle;
             InitializeComponent();
+
+            // create inline error labels
+            lblTitleError = new Label { ForeColor = Color.Red, AutoSize = true, Visible = false };
+            lblTimeError = new Label { ForeColor = Color.Red, AutoSize = true, Visible = false };
+            lblMaxAttemptsError = new Label { ForeColor = Color.Red, AutoSize = true, Visible = false };
+
+            // position error labels relative to existing controls (safe defaults)
+            // Title error below txtTitle
+            lblTitleError.Location = new Point(txtTitle.Left, txtTitle.Bottom + 2);
+            // Time error to the right of numTime
+            lblTimeError.Location = new Point(numTime.Right + 8, numTime.Top);
+            // Max attempts error to the right of numMaxAttempts
+            lblMaxAttemptsError.Location = new Point(numMaxAttempts.Right + 8, numMaxAttempts.Top);
+
+            this.Controls.Add(lblTitleError);
+            this.Controls.Add(lblTimeError);
+            this.Controls.Add(lblMaxAttemptsError);
 
             // Add delete button (big red)
             btnDeleteContent.Click += (s, e) => DeleteRequested?.Invoke(this);
@@ -40,10 +62,31 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             btnAddQuestion.Click += (s, e) => AddQuestion();
             
             // Style labels
-            lblInfoTitle.Font = new Font(lblInfoTitle.Font.FontFamily, 10, FontStyle.Bold);
+            lblTitle.Font = new Font(lblTitle.Font.FontFamily, 10, FontStyle.Bold);
             lblInfoDesc.Font = new Font(lblInfoDesc.Font.FontFamily, 10, FontStyle.Bold);
             lblTime.Font = new Font(lblTime.Font.FontFamily, 9);
             lblMaxAttempts.Font = new Font(lblMaxAttempts.Font.FontFamily, 9);
+
+            // Use txtTitle as test title source
+            lblTitle.Text = "Loại nội dung";
+
+            // Disable internal scrolling — we'll expand the panel instead
+            pnlQuestions.AutoScroll = false;
+
+            // adjust questions width when panel resizes
+            pnlQuestions.Resize += (s, e) => {
+                foreach (var q in _questions)
+                {
+                    q.Width = Math.Max(0, pnlQuestions.ClientSize.Width);
+                }
+                RearrangeQuestions();
+                AdjustContainerSize();
+            };
+
+            // hide inline errors when user edits fields
+            txtTitle.TextChanged += (s, e) => lblTitleError.Visible = false;
+            numTime.ValueChanged += (s, e) => lblTimeError.Visible = false;
+            numMaxAttempts.ValueChanged += (s, e) => lblMaxAttemptsError.Visible = false;
 
             AddQuestion();
         }
@@ -53,12 +96,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
         {
             int number = _questions.Count + 1;
             var q = new TestQuestionItemControl(number);
-            q.Width = pnlQuestions.Width - SystemInformation.VerticalScrollBarWidth - 4;
+            q.Width = pnlQuestions.ClientSize.Width;
             q.Location = new Point(0, _questions.Count * (q.Height + 8));
             q.DeleteRequested += (o) => RemoveQuestion(q);
             pnlQuestions.Controls.Add(q);
             _questions.Add(q);
             RearrangeQuestions();
+            AdjustContainerSize();
             return q;
         }
 
@@ -67,6 +111,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             pnlQuestions.Controls.Remove(q);
             _questions.Remove(q);
             RearrangeQuestions();
+            AdjustContainerSize();
         }
 
         private void RearrangeQuestions()
@@ -76,7 +121,25 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
                 var q = _questions[i];
                 q.Location = new Point(0, i * (q.Height + 8));
                 q.SetNumber(i + 1);
+                q.Width = pnlQuestions.ClientSize.Width;
             }
+        }
+
+        private void AdjustContainerSize()
+        {
+            int total = 0;
+            foreach (var it in _questions)
+            {
+                total += it.Height + 8;
+            }
+            total += 10; // padding
+
+            int minHeight = 120;
+            pnlQuestions.Height = Math.Max(minHeight, total);
+
+            int desired = pnlQuestions.Location.Y + pnlQuestions.Height + btnAddQuestion.Height + 20;
+            if (this.Height < desired) this.Height = desired;
+            this.Parent?.PerformLayout();
         }
 
         public void LoadFromViewModel(LessonContentBuilderViewModel vm)
@@ -87,8 +150,9 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             _contentId = vm.ContentId;
             _refId = vm.RefId;
 
-            txtTitle.Text = vm.Title ?? string.Empty;
-            txtInfoTitle.Text = vm.TestTitle ?? string.Empty;
+            // Title and test title sourced from txtTitle
+            txtTitle.Text = vm.Title ?? vm.TestTitle ?? string.Empty;
+
             txtInfoDesc.Text = vm.TestDesc ?? string.Empty;
             numTime.Value = vm.TimeLimitMinutes.HasValue ? vm.TimeLimitMinutes.Value : numTime.Value;
             numMaxAttempts.Value = vm.MaxAttempts.HasValue ? vm.MaxAttempts.Value : numMaxAttempts.Value;
@@ -108,11 +172,42 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             {
                 AddQuestion();
             }
+            else
+            {
+                AdjustContainerSize();
+            }
         }
 
         public LessonContentBuilderViewModel SaveToViewModel()
         {
             Debug.WriteLine($"[ContentTestControl] SaveToViewModel called. Questions count: {_questions.Count}");
+
+            // clear previous inline errors
+            lblTitleError.Visible = false;
+            lblTimeError.Visible = false;
+            lblMaxAttemptsError.Visible = false;
+
+            // Validation
+            if (string.IsNullOrWhiteSpace(txtTitle.Text))
+            {
+                lblTitleError.Text = "Tiêu đề bài kiểm tra không được để trống.";
+                lblTitleError.Visible = true;
+                throw new InvalidOperationException(lblTitleError.Text);
+            }
+
+            if (numTime.Value <= 0)
+            {
+                lblTimeError.Text = "Thời gian phải lớn hơn 0 phút.";
+                lblTimeError.Visible = true;
+                throw new InvalidOperationException(lblTimeError.Text);
+            }
+
+            if (numMaxAttempts.Value <= 0)
+            {
+                lblMaxAttemptsError.Text = "Số lần làm bài phải lớn hơn 0.";
+                lblMaxAttemptsError.Visible = true;
+                throw new InvalidOperationException(lblMaxAttemptsError.Text);
+            }
             
             var vm = new LessonContentBuilderViewModel
             {
@@ -120,7 +215,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
                 RefId = _refId,
                 ContentType = "Test",
                 Title = txtTitle.Text.Trim(),
-                TestTitle = txtInfoTitle.Text.Trim(),
+                // Use txtTitle as test title as well
+                TestTitle = txtTitle.Text.Trim(),
                 TestDesc = txtInfoDesc.Text.Trim(),
                 TimeLimitMinutes = (int)numTime.Value,
                 MaxAttempts = (int)numMaxAttempts.Value,

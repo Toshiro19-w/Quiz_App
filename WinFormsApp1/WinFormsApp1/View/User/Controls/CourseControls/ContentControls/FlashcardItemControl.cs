@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -23,6 +23,15 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 
             // wire delete
             btnDelete.Click += (s, e) => DeleteRequested?.Invoke(this);
+        }
+
+        // allow parent to set displayed index
+        public void SetIndex(int index)
+        {
+            if (lblIndex != null)
+            {
+                lblIndex.Text = $"Thẻ #{index}";
+            }
         }
     }
 }

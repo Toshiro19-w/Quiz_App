@@ -44,7 +44,7 @@ namespace WinFormsApp1.View.User.Forms
 			pnlMain.Location = new Point(0, 0);
 			pnlMain.Name = "pnlMain";
 			pnlMain.Padding = new Padding(24);
-			pnlMain.Size = new Size(962, 722);
+			pnlMain.Size = new Size(1578, 944);
 			pnlMain.TabIndex = 0;
 			// 
 			// pnlContent
@@ -52,10 +52,10 @@ namespace WinFormsApp1.View.User.Forms
 			pnlContent.CustomizableEdges = customizableEdges1;
 			transition.SetDecoration(pnlContent, Guna.UI2.AnimatorNS.DecorationType.None);
 			pnlContent.Dock = DockStyle.Fill;
-			pnlContent.Location = new Point(24, 144);
+			pnlContent.Location = new Point(24, 114);
 			pnlContent.Name = "pnlContent";
 			pnlContent.ShadowDecoration.CustomizableEdges = customizableEdges2;
-			pnlContent.Size = new Size(914, 554);
+			pnlContent.Size = new Size(1530, 806);
 			pnlContent.TabIndex = 0;
 			// 
 			// pnlStepper
@@ -71,13 +71,13 @@ namespace WinFormsApp1.View.User.Forms
 			pnlStepper.Dock = DockStyle.Top;
 			pnlStepper.Location = new Point(24, 24);
 			pnlStepper.Name = "pnlStepper";
-			pnlStepper.Size = new Size(914, 120);
+			pnlStepper.Size = new Size(1530, 90);
 			pnlStepper.TabIndex = 1;
 			// 
 			// sep34
 			// 
 			transition.SetDecoration(sep34, Guna.UI2.AnimatorNS.DecorationType.None);
-			sep34.Location = new Point(581, 55);
+			sep34.Location = new Point(866, 41);
 			sep34.Name = "sep34";
 			sep34.Size = new Size(120, 4);
 			sep34.TabIndex = 0;
@@ -85,7 +85,7 @@ namespace WinFormsApp1.View.User.Forms
 			// sep23
 			// 
 			transition.SetDecoration(sep23, Guna.UI2.AnimatorNS.DecorationType.None);
-			sep23.Location = new Point(401, 55);
+			sep23.Location = new Point(686, 41);
 			sep23.Name = "sep23";
 			sep23.Size = new Size(120, 4);
 			sep23.TabIndex = 1;
@@ -93,7 +93,7 @@ namespace WinFormsApp1.View.User.Forms
 			// sep12
 			// 
 			transition.SetDecoration(sep12, Guna.UI2.AnimatorNS.DecorationType.None);
-			sep12.Location = new Point(221, 55);
+			sep12.Location = new Point(506, 41);
 			sep12.Name = "sep12";
 			sep12.Size = new Size(120, 4);
 			sep12.TabIndex = 2;
@@ -103,7 +103,7 @@ namespace WinFormsApp1.View.User.Forms
 			transition.SetDecoration(btnStep4, Guna.UI2.AnimatorNS.DecorationType.None);
 			btnStep4.Font = new Font("Segoe UI", 9F);
 			btnStep4.ForeColor = Color.White;
-			btnStep4.Location = new Point(711, 35);
+			btnStep4.Location = new Point(996, 21);
 			btnStep4.Name = "btnStep4";
 			btnStep4.ShadowDecoration.CustomizableEdges = customizableEdges3;
 			btnStep4.Size = new Size(48, 48);
@@ -115,7 +115,7 @@ namespace WinFormsApp1.View.User.Forms
 			transition.SetDecoration(btnStep3, Guna.UI2.AnimatorNS.DecorationType.None);
 			btnStep3.Font = new Font("Segoe UI", 9F);
 			btnStep3.ForeColor = Color.White;
-			btnStep3.Location = new Point(531, 35);
+			btnStep3.Location = new Point(816, 21);
 			btnStep3.Name = "btnStep3";
 			btnStep3.ShadowDecoration.CustomizableEdges = customizableEdges4;
 			btnStep3.Size = new Size(48, 48);
@@ -127,7 +127,7 @@ namespace WinFormsApp1.View.User.Forms
 			transition.SetDecoration(btnStep2, Guna.UI2.AnimatorNS.DecorationType.None);
 			btnStep2.Font = new Font("Segoe UI", 9F);
 			btnStep2.ForeColor = Color.White;
-			btnStep2.Location = new Point(351, 35);
+			btnStep2.Location = new Point(636, 21);
 			btnStep2.Name = "btnStep2";
 			btnStep2.ShadowDecoration.CustomizableEdges = customizableEdges5;
 			btnStep2.Size = new Size(48, 48);
@@ -139,7 +139,7 @@ namespace WinFormsApp1.View.User.Forms
 			transition.SetDecoration(btnStep1, Guna.UI2.AnimatorNS.DecorationType.None);
 			btnStep1.Font = new Font("Segoe UI", 9F);
 			btnStep1.ForeColor = Color.White;
-			btnStep1.Location = new Point(171, 35);
+			btnStep1.Location = new Point(456, 21);
 			btnStep1.Name = "btnStep1";
 			btnStep1.ShadowDecoration.CustomizableEdges = customizableEdges6;
 			btnStep1.Size = new Size(48, 48);
@@ -168,7 +168,7 @@ namespace WinFormsApp1.View.User.Forms
 			// 
 			// CourseBuilderForm
 			// 
-			ClientSize = new Size(962, 722);
+			ClientSize = new Size(1578, 944);
 			Controls.Add(pnlMain);
 			transition.SetDecoration(this, Guna.UI2.AnimatorNS.DecorationType.None);
 			Name = "CourseBuilderForm";
