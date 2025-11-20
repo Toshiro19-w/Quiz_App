@@ -176,6 +176,7 @@ namespace WinFormsApp1.View.User.Components
                     var cart = context.ShoppingCarts
                         .Include(c => c.CartItems)
                         .ThenInclude(ci => ci.Course)
+                        .ThenInclude(course => course.Owner)
                         .FirstOrDefault(c => c.UserId == user.UserId);
 
                     if (cart == null || !cart.CartItems.Any())
