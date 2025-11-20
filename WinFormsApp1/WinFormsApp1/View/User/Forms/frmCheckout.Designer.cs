@@ -63,6 +63,7 @@ namespace WinFormsApp1.View.User.Forms
             panelMain.Padding = new Padding(57, 50, 57, 50);
             panelMain.Size = new Size(2000, 1333);
             panelMain.TabIndex = 0;
+            panelMain.Paint += panelMain_Paint;
             // 
             // panelRight
             // 

@@ -108,7 +108,7 @@ namespace WinFormsApp1.View.User.Controls
         {
             var card = new Panel
             {
-                Size = new Size(350, 280),
+                Size = new Size(350, 320),
                 BackColor = Color.White,
                 Margin = new Padding(15),
                 Cursor = Cursors.Hand
@@ -122,12 +122,11 @@ namespace WinFormsApp1.View.User.Controls
                 BackColor = Color.FromArgb(245, 245, 245)
             };
 
-            // Draw cabinet icon
             imgPanel.Paint += (s, e) =>
             {
                 using (var font = new Font("Segoe UI", 48))
                 {
-                    e.Graphics.DrawString("🗄️", font, Brushes.Gray, new PointF(130, 50));
+                    e.Graphics.DrawString("📚", font, Brushes.Gray, new PointF(130, 50));
                 }
             };
             card.Controls.Add(imgPanel);
@@ -137,59 +136,88 @@ namespace WinFormsApp1.View.User.Controls
             {
                 Text = course.Title,
                 Location = new Point(15, 195),
-                Size = new Size(320, 25),
+                Size = new Size(320, 30),
                 Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 ForeColor = ColorPalette.TextPrimary
             };
             card.Controls.Add(lblTitle);
 
-            // Course description
-            var lblDescription = new Label
-            {
-                Text = course.Summary ?? "Khóa học toàn diện về lĩnh vực này",
-                Location = new Point(15, 225),
-                Size = new Size(320, 40),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = Color.Gray
-            };
-            card.Controls.Add(lblDescription);
-
             // Instructor
             var lblInstructor = new Label
             {
                 Text = $"👤 {course.Owner?.FullName ?? "N/A"}",
-                Location = new Point(15, 250),
-                AutoSize = true,
+                Location = new Point(15, 230),
+                Size = new Size(320, 20),
                 Font = new Font("Segoe UI", 9),
                 ForeColor = Color.Gray
             };
             card.Controls.Add(lblInstructor);
 
+            // Course description
+            var lblDescription = new Label
+            {
+                Text = course.Summary ?? "Khóa học toàn diện",
+                Location = new Point(15, 255),
+                Size = new Size(320, 20),
+                Font = new Font("Segoe UI", 8),
+                ForeColor = Color.LightGray
+            };
+            card.Controls.Add(lblDescription);
+
             // Continue button
             var btnContinue = new Button
             {
                 Text = "🎓 Tiếp tục học",
-                Location = new Point(200, 245),
-                Size = new Size(135, 30),
+                Location = new Point(15, 280),
+                Size = new Size(320, 35),
                 BackColor = Color.FromArgb(88, 56, 255),
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand
             };
             btnContinue.FlatAppearance.BorderSize = 0;
-            btnContinue.Click += (s, e) =>
-            {
-                MessageBox.Show($"Mở khóa học: {course.Title}", "Thông báo",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            };
+            btnContinue.Click += (s, e) => NavigateToCourseDetail(course.CourseId);
             card.Controls.Add(btnContinue);
+
+            // Click on card to navigate
+            card.Click += (s, e) => NavigateToCourseDetail(course.CourseId);
+            imgPanel.Click += (s, e) => NavigateToCourseDetail(course.CourseId);
+            lblTitle.Click += (s, e) => NavigateToCourseDetail(course.CourseId);
 
             // Hover effect
             card.MouseEnter += (s, e) => card.BackColor = ColorPalette.Background;
             card.MouseLeave += (s, e) => card.BackColor = Color.White;
 
             return card;
+        }
+
+        private void NavigateToCourseDetail(int courseId)
+        {
+            var form = this.FindForm();
+            if (form is MainContainer mainContainer)
+            {
+                var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
+                if (mainPanel != null)
+                {
+                    mainPanel.Controls.Clear();
+                    var courseDetail = new CourseControls.CourseDetailControl();
+                    courseDetail.Dock = DockStyle.Fill;
+                    mainPanel.Controls.Add(courseDetail);
+                    _ = courseDetail.LoadCourseAsync(courseId);
+                }
+            }
+        }
+
+        private Control FindControlRecursive(Control parent, string name)
+        {
+            foreach (Control c in parent.Controls)
+            {
+                if (string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase)) return c;
+                var found = FindControlRecursive(c, name);
+                if (found != null) return found;
+            }
+            return null;
         }
 
         private async void LoadFlashcards()

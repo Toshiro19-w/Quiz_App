@@ -111,7 +111,11 @@ namespace WinFormsApp1.View.User.Controls
             btnNextLesson.Click += BtnNextLesson_Click;
             btnMarkComplete.Click += BtnMarkComplete_Click;
 
-            if (btnSubmitTest != null) btnSubmitTest.Click += BtnSubmitTest_Click;
+            if (btnSubmitTest != null)
+            {
+                btnSubmitTest.Click -= BtnSubmitTest_Click;
+                btnSubmitTest.Click += BtnSubmitTest_Click;
+            }
 
             // Navigation events
             if (btnPrevLesson != null) btnPrevLesson.Click += BtnPrevLesson_Click;
@@ -1404,13 +1408,110 @@ namespace WinFormsApp1.View.User.Controls
             _selectedAnswers.Clear();
             _testStartTime = DateTime.UtcNow;
 
+            // Kiểm tra số lần đã làm và hiển thị thông tin
+            await CheckAndDisplayTestInfoAsync();
+        }
+
+        private async Task CheckAndDisplayTestInfoAsync()
+        {
+            var userId = AuthHelper.CurrentUser?.UserId;
+            if (!userId.HasValue) return;
+
+            using var context = new LearningPlatformContext();
+            
+            // Đếm số lần đã làm
+            var attemptCount = await context.TestAttempts
+                .Where(ta => ta.TestId == _currentTest.TestId && ta.UserId == userId.Value)
+                .CountAsync();
+
+            // Lấy điểm cao nhất
+            var highestScore = await context.TestAttempts
+                .Where(ta => ta.TestId == _currentTest.TestId && ta.UserId == userId.Value)
+                .MaxAsync(ta => (decimal?)ta.Score) ?? 0;
+
+            // Tính tổng điểm từ câu hỏi nếu MaxScore = 0 hoặc null
+            decimal maxScore = _currentTest.MaxScore ?? 0;
+            if (maxScore == 0)
+                maxScore = _questions.Sum(q => q.Points);
+
+            // Tạo panel thông tin test
+            var infoPanel = new Panel
+            {
+                Width = 1100,
+                Height = 80,
+                BackColor = Color.FromArgb(240, 248, 255),
+                Margin = new Padding(0, 0, 0, 20),
+                Padding = new Padding(20)
+            };
+
+            var lblInfo = new Label
+            {
+                AutoSize = true,
+                Font = new Font("Segoe UI", 10),
+                ForeColor = Color.FromArgb(0, 102, 153),
+                Location = new Point(20, 10)
+            };
+
+            int timeLimit = (_currentTest.TimeLimitSec ?? 0) / 60;
+            string infoText = $"⏱️ Thời gian: {timeLimit} phút\n";
+            infoText += $"🔄 Số lần làm: {attemptCount}/{_currentTest.MaxAttempts ?? 999}";
+            if (attemptCount > 0)
+                infoText += $"  |  🏆 Điểm cao nhất: {highestScore}/{maxScore}";
+
+            lblInfo.Text = infoText;
+            infoPanel.Controls.Add(lblInfo);
+
+            flowQuestions.Controls.Clear();
+            flowQuestions.Controls.Add(infoPanel);
+
+            // Kiểm tra hết lượt
+            if (_currentTest.MaxAttempts.HasValue && attemptCount >= _currentTest.MaxAttempts.Value)
+            {
+                var lockPanel = new Panel
+                {
+                    Width = 1100,
+                    Height = 300,
+                    BackColor = Color.White,
+                    Margin = new Padding(0)
+                };
+
+                var lblLock = new Label
+                {
+             
+                    Font = new Font("Segoe UI", 72),
+                    Location = new Point(500, 50),
+                    AutoSize = true
+                };
+
+                var lblMessage = new Label
+                {
+                    Text = $"Bạn đã hết lượt làm bài\n\n🏆 Điểm cao nhất: {highestScore}/{maxScore}",
+                    Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(220, 53, 69),
+                    Location = new Point(350, 150),
+                    AutoSize = true,
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+
+                lockPanel.Controls.Add(lblLock);
+                lockPanel.Controls.Add(lblMessage);
+                flowQuestions.Controls.Add(lockPanel);
+
+                btnSubmitTest.Enabled = false;
+                btnSubmitTest.Text = "Hết lượt làm bài";
+                btnSubmitTest.BackColor = Color.Gray;
+                return;
+            }
+
+            // Nếu còn lượt, hiển thị câu hỏi
+            btnSubmitTest.Enabled = true;
+            btnSubmitTest.Text = "Nộp bài";
+            btnSubmitTest.BackColor = ColorPalette.Primary;
             LoadQuestions();
         }
 
         private void LoadQuestions()
         {
-            flowQuestions.Controls.Clear();
-
             for (int i = 0; i < _questions.Count; i++)
             {
                 var question = _questions[i];
@@ -1671,14 +1772,14 @@ namespace WinFormsApp1.View.User.Controls
 
                 await context.SaveChangesAsync();
 
-                // Mark complete content... (Giữ nguyên code cũ)
+                // Mark complete content
                 var content = _currentContents[_currentContentIndex];
                 await MarkContentCompleteAsync(content.ContentId, totalScore);
 
-                // Show result
+                // Show result (CHỈ 1 LẦN)
                 var percentage = maxScore > 0 ? (totalScore / maxScore) * 100 : 0;
                 MessageBox.Show(
-                    $"Kết quả bài kiểm tra:\n\n" +
+                    $"Hoàn thành bài kiểm tra!\n\n" +
                     $"Điểm: {totalScore}/{maxScore} ({percentage:F1}%)\n" +
                     $"Thời gian: {timeSpent / 60} phút {timeSpent % 60} giây",
                     "Kết quả", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1769,7 +1870,7 @@ namespace WinFormsApp1.View.User.Controls
 
                 await context.SaveChangesAsync();
                 await UpdateProgressAsync();
-                await LoadSidebarAsync();
+                // Không gọi LoadSidebarAsync() ở đây để tránh nhân bản chương
             }
             catch (Exception ex)
             {

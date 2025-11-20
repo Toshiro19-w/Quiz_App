@@ -271,6 +271,10 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                     {
                         dbUser.Email = txtNewEmail.Text;
                         context.SaveChanges();
+                        
+                        // Cập nhật AuthHelper.CurrentUser
+                        AuthHelper.CurrentUser.Email = dbUser.Email;
+                        
                         this.DialogResult = DialogResult.OK;
                         this.Close();
                     }

@@ -84,7 +84,7 @@ namespace WinFormsApp1.View.User.Forms
 
             var iconLabel = new Label
             {
-                Text = "🛒",
+        
                 Font = new Font("Segoe UI", 72),
                 Location = new Point(150, 20),
                 AutoSize = true
@@ -216,6 +216,11 @@ namespace WinFormsApp1.View.User.Forms
                 MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void panelMain_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
