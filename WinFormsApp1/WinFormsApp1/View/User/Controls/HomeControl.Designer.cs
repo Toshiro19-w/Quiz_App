@@ -121,6 +121,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			// pictureBoxMotivation
 			// 
+			pictureBoxMotivation.Image = Properties.Resources.image1;
 			pictureBoxMotivation.Location = new Point(1000, 20);
 			pictureBoxMotivation.Name = "pictureBoxMotivation";
 			pictureBoxMotivation.Size = new Size(680, 340);
@@ -143,7 +144,7 @@ namespace WinFormsApp1.View.User.Controls
 			flowPopular.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			flowPopular.Location = new Point(25, 640);
 			flowPopular.Name = "flowPopular";
-			flowPopular.Size = new Size(1695, 280);
+			flowPopular.Size = new Size(1695, 410);
 			flowPopular.TabIndex = 3;
 			// 
 			// btnViewAll
@@ -163,7 +164,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			lblFlashcardSets.AutoSize = true;
 			lblFlashcardSets.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-			lblFlashcardSets.Location = new Point(25, 945);
+			lblFlashcardSets.Location = new Point(25, 1092);
 			lblFlashcardSets.Name = "lblFlashcardSets";
 			lblFlashcardSets.Size = new Size(432, 48);
 			lblFlashcardSets.TabIndex = 5;
@@ -174,7 +175,7 @@ namespace WinFormsApp1.View.User.Controls
 			lblFlashcardDesc.AutoSize = true;
 			lblFlashcardDesc.Font = new Font("Segoe UI", 11F);
 			lblFlashcardDesc.ForeColor = Color.Gray;
-			lblFlashcardDesc.Location = new Point(25, 995);
+			lblFlashcardDesc.Location = new Point(25, 1142);
 			lblFlashcardDesc.Name = "lblFlashcardDesc";
 			lblFlashcardDesc.Size = new Size(438, 30);
 			lblFlashcardDesc.TabIndex = 6;
@@ -183,7 +184,7 @@ namespace WinFormsApp1.View.User.Controls
 			// flowFlashcards
 			// 
 			flowFlashcards.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			flowFlashcards.Location = new Point(25, 1035);
+			flowFlashcards.Location = new Point(25, 1182);
 			flowFlashcards.Name = "flowFlashcards";
 			flowFlashcards.Size = new Size(1695, 280);
 			flowFlashcards.TabIndex = 7;
@@ -193,7 +194,7 @@ namespace WinFormsApp1.View.User.Controls
 			btnViewAllFlashcards.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			btnViewAllFlashcards.Cursor = Cursors.Hand;
 			btnViewAllFlashcards.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-			btnViewAllFlashcards.Location = new Point(1530, 940);
+			btnViewAllFlashcards.Location = new Point(1530, 1087);
 			btnViewAllFlashcards.Name = "btnViewAllFlashcards";
 			btnViewAllFlashcards.Size = new Size(190, 45);
 			btnViewAllFlashcards.TabIndex = 8;
@@ -215,7 +216,7 @@ namespace WinFormsApp1.View.User.Controls
 			Controls.Add(panelMotivation);
 			Controls.Add(panelWelcomeBanner);
 			Name = "HomeControl";
-			Size = new Size(1766, 1350);
+			Size = new Size(1766, 1500);
 			Load += HomeControl_Load;
 			((System.ComponentModel.ISupportInitialize)pictureBoxAvatar).EndInit();
 			panelWelcomeBanner.ResumeLayout(false);
