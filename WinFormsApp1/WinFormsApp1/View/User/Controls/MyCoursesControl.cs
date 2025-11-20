@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Guna.UI2.AnimatorNS;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Microsoft.EntityFrameworkCore;
+using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
+using WinFormsApp1.View.User.Forms;
 
 namespace WinFormsApp1.View.User.Controls
 {
@@ -16,8 +19,7 @@ namespace WinFormsApp1.View.User.Controls
         private int _pageSize = 10;
         private int _totalRecords = 0;
         private List<Course> _allCourses = new List<Course>();
-
-        public MyCoursesControl()
+		public MyCoursesControl()
         {
             InitializeComponent();
             cmbPageSize.SelectedIndex = 0; // Set default to 10
@@ -231,7 +233,7 @@ namespace WinFormsApp1.View.User.Controls
             try
             {
                 using var context = new LearningPlatformContext();
-
+                
                 // Load course with chapters and lessons
                 var courseWithDetails = await context.Courses
                     .Include(c => c.CourseChapters)
@@ -280,10 +282,30 @@ namespace WinFormsApp1.View.User.Controls
             }
         }
 
-        private void EditCourse(Course course)
+        private async void EditCourse(Course course)
         {
-            MessageBox.Show($"Chỉnh sửa khóa học: {course.Title}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // TODO: Open edit course dialog/form
+            try
+            {
+                var builderCtrl = new CourseBuilderController();
+                var vm = await builderCtrl.LoadCourseAsync(course.CourseId);
+                
+                if (vm == null)
+                {
+                    MessageBox.Show("Không thể tải dữ liệu khóa học", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                
+                using var form = new CourseBuilderForm(vm, course.CourseId);
+                form.StartPosition = FormStartPosition.CenterParent;
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    LoadCourses();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở trình chỉnh sửa: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private async void DeleteCourse(Course course)
@@ -330,8 +352,24 @@ namespace WinFormsApp1.View.User.Controls
 
         private void BtnCreateCourse_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Chức năng tạo khóa học mới đang được phát triển", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // TODO: Open create course dialog
+            // Open CourseBuilderForm as dialog to create a new course
+            using var builder = new CourseBuilderForm();
+            builder.StartPosition = FormStartPosition.CenterParent;
+            var owner = this.FindForm();
+            if (owner != null)
+            {
+                builder.ShowDialog(owner);
+            }
+            else
+            {
+                builder.ShowDialog();
+            }
+
+            if (builder.DialogResult == DialogResult.OK)
+            {
+                // Reload courses after successful creation
+                LoadCourses();
+            }
         }
 
         private void BtnRevenue_Click(object sender, EventArgs e)

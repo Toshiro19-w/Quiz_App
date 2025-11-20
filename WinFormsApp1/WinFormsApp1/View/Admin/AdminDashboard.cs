@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.View.User;
 using static WinFormsApp1.Helpers.ColorPalette;
 
 namespace WinFormsApp1.View.Admin
@@ -38,7 +39,7 @@ namespace WinFormsApp1.View.Admin
             topPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 120,
+                Height = 70, // Giảm từ 120 xuống 70
                 BackColor = Primary
             };
 
@@ -46,14 +47,14 @@ namespace WinFormsApp1.View.Admin
             var logoPanel = new Panel
             {
                 Dock = DockStyle.Left,
-                Width = 233,
+                Width = 200, // Giảm width
                 BackColor = Color.Transparent
             };
 
             var logoLabel = new Label
             {
                 Text = "YMEDU",
-                Font = new Font("Segoe UI", 24, FontStyle.Bold),
+                Font = new Font("Segoe UI", 18, FontStyle.Bold), // Giảm font size
                 ForeColor = Color.FromArgb(214, 188, 132),
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleLeft,
@@ -66,41 +67,27 @@ namespace WinFormsApp1.View.Admin
             var profilePanel = new Panel
             {
                 Dock = DockStyle.Right,
-                Width = 383,
+                Width = 300, // Giảm width
                 BackColor = Color.Transparent
             };
 
             var userLabel = new Label
             {
                 Text = AuthHelper.CurrentUser != null ? $"{AuthHelper.CurrentUser.FullName} ({AuthHelper.GetRoleName()})" : "Quản trị viên",
-                Font = new Font("Segoe UI", 12),
+                Font = new Font("Segoe UI", 10), // Giảm font size
                 ForeColor = Color.White,
-                Location = new Point(15, 40),
+                Location = new Point(15, 25), // Điều chỉnh position
                 AutoSize = true,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left
             };
 
-            var btnProfile = new Button
-            {
-                Text = AuthHelper.CurrentUser != null && !string.IsNullOrEmpty(AuthHelper.CurrentUser.FullName) ? AuthHelper.CurrentUser.FullName.Substring(0,1).ToUpper() : "A",
-                Size = new Size(60, 60),
-                BackColor = Color.FromArgb(64,64,64),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 18, FontStyle.Bold),
-                Anchor = AnchorStyles.Top | AnchorStyles.Right
-            };
-            btnProfile.FlatAppearance.BorderSize = 0;
-            btnProfile.Click += (s, e) => { /* open profile */ };
+
 
             // Use layout within profilePanel
             profilePanel.Controls.Add(userLabel);
-            profilePanel.Controls.Add(btnProfile);
             profilePanel.Padding = new Padding(10, 0, 20, 0);
             profilePanel.Resize += (s, e) =>
             {
-                // keep profile button at right edge
-                btnProfile.Location = new Point(profilePanel.ClientSize.Width - btnProfile.Width - 10, (profilePanel.ClientSize.Height - btnProfile.Height) / 2);
                 userLabel.Location = new Point(15, (profilePanel.ClientSize.Height - userLabel.Height) / 2);
             };
 
@@ -196,22 +183,25 @@ namespace WinFormsApp1.View.Admin
             {
                 new { Text = "👤 Người dùng", Tag = "user-management" },
                 new { Text = "📚 Khóa học", Tag = "courses" },
+                new { Text = "   📁 Danh mục", Tag = "categories" },
                 new { Text = "📝 Bài kiểm tra", Tag = "tests" },
+                // new { Text = "⚙️ Cài đặt hệ thống", Tag = "system-settings" }, // Tạm ẩn
                 new { Text = "📊 Báo cáo", Tag = "reports" },
-                new { Text = "🚪 Đăng xuất", Tag = "logout" }
+                new { Text = "🏠 Trang chủ", Tag = "home" }
             };
 
             foreach (var item in otherItems)
             {
+                bool isSubmenu = item.Text.StartsWith("   ");
                 var btn = new Button
                 {
                     Text = item.Text,
-                    Size = new Size(230, 45),
+                    Size = new Size(230, isSubmenu ? 40 : 45),
                     Location = new Point(10, yPos),
                     FlatStyle = FlatStyle.Flat,
                     BackColor = Color.Transparent,
-                    ForeColor = Color.White,
-                    Font = new Font("Segoe UI", 10),
+                    ForeColor = isSubmenu ? Color.FromArgb(200, 200, 200) : Color.White,
+                    Font = new Font("Segoe UI", isSubmenu ? 9 : 10),
                     TextAlign = ContentAlignment.MiddleLeft,
                     Tag = item.Tag,
                     Cursor = Cursors.Hand
@@ -220,7 +210,7 @@ namespace WinFormsApp1.View.Admin
                 btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(74, 85, 104);
                 btn.Click += MenuButton_Click;
                 sidebarPanel.Controls.Add(btn);
-                yPos += 50;
+                yPos += isSubmenu ? 42 : 50;
             }
         }
 
@@ -264,8 +254,14 @@ namespace WinFormsApp1.View.Admin
                 case "tests":
                     LoadTestManagement();
                     break;
-                case "logout":
-                    Logout();
+                case "categories":
+                    LoadCategoryManagement();
+                    break;
+                case "system-settings":
+                    LoadSystemSettings();
+                    break;
+                case "home":
+                    GoToHomePage();
                     break;
                 default:
                     ToastHelper.Show(this, $"Chức năng {button?.Text} đang được phát triển");
@@ -273,22 +269,17 @@ namespace WinFormsApp1.View.Admin
             }
         }
 
-        private void Logout()
+        private void GoToHomePage()
         {
-            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận đăng xuất",
+            var result = MessageBox.Show("Bạn có muốn chuyển về trang chủ?", "Xác nhận",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {
-                AuthHelper.Logout();
                 this.Hide();
-                var loginForm = new dangnhap();
-                loginForm.FormClosed += (s, args) => this.Close();
-                loginForm.Show();
-            }
-            else
-            {
-                ToastHelper.Show(this, "Hủy đăng xuất");
+                var mainForm = new MainContainer();
+                mainForm.FormClosed += (s, args) => this.Close();
+                mainForm.Show();
             }
         }
 
@@ -380,6 +371,22 @@ namespace WinFormsApp1.View.Admin
             var systemDashboard = new SystemMonitoringDashboard();
             systemDashboard.Dock = DockStyle.Fill;
             contentPanel.Controls.Add(systemDashboard);
+        }
+
+        private void LoadCategoryManagement()
+        {
+            contentPanel.Controls.Clear();
+            var categoryControl = new CategoryManagementControl();
+            categoryControl.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(categoryControl);
+        }
+
+        private void LoadSystemSettings()
+        {
+            contentPanel.Controls.Clear();
+            var systemSettings = new SystemSettingsControl();
+            systemSettings.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(systemSettings);
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)

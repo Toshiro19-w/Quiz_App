@@ -10,6 +10,7 @@ namespace WinFormsApp1.View.Admin
         private TextBox txtTitle;
         private TextBox txtDescription;
         private TextBox txtPrice;
+        private ComboBox cmbCategory;
         private CheckBox chkPublished;
         private Button btnAdd;
         private Button btnEdit;
@@ -19,7 +20,7 @@ namespace WinFormsApp1.View.Admin
         private Panel formPanel;
         private Panel mainContainer;
         private Label titleLabel;
-        private Label descLabel;
+
 
         protected override void Dispose(bool disposing)
         {
@@ -40,9 +41,10 @@ namespace WinFormsApp1.View.Admin
             btnEdit = new Button();
             btnAdd = new Button();
             chkPublished = new CheckBox();
+            cmbCategory = new ComboBox();
             txtPrice = new TextBox();
             txtDescription = new TextBox();
-            descLabel = new Label();
+
             txtTitle = new TextBox();
             dataGridView = new DataGridView();
             titleLabel = new Label();
@@ -72,40 +74,41 @@ namespace WinFormsApp1.View.Admin
             formPanel.Controls.Add(btnEdit);
             formPanel.Controls.Add(btnAdd);
             formPanel.Controls.Add(chkPublished);
+            formPanel.Controls.Add(cmbCategory);
             formPanel.Controls.Add(txtPrice);
             formPanel.Controls.Add(txtDescription);
-            formPanel.Controls.Add(descLabel);
+
             formPanel.Controls.Add(txtTitle);
             // make formPanel anchored to top-right and limit max width
-            formPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            formPanel.Location = new Point(1200, 80);
+            formPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
+            formPanel.Location = new Point(1200, 60);
             formPanel.Name = "formPanel";
-            formPanel.Size = new Size(640, 860);
+            formPanel.Size = new Size(350, 880);
             formPanel.TabIndex = 2;
-            formPanel.MaximumSize = new Size(700, 2000);
+            formPanel.MaximumSize = new Size(400, 2000);
             // 
             // btnCancel
             // 
-            btnCancel.BackColor = Color.FromArgb(107, 114, 128);
+            btnCancel.BackColor = Color.FromArgb(156, 163, 175);
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.ForeColor = Color.White;
-            btnCancel.Location = new Point(340, 650);
+            btnCancel.Location = new Point(180, 245);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(280, 45);
+            btnCancel.Size = new Size(155, 40);
             btnCancel.TabIndex = 9;
             btnCancel.Text = "❌ Hủy";
             btnCancel.UseVisualStyleBackColor = false;
             btnCancel.Visible = false;
-            btnCancel.Click += BtnCancel_Click;
+            //btnCancel.Click += BtnCancel_Click;
             // 
             // btnSave
             // 
-            btnSave.BackColor = Color.FromArgb(52, 144, 220);
+            btnSave.BackColor = Color.FromArgb(34, 197, 94);
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(20, 650);
+            btnSave.Location = new Point(15, 245);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(280, 45);
+            btnSave.Size = new Size(155, 40);
             btnSave.TabIndex = 8;
             btnSave.Text = "💾 Lưu";
             btnSave.UseVisualStyleBackColor = false;
@@ -117,9 +120,9 @@ namespace WinFormsApp1.View.Admin
             btnDelete.BackColor = Color.FromArgb(239, 68, 68);
             btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.ForeColor = Color.White;
-            btnDelete.Location = new Point(460, 580);
+            btnDelete.Location = new Point(180, 295);
             btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(150, 45);
+            btnDelete.Size = new Size(155, 40);
             btnDelete.TabIndex = 7;
             btnDelete.Text = "🗑️ Xóa";
             btnDelete.UseVisualStyleBackColor = false;
@@ -127,12 +130,12 @@ namespace WinFormsApp1.View.Admin
             // 
             // btnEdit
             // 
-            btnEdit.BackColor = Color.FromArgb(34, 197, 94);
+            btnEdit.BackColor = Color.FromArgb(59, 130, 246);
             btnEdit.FlatStyle = FlatStyle.Flat;
             btnEdit.ForeColor = Color.White;
-            btnEdit.Location = new Point(300, 580);
+            btnEdit.Location = new Point(15, 295);
             btnEdit.Name = "btnEdit";
-            btnEdit.Size = new Size(150, 45);
+            btnEdit.Size = new Size(155, 40);
             btnEdit.TabIndex = 6;
             btnEdit.Text = "✏️ Sửa";
             btnEdit.UseVisualStyleBackColor = false;
@@ -140,82 +143,79 @@ namespace WinFormsApp1.View.Admin
             // 
             // btnAdd
             // 
-            btnAdd.BackColor = Color.FromArgb(52, 144, 220);
+            btnAdd.BackColor = Color.FromArgb(34, 197, 94);
             btnAdd.FlatStyle = FlatStyle.Flat;
             btnAdd.ForeColor = Color.White;
-            btnAdd.Location = new Point(20, 580);
+            btnAdd.Location = new Point(15, 245);
             btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(200, 45);
+            btnAdd.Size = new Size(320, 40);
             btnAdd.TabIndex = 5;
-            btnAdd.Text = "➕ Thêm";
+            btnAdd.Text = "➕ Thêm khóa học";
             btnAdd.UseVisualStyleBackColor = false;
             btnAdd.Click += BtnAdd_Click;
             // 
             // chkPublished
             // 
             chkPublished.AutoSize = true;
-            chkPublished.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            chkPublished.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             chkPublished.ForeColor = Color.FromArgb(45, 55, 72);
-            chkPublished.Location = new Point(380, 500);
+            chkPublished.Location = new Point(15, 205);
             chkPublished.Name = "chkPublished";
-            chkPublished.Size = new Size(160, 31);
-            chkPublished.TabIndex = 4;
+            chkPublished.Size = new Size(130, 27);
+            chkPublished.TabIndex = 5;
             chkPublished.Text = "Đã xuất bản";
             // 
             // txtPrice
             // 
-            txtPrice.Location = new Point(20, 460);
+            txtPrice.Location = new Point(15, 155);
             txtPrice.Name = "txtPrice";
-            txtPrice.PlaceholderText = "Giá";
-            txtPrice.Size = new Size(300, 35);
+            txtPrice.Size = new Size(155, 35);
             txtPrice.TabIndex = 3;
+            // 
+            // cmbCategory
+            // 
+            cmbCategory.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbCategory.Location = new Point(180, 155);
+            cmbCategory.Name = "cmbCategory";
+            cmbCategory.Size = new Size(155, 35);
+            cmbCategory.TabIndex = 4;
             // 
             // txtDescription
             // 
-            txtDescription.Location = new Point(20, 160);
+            txtDescription.Location = new Point(15, 80);
             txtDescription.Multiline = true;
             txtDescription.Name = "txtDescription";
-            txtDescription.Size = new Size(580, 280);
+            txtDescription.Size = new Size(320, 60);
             txtDescription.TabIndex = 2;
             // 
             // descLabel
             // 
-            descLabel.AutoSize = true;
-            descLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            descLabel.ForeColor = Color.FromArgb(45, 55, 72);
-            descLabel.Location = new Point(16, 120);
-            descLabel.Name = "descLabel";
-            descLabel.Size = new Size(78, 28);
-            descLabel.TabIndex = 1;
-            descLabel.Text = "Mô tả:";
             // 
             // txtTitle
             // 
-            txtTitle.Location = new Point(20, 30);
+            txtTitle.Location = new Point(15, 30);
             txtTitle.Name = "txtTitle";
-            txtTitle.PlaceholderText = "Tên khóa học";
-            txtTitle.Size = new Size(580, 35);
+            txtTitle.Size = new Size(320, 35);
             txtTitle.TabIndex = 0;
             // 
             // dataGridView
             // 
             dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView.Location = new Point(20, 80);
+            dataGridView.Location = new Point(20, 60);
             dataGridView.Name = "dataGridView";
             dataGridView.RowHeadersWidth = 51;
-            // make datagrid anchored and allow it to resize when formPanel width changes
             dataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
-            dataGridView.Size = new Size(1160, 860);
+            dataGridView.Size = new Size(1160, 880);
             dataGridView.TabIndex = 1;
             // 
             // titleLabel
             // 
             titleLabel.AutoSize = true;
-            titleLabel.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
+            titleLabel.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             titleLabel.ForeColor = Color.FromArgb(45, 55, 72);
-            titleLabel.Location = new Point(20, 20);
+            titleLabel.Location = new Point(20, 10);
             titleLabel.Name = "titleLabel";
-            titleLabel.Size = new Size(360, 62);
+            titleLabel.Size = new Size(300, 45);
             titleLabel.TabIndex = 0;
             titleLabel.Text = "Quản lý khóa học";
             // 

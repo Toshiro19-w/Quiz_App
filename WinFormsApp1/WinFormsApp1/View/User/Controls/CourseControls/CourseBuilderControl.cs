@@ -1,14 +1,14 @@
 using System;
 using System.Windows.Forms;
-using WinFormsApp1.ControllersWin;
 using WinFormsApp1.ViewModels;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Controllers;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls
 {
     public partial class CourseBuilderControl : UserControl
     {
-        private readonly CourseControllerWin _controller = new CourseControllerWin();
+        private readonly CourseController _controller = new CourseController();
         private CourseBuilderViewModel vm = new CourseBuilderViewModel();
 
         public CourseBuilderControl()

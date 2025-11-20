@@ -8,19 +8,23 @@ using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.View.Admin
 {
-    public partial class RevenueDashboard : UserControl
+    public partial class RevenueDashboard : AdminBaseControl
     {
-        private AdminController _controller;
-
-        public RevenueDashboard()
+        public RevenueDashboard() : base()
         {
-            _controller = new AdminController();
             InitializeComponent();
         }
 
         private void RevenueDashboard_Load(object sender, EventArgs e)
         {
+            SetupLayout();
             LoadData();
+        }
+
+        private void SetupLayout()
+        {
+            var topPanel = CreateTopPanel("Phân tích doanh thu");
+            this.Controls.Add(topPanel);
         }
 
         private async void LoadData()
@@ -39,7 +43,7 @@ namespace WinFormsApp1.View.Admin
 
             try
             {
-                var revenueStats = await _controller.GetRevenueAnalyticsAsync();
+                var revenueStats = await _adminController.GetRevenueAnalyticsAsync();
                 CreateRevenueStatsCards(revenueStats);
                 CreateRevenueCharts(revenueStats);
             }

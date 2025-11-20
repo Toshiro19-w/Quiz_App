@@ -11,7 +11,6 @@ namespace WinFormsApp1.View.User.Controls
         private Label lblTitle;
         private Label lblSubtitle;
         private Label lblFlashcardCount;
-        private Button btnCreateFlashcard;
         private FlowLayoutPanel flowFlashcards;
 
         protected override void Dispose(bool disposing)
@@ -29,7 +28,6 @@ namespace WinFormsApp1.View.User.Controls
         {
             this.headerPanel = new System.Windows.Forms.Panel();
             this.lblFlashcardCount = new System.Windows.Forms.Label();
-            this.btnCreateFlashcard = new System.Windows.Forms.Button();
             this.lblSubtitle = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
             this.flowFlashcards = new System.Windows.Forms.FlowLayoutPanel();
@@ -39,7 +37,6 @@ namespace WinFormsApp1.View.User.Controls
             // headerPanel
             // 
             this.headerPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(242)))), ((int)(((byte)(245)))));
-            this.headerPanel.Controls.Add(this.btnCreateFlashcard);
             this.headerPanel.Controls.Add(this.lblFlashcardCount);
             this.headerPanel.Controls.Add(this.lblSubtitle);
             this.headerPanel.Controls.Add(this.lblTitle);
@@ -59,22 +56,6 @@ namespace WinFormsApp1.View.User.Controls
             this.lblFlashcardCount.Size = new System.Drawing.Size(170, 28);
             this.lblFlashcardCount.TabIndex = 2;
             this.lblFlashcardCount.Text = "0 bộ flashcard";
-            // 
-            // btnCreateFlashcard
-            // 
-            this.btnCreateFlashcard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(175)))), ((int)(((byte)(80)))));
-            this.btnCreateFlashcard.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnCreateFlashcard.FlatAppearance.BorderSize = 0;
-            this.btnCreateFlashcard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCreateFlashcard.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnCreateFlashcard.ForeColor = System.Drawing.Color.White;
-            this.btnCreateFlashcard.Location = new System.Drawing.Point(1520, 45);
-            this.btnCreateFlashcard.Name = "btnCreateFlashcard";
-            this.btnCreateFlashcard.Size = new System.Drawing.Size(200, 50);
-            this.btnCreateFlashcard.TabIndex = 3;
-            this.btnCreateFlashcard.Text = "+ Tạo Flashcard";
-            this.btnCreateFlashcard.UseVisualStyleBackColor = false;
-            this.btnCreateFlashcard.Click += new System.EventHandler(this.btnCreateFlashcard_Click);
             // 
             // lblSubtitle
             // 

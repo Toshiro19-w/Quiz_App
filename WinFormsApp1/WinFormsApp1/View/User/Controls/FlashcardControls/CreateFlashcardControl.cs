@@ -168,9 +168,9 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
 
             mainPanel.Controls.Clear();
 
-            var flashcardControl = new FlashcardControl();
-            flashcardControl.Dock = DockStyle.Fill;
-            mainPanel.Controls.Add(flashcardControl);
+            var myFlashcardsControl = new MyFlashcardsControl();
+            myFlashcardsControl.Dock = DockStyle.Fill;
+            mainPanel.Controls.Add(myFlashcardsControl);
         }
 
         private Control FindControlRecursive(Control parent, string name)

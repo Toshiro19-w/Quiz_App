@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,26 @@ namespace WinFormsApp1.View.Admin
     {
         private bool isEditing = false;
         private int editingUserId = 0;
+        
+        protected override void OnAddButtonClick(object sender, EventArgs e)
+        {
+            BtnAdd_Click(sender, e);
+        }
+        
+        protected override void OnEditButtonClick(object sender, EventArgs e)
+        {
+            BtnEdit_Click(sender, e);
+        }
+        
+        protected override void OnDeleteButtonClick(object sender, EventArgs e)
+        {
+            BtnDelete_Click(sender, e);
+        }
+        
+        protected override void OnRefreshButtonClick(object sender, EventArgs e)
+        {
+            _ = LoadUsersAsync();
+        }
 
         public UserManagementControl() : base()
         {
@@ -21,23 +42,33 @@ namespace WinFormsApp1.View.Admin
 
         private async void UserManagementControl_Load(object sender, EventArgs e)
         {
-            ApplyModernStyling(dataGridView, formPanel);
-            SetEditMode(false);
-            dataGridView.CellClick += DataGridView_CellClick;
+            var formPanel = CreateInputForm("Thông tin người dùng",
+                ("Email", "txtEmail", "Nhập email...", true, false),
+                ("Họ tên", "txtFullName", "Nhập họ tên...", true, false),
+                ("Tên đăng nhập", "txtUsername", "Nhập tên đăng nhập...", true, false),
+                ("Mật khẩu", "txtPassword", "Nhập mật khẩu...", true, true)
+            );
+            
+            SetupLayoutWithForm("Quản lý người dùng", dataGridView, formPanel);
+            WireCrudEvents();
+            WireFormEvents();
+            SetupSearchFunctionality(dataGridView, "Email", "Họ_tên", "Tên_đăng_nhập");
+            
             await LoadUsersAsync();
         }
-
-        private void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+        
+        private void WireFormEvents()
         {
-            if (e.RowIndex >= 0)
+            var saveBtn = this.Controls.Find("btnSave", true).FirstOrDefault() as Button;
+            if (saveBtn != null)
             {
-                dataGridView.Rows[e.RowIndex].Selected = true;
+                saveBtn.Click += BtnSave_Click;
             }
         }
 
         private void UserManagementControl_Resize(object sender, EventArgs e)
         {
-            AdjustResponsiveLayout(dataGridView, formPanel);
+            AdjustResponsiveLayout(dataGridView, null);
         }
 
         private async Task LoadUsersAsync()
@@ -45,14 +76,26 @@ namespace WinFormsApp1.View.Admin
             try
             {
                 var users = await _adminController.GetUsersAsync();
-                dataGridView.DataSource = users.Select(u => new
+                var userData = users.Select(u => new
                 {
                     ID = u.UserId,
-                    u.Email,
+                    Email = u.Email,
                     Họ_tên = u.FullName,
-                    u.Username,
+                    Tên_đăng_nhập = u.Username,
                     Ngày_tạo = u.CreatedAt.ToString("dd/MM/yyyy")
                 }).ToList();
+                
+                dataGridView.DataSource = userData;
+                ApplyModernStyling(dataGridView, null);
+                
+                UpdateDataGridHeaders(dataGridView, new Dictionary<string, string>
+                {
+                    { "ID", "Mã" },
+                    { "Email", "Email" },
+                    { "Họ_tên", "Họ tên" },
+                    { "Tên_đăng_nhập", "Tên đăng nhập" },
+                    { "Ngày_tạo", "Ngày tạo" }
+                });
             }
             catch (Exception ex)
             {
@@ -62,8 +105,9 @@ namespace WinFormsApp1.View.Admin
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            ClearForm();
-            SetEditMode(true);
+            ClearFormInputs();
+            ClearFormErrors();
+            ShowInputForm();
             isEditing = false;
         }
 
@@ -71,48 +115,56 @@ namespace WinFormsApp1.View.Admin
         {
             if (dataGridView.SelectedRows.Count > 0)
             {
-                var userId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                _ = LoadUserForEditAsync(userId);
-                SetEditMode(true);
+                var selectedRow = dataGridView.SelectedRows[0];
+                editingUserId = Convert.ToInt32(selectedRow.Cells["ID"].Value);
+                
+                SetFormValue("txtEmail", selectedRow.Cells["Email"].Value?.ToString());
+                SetFormValue("txtFullName", selectedRow.Cells["Họ_tên"].Value?.ToString());
+                SetFormValue("txtUsername", selectedRow.Cells["Tên_đăng_nhập"].Value?.ToString());
+                SetFormValue("txtPassword", ""); // Don't show existing password
+                
+                ShowInputForm();
                 isEditing = true;
-                editingUserId = userId;
+            }
+            else
+            {
+                ToastHelper.Show(this.FindForm(), "Vui lòng chọn người dùng để sửa!");
             }
         }
 
-        private async Task LoadUserForEditAsync(int userId)
-        {
-            try
-            {
-                var user = await _adminController.GetUserByIdAsync(userId);
-                if (user != null)
-                {
-                    txtEmail.Text = user.Email;
-                    txtUsername.Text = user.Username;
-                    txtFullName.Text = user.FullName;
-                }
-            }
-            catch (Exception ex)
-            {
-                ToastHelper.Show(this.FindForm(), $"Lỗi tải thông tin người dùng: {ex.Message}");
-            }
-        }
+
 
         private async void BtnSave_Click(object sender, EventArgs e)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(txtEmail.Text))
+                // Validate all fields one more time
+                ValidateField("txtEmail", true, false);
+                ValidateField("txtFullName", true, false);
+                ValidateField("txtUsername", true, false);
+                ValidateField("txtPassword", true, true);
+                
+                // Check if there are any visible errors
+                var errorLabels = GetAllControls(inputFormPanel).OfType<Label>()
+                    .Where(l => l.Name != null && l.Name.EndsWith("Error") && l.Visible);
+                
+                if (errorLabels.Any())
                 {
-                    ToastHelper.Show(this.FindForm(), "Vui lòng nhập email");
+                    ToastHelper.Show(this.FindForm(), "Vui lòng sửa các lỗi trước khi lưu!");
                     return;
                 }
+                
+                var email = GetFormValue("txtEmail").Trim();
+                var fullName = GetFormValue("txtFullName").Trim();
+                var username = GetFormValue("txtUsername").Trim();
+                var password = GetFormValue("txtPassword").Trim();
 
                 var user = new WinFormsApp1.Models.Entities.User
                 {
-                    Email = txtEmail.Text,
-                    Username = txtUsername.Text,
-                    FullName = txtFullName.Text,
-                    PasswordHash = "default",
+                    Email = email,
+                    Username = username,
+                    FullName = fullName,
+                    PasswordHash = Convert.ToBase64String(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(password))),
                     RoleId = 1,
                     Status = 1,
                     CreatedAt = DateTime.UtcNow
@@ -131,14 +183,17 @@ namespace WinFormsApp1.View.Admin
 
                 if (success)
                 {
-                    ToastHelper.Show(this.FindForm(), "Lưu thành công!");
+                    await LogAdminActionAsync(isEditing ? "UPDATE" : "CREATE", "User", 
+                        isEditing ? editingUserId : (int?)null, 
+                        $"{(isEditing ? "Cập nhật" : "Tạo")} người dùng: {user.Email}");
+                    
+                    ToastHelper.Show(this.FindForm(), "✅ Lưu thành công!");
                     await LoadUsersAsync();
-                    SetEditMode(false);
-                    ClearForm();
+                    HideInputForm();
                 }
                 else
                 {
-                    ToastHelper.Show(this.FindForm(), "Lưu thất bại!");
+                    ToastHelper.Show(this.FindForm(), "❌ Lưu thất bại!");
                 }
             }
             catch (Exception ex)
@@ -151,7 +206,9 @@ namespace WinFormsApp1.View.Admin
         {
             if (dataGridView.SelectedRows.Count > 0)
             {
-                var userId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
+                var selectedRow = dataGridView.SelectedRows[0];
+                int userId = Convert.ToInt32(selectedRow.Cells["ID"].Value);
+                
                 var result = MessageBox.Show("Bạn có chắc muốn xóa người dùng này?", "Xác nhận", MessageBoxButtons.YesNo);
 
                 if (result == DialogResult.Yes)
@@ -161,6 +218,7 @@ namespace WinFormsApp1.View.Admin
                         var success = await _adminController.DeleteUserAsync(userId);
                         if (success)
                         {
+                            await LogAdminActionAsync("DELETE", "User", userId, $"Xóa người dùng ID: {userId}");
                             ToastHelper.Show(this.FindForm(), "Xóa thành công!");
                             await LoadUsersAsync();
                         }
@@ -175,32 +233,16 @@ namespace WinFormsApp1.View.Admin
                     }
                 }
             }
+            else
+            {
+                ToastHelper.Show(this.FindForm(), "Vui lòng chọn người dùng để xóa!");
+            }
         }
+        
 
-        private void BtnCancel_Click(object sender, EventArgs e)
-        {
-            SetEditMode(false);
-            ClearForm();
-        }
 
-        private void SetEditMode(bool editing)
-        {
-            btnAdd.Visible = !editing;
-            btnEdit.Visible = !editing;
-            btnDelete.Visible = !editing;
-            btnSave.Visible = editing;
-            btnCancel.Visible = editing;
 
-            txtEmail.Enabled = editing;
-            txtUsername.Enabled = editing;
-            txtFullName.Enabled = editing;
-        }
 
-        private void ClearForm()
-        {
-            txtEmail.Clear();
-            txtUsername.Clear();
-            txtFullName.Clear();
-        }
+
     }
 }

@@ -1,13 +1,20 @@
-﻿using System; using System.Windows.Forms; using WinFormsApp1.Helpers; using WinFormsApp1.ViewModels;
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+using WinFormsApp1.Helpers;
+using WinFormsApp1.ViewModels;
 using System.Threading.Tasks;
 using WinFormsApp1.Models.EF;
 using Microsoft.EntityFrameworkCore;
+using WinFormsApp1.Controllers;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 {
     public partial class Step1_InfoControl : UserControl, IStepControl
     {
         private int? _pendingCategoryId = null;
+        private int? _currentCourseId = null;
+        private CourseBuilderController _controller = new CourseBuilderController();
 
         public Step1_InfoControl()
         {
@@ -18,10 +25,86 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 
         private void HookEvents()
         {
-            txtTitle.TextChanged += (s,e)=> txtSlug.Text = SlugHelper.GenerateSlug(txtTitle.Text);
+            txtTitle.TextChanged += (s,e)=> { txtSlug.Text = SlugHelper.GenerateSlug(txtTitle.Text); ValidateTitle(); };
+            txtSlug.TextChanged += async (s,e)=> await ValidateSlugAsync();
+            txtPrice.TextChanged += (s,e)=> ValidatePrice();
             btnUploadCover.Click += BtnUploadCover_Click;
-            // ensure there's a Next button and wire it
-            btnNext.Click += (s,e)=> OnNextRequested?.Invoke(this, EventArgs.Empty);
+            btnNext.Click += async (s,e)=> { if(await ValidateAllAsync()) OnNextRequested?.Invoke(this, EventArgs.Empty); };
+        }
+
+        private void ValidateTitle()
+        {
+            if(string.IsNullOrWhiteSpace(txtTitle.Text))
+            {
+                lblTitleLabel.ForeColor = Color.Red;
+                lblTitleLabel.Text = "Tiêu đề (Bắt buộc)";
+            }
+            else
+            {
+                lblTitleLabel.ForeColor = Color.Black;
+                lblTitleLabel.Text = "Tiêu đề";
+            }
+        }
+
+        private async Task ValidateSlugAsync()
+        {
+            if(string.IsNullOrWhiteSpace(txtSlug.Text))
+            {
+                lblSlugLabel.ForeColor = Color.Red;
+                lblSlugLabel.Text = "URL Slug (Bắt buộc)";
+                return;
+            }
+            
+            var isUnique = await _controller.IsSlugUniqueAsync(txtSlug.Text, _currentCourseId);
+            if(!isUnique)
+            {
+                lblSlugLabel.ForeColor = Color.Red;
+                lblSlugLabel.Text = "URL Slug (Đã tồn tại)";
+            }
+            else
+            {
+                lblSlugLabel.ForeColor = Color.Black;
+                lblSlugLabel.Text = "URL Slug";
+            }
+        }
+
+        private void ValidatePrice()
+        {
+            if(string.IsNullOrWhiteSpace(txtPrice.Text) || !decimal.TryParse(txtPrice.Text, out var price))
+            {
+                lblPriceLabel.ForeColor = Color.Red;
+                lblPriceLabel.Text = "Giá (VNĐ) - Bắt buộc nhập";
+                return;
+            }
+            
+            if(price <= 2000)
+            {
+                lblPriceLabel.ForeColor = Color.Red;
+                lblPriceLabel.Text = "Giá (VNĐ) - Phải lớn hơn 2000";
+            }
+            else
+            {
+                lblPriceLabel.ForeColor = Color.Black;
+                lblPriceLabel.Text = "Giá (VNĐ)";
+            }
+        }
+
+        private async Task<bool> ValidateAllAsync()
+        {
+            ValidateTitle();
+            await ValidateSlugAsync();
+            ValidatePrice();
+            
+            if(string.IsNullOrWhiteSpace(txtTitle.Text)) return false;
+            if(string.IsNullOrWhiteSpace(txtSlug.Text)) return false;
+            
+            var isUnique = await _controller.IsSlugUniqueAsync(txtSlug.Text, _currentCourseId);
+            if(!isUnique) return false;
+            
+            if(string.IsNullOrWhiteSpace(txtPrice.Text) || !decimal.TryParse(txtPrice.Text, out var price)) return false;
+            if(price <= 2000) return false;
+            
+            return true;
         }
 
         private void BtnUploadCover_Click(object? sender, EventArgs e)
@@ -42,11 +125,12 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
         public void LoadFromViewModel(CourseBuilderViewModel vm)
         {
             if (vm == null) return;
+            _currentCourseId = vm.CourseId;
             txtTitle.Text = vm.Title ?? string.Empty;
             txtSlug.Text = vm.Slug ?? string.Empty;
             txtSummary.Text = vm.Summary ?? string.Empty;
-            txtPrice.Text = vm.Price?.ToString() ?? string.Empty;
-            // category and cover can be mapped by index/url if needed
+            // Format price without trailing .00
+            txtPrice.Text = vm.Price.HasValue ? vm.Price.Value.ToString("F0") : string.Empty;
             if (!string.IsNullOrEmpty(vm.CoverUrl)) picCover.ImageLocation = vm.CoverUrl;
 
             if (vm.CategoryId.HasValue)
@@ -57,7 +141,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
             else
             {
                 _pendingCategoryId = null;
-                // if categories already loaded, select first
                 if (cmbCategory.Items.Count > 0)
                 {
                     try { cmbCategory.SelectedIndex = 0; } catch { }

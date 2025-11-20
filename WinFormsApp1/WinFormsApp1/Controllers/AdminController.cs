@@ -1,6 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
-using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.Controllers
@@ -53,7 +58,7 @@ namespace WinFormsApp1.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"L?i khi t?o ng??i d�ng: {ex.Message}");
+                    throw new Exception($"L?i khi t?o ng??i d�ng: {ex.Message}");
                 }
             }
         }
@@ -65,7 +70,7 @@ namespace WinFormsApp1.Controllers
                 try
                 {
                     var dbUser = await context.Users.FindAsync(user.UserId);
-                    if (dbUser == null) throw new Exception("Ng??i d�ng kh�ng t?n t?i.");
+                    if (dbUser == null) throw new Exception("Ng??i d�ng kh�ng t?n t?i.");
 
                     dbUser.Email = user.Email;
                     dbUser.Username = user.Username;
@@ -80,7 +85,7 @@ namespace WinFormsApp1.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"L?i khi c?p nh?t ng??i d�ng: {ex.Message}");
+                    throw new Exception($"L?i khi c?p nh?t ng??i d�ng: {ex.Message}");
                 }
             }
         }
@@ -92,7 +97,7 @@ namespace WinFormsApp1.Controllers
                 try
                 {
                     var user = await context.Users.FindAsync(id);
-                    if (user == null) throw new Exception("Ng??i d�ng kh�ng t?n t?i.");
+                    if (user == null) throw new Exception("Ng??i d�ng kh�ng t?n t?i.");
 
                     context.Users.Remove(user);
                     await context.SaveChangesAsync();
@@ -100,7 +105,7 @@ namespace WinFormsApp1.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"L?i khi x�a ng??i d�ng: {ex.Message}");
+                    throw new Exception($"L?i khi x�a ng??i d�ng: {ex.Message}");
                 }
             }
         }
@@ -136,13 +141,13 @@ namespace WinFormsApp1.Controllers
             {
                 try
                 {
-                    if (course.Price < 0) throw new ArgumentException("Gi� ph?i l� s? l?n h?n ho?c b?ng 0.");
-                    if (string.IsNullOrWhiteSpace(course.Title)) throw new ArgumentException("Ti�u ?? kh�ng ???c ?? tr?ng.");
-                    if (course.Title.Length > 200) throw new ArgumentException("Ti�u ?? qu� d�i (t?i ?a 200 k� t?).");
+                    if (course.Price < 0) throw new ArgumentException("Gi� ph?i l� s? l?n h?n ho?c b?ng 0.");
+                    if (string.IsNullOrWhiteSpace(course.Title)) throw new ArgumentException("Ti�u ?? kh�ng ???c ?? tr?ng.");
+                    if (course.Title.Length > 200) throw new ArgumentException("Ti�u ?? qu� d�i (t?i ?a 200 k� t?).");
 
                     if (string.IsNullOrWhiteSpace(course.Slug)) course.Slug = course.Title.ToLower().Replace(" ", "-");
                     var slug = course.Slug;
-                    if (await CourseSlugExistsAsync(slug)) throw new ArgumentException("Slug ?� t?n t?i. Vui l�ng ??i t�n ti�u ??.");
+                    if (await CourseSlugExistsAsync(slug)) throw new ArgumentException("Slug ?� t?n t?i. Vui l�ng ??i t�n ti�u ??.");
 
                     if (course.CreatedAt == default) course.CreatedAt = DateTime.UtcNow;
 
@@ -156,7 +161,7 @@ namespace WinFormsApp1.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"L?i khi t?o kh�a h?c: {ex.Message}");
+                    throw new Exception($"L?i khi t?o kh�a h?c: {ex.Message}");
                 }
             }
         }
@@ -168,14 +173,14 @@ namespace WinFormsApp1.Controllers
                 try
                 {
                     var dbCourse = await context.Courses.FindAsync(course.CourseId);
-                    if (dbCourse == null) throw new Exception("Kh�a h?c kh�ng t?n t?i.");
+                    if (dbCourse == null) throw new Exception("Kh�a h?c kh�ng t?n t?i.");
 
-                    if (course.Price < 0) throw new ArgumentException("Gi� ph?i l� s? l?n h?n ho?c b?ng 0.");
-                    if (string.IsNullOrWhiteSpace(course.Title)) throw new ArgumentException("Ti�u ?? kh�ng ???c ?? tr?ng.");
-                    if (course.Title.Length > 200) throw new ArgumentException("Ti�u ?? qu� d�i (t?i ?a 200 k� t?).");
+                    if (course.Price < 0) throw new ArgumentException("Gi� ph?i l� s? l?n h?n ho?c b?ng 0.");
+                    if (string.IsNullOrWhiteSpace(course.Title)) throw new ArgumentException("Ti�u ?? kh�ng ???c ?? tr?ng.");
+                    if (course.Title.Length > 200) throw new ArgumentException("Ti�u ?? qu� d�i (t?i ?a 200 k� t?).");
 
                     if (string.IsNullOrWhiteSpace(course.Slug)) course.Slug = course.Title.ToLower().Replace(" ", "-");
-                    if (await CourseSlugExistsAsync(course.Slug, course.CourseId)) throw new ArgumentException("Slug ?� t?n t?i cho kh�a h?c kh�c.");
+                    if (await CourseSlugExistsAsync(course.Slug, course.CourseId)) throw new ArgumentException("Slug ?� t?n t?i cho kh�a h?c kh�c.");
 
                     // update allowed fields
                     dbCourse.Title = course.Title;
@@ -196,7 +201,7 @@ namespace WinFormsApp1.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"L?i khi c?p nh?t kh�a h?c: {ex.Message}");
+                    throw new Exception($"L?i khi c?p nh?t kh�a h?c: {ex.Message}");
                 }
             }
         }
@@ -208,7 +213,7 @@ namespace WinFormsApp1.Controllers
                 try
                 {
                     var course = await context.Courses.FindAsync(id);
-                    if (course == null) throw new Exception("Kh�a h?c kh�ng t?n t?i.");
+                    if (course == null) throw new Exception("Kh�a h?c kh�ng t?n t?i.");
 
                     context.Courses.Remove(course);
                     await context.SaveChangesAsync();
@@ -216,7 +221,7 @@ namespace WinFormsApp1.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"L?i khi x�a kh�a h?c: {ex.Message}");
+                    throw new Exception($"L?i khi x�a kh�a h?c: {ex.Message}");
                 }
             }
         }
@@ -244,8 +249,8 @@ namespace WinFormsApp1.Controllers
             {
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(test.Title)) throw new ArgumentException("Ti�u ?? b�i ki?m tra kh�ng ???c ?? tr?ng.");
-                    if (test.Title.Length > 200) throw new ArgumentException("Ti�u ?? qu� d�i (t?i ?a 200 k� t?).");
+                    if (string.IsNullOrWhiteSpace(test.Title)) throw new ArgumentException("Ti�u ?? b�i ki?m tra kh�ng ???c ?? tr?ng.");
+                    if (test.Title.Length > 200) throw new ArgumentException("Ti�u ?? qu� d�i (t?i ?a 200 k� t?).");
 
                     context.Tests.Add(test);
                     await context.SaveChangesAsync();
@@ -257,7 +262,7 @@ namespace WinFormsApp1.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"L?i khi t?o b�i ki?m tra: {ex.Message}");
+                    throw new Exception($"L?i khi t?o b�i ki?m tra: {ex.Message}");
                 }
             }
         }
@@ -269,10 +274,10 @@ namespace WinFormsApp1.Controllers
                 try
                 {
                     var dbTest = await context.Tests.FindAsync(test.TestId);
-                    if (dbTest == null) throw new Exception("B�i ki?m tra kh�ng t?n t?i.");
+                    if (dbTest == null) throw new Exception("B�i ki?m tra kh�ng t?n t?i.");
 
-                    if (string.IsNullOrWhiteSpace(test.Title)) throw new ArgumentException("Ti�u ?? b�i ki?m tra kh�ng ???c ?? tr?ng.");
-                    if (test.Title.Length > 200) throw new ArgumentException("Ti�u ?? qu� d�i (t?i ?a 200 k� t?).");
+                    if (string.IsNullOrWhiteSpace(test.Title)) throw new ArgumentException("Ti�u ?? b�i ki?m tra kh�ng ???c ?? tr?ng.");
+                    if (test.Title.Length > 200) throw new ArgumentException("Ti�u ?? qu� d�i (t?i ?a 200 k� t?).");
 
                     dbTest.Title = test.Title;
                     dbTest.Description = test.Description;
@@ -289,7 +294,7 @@ namespace WinFormsApp1.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"L?i khi c?p nh?t b�i ki?m tra: {ex.Message}");
+                    throw new Exception($"L?i khi c?p nh?t b�i ki?m tra: {ex.Message}");
                 }
             }
         }
@@ -301,7 +306,7 @@ namespace WinFormsApp1.Controllers
                 try
                 {
                     var test = await context.Tests.FindAsync(id);
-                    if (test == null) throw new Exception("B�i ki?m tra kh�ng t?n t?i.");
+                    if (test == null) throw new Exception("B�i ki?m tra kh�ng t?n t?i.");
 
                     context.Tests.Remove(test);
                     await context.SaveChangesAsync();
@@ -309,7 +314,7 @@ namespace WinFormsApp1.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"L?i khi x�a b�i ki?m tra: {ex.Message}");
+                    throw new Exception($"L?i khi x�a b�i ki?m tra: {ex.Message}");
                 }
             }
         }
@@ -406,9 +411,421 @@ namespace WinFormsApp1.Controllers
             }
         }
 
+        // Question Management
+        public async Task<List<Question>> GetQuestionsByTestIdAsync(int testId)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                return await context.Questions
+                    .Include(q => q.QuestionOptions)
+                    .Where(q => q.TestId == testId)
+                    .OrderBy(q => q.OrderIndex)
+                    .ToListAsync();
+            }
+        }
+
+        public async Task<Question> GetQuestionByIdAsync(int questionId)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                return await context.Questions
+                    .Include(q => q.QuestionOptions)
+                    .FirstOrDefaultAsync(q => q.QuestionId == questionId);
+            }
+        }
+
+        public async Task<bool> CreateQuestionAsync(Question question)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(question.StemText)) 
+                        throw new ArgumentException("Nội dung câu hỏi không được trống");
+                    if (question.Points <= 0) 
+                        throw new ArgumentException("Điểm số phải lớn hơn 0");
+
+                    // Set order index if not provided
+                    if (question.OrderIndex == 0)
+                    {
+                        var maxOrder = await context.Questions
+                            .Where(q => q.TestId == question.TestId)
+                            .MaxAsync(q => (int?)q.OrderIndex) ?? 0;
+                        question.OrderIndex = maxOrder + 1;
+                    }
+
+                    context.Questions.Add(question);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi tạo câu hỏi: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task<bool> UpdateQuestionAsync(Question question)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    var dbQuestion = await context.Questions
+                        .Include(q => q.QuestionOptions)
+                        .FirstOrDefaultAsync(q => q.QuestionId == question.QuestionId);
+                    if (dbQuestion == null) throw new Exception("Câu hỏi không tồn tại");
+
+                    if (string.IsNullOrWhiteSpace(question.StemText)) 
+                        throw new ArgumentException("Nội dung câu hỏi không được trống");
+                    if (question.Points <= 0) 
+                        throw new ArgumentException("Điểm số phải lớn hơn 0");
+
+                    dbQuestion.StemText = question.StemText;
+                    dbQuestion.Type = question.Type;
+                    dbQuestion.Points = question.Points;
+                    dbQuestion.OrderIndex = question.OrderIndex;
+                    dbQuestion.Metadata = question.Metadata;
+
+                    // Update options
+                    context.QuestionOptions.RemoveRange(dbQuestion.QuestionOptions);
+                    if (question.QuestionOptions?.Any() == true)
+                    {
+                        foreach (var option in question.QuestionOptions)
+                        {
+                            option.QuestionId = question.QuestionId;
+                            context.QuestionOptions.Add(option);
+                        }
+                    }
+
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi cập nhật câu hỏi: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task<bool> DeleteQuestionAsync(int questionId)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    var question = await context.Questions
+                        .Include(q => q.QuestionOptions)
+                        .FirstOrDefaultAsync(q => q.QuestionId == questionId);
+                    if (question == null) throw new Exception("Câu hỏi không tồn tại");
+
+                    context.QuestionOptions.RemoveRange(question.QuestionOptions);
+                    context.Questions.Remove(question);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi xóa câu hỏi: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task<bool> ReorderQuestionsAsync(int testId, List<int> questionIds)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    for (int i = 0; i < questionIds.Count; i++)
+                    {
+                        var question = await context.Questions.FindAsync(questionIds[i]);
+                        if (question != null && question.TestId == testId)
+                        {
+                            question.OrderIndex = i + 1;
+                        }
+                    }
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi sắp xếp câu hỏi: {ex.Message}");
+                }
+            }
+        }
+
+        // Chapter Management
+        public async Task<List<CourseChapter>> GetChaptersByCourseIdAsync(int courseId)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                return await context.CourseChapters
+                    .Include(c => c.Lessons)
+                    .Where(c => c.CourseId == courseId)
+                    .OrderBy(c => c.OrderIndex)
+                    .ToListAsync();
+            }
+        }
+
+        public async Task<bool> CreateChapterAsync(CourseChapter chapter)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(chapter.Title))
+                        throw new ArgumentException("Tiêu đề chương không được trống");
+
+                    if (chapter.OrderIndex == 0)
+                    {
+                        var maxOrder = await context.CourseChapters
+                            .Where(c => c.CourseId == chapter.CourseId)
+                            .MaxAsync(c => (int?)c.OrderIndex) ?? 0;
+                        chapter.OrderIndex = maxOrder + 1;
+                    }
+
+                    context.CourseChapters.Add(chapter);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi tạo chương: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task<bool> UpdateChapterAsync(CourseChapter chapter)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    var dbChapter = await context.CourseChapters.FindAsync(chapter.ChapterId);
+                    if (dbChapter == null) throw new Exception("Chương không tồn tại");
+
+                    if (string.IsNullOrWhiteSpace(chapter.Title))
+                        throw new ArgumentException("Tiêu đề chương không được trống");
+
+                    dbChapter.Title = chapter.Title;
+                    dbChapter.Description = chapter.Description;
+                    dbChapter.OrderIndex = chapter.OrderIndex;
+
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi cập nhật chương: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task<bool> DeleteChapterAsync(int chapterId)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    var chapter = await context.CourseChapters
+                        .Include(c => c.Lessons)
+                        .FirstOrDefaultAsync(c => c.ChapterId == chapterId);
+                    if (chapter == null) throw new Exception("Chương không tồn tại");
+
+                    context.Lessons.RemoveRange(chapter.Lessons);
+                    context.CourseChapters.Remove(chapter);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi xóa chương: {ex.Message}");
+                }
+            }
+        }
+
+        // Lesson Management
+        public async Task<List<Lesson>> GetLessonsByChapterIdAsync(int chapterId)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                return await context.Lessons
+                    .Where(l => l.ChapterId == chapterId)
+                    .OrderBy(l => l.OrderIndex)
+                    .ToListAsync();
+            }
+        }
+
+        public async Task<bool> CreateLessonAsync(Lesson lesson)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(lesson.Title))
+                        throw new ArgumentException("Tiêu đề bài học không được trống");
+
+                    if (lesson.OrderIndex == 0)
+                    {
+                        var maxOrder = await context.Lessons
+                            .Where(l => l.ChapterId == lesson.ChapterId)
+                            .MaxAsync(l => (int?)l.OrderIndex) ?? 0;
+                        lesson.OrderIndex = maxOrder + 1;
+                    }
+
+                    lesson.CreatedAt = DateTime.UtcNow;
+                    context.Lessons.Add(lesson);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi tạo bài học: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task<bool> UpdateLessonAsync(Lesson lesson)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    var dbLesson = await context.Lessons.FindAsync(lesson.LessonId);
+                    if (dbLesson == null) throw new Exception("Bài học không tồn tại");
+
+                    if (string.IsNullOrWhiteSpace(lesson.Title))
+                        throw new ArgumentException("Tiêu đề bài học không được trống");
+
+                    dbLesson.Title = lesson.Title;
+                    dbLesson.Description = lesson.Description;
+                    dbLesson.OrderIndex = lesson.OrderIndex;
+                    dbLesson.Visibility = lesson.Visibility;
+                    dbLesson.UpdatedAt = DateTime.UtcNow;
+
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi cập nhật bài học: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task<bool> DeleteLessonAsync(int lessonId)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    var lesson = await context.Lessons.FindAsync(lessonId);
+                    if (lesson == null) throw new Exception("Bài học không tồn tại");
+
+                    context.Lessons.Remove(lesson);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi xóa bài học: {ex.Message}");
+                }
+            }
+        }
+
+        // Category Management
+        public async Task<List<CourseCategory>> GetCategoriesAsync()
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                return await context.CourseCategories.ToListAsync();
+            }
+        }
+
+        public async Task<CourseCategory> GetCategoryByIdAsync(int id)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                return await context.CourseCategories.FirstOrDefaultAsync(c => c.CategoryId == id);
+            }
+        }
+
+        public async Task<bool> CreateCategoryAsync(CourseCategory category)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(category.Name))
+                        throw new ArgumentException("Tên danh mục không được trống");
+
+                    context.CourseCategories.Add(category);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi tạo danh mục: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task<bool> UpdateCategoryAsync(CourseCategory category)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    var dbCategory = await context.CourseCategories.FindAsync(category.CategoryId);
+                    if (dbCategory == null) throw new Exception("Danh mục không tồn tại");
+
+                    if (string.IsNullOrWhiteSpace(category.Name))
+                        throw new ArgumentException("Tên danh mục không được trống");
+
+                    dbCategory.Name = category.Name;
+                    dbCategory.Description = category.Description;
+
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi cập nhật danh mục: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task<bool> DeleteCategoryAsync(int id)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                try
+                {
+                    var category = await context.CourseCategories.FindAsync(id);
+                    if (category == null) throw new Exception("Danh mục không tồn tại");
+
+                    // Kiểm tra xem có khóa học nào đang sử dụng danh mục này không
+                    var coursesUsingCategory = await context.Courses.AnyAsync(c => c.CategoryId == id);
+                    if (coursesUsingCategory)
+                    {
+                        throw new Exception("Không thể xóa danh mục vì có khóa học đang sử dụng");
+                    }
+
+                    context.CourseCategories.Remove(category);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Lỗi khi xóa danh mục: {ex.Message}");
+                }
+            }
+        }
+
         internal void Dispose()
         {
-            Application.Exit();
+            // Cleanup resources if needed
         }
     }
 }

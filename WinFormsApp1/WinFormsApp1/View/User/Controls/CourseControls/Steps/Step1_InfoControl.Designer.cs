@@ -79,7 +79,7 @@
 			lblTitleLabel.Font = new Font("Segoe UI", 9F);
 			lblTitleLabel.Location = new Point(20, 54);
 			lblTitleLabel.Name = "lblTitleLabel";
-			lblTitleLabel.Size = new Size(98, 29);
+			lblTitleLabel.Size = new Size(520, 29);
 			lblTitleLabel.TabIndex = 1;
 			lblTitleLabel.Text = "Tiêu đề";
 			// 
@@ -103,7 +103,7 @@
 			lblSlugLabel.Font = new Font("Segoe UI", 9F);
 			lblSlugLabel.Location = new Point(20, 140);
 			lblSlugLabel.Name = "lblSlugLabel";
-			lblSlugLabel.Size = new Size(200, 26);
+			lblSlugLabel.Size = new Size(520, 26);
 			lblSlugLabel.TabIndex = 2;
 			lblSlugLabel.Text = "URL Slug";
 			// 
@@ -168,7 +168,7 @@
 			lblPriceLabel.Font = new Font("Segoe UI", 9F);
 			lblPriceLabel.Location = new Point(281, 381);
 			lblPriceLabel.Name = "lblPriceLabel";
-			lblPriceLabel.Size = new Size(200, 28);
+			lblPriceLabel.Size = new Size(260, 28);
 			lblPriceLabel.TabIndex = 5;
 			lblPriceLabel.Text = "Giá (VNĐ)";
 			// 
