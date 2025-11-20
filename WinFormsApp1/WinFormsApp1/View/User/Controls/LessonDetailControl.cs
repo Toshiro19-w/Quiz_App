@@ -156,6 +156,14 @@ namespace WinFormsApp1.View.User.Controls
                 if (_currentLesson == null) return;
 
                 _currentContents = _currentLesson.LessonContents.OrderBy(lc => lc.OrderIndex).ToList();
+                
+                // Disable mark-complete if there are no contents in this lesson
+                try
+                {
+                    if (btnMarkComplete != null)
+                        btnMarkComplete.Enabled = _currentContents != null && _currentContents.Count > 0;
+                }
+                catch { }
 
                 // Update UI
                 if (lblCourseTitle != null) lblCourseTitle.Text = _currentCourse.Title;
@@ -617,6 +625,56 @@ namespace WinFormsApp1.View.User.Controls
                 case "Test":
                     await LoadTestContentAsync(content);
                     break;
+            }
+
+            // Update mark-complete button based on existence of meaningful content
+            UpdateMarkCompleteButton(content);
+        }
+
+        // Enable/disable the Mark Complete button depending on whether the content is present
+        private void UpdateMarkCompleteButton(LessonContent content)
+        {
+            try
+            {
+                if (btnMarkComplete == null)
+                    return;
+
+                if (content == null)
+                {
+                    btnMarkComplete.Enabled = false;
+                    return;
+                }
+
+                // Default to enabled
+                bool enabled = true;
+
+                switch (content.ContentType)
+                {
+                    case "Video":
+                        // If no video url, disable
+                        enabled = !string.IsNullOrEmpty(content.VideoUrl);
+                        break;
+                    case "Theory":
+                        // If no body and no title, treat as empty
+                        enabled = !string.IsNullOrEmpty(content.Body) || !string.IsNullOrEmpty(content.Title);
+                        break;
+                    case "FlashcardSet":
+                        enabled = content.RefId.HasValue;
+                        break;
+                    case "Test":
+                        enabled = content.RefId.HasValue;
+                        break;
+                    default:
+                        // For unknown types, enable only if there's at least a title
+                        enabled = !string.IsNullOrEmpty(content.Title);
+                        break;
+                }
+
+                btnMarkComplete.Enabled = enabled;
+            }
+            catch
+            {
+                // ignore UI update failures
             }
         }
 

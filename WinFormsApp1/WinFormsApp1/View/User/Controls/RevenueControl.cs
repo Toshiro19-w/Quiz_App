@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace WinFormsApp1.View.User.Controls
                 var userId = AuthHelper.CurrentUser?.UserId;
                 if (!userId.HasValue)
                 {
-                    MessageBox.Show("Vui l�ng ??ng nh?p!", "Th�ng b�o", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Vui lòng đăng nhập!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -83,7 +83,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"L?i khi t?i d? li?u: {ex.Message}", "L?i", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -91,9 +91,9 @@ namespace WinFormsApp1.View.User.Controls
         {
             // Update summary cards
             lblTotalPurchases.Text = _overview.TotalPurchases.ToString();
-            lblTotalGrossRevenue.Text = $"{_overview.TotalGrossRevenue:N0} VN?";
-            lblInstructorRevenue.Text = $"{_overview.TotalInstructorRevenue:N0} VN?";
-            lblPlatformFee.Text = $"{_overview.TotalPlatformFee:N0} VN?";
+            lblTotalGrossRevenue.Text = $"{_overview.TotalGrossRevenue:N0} VNĐ";
+            lblInstructorRevenue.Text = $"{_overview.TotalInstructorRevenue:N0} VNĐ";
+            lblPlatformFee.Text = $"{_overview.TotalPlatformFee:N0} VNĐ";
         }
 
         private void ApplyFiltersAndLoadPage()
@@ -132,7 +132,7 @@ namespace WinFormsApp1.View.User.Controls
             {
                 var lblEmpty = new Label
                 {
-                    Text = "Ch?a c� doanh thu n�o",
+                    Text = "Chưa có doanh thu nào",
                     Font = new Font("Segoe UI", 14, FontStyle.Bold),
                     ForeColor = ColorPalette.TextSecondary,
                     AutoSize = true,
@@ -183,7 +183,7 @@ namespace WinFormsApp1.View.User.Controls
             // Price
             var lblPrice = new Label
             {
-                Text = $"{revenue.CoursePrice:N0} VN?",
+                Text = $"{revenue.CoursePrice:N0} VNĐ",
                 Location = new Point(664, 25),
                 Size = new Size(150, 20),
                 Font = new Font("Segoe UI", 9),
@@ -206,7 +206,7 @@ namespace WinFormsApp1.View.User.Controls
             // Gross Revenue
             var lblGrossRevenue = new Label
             {
-                Text = $"{revenue.GrossRevenue:N0} VN?",
+                Text = $"{revenue.GrossRevenue:N0} VNĐ",
                 Location = new Point(1043, 25),
                 Size = new Size(180, 20),
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
@@ -217,7 +217,7 @@ namespace WinFormsApp1.View.User.Controls
             // Instructor Revenue (60%)
             var lblInstructorRev = new Label
             {
-                Text = $"{revenue.InstructorRevenue:N0} VN?",
+                Text = $"{revenue.InstructorRevenue:N0} VNĐ",
                 Location = new Point(1357, 25),
                 Size = new Size(180, 20),
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
@@ -228,7 +228,7 @@ namespace WinFormsApp1.View.User.Controls
             // Platform Fee (40%)
             var lblPlatformFee = new Label
             {
-                Text = $"{revenue.PlatformFee:N0} VN?",
+                Text = $"{revenue.PlatformFee:N0} VNĐ",
                 Location = new Point(1629, 25),
                 Size = new Size(180, 20),
                 Font = new Font("Segoe UI", 9),
@@ -250,7 +250,9 @@ namespace WinFormsApp1.View.User.Controls
 
         private void UpdatePaginationUI(int totalPages)
         {
-            lblPageInfo.Text = $"Hi?n th? {(_currentPage - 1) * _pageSize + 1} t?i {Math.Min(_currentPage * _pageSize, _totalRecords)} c?a {_totalRecords} d? li?u";
+            int start = (_currentPage - 1) * _pageSize + 1;
+            int end = Math.Min(_currentPage * _pageSize, _totalRecords);
+            lblPageInfo.Text = $"Hiển thị {start} tới {end} của {_totalRecords} mục dữ liệu";
 
             btnFirstPage.Enabled = _currentPage > 1;
             btnPrevPage.Enabled = _currentPage > 1;
