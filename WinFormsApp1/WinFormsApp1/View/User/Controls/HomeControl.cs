@@ -223,7 +223,12 @@ namespace WinFormsApp1.View.User.Controls
 
             foreach (var course in popular)
             {
-                flowPopular.Controls.Add(CreateCourseCard(course));
+                // Use the unified CourseCardControl for consistent layout
+                var card = new CourseCardControl();
+                card.Bind(course);
+                // Ensure margin matches flow layout expectations
+                card.Margin = new Padding(10);
+                flowPopular.Controls.Add(card);
             }
         }
 
@@ -398,61 +403,13 @@ namespace WinFormsApp1.View.User.Controls
 
         private Panel CreateCourseCard(Models.Entities.Course course)
         {
-            // Use larger card size for all courses
-            var card = new Panel
-            {
-                Size = new Size(340, 200),
-                BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle,
-                Margin = new Padding(10),
-                Cursor = Cursors.Hand
-            };
-            card.MouseEnter += (s, e) => card.BackColor = Color.FromArgb(245, 245, 245);
-            card.MouseLeave += (s, e) => card.BackColor = Color.White;
-
-            var lblTitle = new Label
-            {
-                Text = course.Title,
-                Location = new Point(10, 10),
-                Size = new Size(320, 50),
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold)
-            };
-
-            var lblReviews = new Label
-            {
-                Text = $"⭐ {course.TotalReviews} đánh giá",
-                Location = new Point(10, 70),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 9F),
-                ForeColor = Color.Gray
-            };
-
-            var lblPrice = new Label
-            {
-                Text = course.Price > 0 ? $"{course.Price:N0} VNĐ" : "Miễn phí",
-                Location = new Point(10, 95),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
-                ForeColor = Color.Green
-            };
-
-            var btnView = new Button
-            {
-                Text = "Xem khóa học",
-                Location = new Point(105, 155),
-                Size = new Size(130, 35),
-                BackColor = Color.FromArgb(76, 175, 80),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand,
-                Tag = course.CourseId,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold)
-            };
-            btnView.FlatAppearance.BorderSize = 0;
-            btnView.Click += (s, e) => ShowCourseDetail((int)btnView.Tag);
-
-            card.Controls.AddRange(new Control[] { lblTitle, lblReviews, lblPrice, btnView });
-            return card;
+            // Backwards-compatible wrapper in case other code expects a Panel
+            var control = new CourseCardControl();
+            control.Bind(course);
+            var panel = new Panel { Width = control.Width, Height = control.Height };
+            control.Dock = DockStyle.Fill;
+            panel.Controls.Add(control);
+            return panel;
         }
 
         private void ShowCourseDetail(int courseId)
