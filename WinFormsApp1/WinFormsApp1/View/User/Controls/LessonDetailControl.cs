@@ -111,7 +111,11 @@ namespace WinFormsApp1.View.User.Controls
             btnNextLesson.Click += BtnNextLesson_Click;
             btnMarkComplete.Click += BtnMarkComplete_Click;
 
-            if (btnSubmitTest != null) btnSubmitTest.Click += BtnSubmitTest_Click;
+            if (btnSubmitTest != null)
+            {
+                btnSubmitTest.Click -= BtnSubmitTest_Click;
+                btnSubmitTest.Click += BtnSubmitTest_Click;
+            }
 
             // Navigation events
             if (btnPrevLesson != null) btnPrevLesson.Click += BtnPrevLesson_Click;
@@ -1671,14 +1675,14 @@ namespace WinFormsApp1.View.User.Controls
 
                 await context.SaveChangesAsync();
 
-                // Mark complete content... (Giữ nguyên code cũ)
+                // Mark complete content
                 var content = _currentContents[_currentContentIndex];
                 await MarkContentCompleteAsync(content.ContentId, totalScore);
 
-                // Show result
+                // Show result (CHỈ 1 LẦN)
                 var percentage = maxScore > 0 ? (totalScore / maxScore) * 100 : 0;
                 MessageBox.Show(
-                    $"Kết quả bài kiểm tra:\n\n" +
+                    $"Hoàn thành bài kiểm tra!\n\n" +
                     $"Điểm: {totalScore}/{maxScore} ({percentage:F1}%)\n" +
                     $"Thời gian: {timeSpent / 60} phút {timeSpent % 60} giây",
                     "Kết quả", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1769,7 +1773,7 @@ namespace WinFormsApp1.View.User.Controls
 
                 await context.SaveChangesAsync();
                 await UpdateProgressAsync();
-                await LoadSidebarAsync();
+                // Không gọi LoadSidebarAsync() ở đây để tránh nhân bản chương
             }
             catch (Exception ex)
             {
