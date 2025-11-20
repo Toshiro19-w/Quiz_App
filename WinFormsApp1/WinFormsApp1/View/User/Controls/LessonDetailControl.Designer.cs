@@ -117,7 +117,7 @@
             lblVideoPlaceholder.Location = new Point(0, 0);
             lblVideoPlaceholder.Margin = new Padding(4, 0, 4, 0);
             lblVideoPlaceholder.Name = "lblVideoPlaceholder";
-            lblVideoPlaceholder.Size = new Size(1157, 720);
+            lblVideoPlaceholder.Size = new Size(900, 600);
             lblVideoPlaceholder.TabIndex = 0;
             lblVideoPlaceholder.Text = "- Video Player\r\n(Cần cài đặt Windows Media Player)";
             lblVideoPlaceholder.TextAlign = ContentAlignment.MiddleCenter;

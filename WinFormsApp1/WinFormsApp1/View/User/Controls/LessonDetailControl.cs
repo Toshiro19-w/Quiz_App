@@ -53,7 +53,7 @@ namespace WinFormsApp1.View.User.Controls
         public LessonDetailControl()
         {
             InitializeComponent();
-            if (!DesignMode) 
+            if (!DesignMode)
             {
                 Core.Initialize();
             }
@@ -67,14 +67,18 @@ namespace WinFormsApp1.View.User.Controls
                 Dock = DockStyle.Fill
             };
 
-            // Thêm VideoView vào panel chứa video của bạn
+            // --- SỬA LẠI ĐOẠN NÀY ---
+            // 1. Xóa hết các Label/Text cũ đang nằm trong pnlVideo (cái dòng chữ trắng trắng)
+            pnlVideo.Controls.Clear();
+
+            // 2. Sau đó mới thêm màn hình VLC vào
             pnlVideo.Controls.Add(_videoView);
+            // ------------------------
 
             // Gán sự kiện theo dõi tiến độ
             _mediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
             _mediaPlayer.EndReached += MediaPlayer_EndReached;
             InitializeEventHandlers();
-            //SetupVideoProgressTimer();
         }
 
         private void InitializeEventHandlers()
@@ -538,26 +542,39 @@ namespace WinFormsApp1.View.User.Controls
             var userId = AuthHelper.CurrentUser?.UserId;
             if (!userId.HasValue) return;
 
-            // --- BƯỚC 1: Xử lý logic lấy danh sách ID bài học trên RAM (Client-side) ---
-            // Gom tất cả LessonId của khóa học hiện tại vào một List<int>
+            // --- BƯỚC 1: Lấy tổng số bài học ---
             var allLessonIds = _currentCourse.CourseChapters
                 .SelectMany(ch => ch.Lessons)
                 .Select(l => l.LessonId)
                 .ToList();
 
-            // --- BƯỚC 2: Truy vấn Database với danh sách ID đã có (Server-side) ---
-            // Kiểm tra xem LessonContent nào thuộc về các LessonId đó
-            var totalContents = await context.LessonContents
-                .Where(lc => allLessonIds.Contains(lc.LessonId)) // EF Core sẽ dịch cái này thành SQL "IN (...)"
-                .CountAsync();
+            // Lấy ContentId thực tế (tránh đếm ảo)
+            var validContentIds = await context.LessonContents
+                .Where(lc => allLessonIds.Contains(lc.LessonId))
+                .Select(lc => lc.ContentId)
+                .ToListAsync();
 
+            var totalContents = validContentIds.Count;
+
+            // --- BƯỚC 2: Đếm số bài đã hoàn thành ---
+            // Dùng .Distinct() để tránh lỗi đếm trùng (ví dụ 1 bài lưu 2 lần hoàn thành) gây ra lỗi > 100%
             var completedContents = await context.CourseProgresses
                 .Where(cp => cp.UserId == userId.Value &&
-                             cp.CourseId == _currentCourse.CourseId &&
+                             validContentIds.Contains(cp.ContentId) &&
                              cp.IsCompleted)
+                .Select(cp => cp.ContentId)
+                .Distinct() // <--- QUAN TRỌNG: Loại bỏ trùng lặp
                 .CountAsync();
 
+            // Tính phần trăm
             var progress = totalContents > 0 ? (int)((double)completedContents / totalContents * 100) : 0;
+
+            // --- BƯỚC 3: SỬA LỖI CRASH ---
+            // Giới hạn giá trị trong khoảng 0 - 100
+            if (progress > 100) progress = 100;
+            if (progress < 0) progress = 0;
+
+            // Cập nhật UI
             progressBar.Value = progress;
             lblProgress.Text = $"Tiến độ: {progress}% ({completedContents}/{totalContents} hoàn thành)";
         }
@@ -598,34 +615,44 @@ namespace WinFormsApp1.View.User.Controls
         private async Task LoadVideoContentAsync(LessonContent content)
         {
             pnlVideo.Visible = true;
-            _videoView.Visible = true; // Hiện màn hình VLC
-
-            // Reset trạng thái
+            _videoView.Visible = true;
             _totalWatchedSeconds = 0;
 
             if (!string.IsNullOrEmpty(content.VideoUrl))
             {
-                // Đường dẫn file video
-                string relativePath = content.VideoUrl.TrimStart('/');
-                string fullPath = System.IO.Path.Combine(Application.StartupPath, "wwwroot", relativePath);
+                // 1. Xử lý đường dẫn từ Database (VD: "Library/Video/ten_file.mp4")
+                string dbPath = content.VideoUrl.Replace("/", "\\").TrimStart('\\');
 
+                // 2. ĐƯỜNG DẪN CỐ ĐỊNH (HARDCODED PATH)
+                // Lưu ý: Dấu @ đằng trước để nhận diện dấu \ trong chuỗi
+                string projectRoot = @"D:\BTL web\BTL web game\APP_Quiz\Quiz_App\WinFormsApp1\WinFormsApp1";
+
+                // Ghép đường dẫn gốc + đường dẫn trong DB
+                // Kết quả sẽ là: D:\...\WinFormsApp1\Library\Video\ten_file.mp4
+                string fullPath = System.IO.Path.Combine(projectRoot, dbPath);
+
+                // 3. Kiểm tra và chạy video
                 if (System.IO.File.Exists(fullPath))
                 {
-                    // Tạo media từ file
-                    using var media = new Media(_libVLC, fullPath);
+                    // Tìm thấy file -> Chạy
+                    using var media = new Media(_libVLC, fullPath, FromType.FromPath);
                     _mediaPlayer.Play(media);
 
-                    // Lấy thời gian đã xem trước đó để resume (nếu có)
+                    // Resume lại đoạn đã xem (nếu có)
                     int watchedSec = await GetWatchedDurationAsync(content.ContentId);
                     if (watchedSec > 0)
                     {
-                        // VLC dùng mili-giây (ms) nên phải nhân 1000
                         _mediaPlayer.Time = (long)watchedSec * 1000;
                     }
                 }
                 else
                 {
-                    MessageBox.Show($"Không tìm thấy video: {fullPath}");
+                    // Nếu vẫn không thấy -> Báo lỗi chi tiết để bạn biết sai ở đâu
+                    MessageBox.Show(
+                        $"Không tìm thấy video!\n\n" +
+                        $"Đường dẫn phần mềm đang tìm:\n{fullPath}\n\n" +
+                        $"Hãy kiểm tra xem file '{System.IO.Path.GetFileName(fullPath)}' có thực sự nằm ở đó không?",
+                        "Lỗi File", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
