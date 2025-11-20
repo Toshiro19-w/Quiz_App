@@ -50,6 +50,17 @@ namespace WinFormsApp1.View.User.Controls
         private MediaPlayer _mediaPlayer;
         private VideoView _videoView;
 
+        // --- VIDEO CONTROLS ---
+        private Panel _pnlControls;
+        private Button _btnPlayPause;
+        private TrackBar _trackBarTime; // Thanh tua video
+        private Label _lblTimeCurrent;  // Thời gian hiện tại (00:10)
+        private Label _lblTimeTotal;    // Tổng thời gian (05:00)
+        private bool _isDraggingSeek = false;
+        private Button _btnVolume;      // Nút Loa (Mute/Unmute)
+        private TrackBar _trackBarVolume; // Thanh trượt âm lượng
+        private int _lastVolume = 100;
+
         public LessonDetailControl()
         {
             InitializeComponent();
@@ -221,7 +232,7 @@ namespace WinFormsApp1.View.User.Controls
 
                     var pnlLesson = CreateExpandableLessonItem(lesson, isCompleted, isCurrent);
 
-                    flowLessons.Controls.Add(pnlLesson); // Thêm vào lần 1
+                    flowLessons.Controls.Add(pnlLesson);
 
                 }
             }
@@ -390,10 +401,11 @@ namespace WinFormsApp1.View.User.Controls
         // Thêm tham số int parentLessonId
         private Panel CreateContentItem(LessonContent content, int index, int parentLessonId)
         {
+            // 1. Tăng chiều cao Panel để rộng rãi hơn (50 -> 65)
             var panel = new Panel
             {
                 Width = 300,
-                Height = 50,
+                Height = 65, // Tăng lên 65 cho thoáng
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle,
                 Margin = new Padding(5, 2, 5, 2),
@@ -403,46 +415,51 @@ namespace WinFormsApp1.View.User.Controls
 
             var (icon, color, label) = GetContentTypeIconFromType(content.ContentType);
 
+            // 2. Cấu hình Icon: Cho size to ra và căn giữa
             var lblIcon = new Label
             {
                 Text = icon,
-                Location = new Point(10, 10),
-                Size = new Size(25, 25),
-                Font = new Font("Segoe UI", 11),
+                Location = new Point(10, 12), // Căn giữa theo chiều dọc (65-40)/2 ~ 12
+                Size = new Size(40, 40),      // Khung icon to ra (40x40) để không bị che
+                Font = new Font("Segoe UI", 14), // Font icon to rõ hơn
                 ForeColor = color,
-                TextAlign = ContentAlignment.MiddleCenter,
+                TextAlign = ContentAlignment.MiddleCenter, // Quan trọng: Căn icon vào giữa khung
                 Cursor = Cursors.Hand
             };
 
+            // 3. Tiêu đề chính
             var lblTitle = new Label
             {
                 Text = content.Title ?? label,
-                Location = new Point(45, 5),
-                Size = new Size(240, 20),
-                Font = new Font("Segoe UI", 9),
+                Location = new Point(55, 8), // Dịch sang phải tí và đẩy lên trên
+                Size = new Size(200, 25),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold), // Chữ đậm cho dễ nhìn
                 ForeColor = ColorPalette.TextPrimary,
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                AutoEllipsis = true // Nếu tên dài quá thì hiện dấu "..."
             };
 
+            // 4. Loại nội dung (Chữ nhỏ bên dưới)
             var lblType = new Label
             {
                 Text = label,
-                Location = new Point(45, 25),
-                Size = new Size(100, 15),
-                Font = new Font("Segoe UI", 7),
-                ForeColor = ColorPalette.TextSecondary,
+                Location = new Point(55, 35), // Nằm dưới tiêu đề
+                Size = new Size(150, 20),
+                Font = new Font("Segoe UI", 8, FontStyle.Regular),
+                ForeColor = Color.Gray,
                 Cursor = Cursors.Hand
             };
 
+            // 5. Dấu tích hoàn thành (nếu có)
             Label lblCheck = null;
             if (IsContentCompleted(content.ContentId))
             {
                 lblCheck = new Label
                 {
                     Text = "✓",
-                    Location = new Point(270, 15),
-                    Size = new Size(20, 20),
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    Location = new Point(260, 20), // Căn giữa phải
+                    Size = new Size(25, 25),
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
                     ForeColor = ColorPalette.Success,
                     TextAlign = ContentAlignment.MiddleCenter,
                     Cursor = Cursors.Hand
@@ -452,24 +469,20 @@ namespace WinFormsApp1.View.User.Controls
 
             panel.Controls.AddRange(new Control[] { lblIcon, lblTitle, lblType });
 
-            // --- LOGIC CLICK MỚI ---
+            // --- LOGIC CLICK (GIỮ NGUYÊN) ---
             EventHandler clickHandler = async (s, e) =>
             {
-                // Kiểm tra xem có đang ở đúng bài học chứa nội dung này không
                 if (_currentLesson != null && _currentLesson.LessonId == parentLessonId)
                 {
-                    // Nếu đang ở đúng bài -> Chỉ chuyển nội dung (Nhanh hơn)
                     var contentIndex = _currentContents.FindIndex(c => c.ContentId == content.ContentId);
                     if (contentIndex >= 0) await LoadContentAsync(contentIndex);
                 }
                 else
                 {
-                    // Nếu đang ở bài khác -> Load bài học mới và nhảy tới nội dung này
                     await LoadLessonAsync(_currentCourse.Slug, parentLessonId, content.ContentId);
                 }
             };
 
-            // Gắn sự kiện
             panel.Click += clickHandler;
             lblIcon.Click += clickHandler;
             lblTitle.Click += clickHandler;
@@ -617,39 +630,48 @@ namespace WinFormsApp1.View.User.Controls
 
             if (!string.IsNullOrEmpty(content.VideoUrl))
             {
-                // 1. Xử lý đường dẫn từ Database (VD: "Library/Video/ten_file.mp4")
-                string dbPath = content.VideoUrl.Replace("/", "\\").TrimStart('\\');
+                SetupVideoControls();
+                _pnlControls.Visible = true;
 
-                // 2. ĐƯỜNG DẪN CỐ ĐỊNH (HARDCODED PATH)
-                // Lưu ý: Dấu @ đằng trước để nhận diện dấu \ trong chuỗi
-                string projectRoot = @"D:\BTL web\BTL web game\APP_Quiz\Quiz_App\WinFormsApp1\WinFormsApp1";
+                // Reset trạng thái
+                _btnPlayPause.Text = "⏸";
+                _trackBarTime.Value = 0;
+                _lblTimeCurrent.Text = "00:00";
+                _lblTimeTotal.Text = "00:00";
 
-                // Ghép đường dẫn gốc + đường dẫn trong DB
-                // Kết quả sẽ là: D:\...\WinFormsApp1\Library\Video\ten_file.mp4
-                string fullPath = System.IO.Path.Combine(projectRoot, dbPath);
+                // --- Reset Âm lượng ---
+                _mediaPlayer.Volume = 100;
+                _trackBarVolume.Value = 100;
+                _btnVolume.Text = "🔊";
+                // ---------------------
 
-                // 3. Kiểm tra và chạy video
-                if (System.IO.File.Exists(fullPath))
+                _totalWatchedSeconds = 0;
+
+                if (!string.IsNullOrEmpty(content.VideoUrl))
                 {
-                    // Tìm thấy file -> Chạy
-                    using var media = new Media(_libVLC, fullPath, FromType.FromPath);
-                    _mediaPlayer.Play(media);
+                    // ... (Giữ nguyên phần code xử lý đường dẫn cũ của bạn ở đây) ...
+                    string dbPath = content.VideoUrl.Replace("/", "\\").TrimStart('\\');
+                    string projectRoot = @"D:\BTL web\BTL web game\APP_Quiz\Quiz_App\WinFormsApp1\WinFormsApp1";
+                    string fullPath = System.IO.Path.Combine(projectRoot, dbPath);
 
-                    // Resume lại đoạn đã xem (nếu có)
-                    int watchedSec = await GetWatchedDurationAsync(content.ContentId);
-                    if (watchedSec > 0)
+                    if (System.IO.File.Exists(fullPath))
                     {
-                        _mediaPlayer.Time = (long)watchedSec * 1000;
+                        using var media = new Media(_libVLC, fullPath, FromType.FromPath);
+                        _mediaPlayer.Play(media);
+
+                        // ... (Giữ nguyên phần Resume cũ) ...
+                        int watchedSec = await GetWatchedDurationAsync(content.ContentId);
+                        if (watchedSec > 0) _mediaPlayer.Time = (long)watchedSec * 1000;
                     }
-                }
-                else
-                {
-                    // Nếu vẫn không thấy -> Báo lỗi chi tiết để bạn biết sai ở đâu
-                    MessageBox.Show(
-                        $"Không tìm thấy video!\n\n" +
-                        $"Đường dẫn phần mềm đang tìm:\n{fullPath}\n\n" +
-                        $"Hãy kiểm tra xem file '{System.IO.Path.GetFileName(fullPath)}' có thực sự nằm ở đó không?",
-                        "Lỗi File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    {
+                        // Nếu vẫn không thấy -> Báo lỗi chi tiết để bạn biết sai ở đâu
+                        MessageBox.Show(
+                            $"Không tìm thấy video!\n\n" +
+                            $"Đường dẫn phần mềm đang tìm:\n{fullPath}\n\n" +
+                            $"Hãy kiểm tra xem file '{System.IO.Path.GetFileName(fullPath)}' có thực sự nằm ở đó không?",
+                            "Lỗi File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -657,16 +679,39 @@ namespace WinFormsApp1.View.User.Controls
         // Sự kiện: Khi video đang chạy (Gọi liên tục khi thời gian thay đổi)
         private void MediaPlayer_TimeChanged(object sender, MediaPlayerTimeChangedEventArgs e)
         {
-            // Vì VLC chạy trên luồng riêng, phải dùng Invoke để tương tác với biến của Form
-            this.Invoke((MethodInvoker)delegate {
-                // e.Time là mili-giây -> chia 1000 ra giây
-                int currentSeconds = (int)(e.Time / 1000);
+            // Dùng Invoke để cập nhật giao diện từ luồng khác
+            if (this.IsDisposed || !this.IsHandleCreated) return;
 
-                // Chỉ lưu mỗi 5 giây một lần để đỡ nặng Database
+            this.Invoke((MethodInvoker)delegate {
+                // 1. Cập nhật Tổng thời gian (Chỉ cần làm khi chưa có giá trị)
+                long durationMs = _mediaPlayer.Length;
+                if (durationMs > 0)
+                {
+                    TimeSpan total = TimeSpan.FromMilliseconds(durationMs);
+                    _lblTimeTotal.Text = total.ToString(@"mm\:ss");
+                }
+
+                // 2. Cập nhật Thời gian hiện tại
+                long currentMs = e.Time;
+                TimeSpan current = TimeSpan.FromMilliseconds(currentMs);
+                _lblTimeCurrent.Text = current.ToString(@"mm\:ss");
+
+                // 3. Cập nhật vị trí thanh trượt (Chỉ khi người dùng KHÔNG đang kéo)
+                if (!_isDraggingSeek && durationMs > 0)
+                {
+                    // Tính tỷ lệ phần nghìn
+                    int value = (int)((double)currentMs / durationMs * 1000);
+                    if (value > 1000) value = 1000;
+                    if (value < 0) value = 0;
+                    _trackBarTime.Value = value;
+                }
+
+                // 4. Logic lưu tiến độ (Giữ nguyên logic cũ của bạn)
+                int currentSeconds = (int)(currentMs / 1000);
                 if (currentSeconds > _totalWatchedSeconds + 5)
                 {
                     _totalWatchedSeconds = currentSeconds;
-                    _ = SaveVideoProgressAsync(); // Lưu tiến độ
+                    _ = SaveVideoProgressAsync();
                 }
             });
         }
@@ -752,9 +797,173 @@ namespace WinFormsApp1.View.User.Controls
 
             return progress?.DurationSec ?? 0;
         }
-        
-        #endregion
 
+        #endregion
+        private void SetupVideoControls()
+        {
+            if (_pnlControls != null) return;
+
+            // 1. Panel chính
+            _pnlControls = new Panel
+            {
+                Height = 60,
+                Dock = DockStyle.Bottom,
+                BackColor = Color.FromArgb(200, 20, 20, 20),
+                Padding = new Padding(10)
+            };
+
+            // 2. Nút Play/Pause
+            _btnPlayPause = new Button
+            {
+                Text = "⏸",
+                Size = new Size(40, 40),
+                Location = new Point(15, 10),
+                FlatStyle = FlatStyle.Flat,
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 14),
+                Cursor = Cursors.Hand,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            _btnPlayPause.FlatAppearance.BorderSize = 0;
+            _btnPlayPause.Click += (s, e) =>
+            {
+                if (_mediaPlayer.IsPlaying)
+                {
+                    _mediaPlayer.Pause();
+                    _btnPlayPause.Text = "▶";
+                }
+                else
+                {
+                    _mediaPlayer.Play();
+                    _btnPlayPause.Text = "⏸";
+                }
+            };
+
+            // 3. Thời gian hiện tại
+            _lblTimeCurrent = new Label
+            {
+                Text = "00:00",
+                ForeColor = Color.White,
+                AutoSize = true,
+                Location = new Point(65, 20),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+            };
+
+            // --- CÁC PHẦN MỚI VỀ ÂM THANH ---
+
+            // 6. Nút Loa (Mute) - Đặt ở bên phải
+            _btnVolume = new Button
+            {
+                Text = "🔊", // Icon loa
+                Size = new Size(40, 40),
+                FlatStyle = FlatStyle.Flat,
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 12),
+                Cursor = Cursors.Hand,
+                Anchor = AnchorStyles.Top | AnchorStyles.Right, // Neo phải
+                Location = new Point(_pnlControls.Width - 160, 10)
+            };
+            _btnVolume.FlatAppearance.BorderSize = 0;
+
+            // Xử lý sự kiện Mute/Unmute
+            _btnVolume.Click += (s, e) =>
+            {
+                if (_mediaPlayer.Volume > 0)
+                {
+                    // Đang có tiếng -> Tắt tiếng (Mute)
+                    _lastVolume = _mediaPlayer.Volume; // Lưu lại mức cũ
+                    _mediaPlayer.Volume = 0;
+                    _trackBarVolume.Value = 0;
+                    _btnVolume.Text = "🔇";
+                }
+                else
+                {
+                    // Đang tắt tiếng -> Bật lại (Unmute)
+                    _mediaPlayer.Volume = _lastVolume;
+                    _trackBarVolume.Value = _lastVolume;
+                    _btnVolume.Text = "🔊";
+                }
+            };
+
+            // 7. Thanh trượt Âm lượng - Đặt bên cạnh nút loa
+            _trackBarVolume = new TrackBar
+            {
+                Height = 45,
+                Width = 100,
+                Minimum = 0,
+                Maximum = 100,
+                Value = 100, // Mặc định to nhất
+                TickStyle = TickStyle.None,
+                Cursor = Cursors.Hand,
+                Anchor = AnchorStyles.Top | AnchorStyles.Right, // Neo phải
+                Location = new Point(_pnlControls.Width - 115, 12)
+            };
+
+            // Xử lý khi kéo thanh âm lượng
+            _trackBarVolume.Scroll += (s, e) =>
+            {
+                _mediaPlayer.Volume = _trackBarVolume.Value;
+
+                // Đổi icon loa tùy theo mức âm lượng
+                if (_trackBarVolume.Value == 0) _btnVolume.Text = "🔇";
+                else if (_trackBarVolume.Value < 50) _btnVolume.Text = "🔉";
+                else _btnVolume.Text = "🔊";
+            };
+
+            // ----------------------------------
+
+            // 4. Tổng thời gian (Dời vị trí sang bên trái nút Volume một chút)
+            _lblTimeTotal = new Label
+            {
+                Text = "00:00",
+                ForeColor = Color.LightGray,
+                AutoSize = true,
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                Font = new Font("Segoe UI", 10),
+                Location = new Point(_pnlControls.Width - 230, 20) // Cách lề phải xa hơn để nhường chỗ cho Volume
+            };
+
+            // 5. Thanh tua (Seek Bar) - Điều chỉnh lại Width để không đè lên Volume
+            _trackBarTime = new TrackBar
+            {
+                Location = new Point(115, 12),
+                Height = 45,
+                Minimum = 0,
+                Maximum = 1000,
+                TickStyle = TickStyle.None,
+                Cursor = Cursors.Hand,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+                // Chiều rộng = Tổng rộng - (Lề trái + Khu vực bên phải chứa Volume & TimeTotal)
+                Width = _pnlControls.Width - 360
+            };
+
+            _trackBarTime.MouseDown += (s, e) => _isDraggingSeek = true;
+            _trackBarTime.MouseUp += (s, e) =>
+            {
+                float pos = (float)_trackBarTime.Value / 1000.0f;
+                _mediaPlayer.Position = pos;
+                _isDraggingSeek = false;
+            };
+            _trackBarTime.Scroll += (s, e) =>
+            {
+                if (_isDraggingSeek) return;
+                float pos = (float)_trackBarTime.Value / 1000.0f;
+                _mediaPlayer.Position = pos;
+            };
+
+            // Thêm tất cả vào Panel
+            _pnlControls.Controls.AddRange(new Control[] {
+                _btnPlayPause,
+                _lblTimeCurrent,
+                _trackBarTime,
+                _lblTimeTotal,
+                _btnVolume,      // Mới
+                _trackBarVolume  // Mới
+            });
+
+            pnlVideo.Controls.Add(_pnlControls);
+            _pnlControls.BringToFront();
+        }
         #region Theory Content
 
         private async Task LoadTheoryContentAsync(LessonContent content)
