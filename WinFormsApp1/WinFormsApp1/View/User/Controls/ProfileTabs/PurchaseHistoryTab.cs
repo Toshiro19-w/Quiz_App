@@ -22,7 +22,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
         private void InitializeComponent()
         {
             this.BackColor = Color.White;
-            this.Size = new Size(760, 550);
+            this.Size = new Size(860, 650);
             this.AutoScroll = true;
 
             int yPos = 30;
