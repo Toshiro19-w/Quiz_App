@@ -236,20 +236,57 @@ namespace WinFormsApp1.View.User.Controls
 
         private void ViewFlashcardSet(FlashcardSet flashcardSet)
         {
-            MessageBox.Show($"Xem bộ flashcard: {flashcardSet.Title}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // TODO: Navigate to flashcard set detail view
+            var form = this.FindForm();
+            if (form == null) return;
+
+            var mainPanel = FindControlRecursive(form, "mainContentPanel") as Panel;
+
+            if (mainPanel == null)
+            {
+                mainPanel = this.Parent as Panel;
+            }
+
+            if (mainPanel == null) return;
+
+            mainPanel.Controls.Clear();
+
+            var detail = new WinFormsApp1.View.User.Controls.FlashcardControls.FlashcardDetailControl(flashcardSet.SetId);
+            detail.Dock = DockStyle.Fill;
+            mainPanel.Controls.Add(detail);
         }
 
         private void StudyFlashcardSet(FlashcardSet flashcardSet)
         {
-            MessageBox.Show($"Học bộ flashcard: {flashcardSet.Title}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // TODO: Open flashcard study mode
+            if (flashcardSet.Flashcards == null || flashcardSet.Flashcards.Count == 0)
+            {
+                MessageBox.Show("Bộ flashcard này chưa có thẻ nào để học!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var studyForm = new WinFormsApp1.View.User.Controls.FlashcardControls.FlashcardStudyForm(flashcardSet.SetId);
+            studyForm.ShowDialog();
         }
 
         private void EditFlashcardSet(FlashcardSet flashcardSet)
         {
-            MessageBox.Show($"Chỉnh sửa bộ flashcard: {flashcardSet.Title}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // TODO: Open edit flashcard dialog/form
+            var form = this.FindForm();
+            if (form == null) return;
+
+            var mainPanel = FindControlRecursive(form, "mainContentPanel") as Panel;
+
+            if (mainPanel == null)
+            {
+                mainPanel = this.Parent as Panel;
+            }
+
+            if (mainPanel == null) return;
+
+            mainPanel.Controls.Clear();
+
+            var editControl = new WinFormsApp1.View.User.Controls.FlashcardControls.EditFlashcardControl(flashcardSet.SetId);
+            editControl.Dock = DockStyle.Fill;
+            mainPanel.Controls.Add(editControl);
         }
 
         private async void DeleteFlashcardSet(FlashcardSet flashcardSet)
@@ -297,8 +334,23 @@ namespace WinFormsApp1.View.User.Controls
 
         private void BtnCreateFlashcard_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Chức năng tạo bộ flashcard mới đang được phát triển", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // TODO: Open create flashcard dialog
+            var form = this.FindForm();
+            if (form == null) return;
+
+            var mainPanel = FindControlRecursive(form, "mainContentPanel") as Panel;
+
+            if (mainPanel == null)
+            {
+                mainPanel = this.Parent as Panel;
+            }
+
+            if (mainPanel == null) return;
+
+            mainPanel.Controls.Clear();
+
+            var createControl = new WinFormsApp1.View.User.Controls.FlashcardControls.CreateFlashcardControl();
+            createControl.Dock = DockStyle.Fill;
+            mainPanel.Controls.Add(createControl);
         }
 
         private void BtnBack_Click(object sender, EventArgs e)

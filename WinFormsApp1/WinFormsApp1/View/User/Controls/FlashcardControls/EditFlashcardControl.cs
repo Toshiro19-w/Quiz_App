@@ -1,35 +1,70 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.Entities;
-using WinFormsApp1.Controllers;
 
 namespace WinFormsApp1.View.User.Controls.FlashcardControls
 {
-    public partial class CreateFlashcardControl : UserControl
+    public partial class EditFlashcardControl : UserControl
     {
-        private List<FlashcardCardControl> flashcardCards = new List<FlashcardCardControl>();
+        private List<EditFlashcardCardControl> flashcardCards = new List<EditFlashcardCardControl>();
         private int cardCounter = 1;
         private readonly FlashcardController _flashcardController;
+        private readonly int _flashcardSetId;
+        private FlashcardSet _currentFlashcardSet;
+        private List<int> _deletedFlashcardIds = new List<int>();
 
-        public CreateFlashcardControl()
+        public EditFlashcardControl(int flashcardSetId)
         {
             InitializeComponent();
             _flashcardController = new FlashcardController();
-            AddFirstCard();
+            _flashcardSetId = flashcardSetId;
+            LoadData();
         }
 
-        private void AddFirstCard()
+        private async void LoadData()
         {
-            AddNewCard();
+            try
+            {
+                _currentFlashcardSet = await _flashcardController.GetFlashcardSetByIdAsync(_flashcardSetId);
+                if (_currentFlashcardSet == null)
+                {
+                    MessageBox.Show("Không tìm thấy bộ flashcard!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    NavigateBack();
+                    return;
+                }
+
+                // Populate fields
+                txtTitle.Text = _currentFlashcardSet.Title;
+                txtDescription.Text = _currentFlashcardSet.Description;
+                txtLanguage.Text = _currentFlashcardSet.Language;
+                cboVisibility.SelectedItem = _currentFlashcardSet.Visibility;
+
+                // Load cards
+                var flashcards = await _flashcardController.GetFlashcardsInSetAsync(_flashcardSetId);
+                foreach (var flashcard in flashcards)
+                {
+                    AddCard(flashcard);
+                }
+
+                if (flashcardCards.Count == 0)
+                {
+                    AddCard(null); // Add at least one empty card if none exist
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void AddNewCard()
+        private void AddCard(Flashcard flashcard = null)
         {
-            var card = new FlashcardCardControl(cardCounter);
+            var card = new EditFlashcardCardControl(cardCounter, flashcard);
             card.OnDeleteClicked += Card_OnDeleteClicked;
             card.Margin = new Padding(0, 0, 0, 15);
             flashcardCards.Add(card);
@@ -38,13 +73,19 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             UpdateCardCount();
         }
 
-        private void Card_OnDeleteClicked(FlashcardCardControl card)
+        private void Card_OnDeleteClicked(EditFlashcardCardControl card)
         {
             if (flashcardCards.Count <= 1)
             {
                 MessageBox.Show("Phải có ít nhất 1 thẻ flashcard!", "Cảnh báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
+            }
+
+            // If it's an existing card (has ID), track it for deletion
+            if (card.FlashcardId.HasValue)
+            {
+                _deletedFlashcardIds.Add(card.FlashcardId.Value);
             }
 
             flashcardCards.Remove(card);
@@ -61,7 +102,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
 
         private void btnAddCard_Click(object sender, EventArgs e)
         {
-            AddNewCard();
+            AddCard();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -75,7 +116,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             }
         }
 
-        private async void btnCreate_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
             // Validation
             if (string.IsNullOrWhiteSpace(txtTitle.Text))
@@ -106,49 +147,67 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
 
             try
             {
-                btnCreate.Enabled = false;
-                btnCreate.Text = "Đang tạo...";
+                btnSave.Enabled = false;
+                btnSave.Text = "Đang lưu...";
 
-                // Create FlashcardSet
-                var flashcardSet = new FlashcardSet
+                // Update FlashcardSet
+                _currentFlashcardSet.Title = txtTitle.Text.Trim();
+                _currentFlashcardSet.Description = txtDescription.Text.Trim();
+                _currentFlashcardSet.Visibility = cboVisibility.SelectedItem?.ToString() ?? "Public";
+                _currentFlashcardSet.Language = txtLanguage.Text.Trim();
+
+                await _flashcardController.UpdateFlashcardSetAsync(_currentFlashcardSet);
+
+                // Process deletions
+                foreach (var id in _deletedFlashcardIds)
                 {
-                    OwnerId = AuthHelper.CurrentUser.UserId,
-                    Title = txtTitle.Text.Trim(),
-                    Description = txtDescription.Text.Trim(),
-                    Visibility = cboVisibility.SelectedItem?.ToString() ?? "Public",
-                    Language = txtLanguage.Text.Trim()
-                };
+                    await _flashcardController.DeleteFlashcardAsync(id);
+                }
 
-                // Prepare flashcards list
-                var flashcards = new List<Flashcard>();
+                // Process updates and additions
                 foreach (var card in flashcardCards)
                 {
                     if (!string.IsNullOrWhiteSpace(card.FrontText) && !string.IsNullOrWhiteSpace(card.BackText))
                     {
-                        var flashcard = new Flashcard
+                        if (card.FlashcardId.HasValue)
                         {
-                            FrontText = card.FrontText.Trim(),
-                            BackText = card.BackText.Trim(),
-                            Hint = card.HintText?.Trim()
-                        };
-                        flashcards.Add(flashcard);
+                            // Update existing
+                            var flashcard = new Flashcard
+                            {
+                                CardId = card.FlashcardId.Value,
+                                SetId = _flashcardSetId,
+                                FrontText = card.FrontText.Trim(),
+                                BackText = card.BackText.Trim(),
+                                Hint = card.HintText?.Trim()
+                            };
+                            await _flashcardController.UpdateFlashcardAsync(flashcard);
+                        }
+                        else
+                        {
+                            // Add new
+                            var flashcard = new Flashcard
+                            {
+                                SetId = _flashcardSetId,
+                                FrontText = card.FrontText.Trim(),
+                                BackText = card.BackText.Trim(),
+                                Hint = card.HintText?.Trim()
+                            };
+                            await _flashcardController.AddFlashcardToSetAsync(flashcard);
+                        }
                     }
                 }
 
-                // Use controller to create flashcard set
-                await _flashcardController.CreateFlashcardSetAsync(flashcardSet, flashcards);
-
-                MessageBox.Show("Tạo bộ flashcard thành công!", "Thành công",
+                MessageBox.Show("Cập nhật bộ flashcard thành công!", "Thành công",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 NavigateBack();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tạo flashcard: {ex.Message}", "Lỗi",
+                MessageBox.Show($"Lỗi khi cập nhật flashcard: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                btnCreate.Enabled = true;
-                btnCreate.Text = "✓ Tạo bộ Flashcard";
+                btnSave.Enabled = true;
+                btnSave.Text = "💾 Lưu thay đổi";
             }
         }
 
@@ -185,8 +244,8 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
         }
     }
 
-    // Individual Flashcard Card Control
-    public class FlashcardCardControl : Panel
+    // Individual Flashcard Card Control (Modified to support editing)
+    public class EditFlashcardCardControl : Panel
     {
         private TextBox txtFront;
         private TextBox txtBack;
@@ -195,18 +254,23 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
         private Label lblTitle;
         private Panel divider;
 
-        public event Action<FlashcardCardControl> OnDeleteClicked;
+        public event Action<EditFlashcardCardControl> OnDeleteClicked;
 
+        public int? FlashcardId { get; private set; }
         public string FrontText => txtFront.Text;
         public string BackText => txtBack.Text;
         public string HintText => txtHint.Text;
 
-        public FlashcardCardControl(int cardNumber)
+        public EditFlashcardCardControl(int cardNumber, Flashcard flashcard = null)
         {
-            InitializeComponent(cardNumber);
+            if (flashcard != null)
+            {
+                FlashcardId = flashcard.CardId;
+            }
+            InitializeComponent(cardNumber, flashcard);
         }
 
-        private void InitializeComponent(int cardNumber)
+        private void InitializeComponent(int cardNumber, Flashcard flashcard)
         {
             this.Size = new Size(850, 260);
             this.BackColor = Color.White;
@@ -268,7 +332,8 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
                 Font = new Font("Segoe UI", 10F),
                 PlaceholderText = "Nhập câu hỏi hoặc từ vựng",
                 BorderStyle = BorderStyle.FixedSingle,
-                BackColor = Color.FromArgb(250, 250, 250)
+                BackColor = Color.FromArgb(250, 250, 250),
+                Text = flashcard?.FrontText ?? ""
             };
             this.Controls.Add(txtFront);
 
@@ -292,7 +357,8 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
                 Font = new Font("Segoe UI", 10F),
                 PlaceholderText = "Nhập câu trả lời hoặc nghĩa",
                 BorderStyle = BorderStyle.FixedSingle,
-                BackColor = Color.FromArgb(250, 250, 250)
+                BackColor = Color.FromArgb(250, 250, 250),
+                Text = flashcard?.BackText ?? ""
             };
             this.Controls.Add(txtBack);
 
@@ -315,7 +381,8 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
                 Font = new Font("Segoe UI", 10F),
                 PlaceholderText = "Nhập gợi ý giúp ghi nhớ",
                 BorderStyle = BorderStyle.FixedSingle,
-                BackColor = Color.FromArgb(250, 250, 250)
+                BackColor = Color.FromArgb(250, 250, 250),
+                Text = flashcard?.Hint ?? ""
             };
             this.Controls.Add(txtHint);
         }
