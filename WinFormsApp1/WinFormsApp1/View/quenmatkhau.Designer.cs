@@ -19,6 +19,7 @@ namespace WinFormsApp1.View
         {
             groupBox1 = new GroupBox();
             pnlResetToken = new Panel();
+            btnConfirmReset = new Button();
             btnResetPassword = new Button();
             lblConfirmPasswordError = new Label();
             lblPasswordError = new Label();
@@ -52,102 +53,18 @@ namespace WinFormsApp1.View
             groupBox1.Controls.Add(lblEmail);
             groupBox1.Controls.Add(lblTitle);
             groupBox1.Controls.Add(lblSubtitle);
-            groupBox1.Location = new Point(150, 50);
+            groupBox1.FlatStyle = FlatStyle.Flat;
+            groupBox1.Location = new Point(188, 62);
+            groupBox1.Margin = new Padding(4);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(500, 620);
+            groupBox1.Padding = new Padding(4);
+            groupBox1.Size = new Size(625, 796);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
-            groupBox1.FlatStyle = FlatStyle.Flat;
-            // 
-            // lblTitle
-            // 
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
-            lblTitle.ForeColor = WinFormsApp1.Helpers.ColorPalette.ButtonPrimary;
-            lblTitle.Location = new Point(120, 30);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(260, 54);
-            lblTitle.TabIndex = 0;
-            lblTitle.Text = "Quên mật khẩu";
-            // 
-            // lblSubtitle
-            // 
-            lblSubtitle.AutoSize = true;
-            lblSubtitle.Font = new Font("Segoe UI", 10F);
-            lblSubtitle.ForeColor = Color.Gray;
-            lblSubtitle.Location = new Point(80, 90);
-            lblSubtitle.Name = "lblSubtitle";
-            lblSubtitle.Size = new Size(340, 23);
-            lblSubtitle.TabIndex = 1;
-            lblSubtitle.Text = "Nhập email để nhận mã đặt lại mật khẩu";
-            // 
-            // lblEmail
-            // 
-            lblEmail.AutoSize = true;
-            lblEmail.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblEmail.ForeColor = Color.FromArgb(64, 64, 64);
-            lblEmail.Location = new Point(50, 140);
-            lblEmail.Name = "lblEmail";
-            lblEmail.Size = new Size(54, 23);
-            lblEmail.TabIndex = 2;
-            lblEmail.Text = "Email";
-            // 
-            // txtEmail
-            // 
-            txtEmail.BorderStyle = BorderStyle.FixedSingle;
-            txtEmail.Font = new Font("Segoe UI", 11F);
-            txtEmail.Location = new Point(50, 170);
-            txtEmail.Name = "txtEmail";
-            txtEmail.Size = new Size(400, 32);
-            txtEmail.TabIndex = 3;
-            // 
-            // btnBackToLogin
-            // 
-            btnBackToLogin.BackColor = Color.Transparent;
-            btnBackToLogin.FlatStyle = FlatStyle.Flat;
-            btnBackToLogin.FlatAppearance.BorderSize = 1;
-            btnBackToLogin.FlatAppearance.BorderColor = WinFormsApp1.Helpers.ColorPalette.ButtonPrimary;
-            btnBackToLogin.Font = new Font("Segoe UI", 11F);
-            btnBackToLogin.ForeColor = WinFormsApp1.Helpers.ColorPalette.ButtonPrimary;
-            btnBackToLogin.Location = new Point(50, 550);
-            btnBackToLogin.Name = "btnBackToLogin";
-            btnBackToLogin.Size = new Size(190, 50);
-            btnBackToLogin.TabIndex = 4;
-            btnBackToLogin.Text = "Quay lại đăng nhập";
-            btnBackToLogin.UseVisualStyleBackColor = false;
-            btnBackToLogin.Cursor = Cursors.Hand;
-            btnBackToLogin.Click += btnBackToLogin_Click;
-            // 
-            // btnSendReset
-            // 
-            btnSendReset.BackColor = WinFormsApp1.Helpers.ColorPalette.ButtonSecondary;
-            btnSendReset.FlatStyle = FlatStyle.Flat;
-            btnSendReset.FlatAppearance.BorderSize = 0;
-            btnSendReset.FlatAppearance.MouseOverBackColor = WinFormsApp1.Helpers.ColorPalette.SecondaryDark;
-            btnSendReset.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            btnSendReset.ForeColor = Color.White;
-            btnSendReset.Location = new Point(260, 550);
-            btnSendReset.Name = "btnSendReset";
-            btnSendReset.Size = new Size(190, 50);
-            btnSendReset.TabIndex = 5;
-            btnSendReset.Text = "Gửi mã xác nhận";
-            btnSendReset.UseVisualStyleBackColor = false;
-            btnSendReset.Cursor = Cursors.Hand;
-            btnSendReset.Click += btnSendReset_Click;
-            // 
-            // lblTokenDisplay
-            // 
-            lblTokenDisplay.AutoSize = true;
-            lblTokenDisplay.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            lblTokenDisplay.ForeColor = WinFormsApp1.Helpers.ColorPalette.ButtonSecondary;
-            lblTokenDisplay.Location = new Point(50, 220);
-            lblTokenDisplay.Name = "lblTokenDisplay";
-            lblTokenDisplay.Size = new Size(0, 28);
-            lblTokenDisplay.TabIndex = 6;
-            lblTokenDisplay.Visible = false;
             // 
             // pnlResetToken
             // 
+            pnlResetToken.Controls.Add(btnConfirmReset);
             pnlResetToken.Controls.Add(btnResetPassword);
             pnlResetToken.Controls.Add(lblConfirmPasswordError);
             pnlResetToken.Controls.Add(lblPasswordError);
@@ -157,130 +74,252 @@ namespace WinFormsApp1.View
             pnlResetToken.Controls.Add(lblConfirmNewPassword);
             pnlResetToken.Controls.Add(lblNewPassword);
             pnlResetToken.Controls.Add(lblResetToken);
-            pnlResetToken.Location = new Point(50, 260);
+            pnlResetToken.Location = new Point(62, 257);
+            pnlResetToken.Margin = new Padding(4);
             pnlResetToken.Name = "pnlResetToken";
-            pnlResetToken.Size = new Size(400, 250);
+            pnlResetToken.Size = new Size(500, 432);
             pnlResetToken.TabIndex = 7;
             pnlResetToken.Visible = false;
             // 
-            // lblResetToken
+            // btnConfirmReset
             // 
-            lblResetToken.AutoSize = true;
-            lblResetToken.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblResetToken.ForeColor = Color.FromArgb(64, 64, 64);
-            lblResetToken.Location = new Point(0, 10);
-            lblResetToken.Name = "lblResetToken";
-            lblResetToken.Size = new Size(120, 23);
-            lblResetToken.TabIndex = 0;
-            lblResetToken.Text = "Mã xác nhận";
-            // 
-            // txtResetToken
-            // 
-            txtResetToken.BorderStyle = BorderStyle.FixedSingle;
-            txtResetToken.Font = new Font("Segoe UI", 11F);
-            txtResetToken.Location = new Point(0, 40);
-            txtResetToken.Name = "txtResetToken";
-            txtResetToken.Size = new Size(400, 32);
-            txtResetToken.TabIndex = 1;
-            // 
-            // lblNewPassword
-            // 
-            lblNewPassword.AutoSize = true;
-            lblNewPassword.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblNewPassword.ForeColor = Color.FromArgb(64, 64, 64);
-            lblNewPassword.Location = new Point(0, 90);
-            lblNewPassword.Name = "lblNewPassword";
-            lblNewPassword.Size = new Size(118, 23);
-            lblNewPassword.TabIndex = 2;
-            lblNewPassword.Text = "Mật khẩu mới";
-            // 
-            // txtNewPassword
-            // 
-            txtNewPassword.BorderStyle = BorderStyle.FixedSingle;
-            txtNewPassword.Font = new Font("Segoe UI", 11F);
-            txtNewPassword.Location = new Point(0, 120);
-            txtNewPassword.Name = "txtNewPassword";
-            txtNewPassword.UseSystemPasswordChar = true;
-            txtNewPassword.Size = new Size(400, 32);
-            txtNewPassword.TabIndex = 3;
-            // 
-            // lblConfirmNewPassword
-            // 
-            lblConfirmNewPassword.AutoSize = true;
-            lblConfirmNewPassword.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblConfirmNewPassword.ForeColor = Color.FromArgb(64, 64, 64);
-            lblConfirmNewPassword.Location = new Point(0, 170);
-            lblConfirmNewPassword.Name = "lblConfirmNewPassword";
-            lblConfirmNewPassword.Size = new Size(185, 23);
-            lblConfirmNewPassword.TabIndex = 4;
-            lblConfirmNewPassword.Text = "Xác nhận mật khẩu mới";
-            // 
-            // txtConfirmNewPassword
-            // 
-            txtConfirmNewPassword.BorderStyle = BorderStyle.FixedSingle;
-            txtConfirmNewPassword.Font = new Font("Segoe UI", 11F);
-            txtConfirmNewPassword.Location = new Point(0, 200);
-            txtConfirmNewPassword.Name = "txtConfirmNewPassword";
-            txtConfirmNewPassword.UseSystemPasswordChar = true;
-            txtConfirmNewPassword.Size = new Size(400, 32);
-            txtConfirmNewPassword.TabIndex = 5;
+            btnConfirmReset.BackColor = Color.FromArgb(40, 167, 69);
+            btnConfirmReset.Cursor = Cursors.Hand;
+            btnConfirmReset.FlatAppearance.BorderSize = 0;
+            btnConfirmReset.FlatStyle = FlatStyle.Flat;
+            btnConfirmReset.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnConfirmReset.ForeColor = Color.White;
+            btnConfirmReset.Location = new Point(62, 369);
+            btnConfirmReset.Name = "btnConfirmReset";
+            btnConfirmReset.Size = new Size(400, 45);
+            btnConfirmReset.TabIndex = 6;
+            btnConfirmReset.Text = "Xác nhận đổi mật khẩu";
+            btnConfirmReset.UseVisualStyleBackColor = false;
+            btnConfirmReset.Click += btnConfirmReset_Click;
             // 
             // btnResetPassword
             // 
-            btnResetPassword.BackColor = WinFormsApp1.Helpers.ColorPalette.ButtonPrimary;
-            btnResetPassword.FlatStyle = FlatStyle.Flat;
+            btnResetPassword.BackColor = Color.FromArgb(214, 188, 132);
+            btnResetPassword.Cursor = Cursors.Hand;
             btnResetPassword.FlatAppearance.BorderSize = 0;
+            btnResetPassword.FlatStyle = FlatStyle.Flat;
             btnResetPassword.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnResetPassword.ForeColor = Color.White;
-            btnResetPassword.Location = new Point(250, 250);
+            btnResetPassword.Location = new Point(312, 312);
+            btnResetPassword.Margin = new Padding(4);
             btnResetPassword.Name = "btnResetPassword";
-            btnResetPassword.Size = new Size(150, 40);
+            btnResetPassword.Size = new Size(188, 50);
             btnResetPassword.TabIndex = 6;
             btnResetPassword.Text = "Đặt lại mật khẩu";
             btnResetPassword.UseVisualStyleBackColor = false;
-            btnResetPassword.Cursor = Cursors.Hand;
             btnResetPassword.Click += btnResetPassword_Click;
-            // 
-            // lblEmailError
-            // 
-            lblEmailError.AutoSize = true;
-            lblEmailError.Font = new Font("Segoe UI", 9F);
-            lblEmailError.ForeColor = Color.Red;
-            lblEmailError.Location = new Point(50, 205);
-            lblEmailError.Name = "lblEmailError";
-            lblEmailError.Size = new Size(0, 20);
-            lblEmailError.TabIndex = 8;
-            // 
-            // lblPasswordError
-            // 
-            lblPasswordError.AutoSize = true;
-            lblPasswordError.Font = new Font("Segoe UI", 9F);
-            lblPasswordError.ForeColor = Color.Red;
-            lblPasswordError.Location = new Point(0, 155);
-            lblPasswordError.Name = "lblPasswordError";
-            lblPasswordError.Size = new Size(0, 20);
-            lblPasswordError.TabIndex = 7;
             // 
             // lblConfirmPasswordError
             // 
             lblConfirmPasswordError.AutoSize = true;
             lblConfirmPasswordError.Font = new Font("Segoe UI", 9F);
             lblConfirmPasswordError.ForeColor = Color.Red;
-            lblConfirmPasswordError.Location = new Point(0, 235);
+            lblConfirmPasswordError.Location = new Point(0, 294);
+            lblConfirmPasswordError.Margin = new Padding(4, 0, 4, 0);
             lblConfirmPasswordError.Name = "lblConfirmPasswordError";
-            lblConfirmPasswordError.Size = new Size(0, 20);
+            lblConfirmPasswordError.Size = new Size(0, 25);
             lblConfirmPasswordError.TabIndex = 8;
+            // 
+            // lblPasswordError
+            // 
+            lblPasswordError.AutoSize = true;
+            lblPasswordError.Font = new Font("Segoe UI", 9F);
+            lblPasswordError.ForeColor = Color.Red;
+            lblPasswordError.Location = new Point(0, 194);
+            lblPasswordError.Margin = new Padding(4, 0, 4, 0);
+            lblPasswordError.Name = "lblPasswordError";
+            lblPasswordError.Size = new Size(0, 25);
+            lblPasswordError.TabIndex = 7;
+            // 
+            // txtConfirmNewPassword
+            // 
+            txtConfirmNewPassword.BorderStyle = BorderStyle.FixedSingle;
+            txtConfirmNewPassword.Font = new Font("Segoe UI", 11F);
+            txtConfirmNewPassword.Location = new Point(0, 250);
+            txtConfirmNewPassword.Margin = new Padding(4);
+            txtConfirmNewPassword.Name = "txtConfirmNewPassword";
+            txtConfirmNewPassword.Size = new Size(500, 37);
+            txtConfirmNewPassword.TabIndex = 5;
+            txtConfirmNewPassword.UseSystemPasswordChar = true;
+            // 
+            // txtNewPassword
+            // 
+            txtNewPassword.BorderStyle = BorderStyle.FixedSingle;
+            txtNewPassword.Font = new Font("Segoe UI", 11F);
+            txtNewPassword.Location = new Point(0, 150);
+            txtNewPassword.Margin = new Padding(4);
+            txtNewPassword.Name = "txtNewPassword";
+            txtNewPassword.Size = new Size(500, 37);
+            txtNewPassword.TabIndex = 3;
+            txtNewPassword.UseSystemPasswordChar = true;
+            // 
+            // txtResetToken
+            // 
+            txtResetToken.BorderStyle = BorderStyle.FixedSingle;
+            txtResetToken.Font = new Font("Segoe UI", 11F);
+            txtResetToken.Location = new Point(0, 50);
+            txtResetToken.Margin = new Padding(4);
+            txtResetToken.Name = "txtResetToken";
+            txtResetToken.Size = new Size(500, 37);
+            txtResetToken.TabIndex = 1;
+            // 
+            // lblConfirmNewPassword
+            // 
+            lblConfirmNewPassword.AutoSize = true;
+            lblConfirmNewPassword.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblConfirmNewPassword.ForeColor = Color.FromArgb(64, 64, 64);
+            lblConfirmNewPassword.Location = new Point(0, 212);
+            lblConfirmNewPassword.Margin = new Padding(4, 0, 4, 0);
+            lblConfirmNewPassword.Name = "lblConfirmNewPassword";
+            lblConfirmNewPassword.Size = new Size(237, 28);
+            lblConfirmNewPassword.TabIndex = 4;
+            lblConfirmNewPassword.Text = "Xác nhận mật khẩu mới";
+            // 
+            // lblNewPassword
+            // 
+            lblNewPassword.AutoSize = true;
+            lblNewPassword.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblNewPassword.ForeColor = Color.FromArgb(64, 64, 64);
+            lblNewPassword.Location = new Point(0, 112);
+            lblNewPassword.Margin = new Padding(4, 0, 4, 0);
+            lblNewPassword.Name = "lblNewPassword";
+            lblNewPassword.Size = new Size(145, 28);
+            lblNewPassword.TabIndex = 2;
+            lblNewPassword.Text = "Mật khẩu mới";
+            // 
+            // lblResetToken
+            // 
+            lblResetToken.AutoSize = true;
+            lblResetToken.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblResetToken.ForeColor = Color.FromArgb(64, 64, 64);
+            lblResetToken.Location = new Point(0, 12);
+            lblResetToken.Margin = new Padding(4, 0, 4, 0);
+            lblResetToken.Name = "lblResetToken";
+            lblResetToken.Size = new Size(133, 28);
+            lblResetToken.TabIndex = 0;
+            lblResetToken.Text = "Mã xác nhận";
+            // 
+            // lblTokenDisplay
+            // 
+            lblTokenDisplay.AutoSize = true;
+            lblTokenDisplay.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblTokenDisplay.ForeColor = Color.FromArgb(132, 214, 147);
+            lblTokenDisplay.Location = new Point(62, 275);
+            lblTokenDisplay.Margin = new Padding(4, 0, 4, 0);
+            lblTokenDisplay.Name = "lblTokenDisplay";
+            lblTokenDisplay.Size = new Size(0, 32);
+            lblTokenDisplay.TabIndex = 6;
+            lblTokenDisplay.Visible = false;
+            // 
+            // lblEmailError
+            // 
+            lblEmailError.AutoSize = true;
+            lblEmailError.Font = new Font("Segoe UI", 9F);
+            lblEmailError.ForeColor = Color.Red;
+            lblEmailError.Location = new Point(62, 256);
+            lblEmailError.Margin = new Padding(4, 0, 4, 0);
+            lblEmailError.Name = "lblEmailError";
+            lblEmailError.Size = new Size(0, 25);
+            lblEmailError.TabIndex = 8;
+            // 
+            // btnSendReset
+            // 
+            btnSendReset.BackColor = Color.FromArgb(132, 214, 147);
+            btnSendReset.Cursor = Cursors.Hand;
+            btnSendReset.FlatAppearance.BorderSize = 0;
+            btnSendReset.FlatAppearance.MouseOverBackColor = Color.FromArgb(112, 194, 127);
+            btnSendReset.FlatStyle = FlatStyle.Flat;
+            btnSendReset.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnSendReset.ForeColor = Color.White;
+            btnSendReset.Location = new Point(320, 709);
+            btnSendReset.Margin = new Padding(4);
+            btnSendReset.Name = "btnSendReset";
+            btnSendReset.Size = new Size(238, 62);
+            btnSendReset.TabIndex = 5;
+            btnSendReset.Text = "Gửi mã xác nhận";
+            btnSendReset.UseVisualStyleBackColor = false;
+            btnSendReset.Click += btnSendReset_Click;
+            // 
+            // btnBackToLogin
+            // 
+            btnBackToLogin.BackColor = Color.Transparent;
+            btnBackToLogin.Cursor = Cursors.Hand;
+            btnBackToLogin.FlatAppearance.BorderColor = Color.FromArgb(214, 188, 132);
+            btnBackToLogin.FlatStyle = FlatStyle.Flat;
+            btnBackToLogin.Font = new Font("Segoe UI", 11F);
+            btnBackToLogin.ForeColor = Color.FromArgb(214, 188, 132);
+            btnBackToLogin.Location = new Point(62, 709);
+            btnBackToLogin.Margin = new Padding(4);
+            btnBackToLogin.Name = "btnBackToLogin";
+            btnBackToLogin.Size = new Size(238, 62);
+            btnBackToLogin.TabIndex = 4;
+            btnBackToLogin.Text = "Quay lại đăng nhập";
+            btnBackToLogin.UseVisualStyleBackColor = false;
+            btnBackToLogin.Click += btnBackToLogin_Click;
+            // 
+            // txtEmail
+            // 
+            txtEmail.BorderStyle = BorderStyle.FixedSingle;
+            txtEmail.Font = new Font("Segoe UI", 11F);
+            txtEmail.Location = new Point(62, 212);
+            txtEmail.Margin = new Padding(4);
+            txtEmail.Name = "txtEmail";
+            txtEmail.Size = new Size(500, 37);
+            txtEmail.TabIndex = 3;
+            txtEmail.TextChanged += txtEmail_TextChanged;
+            // 
+            // lblEmail
+            // 
+            lblEmail.AutoSize = true;
+            lblEmail.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblEmail.ForeColor = Color.FromArgb(64, 64, 64);
+            lblEmail.Location = new Point(62, 175);
+            lblEmail.Margin = new Padding(4, 0, 4, 0);
+            lblEmail.Name = "lblEmail";
+            lblEmail.Size = new Size(64, 28);
+            lblEmail.TabIndex = 2;
+            lblEmail.Text = "Email";
+            // 
+            // lblTitle
+            // 
+            lblTitle.AutoSize = true;
+            lblTitle.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
+            lblTitle.ForeColor = Color.FromArgb(214, 188, 132);
+            lblTitle.Location = new Point(150, 38);
+            lblTitle.Margin = new Padding(4, 0, 4, 0);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(374, 65);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "Quên mật khẩu";
+            // 
+            // lblSubtitle
+            // 
+            lblSubtitle.AutoSize = true;
+            lblSubtitle.Font = new Font("Segoe UI", 10F);
+            lblSubtitle.ForeColor = Color.Gray;
+            lblSubtitle.Location = new Point(100, 112);
+            lblSubtitle.Margin = new Padding(4, 0, 4, 0);
+            lblSubtitle.Name = "lblSubtitle";
+            lblSubtitle.Size = new Size(364, 28);
+            lblSubtitle.TabIndex = 1;
+            lblSubtitle.Text = "Nhập email để nhận mã đặt lại mật khẩu";
             // 
             // quenmatkhau
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(240, 242, 245);
-            ClientSize = new Size(800, 720);
+            ClientSize = new Size(1000, 900);
             Controls.Add(groupBox1);
+            Margin = new Padding(4);
             Name = "quenmatkhau";
-            Text = "Quên mật khẩu - YMEDU Learning Platform";
             StartPosition = FormStartPosition.CenterScreen;
+            Text = "Quên mật khẩu - YMEDU Learning Platform";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             pnlResetToken.ResumeLayout(false);
@@ -309,5 +348,6 @@ namespace WinFormsApp1.View
         private Label lblEmailError;
         private Label lblPasswordError;
         private Label lblConfirmPasswordError;
+        private System.Windows.Forms.Button btnConfirmReset;
     }
 }
