@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -84,11 +84,10 @@ namespace WinFormsApp1.View.User.Components
 
             int y = 0;
 
-            // Add 'T?t c? kh�a h?c' at top
             var allBtn = new Button
             {
-                Text = "T?t c? kh�a h?c",
-                Tag = new CourseCategory { CategoryId = 0, Name = "T?t c? kh�a h?c", Slug = string.Empty },
+                Text = "Tất cả khóa học",
+                Tag = new CourseCategory { CategoryId = 0, Name = "Tất cả khóa học", Slug = string.Empty },
                 Width = menuPanel.Width - 18,
                 Height = 40,
                 Location = new Point(4, y),
