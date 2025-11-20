@@ -38,7 +38,9 @@ namespace WinFormsApp1.View.User.Controls
                 using var context = new LearningPlatformContext();
                 _allFlashcardSets = await context.FlashcardSets
                     .Include(fs => fs.Flashcards)
-                    .Where(fs => fs.OwnerId == userId.Value && !fs.IsDeleted)
+                    .Where(fs => fs.OwnerId == userId.Value && 
+                                !fs.IsDeleted &&
+                                (fs.Visibility == "Public" || fs.Visibility == "Private"))
                     .OrderByDescending(fs => fs.CreatedAt)
                     .ToListAsync();
 
