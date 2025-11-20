@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.Entities;
@@ -15,12 +14,9 @@ namespace WinFormsApp1.View.User.Forms
     {
         private Course _course;
         private decimal _totalAmount;
-
-        // UI Components
         private Button btnPayWithQR;
         private Button btnCancel;
 
-        // Import DLL để bo tròn nút/panel
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse);
 
@@ -29,7 +25,7 @@ namespace WinFormsApp1.View.User.Forms
             _course = course;
             _totalAmount = course.Price;
             InitializeComponent();
-            SetupModernUI(); // Gọi hàm UI mới
+            SetupUI_1200x700();
         }
 
         private void InitializeComponent()
@@ -38,29 +34,25 @@ namespace WinFormsApp1.View.User.Forms
             // 
             // PaymentForm
             // 
-            this.ClientSize = new System.Drawing.Size(500, 450);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None; // Tắt viền mặc định của Windows để tự vẽ
+            this.ClientSize = new System.Drawing.Size(1200, 700); // Kích thước mới
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "PaymentForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Thanh toán";
-            this.Load += new System.EventHandler(this.PaymentForm_Load);
             this.ResumeLayout(false);
         }
 
-        private void SetupModernUI()
+        private void SetupUI_1200x700()
         {
-            // 1. Cấu hình Form chính
             this.BackColor = Color.White;
-            // Bo tròn Form
-            this.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 20, 20));
+            this.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 25, 25));
 
-            // Viền mỏng xung quanh form (để tách biệt với nền desktop)
             this.Paint += (s, e) =>
             {
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using (Pen p = new Pen(Color.LightGray, 1))
+                using (Pen p = new Pen(Color.LightGray, 2))
                 {
-                    e.Graphics.DrawPath(p, GetRoundedPath(this.ClientRectangle, 20));
+                    e.Graphics.DrawPath(p, GetRoundedPath(this.ClientRectangle, 25));
                 }
             };
 
@@ -68,15 +60,15 @@ namespace WinFormsApp1.View.User.Forms
             Panel pnlHeader = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 70,
-                BackColor = Color.FromArgb(88, 56, 255) // Màu tím thương hiệu
+                Height = 100, // Giảm nhẹ chiều cao header (120 -> 100)
+                BackColor = Color.FromArgb(88, 56, 255)
             };
 
             Label lblTitle = new Label
             {
                 Text = "XÁC NHẬN THANH TOÁN",
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                Font = new Font("Segoe UI", 22, FontStyle.Bold),
                 AutoSize = false,
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleCenter
@@ -84,123 +76,131 @@ namespace WinFormsApp1.View.User.Forms
             pnlHeader.Controls.Add(lblTitle);
             this.Controls.Add(pnlHeader);
 
-            // --- CONTENT PANEL (Chứa thông tin) ---
+            // --- CONTENT ---
             Panel pnlContent = new Panel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(30) // Lề rộng cho thoáng
+                BackColor = Color.White
             };
             this.Controls.Add(pnlContent);
-            pnlContent.BringToFront(); // Đảm bảo nằm dưới Header
+            pnlContent.BringToFront();
 
-            int yPos = 20;
+            int centerX = this.Width / 2;
+            int currentY = 40; // Bắt đầu nội dung cách header 40px
 
-            // 1. Thông tin khóa học (Card)
+            // 1. Panel Thông tin khóa học
+            int cardWidth = 900; // Mở rộng chiều ngang
+            int cardHeight = 180; // Giảm chiều cao card chút xíu
+
             Panel pnlCourseInfo = new Panel
             {
-                Location = new Point(30, yPos),
-                Size = new Size(440, 100),
-                BackColor = Color.FromArgb(248, 249, 250) // Màu xám rất nhạt
+                Location = new Point(centerX - (cardWidth / 2), currentY),
+                Size = new Size(cardWidth, cardHeight),
+                BackColor = Color.FromArgb(248, 249, 250)
             };
-            // Bo tròn panel thông tin
+
             pnlCourseInfo.Paint += (s, e) =>
             {
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using (Pen p = new Pen(Color.FromArgb(230, 230, 230), 1))
+                using (Pen p = new Pen(Color.FromArgb(220, 220, 220), 1))
+                using (var path = GetRoundedPath(pnlCourseInfo.ClientRectangle, 20))
                 {
-                    using (var path = GetRoundedPath(pnlCourseInfo.ClientRectangle, 15))
-                    {
-                        e.Graphics.FillPath(new SolidBrush(Color.FromArgb(248, 249, 250)), path);
-                        e.Graphics.DrawPath(p, path);
-                    }
+                    e.Graphics.FillPath(new SolidBrush(Color.FromArgb(248, 249, 250)), path);
+                    e.Graphics.DrawPath(p, path);
                 }
             };
 
-            // Tên khóa học
             Label lblCourseName = new Label
             {
-                Text = _course.Title,
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Text = _course.Title.ToUpper(),
+                Font = new Font("Segoe UI", 20, FontStyle.Bold),
                 ForeColor = Color.FromArgb(50, 50, 50),
-                Location = new Point(15, 15),
-                Size = new Size(410, 50), // Cho phép xuống dòng nếu tên dài
-                BackColor = Color.Transparent
+                Location = new Point(20, 25),
+                Size = new Size(cardWidth - 40, 80),
+                BackColor = Color.Transparent,
+                TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // Giảng viên
             Label lblInstructor = new Label
             {
                 Text = $"Giảng viên: {_course.Owner?.FullName ?? "N/A"}",
-                Font = new Font("Segoe UI", 10, FontStyle.Regular),
+                Font = new Font("Segoe UI", 14, FontStyle.Regular),
                 ForeColor = Color.Gray,
-                Location = new Point(15, 65),
-                AutoSize = true,
-                BackColor = Color.Transparent
+                Location = new Point(20, 110),
+                Size = new Size(cardWidth - 40, 30),
+                BackColor = Color.Transparent,
+                TextAlign = ContentAlignment.MiddleCenter
             };
 
             pnlCourseInfo.Controls.Add(lblCourseName);
             pnlCourseInfo.Controls.Add(lblInstructor);
             pnlContent.Controls.Add(pnlCourseInfo);
 
-            yPos += 120; // Dịch xuống
+            // Cập nhật Y: Khoảng cách từ Card xuống Giá tiền
+            currentY += cardHeight + 40;
 
-            // 2. Phần giá tiền (Nổi bật nhất)
+            // 2. Label "Tổng số tiền"
             Label lblTotalLabel = new Label
             {
-                Text = "Tổng thanh toán",
-                Font = new Font("Segoe UI", 10, FontStyle.Regular),
+                Text = "Tổng số tiền thanh toán",
+                Font = new Font("Segoe UI", 13, FontStyle.Regular),
                 ForeColor = Color.Gray,
-                Location = new Point(0, yPos),
-                Size = new Size(500, 20),
+                Location = new Point(0, currentY),
+                Size = new Size(this.Width, 30),
                 TextAlign = ContentAlignment.MiddleCenter
             };
             pnlContent.Controls.Add(lblTotalLabel);
 
-            yPos += 25;
+            currentY += 35;
 
+            // 3. GIÁ TIỀN (Sửa lỗi bị che)
             Label lblPrice = new Label
             {
-                Text = $"{_totalAmount:N0} đ",
-                Font = new Font("Segoe UI", 28, FontStyle.Bold),
-                ForeColor = Color.FromArgb(88, 56, 255), // Màu tím
-                Location = new Point(0, yPos),
-                Size = new Size(500, 50),
-                TextAlign = ContentAlignment.MiddleCenter
+                Text = $"{_totalAmount:N0} VNĐ",
+                Font = new Font("Segoe UI", 50, FontStyle.Bold),
+                ForeColor = Color.FromArgb(88, 56, 255),
+                Location = new Point(0, currentY),
+                Size = new Size(this.Width, 110), // TĂNG CHIỀU CAO LÊN 110px ĐỂ KHÔNG BỊ CẮT CHỮ
+                TextAlign = ContentAlignment.MiddleCenter,
+                // AutoSize = false (Đã set false mặc định khi set Size)
             };
             pnlContent.Controls.Add(lblPrice);
 
-            // --- FOOTER BUTTONS ---
+            currentY += 120; // Khoảng cách xuống nút
 
-            // Nút Thanh toán
-            btnPayWithQR = CreateStyledButton("Thanh toán qua VietQR", Color.FromArgb(40, 167, 69), Color.White);
-            btnPayWithQR.Location = new Point(50, 300);
-            btnPayWithQR.Size = new Size(400, 50);
+            // 4. Nút Thanh toán
+            int btnWidth = 450;
+            int btnHeight = 70;
+
+            btnPayWithQR = CreateStyledButton("THANH TOÁN QUA VIETQR", Color.FromArgb(40, 167, 69), Color.White);
+            btnPayWithQR.Font = new Font("Segoe UI", 15, FontStyle.Bold);
+            btnPayWithQR.Location = new Point(centerX - (btnWidth / 2), currentY);
+            btnPayWithQR.Size = new Size(btnWidth, btnHeight);
             btnPayWithQR.Click += BtnPayWithQR_Click;
-            this.Controls.Add(btnPayWithQR);
-            btnPayWithQR.BringToFront();
+            pnlContent.Controls.Add(btnPayWithQR);
 
-            // Nút Hủy
+            currentY += btnHeight + 20;
+
+            // 5. Nút Quay lại
             btnCancel = new Button
             {
                 Text = "Quay lại",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 ForeColor = Color.Gray,
                 BackColor = Color.Transparent,
                 FlatStyle = FlatStyle.Flat,
-                Location = new Point(150, 360),
-                Size = new Size(200, 30),
+                Location = new Point(centerX - 100, currentY),
+                Size = new Size(200, 35),
                 Cursor = Cursors.Hand
             };
             btnCancel.FlatAppearance.BorderSize = 0;
             btnCancel.FlatAppearance.MouseOverBackColor = Color.Transparent;
             btnCancel.FlatAppearance.MouseDownBackColor = Color.Transparent;
             btnCancel.Click += (s, e) => this.DialogResult = DialogResult.Cancel;
-            this.Controls.Add(btnCancel);
-            btnCancel.BringToFront();
+            pnlContent.Controls.Add(btnCancel);
         }
 
         // --- LOGIC XỬ LÝ (GIỮ NGUYÊN) ---
-
         private async void BtnPayWithQR_Click(object sender, EventArgs e)
         {
             try
@@ -212,19 +212,17 @@ namespace WinFormsApp1.View.User.Forms
                     return;
                 }
 
-                // Ẩn form hiện tại đi một chút hoặc hiện loading
                 this.Hide();
 
                 using (var qrDialog = new PaymentQRDialog(_course.Title, _totalAmount, _course.CourseId))
                 {
-                    var result = qrDialog.ShowDialog(); // Show dialog độc lập
+                    var result = qrDialog.ShowDialog();
 
                     if (result == DialogResult.OK)
                     {
-                        // Show lại form để hiển thị trạng thái xử lý (nếu cần)
                         this.Show();
                         btnPayWithQR.Enabled = false;
-                        btnPayWithQR.Text = "Đang xử lý giao dịch...";
+                        btnPayWithQR.Text = "Đang xử lý...";
                         btnPayWithQR.BackColor = Color.Gray;
 
                         try
@@ -235,27 +233,20 @@ namespace WinFormsApp1.View.User.Forms
                                 _totalAmount
                             );
 
-                            MessageBox.Show(
-                                "Thanh toán thành công! Bạn đã có thể truy cập khóa học.",
-                                "Thanh toán thành công",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information
-                            );
-
+                            MessageBox.Show("Thanh toán thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             this.DialogResult = DialogResult.OK;
                             this.Close();
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show($"Lỗi khi xử lý thanh toán: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             btnPayWithQR.Enabled = true;
-                            btnPayWithQR.Text = "Thanh toán qua VietQR";
+                            btnPayWithQR.Text = "THANH TOÁN QUA VIETQR";
                             btnPayWithQR.BackColor = Color.FromArgb(40, 167, 69);
                         }
                     }
                     else
                     {
-                        // Nếu hủy ở màn hình QR thì hiện lại form này
                         this.Show();
                     }
                 }
@@ -267,13 +258,7 @@ namespace WinFormsApp1.View.User.Forms
             }
         }
 
-        private void PaymentForm_Load(object sender, EventArgs e)
-        {
-            // Animation hoặc logic load nếu cần
-        }
-
-        // --- CÁC HÀM HỖ TRỢ UI ---
-
+        // --- HELPER UI ---
         private Button CreateStyledButton(string text, Color backColor, Color foreColor)
         {
             var btn = new Button
@@ -282,17 +267,14 @@ namespace WinFormsApp1.View.User.Forms
                 BackColor = backColor,
                 ForeColor = foreColor,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 Cursor = Cursors.Hand
             };
             btn.FlatAppearance.BorderSize = 0;
-            // Bo tròn nút
             btn.Paint += (s, e) =>
             {
                 Button b = (Button)s;
-                IntPtr ptr = CreateRoundRectRgn(0, 0, b.Width, b.Height, 15, 15);
+                IntPtr ptr = CreateRoundRectRgn(0, 0, b.Width, b.Height, 20, 20);
                 b.Region = Region.FromHrgn(ptr);
-                // DeleteObject(ptr); // Trong C# managed code thường ko cần thiết phải gọi delete object gdi thủ công cho region nhỏ
             };
             return btn;
         }

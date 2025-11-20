@@ -1,31 +1,31 @@
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using WinFormsApp1.Service.PaymentService;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Service.PaymentService;
 
 namespace WinFormsApp1.View.Dialogs
 {
     public class PaymentQRDialog : Form
     {
+        // Import DLL bo tròn
+        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        private static extern IntPtr CreateRoundRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse);
+
         private Label lblCourseTitle;
         private Label lblAmount;
         private PictureBox picQRCode;
-        private Label lblBankInfo;
-        private Label lblAccountName;
-        private Label lblAccountNumber;
-        private Label lblDescription;
+        private Label lblTimer;
         private Button btnConfirmPayment;
         private Button btnCancel;
-        private Label lblTimer;
         private System.Windows.Forms.Timer countdownTimer;
-        private Panel panelMain;
-        private Panel panelQR;
+        private int timeRemaining = 300; // 5 phút
 
         public decimal Amount { get; set; }
         public string CourseTitle { get; set; }
         public int CourseId { get; set; }
-        public DialogResult PaymentResult { get; set; }
 
         public PaymentQRDialog(string courseTitle, decimal amount, int courseId)
         {
@@ -34,215 +34,202 @@ namespace WinFormsApp1.View.Dialogs
             CourseId = courseId;
             InitializeComponent();
             SetupUI();
+            GenerateQRCode();
+            StartTimer();
         }
 
         private void InitializeComponent()
         {
-            this.Text = "Thanh toán bằng VietQR";
-            this.Size = new Size(500, 700);
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.BackColor = Color.White;
-            this.Font = new Font("Segoe UI", 9);
-
-            // Setup countdown timer
-            countdownTimer = new System.Windows.Forms.Timer();
-            countdownTimer.Interval = 1000;
-            countdownTimer.Tick += CountdownTimer_Tick;
+            SuspendLayout();
+            // 
+            // PaymentQRDialog
+            // 
+            ClientSize = new Size(815, 1000);
+            FormBorderStyle = FormBorderStyle.None;
+            Name = "PaymentQRDialog";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Thanh toán VietQR";
+            ResumeLayout(false);
         }
 
         private void SetupUI()
         {
-            // Main panel
-            panelMain = new Panel
+            this.BackColor = Color.White;
+            this.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 25, 25));
+
+            // Header
+            Panel pnlHeader = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 110,
+                BackColor = Color.FromArgb(88, 56, 255)
+            };
+
+            Label lblTitle = new Label
+            {
+                Text = "QUÉT MÃ QR ĐỂ THANH TOÁN",
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 22, FontStyle.Bold),
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            pnlHeader.Controls.Add(lblTitle);
+            this.Controls.Add(pnlHeader);
+
+            // Footer
+            Panel pnlFooter = new Panel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 160,
+                BackColor = Color.White,
+                Padding = new Padding(0, 15, 0, 0)
+            };
+            this.Controls.Add(pnlFooter);
+
+            int centerX = this.Width / 2;
+
+            // Confirm button
+            btnConfirmPayment = CreateStyledButton("ĐÃ THANH TOÁN",
+                Color.FromArgb(40, 167, 69), Color.White);
+            btnConfirmPayment.Size = new Size(380, 60);
+            btnConfirmPayment.Location = new Point(centerX - 190, 10);
+            btnConfirmPayment.Click += BtnConfirmPayment_Click;
+            pnlFooter.Controls.Add(btnConfirmPayment);
+
+            // Cancel button
+            btnCancel = new Button
+            {
+                Text = "Hủy bỏ",
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                ForeColor = Color.DimGray,
+                BackColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Size = new Size(150, 30),
+                Location = new Point(centerX - 75, 80),
+                Cursor = Cursors.Hand
+            };
+            btnCancel.FlatAppearance.BorderSize = 0;
+            btnCancel.Click += (s, e) => this.DialogResult = DialogResult.Cancel;
+            pnlFooter.Controls.Add(btnCancel);
+
+            // Body panel
+            Panel pnlContent = new Panel
             {
                 Dock = DockStyle.Fill,
                 Padding = new Padding(20),
-                BackColor = Color.White
+                AutoScroll = true
             };
-            this.Controls.Add(panelMain);
+            this.Controls.Add(pnlContent);
+            pnlContent.BringToFront();
 
-            int yPos = 0;
-
-            // Title
-            var lblTitle = new Label
-            {
-                Text = "Quét mã QR để thanh toán",
-                Location = new Point(0, yPos),
-                Size = new Size(440, 30),
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                ForeColor = ColorPalette.TextPrimary,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            panelMain.Controls.Add(lblTitle);
-            yPos += 40;
+            // ===== FIXED: đẩy xuống tránh che Header =====
+            int currentY = 80;
 
             // Timer
             lblTimer = new Label
             {
-                Text = "Hết hạn trong: 5:00",
-                Location = new Point(0, yPos),
-                Size = new Size(440, 25),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Text = "Hết hạn trong: 05:00",
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
                 ForeColor = Color.Red,
-                TextAlign = ContentAlignment.MiddleCenter
+                Size = new Size(pnlContent.Width - 40, 35),
+                Location = new Point(20, currentY),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
-            panelMain.Controls.Add(lblTimer);
-            yPos += 35;
+            pnlContent.Controls.Add(lblTimer);
 
-            // Course title
+            currentY += 50;
+
+            // Course Title
             lblCourseTitle = new Label
             {
                 Text = CourseTitle,
-                Location = new Point(0, yPos),
-                Size = new Size(440, 40),
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                ForeColor = ColorPalette.TextPrimary,
-                TextAlign = ContentAlignment.MiddleCenter
+                Font = new Font("Segoe UI", 18, FontStyle.Bold),
+                ForeColor = Color.FromArgb(64, 64, 64),
+                Size = new Size(pnlContent.Width - 40, 45),
+                Location = new Point(20, currentY),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
-            panelMain.Controls.Add(lblCourseTitle);
-            yPos += 50;
+            pnlContent.Controls.Add(lblCourseTitle);
+
+            currentY += 60;
 
             // Amount
             lblAmount = new Label
             {
                 Text = $"Số tiền: {Amount:N0} VNĐ",
-                Location = new Point(0, yPos),
-                Size = new Size(440, 30),
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Font = new Font("Segoe UI", 32, FontStyle.Bold),
                 ForeColor = Color.FromArgb(88, 56, 255),
-                TextAlign = ContentAlignment.MiddleCenter
+                Size = new Size(pnlContent.Width - 40, 70),
+                Location = new Point(20, currentY),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
-            panelMain.Controls.Add(lblAmount);
-            yPos += 40;
+            pnlContent.Controls.Add(lblAmount);
 
-            // QR Code panel
-            panelQR = new Panel
+            currentY += 90;
+
+            // ===== FIXED: Căn giữa QR theo panel content =====
+            int qrSize = 340;
+            Panel pnlQRBorder = new Panel
             {
-                Location = new Point(70, yPos),
-                Size = new Size(300, 300),
+                Size = new Size(qrSize + 2, qrSize + 2),
+                Location = new Point((pnlContent.Width - qrSize) / 2 - 10, currentY),
+                BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle,
-                BackColor = Color.White
+                Anchor = AnchorStyles.Top
             };
-            panelMain.Controls.Add(panelQR);
 
-            // QR Code
             picQRCode = new PictureBox
             {
                 Dock = DockStyle.Fill,
-                SizeMode = PictureBoxSizeMode.Zoom,
-                BackColor = Color.White
+                SizeMode = PictureBoxSizeMode.Zoom
             };
-            panelQR.Controls.Add(picQRCode);
-            yPos += 320;
 
-            // Bank info section
-            var lblBankTitle = new Label
+            pnlQRBorder.Controls.Add(picQRCode);
+            pnlContent.Controls.Add(pnlQRBorder);
+
+            currentY += qrSize + 40;
+
+            // Bank info
+            Label lblBankInfo = new Label
             {
-                Text = "Thông tin tài khoản:",
-                Location = new Point(0, yPos),
-                Size = new Size(440, 25),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                ForeColor = Color.Gray,
-                TextAlign = ContentAlignment.MiddleLeft
+                Text = $"Ngân hàng: {VietQRConfig.BankName}\nChủ TK: {VietQRConfig.AccountName}\nSTK: {VietQRConfig.AccountNumber}",
+                Font = new Font("Segoe UI", 15, FontStyle.Regular),
+                ForeColor = Color.DimGray,
+                Size = new Size(pnlContent.Width - 40, 100),
+                Location = new Point(20, currentY),
+                TextAlign = ContentAlignment.TopCenter,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
-            panelMain.Controls.Add(lblBankTitle);
-            yPos += 30;
+            pnlContent.Controls.Add(lblBankInfo);
+        }
 
-            // Bank name
-            var lblBank = new Label
+
+        private void StartTimer()
+        {
+            countdownTimer = new System.Windows.Forms.Timer();
+            countdownTimer.Interval = 1000;
+            countdownTimer.Tick += (s, e) =>
             {
-                Text = $"Ngân hàng: {VietQRConfig.BankName}",
-                Location = new Point(0, yPos),
-                Size = new Size(440, 20),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = Color.Gray
+                timeRemaining--;
+                int minutes = timeRemaining / 60;
+                int seconds = timeRemaining % 60;
+                lblTimer.Text = $"Hết hạn trong: {minutes:D2}:{seconds:D2}";
+
+                if (timeRemaining <= 60) lblTimer.ForeColor = Color.Red;
+                else lblTimer.ForeColor = Color.Black;
+
+                if (timeRemaining <= 0)
+                {
+                    countdownTimer.Stop();
+                    MessageBox.Show("Hết thời gian thanh toán!", "Thông báo");
+                    this.DialogResult = DialogResult.Abort;
+                    this.Close();
+                }
             };
-            panelMain.Controls.Add(lblBank);
-            yPos += 25;
-
-            // Account name
-            lblAccountName = new Label
-            {
-                Text = $"Chủ tài khoản: {VietQRConfig.AccountName}",
-                Location = new Point(0, yPos),
-                Size = new Size(440, 20),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = Color.Gray
-            };
-            panelMain.Controls.Add(lblAccountName);
-            yPos += 25;
-
-            // Account number
-            lblAccountNumber = new Label
-            {
-                Text = $"Số tài khoản: {VietQRConfig.AccountNumber}",
-                Location = new Point(0, yPos),
-                Size = new Size(440, 20),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = Color.Gray
-            };
-            panelMain.Controls.Add(lblAccountNumber);
-            yPos += 25;
-
-            // Description
-            lblDescription = new Label
-            {
-                Text = $"Nội dung: Thanh toan khoa hoc {CourseId}",
-                Location = new Point(0, yPos),
-                Size = new Size(440, 20),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = Color.Gray
-            };
-            panelMain.Controls.Add(lblDescription);
-            yPos += 40;
-
-            // Buttons panel
-            var panelButtons = new Panel
-            {
-                Location = new Point(0, yPos),
-                Size = new Size(440, 50)
-            };
-            panelMain.Controls.Add(panelButtons);
-
-            // Confirm button
-            btnConfirmPayment = new Button
-            {
-                Text = "Đã thanh toán",
-                Location = new Point(0, 0),
-                Size = new Size(210, 40),
-                BackColor = Color.FromArgb(88, 56, 255),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Cursor = Cursors.Hand
-            };
-            btnConfirmPayment.FlatAppearance.BorderSize = 0;
-            btnConfirmPayment.Click += BtnConfirmPayment_Click;
-            panelButtons.Controls.Add(btnConfirmPayment);
-
-            // Cancel button
-            btnCancel = new Button
-            {
-                Text = "Hủy",
-                Location = new Point(230, 0),
-                Size = new Size(210, 40),
-                BackColor = Color.LightGray,
-                ForeColor = Color.Black,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Cursor = Cursors.Hand
-            };
-            btnCancel.FlatAppearance.BorderSize = 0;
-            btnCancel.Click += (s, e) => this.DialogResult = DialogResult.Cancel;
-            panelButtons.Controls.Add(btnCancel);
-
-            // Generate QR code
-            GenerateQRCode();
-
-            // Start countdown timer (5 minutes)
             countdownTimer.Start();
         }
 
@@ -253,65 +240,56 @@ namespace WinFormsApp1.View.Dialogs
                 var qrImage = VietQRService.GeneratePaymentQRCode(Amount, CourseTitle, CourseId);
                 picQRCode.Image = qrImage;
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show($"Lỗi khi tạo mã QR: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                // Show fallback info
-                var lblError = new Label
-                {
-                    Text = "Không thể tạo mã QR\nVui lòng chuyển khoản thủ công",
-                    Dock = DockStyle.Fill,
-                    TextAlign = ContentAlignment.MiddleCenter,
-                    ForeColor = Color.Red,
-                    Font = new Font("Segoe UI", 10)
-                };
-                panelQR.Controls.Add(lblError);
-            }
-        }
-
-        private int timeRemaining = 300; // 5 minutes
-
-        private void CountdownTimer_Tick(object sender, EventArgs e)
-        {
-            timeRemaining--;
-
-            int minutes = timeRemaining / 60;
-            int seconds = timeRemaining % 60;
-            lblTimer.Text = $"Hết hạn trong: {minutes}:{seconds:D2}";
-
-            if (timeRemaining <= 60)
-                lblTimer.ForeColor = Color.Red;
-
-            if (timeRemaining <= 0)
-            {
-                countdownTimer.Stop();
-                MessageBox.Show("Thời gian thanh toán hết hạn. Vui lòng thử lại.", "Hết hạn", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.DialogResult = DialogResult.Abort;
-                this.Close();
+                Label lblErr = new Label { Text = "Lỗi tạo QR", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter };
+                picQRCode.Controls.Add(lblErr);
             }
         }
 
         private void BtnConfirmPayment_Click(object sender, EventArgs e)
         {
-            countdownTimer.Stop();
-
-            var result = MessageBox.Show(
-                "Bạn đã thanh toán thành công chưa?",
-                "Xác nhận thanh toán",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
-
+            var result = MessageBox.Show("Bạn đã chuyển khoản thành công chưa?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
-            else
+        }
+
+        // --- HELPER UI ---
+        private Button CreateStyledButton(string text, Color backColor, Color foreColor)
+        {
+            var btn = new Button
             {
-                countdownTimer.Start();
-            }
+                Text = text,
+                BackColor = backColor,
+                ForeColor = foreColor,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 16, FontStyle.Bold), // Font to hơn
+                Cursor = Cursors.Hand
+            };
+            btn.FlatAppearance.BorderSize = 0;
+            btn.Paint += (s, e) =>
+            {
+                Button b = (Button)s;
+                IntPtr ptr = CreateRoundRectRgn(0, 0, b.Width, b.Height, 30, 30); // Bo tròn nhiều hơn
+                b.Region = Region.FromHrgn(ptr);
+            };
+            return btn;
+        }
+
+        private GraphicsPath GetRoundedPath(Rectangle rect, int radius)
+        {
+            GraphicsPath path = new GraphicsPath();
+            float curveSize = radius * 2F;
+            path.StartFigure();
+            path.AddArc(rect.X, rect.Y, curveSize, curveSize, 180, 90);
+            path.AddArc(rect.Right - curveSize, rect.Y, curveSize, curveSize, 270, 90);
+            path.AddArc(rect.Right - curveSize, rect.Bottom - curveSize, curveSize, curveSize, 0, 90);
+            path.AddArc(rect.X, rect.Bottom - curveSize, curveSize, curveSize, 90, 90);
+            path.CloseFigure();
+            return path;
         }
 
         protected override void Dispose(bool disposing)
