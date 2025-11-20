@@ -19,6 +19,9 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			this.BorderStyle = BorderStyle.FixedSingle;
 			InitializeComponent();
 
+			// disable internal scrolling — we'll expand the panel instead
+			pnlFlashcards.AutoScroll = false;
+
 			// Add delete button
 			var btnDelete = new Button
 			{
@@ -54,12 +57,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 		private void AddFlashcardItem(string front = "", string back = "", string hint = "")
 		{
 			var item = new FlashcardItemControl(front, back, hint);
-			item.Width = pnlFlashcards.Width - SystemInformation.VerticalScrollBarWidth - 4;
+			item.Width = pnlFlashcards.ClientSize.Width; // fit width
 			item.Location = new Point(0, _items.Count * (item.Height + 6));
 			item.DeleteRequested += (o) => RemoveFlashcardItem(item);
 			pnlFlashcards.Controls.Add(item);
 			_items.Add(item);
 			RearrangeItems();
+			AdjustContainerSize();
 		}
 
 		private void RemoveFlashcardItem(FlashcardItemControl item)
@@ -67,6 +71,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			pnlFlashcards.Controls.Remove(item);
 			_items.Remove(item);
 			RearrangeItems();
+			AdjustContainerSize();
 		}
 
 		private void RearrangeItems()
@@ -75,7 +80,33 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			{
 				var item = _items[i];
 				item.Location = new Point(0, i * (item.Height + 6));
+				// set numbered title
+				item.SetIndex(i + 1);
+				// ensure width matches container
+				item.Width = pnlFlashcards.ClientSize.Width;
 			}
+		}
+
+		private void AdjustContainerSize()
+		{
+			// calculate required height to show all items without scroll
+			int total = 0;
+			foreach (var it in _items)
+			{
+				total += it.Height + 6;
+			}
+			// add a little padding
+			total += 10;
+
+			// set panel height to required size but not less than a minimum
+			int minHeight = 120;
+			pnlFlashcards.Height = Math.Max(minHeight, total);
+
+			// expand this control to fit new panel height plus other elements (btnAddFlashcard etc.)
+			int desired = pnlFlashcards.Location.Y + pnlFlashcards.Height + btnAddFlashcard.Height + 20;
+			if (this.Height < desired) this.Height = desired;
+			// also adjust parent container layout if necessary (if parent is a FlowLayoutPanel, call PerformLayout)
+			this.Parent?.PerformLayout();
 		}
 
 		public void LoadFromViewModel(LessonContentBuilderViewModel vm)
@@ -96,6 +127,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			}
 
 			if (_items.Count == 0) AddFlashcardItem();
+			else AdjustContainerSize();
 		}
 
 		public LessonContentBuilderViewModel SaveToViewModel()

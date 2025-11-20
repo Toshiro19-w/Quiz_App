@@ -12,6 +12,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		private CourseBuilderViewModel? _vm;
 		private int _currentChapterIndex = -1;
 		private int _currentLessonIndex = -1;
+		private int _previousComboIndex = -1;
 
 		public Step3_ContentControl()
 		{
@@ -37,6 +38,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			flpContents.Controls.Clear();
 			_currentChapterIndex = -1;
 			_currentLessonIndex = -1;
+			_previousComboIndex = -1;
 
 			if (vm?.Chapters == null || vm.Chapters.Count == 0)
 			{
@@ -79,7 +81,11 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		// ============================================================
 		public void SaveToViewModel(CourseBuilderViewModel vm)
 		{
-			SaveCurrentLesson();
+			// Attempt to save current lesson; if validation fails, abort silently so user can fix inline errors
+			if (!SaveCurrentLesson())
+			{
+				return;
+			}
 		}
 
 		// ============================================================
@@ -88,9 +94,25 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		private void ChangeSelectedLesson()
 		{
 			// Only save if we have a valid current lesson
+			// Save old lesson BEFORE switching; if save fails, revert selection
+			int newComboIndex = cmbLessonSelector.SelectedIndex;
+
 			if (_currentChapterIndex >= 0 && _currentLessonIndex >= 0)
 			{
-				SaveCurrentLesson();   // save old lesson BEFORE switching
+				if (!SaveCurrentLesson())
+				{
+					// revert selection to previous valid index
+					if (_previousComboIndex >= 0 && _previousComboIndex < cmbLessonSelector.Items.Count)
+					{
+						cmbLessonSelector.SelectedIndex = _previousComboIndex;
+					}
+					else
+					{
+						// no previous, just set to -1
+						cmbLessonSelector.SelectedIndex = -1;
+					}
+					return;
+				}
 			}
 
 			if (cmbLessonSelector.SelectedItem is not ComboItem item)
@@ -98,6 +120,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				return;
 			}
 
+			_previousComboIndex = newComboIndex;
 			_currentChapterIndex = item.ChapterIndex;
 			_currentLessonIndex = item.LessonIndex;
 
@@ -107,10 +130,10 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		// ============================================================
 		// LƯU TẤT CẢ CONTENTS CỦA BÀI HIỆN TẠI
 		// ============================================================
-		private void SaveCurrentLesson()
+		private bool SaveCurrentLesson()
 		{
-			if (_vm == null) return;
-			if (_currentChapterIndex < 0 || _currentLessonIndex < 0) return;
+			if (_vm == null) return true;
+			if (_currentChapterIndex < 0 || _currentLessonIndex < 0) return true;
 
 			var chapter = _vm.Chapters[_currentChapterIndex];
 			var lesson = chapter.Lessons[_currentLessonIndex];
@@ -126,7 +149,18 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				{
 					if (c is IContentControl ic)
 					{
-						var saved = ic.SaveToViewModel();
+						LessonContentBuilderViewModel saved;
+						try
+						{
+							saved = ic.SaveToViewModel();
+						}
+						catch (InvalidOperationException ex)
+						{
+							// validation failed in child control; rely on child to show inline label
+							Debug.WriteLine($"[Step3] Validation failed: {ex.Message}");
+							return false;
+						}
+						
 						Debug.WriteLine($"[Step3] Saved content: Type={saved.ContentType}, Title='{saved.Title}', Questions={saved.Questions?.Count ?? 0}");
 
 						// If control.Tag holds original contentVm, preserve identifiers
@@ -152,6 +186,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				lesson.Contents.Clear();
 				lesson.Contents.AddRange(savedList);
 			}
+
+			return true;
 		}
 
 		// ============================================================
