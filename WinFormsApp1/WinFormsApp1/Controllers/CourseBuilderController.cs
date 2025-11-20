@@ -294,68 +294,94 @@ namespace WinFormsApp1.Controllers
                                 }
                             }
 
-                            if (string.Equals(c.ContentType, "Test", StringComparison.OrdinalIgnoreCase) && !c.RefId.HasValue)
+                            if (string.Equals(c.ContentType, "Test", StringComparison.OrdinalIgnoreCase))
                             {
-                                if (!string.IsNullOrWhiteSpace(c.TestTitle) || c.Questions != null && c.Questions.Count > 0)
+                                Test? test = null;
+                                if (c.RefId.HasValue)
                                 {
-                                    // compute max score from provided questions (if any)
-                                    decimal totalPoints = 0;
-                                    if (c.Questions != null && c.Questions.Count > 0)
+                                    test = await context.Tests
+                                        .Include(t => t.Questions)
+                                            .ThenInclude(q => q.QuestionOptions)
+                                        .FirstOrDefaultAsync(t => t.TestId == c.RefId.Value);
+                                    
+                                    if (test != null)
                                     {
-                                        totalPoints = c.Questions.Sum(q => q.Points);
+                                        Debug.WriteLine($"[Controller] Updating Test Id={test.TestId}. Questions count: {c.Questions?.Count ?? 0}");
+                                        
+                                        foreach (var q in test.Questions.ToList())
+                                        {
+                                            context.QuestionOptions.RemoveRange(q.QuestionOptions);
+                                            context.Questions.Remove(q);
+                                        }
+                                        await context.SaveChangesAsync();
+                                        
+                                        test.Title = string.IsNullOrWhiteSpace(c.TestTitle) ? c.Title ?? "Untitled Test" : c.TestTitle;
+                                        test.Description = c.TestDesc;
                                     }
-
-                                    var test = new Test
+                                    else
+                                    {
+                                        c.RefId = null;
+                                    }
+                                }
+                                
+                                if (test == null)
+                                {
+                                    Debug.WriteLine($"[Controller] Creating Test for lesson {lesson.LessonId}. Questions count: {c.Questions?.Count ?? 0}");
+                                    
+                                    test = new Test
                                     {
                                         OwnerId = course.OwnerId,
                                         Title = string.IsNullOrWhiteSpace(c.TestTitle) ? c.Title ?? "Untitled Test" : c.TestTitle,
                                         Description = c.TestDesc,
                                         Visibility = "Course",
-                                        GradingMode = "Auto", // required non-nullable DB field
-                                        MaxScore = totalPoints == 0 ? null : (decimal?)totalPoints,
+                                        GradingMode = "Auto",
                                         CreatedAt = DateTime.Now
                                     };
                                     context.Tests.Add(test);
                                     await context.SaveChangesAsync();
-
-                                    if (c.Questions != null)
+                                    c.RefId = test.TestId;
+                                }
+                                
+                                decimal totalPoints = 0;
+                                if (c.Questions != null && c.Questions.Count > 0)
+                                {
+                                    int qIdx = 0;
+                                    foreach (var q in c.Questions)
                                     {
-                                        int qIdx = 0;
-                                        foreach (var q in c.Questions)
+                                        var question = new Question
                                         {
-                                            var question = new Question
-                                            {
-                                                TestId = test.TestId,
-                                                Type = q.Type ?? "MCQ_Single",
-                                                StemText = q.StemText ?? string.Empty,
-                                                Points = q.Points == 0 ? 1 : q.Points,
-                                                OrderIndex = qIdx++
-                                            };
-                                            context.Questions.Add(question);
-                                            await context.SaveChangesAsync();
+                                            TestId = test.TestId,
+                                            Type = q.Type ?? "MCQ_Single",
+                                            StemText = q.StemText ?? string.Empty,
+                                            Points = q.Points == 0 ? 1 : q.Points,
+                                            OrderIndex = qIdx++
+                                        };
+                                        context.Questions.Add(question);
+                                        await context.SaveChangesAsync();
+                                        totalPoints += question.Points;
 
-                                            if (q.Options != null)
+                                        if (q.Options != null)
+                                        {
+                                            int oIdx = 0;
+                                            foreach (var opt in q.Options)
                                             {
-                                                int oIdx = 0;
-                                                foreach (var opt in q.Options)
+                                                var option = new QuestionOption
                                                 {
-                                                    var option = new QuestionOption
-                                                    {
-                                                        QuestionId = question.QuestionId,
-                                                        OptionText = opt.OptionText ?? string.Empty,
-                                                        IsCorrect = opt.IsCorrect,
-                                                        OrderIndex = oIdx++
-                                                    };
-                                                    context.QuestionOptions.Add(option);
-                                                }
-                                                await context.SaveChangesAsync();
+                                                    QuestionId = question.QuestionId,
+                                                    OptionText = opt.OptionText ?? string.Empty,
+                                                    IsCorrect = opt.IsCorrect,
+                                                    OrderIndex = oIdx++
+                                                };
+                                                context.QuestionOptions.Add(option);
                                             }
+                                            await context.SaveChangesAsync();
                                         }
                                     }
-
-                                    c.RefId = test.TestId;
-                                    Debug.WriteLine($"SaveCourseAsync: Created Test Id={test.TestId} for lesson {lesson.LessonId}");
                                 }
+                                
+                                test.MaxScore = totalPoints == 0 ? null : (decimal?)totalPoints;
+                                await context.SaveChangesAsync();
+                                Debug.WriteLine($"[Controller] Test Id={test.TestId} saved with {c.Questions?.Count ?? 0} questions");
                             }
 
                             // Ensure RefId is set before creating LessonContent

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using WinFormsApp1.ViewModels;
@@ -111,6 +112,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 
         public LessonContentBuilderViewModel SaveToViewModel()
         {
+            Debug.WriteLine($"[ContentTestControl] SaveToViewModel called. Questions count: {_questions.Count}");
+            
             var vm = new LessonContentBuilderViewModel
             {
                 ContentId = _contentId,
@@ -124,6 +127,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
                 Questions = new List<TestQuestionBuilderViewModel>()
             };
 
+            Debug.WriteLine($"[ContentTestControl] Title: '{vm.Title}', TestTitle: '{vm.TestTitle}', RefId: {vm.RefId}");
+
             for (int i = 0; i < _questions.Count; i++)
             {
                 var q = _questions[i];
@@ -136,6 +141,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
                     Options = new List<TestQuestionOptionBuilderViewModel>()
                 };
 
+                Debug.WriteLine($"[ContentTestControl] Question {i+1}: Type={tq.Type}, StemText='{tq.StemText}', Points={tq.Points}");
+
                 int optIndex = 1;
                 foreach (var a in q.GetAnswers())
                 {
@@ -145,11 +152,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
                         IsCorrect = a.IsCorrect,
                         OrderIndex = optIndex++
                     });
+                    Debug.WriteLine($"[ContentTestControl]   Option {optIndex-1}: Text='{a.AnswerText}', IsCorrect={a.IsCorrect}");
                 }
 
                 vm.Questions.Add(tq);
             }
 
+            Debug.WriteLine($"[ContentTestControl] Final VM has {vm.Questions.Count} questions");
             return vm;
         }
     }
