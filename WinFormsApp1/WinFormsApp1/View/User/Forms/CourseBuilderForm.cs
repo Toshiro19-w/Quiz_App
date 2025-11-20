@@ -114,7 +114,14 @@ namespace WinFormsApp1.View.User.Forms
         {
             if (stepIndex != currentStep) return;
             var cur = steps[currentStep] as IStepControl;
-            cur?.SaveToViewModel(vm);
+            try
+            {
+                cur?.SaveToViewModel(vm);
+            }
+            catch (InvalidOperationException)
+            {
+                return;
+            }
             var ok = await ValidateStepAsync(currentStep);
             if (!ok) return;
             var next = currentStep + 1;
@@ -125,7 +132,14 @@ namespace WinFormsApp1.View.User.Forms
         {
             if (stepIndex != currentStep) return;
             var cur = steps[currentStep] as IStepControl;
-            cur?.SaveToViewModel(vm);
+            try
+            {
+                cur?.SaveToViewModel(vm);
+            }
+            catch (InvalidOperationException)
+            {
+                return;
+            }
             var prev = Math.Max(0, currentStep - 1);
             LoadStep(prev);
         }
@@ -141,7 +155,14 @@ namespace WinFormsApp1.View.User.Forms
             {
                 var old = pnlContent.Controls[0] as IStepControl;
                 old?.OnLeaving();
-                old?.SaveToViewModel(vm);
+                try
+                {
+                    old?.SaveToViewModel(vm);
+                }
+                catch (InvalidOperationException)
+                {
+                    // ignore validation errors when switching steps via stepper buttons
+                }
             }
 
             // highlight stepper

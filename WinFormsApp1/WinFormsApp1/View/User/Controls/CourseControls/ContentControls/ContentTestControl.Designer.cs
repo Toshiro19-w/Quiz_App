@@ -53,6 +53,7 @@
 			txtTitle.Name = "txtTitle";
 			txtTitle.Size = new Size(560, 34);
 			txtTitle.TabIndex = 2;
+			txtTitle.Text = "";
 			// 
 			// lblInfoDesc
 			// 

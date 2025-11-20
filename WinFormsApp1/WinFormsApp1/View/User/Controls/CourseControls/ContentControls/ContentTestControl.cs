@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using WinFormsApp1.Helpers;
 using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
@@ -228,6 +229,40 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             for (int i = 0; i < _questions.Count; i++)
             {
                 var q = _questions[i];
+                
+                // Validate question text
+                if (string.IsNullOrWhiteSpace(q.QuestionText))
+                {
+                    ToastHelper.Show(this, $"Câu hỏi {i+1} không được để trống.");
+                    throw new InvalidOperationException();
+                }
+                
+                var answers = q.GetAnswers().ToList();
+                
+                // Validate has answers
+                if (answers.Count == 0)
+                {
+                    ToastHelper.Show(this, $"Câu hỏi {i+1} phải có ít nhất một đáp án.");
+                    throw new InvalidOperationException();
+                }
+                
+                // Validate answer text not empty
+                for (int j = 0; j < answers.Count; j++)
+                {
+                    if (string.IsNullOrWhiteSpace(answers[j].AnswerText))
+                    {
+                        ToastHelper.Show(this, $"Câu hỏi {i+1}: Đáp án {j+1} không được để trống.");
+                        throw new InvalidOperationException();
+                    }
+                }
+                
+                // Validate has correct answer
+                if (!answers.Any(a => a.IsCorrect))
+                {
+                    ToastHelper.Show(this, $"Câu hỏi {i+1} phải có ít nhất một đáp án đúng.");
+                    throw new InvalidOperationException();
+                }
+                
                 var tq = new TestQuestionBuilderViewModel
                 {
                     Type = q.QuestionTypeIndex == 0 ? "MCQ_Single" : q.QuestionTypeIndex == 1 ? "MCQ_Multi" : "TrueFalse",
@@ -240,7 +275,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
                 Debug.WriteLine($"[ContentTestControl] Question {i+1}: Type={tq.Type}, StemText='{tq.StemText}', Points={tq.Points}");
 
                 int optIndex = 1;
-                foreach (var a in q.GetAnswers())
+                foreach (var a in answers)
                 {
                     tq.Options.Add(new TestQuestionOptionBuilderViewModel
                     {
