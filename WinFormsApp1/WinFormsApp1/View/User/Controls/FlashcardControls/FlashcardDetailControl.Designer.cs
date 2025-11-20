@@ -65,12 +65,13 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             lblBreadcrumb.ForeColor = Color.Gray;
             lblBreadcrumb.Location = new Point(30, 25);
             lblBreadcrumb.Name = "lblBreadcrumb";
-            lblBreadcrumb.Size = new Size(250, 25);
+            lblBreadcrumb.Size = new Size(326, 25);
             lblBreadcrumb.TabIndex = 0;
             lblBreadcrumb.Text = "Flashcards / HTML/CSS Quick Reference";
             // 
             // pnlHeader
             // 
+            pnlHeader.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             pnlHeader.BackColor = Color.FromArgb(124, 77, 255);
             pnlHeader.Controls.Add(lblTitle);
             pnlHeader.Controls.Add(lblCardCount);
@@ -78,7 +79,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             pnlHeader.Controls.Add(lblLanguage);
             pnlHeader.Location = new Point(30, 70);
             pnlHeader.Name = "pnlHeader";
-            pnlHeader.Size = new Size(1200, 160);
+            pnlHeader.Size = new Size(1198, 160);
             pnlHeader.TabIndex = 1;
             // 
             // lblTitle
@@ -98,7 +99,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             lblCardCount.ForeColor = Color.White;
             lblCardCount.Location = new Point(25, 105);
             lblCardCount.Name = "lblCardCount";
-            lblCardCount.Size = new Size(100, 32);
+            lblCardCount.Size = new Size(108, 32);
             lblCardCount.TabIndex = 1;
             lblCardCount.Text = "Số thẻ: 4";
             // 
@@ -109,7 +110,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             lblCreatedDate.ForeColor = Color.White;
             lblCreatedDate.Location = new Point(220, 107);
             lblCreatedDate.Name = "lblCreatedDate";
-            lblCreatedDate.Size = new Size(200, 30);
+            lblCreatedDate.Size = new Size(207, 30);
             lblCreatedDate.TabIndex = 2;
             lblCreatedDate.Text = "Tạo lúc: 15/11/2025";
             // 
@@ -120,17 +121,18 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             lblLanguage.ForeColor = Color.White;
             lblLanguage.Location = new Point(480, 107);
             lblLanguage.Name = "lblLanguage";
-            lblLanguage.Size = new Size(120, 30);
+            lblLanguage.Size = new Size(138, 30);
             lblLanguage.TabIndex = 3;
             lblLanguage.Text = "Ngôn ngữ: vi";
             // 
             // pnlActions
             // 
+            pnlActions.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             pnlActions.BackColor = Color.White;
             pnlActions.BorderStyle = BorderStyle.FixedSingle;
             pnlActions.Controls.Add(btnStartLearning);
             pnlActions.Controls.Add(btnViewDifferent);
-            pnlActions.Location = new Point(1260, 70);
+            pnlActions.Location = new Point(1258, 70);
             pnlActions.Name = "pnlActions";
             pnlActions.Size = new Size(380, 160);
             pnlActions.TabIndex = 2;
@@ -168,6 +170,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             // 
             // pnlInfo
             // 
+            pnlInfo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             pnlInfo.BackColor = Color.FromArgb(248, 249, 250);
             pnlInfo.BorderStyle = BorderStyle.FixedSingle;
             pnlInfo.Controls.Add(lblDescriptionTitle);
@@ -175,7 +178,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             pnlInfo.Controls.Add(lblAuthorTitle);
             pnlInfo.Controls.Add(lblAuthorName);
             pnlInfo.Controls.Add(lblAuthorEmail);
-            pnlInfo.Location = new Point(1260, 250);
+            pnlInfo.Location = new Point(1258, 250);
             pnlInfo.Name = "pnlInfo";
             pnlInfo.Size = new Size(380, 350);
             pnlInfo.TabIndex = 3;
@@ -186,7 +189,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             lblDescriptionTitle.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             lblDescriptionTitle.Location = new Point(25, 25);
             lblDescriptionTitle.Name = "lblDescriptionTitle";
-            lblDescriptionTitle.Size = new Size(100, 36);
+            lblDescriptionTitle.Size = new Size(87, 36);
             lblDescriptionTitle.TabIndex = 0;
             lblDescriptionTitle.Text = "Mô tả";
             // 
@@ -208,7 +211,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             lblAuthorTitle.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             lblAuthorTitle.Location = new Point(25, 190);
             lblAuthorTitle.Name = "lblAuthorTitle";
-            lblAuthorTitle.Size = new Size(100, 36);
+            lblAuthorTitle.Size = new Size(98, 36);
             lblAuthorTitle.TabIndex = 2;
             lblAuthorTitle.Text = "Tác giả";
             // 
@@ -218,7 +221,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             lblAuthorName.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             lblAuthorName.Location = new Point(25, 240);
             lblAuthorName.Name = "lblAuthorName";
-            lblAuthorName.Size = new Size(180, 30);
+            lblAuthorName.Size = new Size(175, 30);
             lblAuthorName.TabIndex = 3;
             lblAuthorName.Text = "Trần Minh Khoa";
             // 
@@ -229,7 +232,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             lblAuthorEmail.ForeColor = Color.Gray;
             lblAuthorEmail.Location = new Point(25, 280);
             lblAuthorEmail.Name = "lblAuthorEmail";
-            lblAuthorEmail.Size = new Size(220, 25);
+            lblAuthorEmail.Size = new Size(147, 25);
             lblAuthorEmail.TabIndex = 4;
             lblAuthorEmail.Text = "teacher@learn.vn";
             // 
@@ -239,17 +242,18 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             lblFlashcardsTitle.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
             lblFlashcardsTitle.Location = new Point(30, 250);
             lblFlashcardsTitle.Name = "lblFlashcardsTitle";
-            lblFlashcardsTitle.Size = new Size(234, 46);
+            lblFlashcardsTitle.Size = new Size(242, 46);
             lblFlashcardsTitle.TabIndex = 4;
             lblFlashcardsTitle.Text = "Danh sách thẻ";
             // 
             // flowFlashcards
             // 
+            flowFlashcards.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             flowFlashcards.AutoScroll = true;
             flowFlashcards.FlowDirection = FlowDirection.TopDown;
             flowFlashcards.Location = new Point(30, 310);
             flowFlashcards.Name = "flowFlashcards";
-            flowFlashcards.Size = new Size(1200, 750);
+            flowFlashcards.Size = new Size(1198, 750);
             flowFlashcards.TabIndex = 5;
             flowFlashcards.WrapContents = false;
             // 
@@ -264,7 +268,7 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             Controls.Add(pnlHeader);
             Controls.Add(lblBreadcrumb);
             Name = "FlashcardDetailControl";
-            Size = new Size(1700, 1100);
+            Size = new Size(1698, 1100);
             Load += FlashcardDetailControl_Load;
             pnlHeader.ResumeLayout(false);
             pnlHeader.PerformLayout();
