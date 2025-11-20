@@ -177,7 +177,8 @@ namespace WinFormsApp1.View.Admin
                 {
                     SetTextValue(txtTitle, course.Title);
                     SetTextValue(txtDescription, course.Summary);
-                    SetTextValue(txtPrice, course.Price.ToString());
+                    // display price without trailing .00
+                    SetTextValue(txtPrice, course.Price.ToString("F0"));
                     chkPublished.Checked = course.IsPublished;
                     cmbCategory.SelectedValue = course.CategoryId;
                 }

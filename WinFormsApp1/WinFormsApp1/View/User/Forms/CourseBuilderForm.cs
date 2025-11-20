@@ -230,7 +230,11 @@ namespace WinFormsApp1.View.User.Forms
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
-            catch (Exception ex) { MessageBox.Show("Lỗi khi lưu: " + ex.Message); }
+            catch (Exception ex)
+            {
+                var innerMsg = ex.InnerException != null ? "\n\nInner: " + ex.InnerException.Message : "";
+                MessageBox.Show("Lỗi khi lưu: " + ex.Message + innerMsg + "\n\nStack: " + ex.StackTrace, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

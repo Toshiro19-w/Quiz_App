@@ -16,10 +16,10 @@ namespace WinFormsApp1.Controllers
 		{
 			using var context = new LearningPlatformContext();
 			var course = await context.Courses
-				.Include(c => c.CourseChapters.OrderBy(ch => ch.OrderIndex))
-					.ThenInclude(ch => ch.Lessons.OrderBy(l => l.OrderIndex))
-						.ThenInclude(l => l.LessonContents.OrderBy(lc => lc.OrderIndex))
-				.FirstOrDefaultAsync(c => c.CourseId == courseId);
+					.Include(c => c.CourseChapters.OrderBy(ch => ch.OrderIndex))
+						.ThenInclude(ch => ch.Lessons.OrderBy(l => l.OrderIndex))
+							.ThenInclude(l => l.LessonContents.OrderBy(lc => lc.OrderIndex))
+					.FirstOrDefaultAsync(c => c.CourseId == courseId);
 
 			if (course == null) return null!;
 
@@ -308,11 +308,22 @@ namespace WinFormsApp1.Controllers
                                     {
                                         Debug.WriteLine($"[Controller] Updating Test Id={test.TestId}. Questions count: {c.Questions?.Count ?? 0}");
                                         
-                                        foreach (var q in test.Questions.ToList())
+                                        var questionIds = test.Questions.Select(q => q.QuestionId).ToList();
+                                        var options = await context.QuestionOptions.Where(o => questionIds.Contains(o.QuestionId)).ToListAsync();
+                                        context.QuestionOptions.RemoveRange(options);
+                                        await context.SaveChangesAsync();
+                                        
+                                        // Remove any AttemptAnswers that reference these questions to avoid FK conflicts
+                                        var attemptAnswers = await context.AttemptAnswers.Where(a => questionIds.Contains(a.QuestionId)).ToListAsync();
+                                        if (attemptAnswers.Any())
                                         {
-                                            context.QuestionOptions.RemoveRange(q.QuestionOptions);
-                                            context.Questions.Remove(q);
+                                            Debug.WriteLine($"[Controller] Removing {attemptAnswers.Count} AttemptAnswers referencing old questions for TestId={test.TestId}");
+                                            context.AttemptAnswers.RemoveRange(attemptAnswers);
+                                            await context.SaveChangesAsync();
                                         }
+
+                                        var questions = await context.Questions.Where(q => q.TestId == test.TestId).ToListAsync();
+                                        context.Questions.RemoveRange(questions);
                                         await context.SaveChangesAsync();
                                         
                                         test.Title = string.IsNullOrWhiteSpace(c.TestTitle) ? c.Title ?? "Untitled Test" : c.TestTitle;
