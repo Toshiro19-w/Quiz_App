@@ -179,6 +179,25 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 		{
 			flowReviews.Controls.Clear();
 
+			// Kiểm tra nếu user đã mua khóa học
+			var currentUser = AuthHelper.CurrentUser;
+			if (currentUser != null)
+			{
+				var hasPurchased = _course.CoursePurchases?.Any(p => p.BuyerId == currentUser.UserId && p.Status == "Paid") ?? false;
+				if (hasPurchased)
+				{
+					var userReview = _course.CourseReviews.FirstOrDefault(r => r.UserId == currentUser.UserId);
+					if (userReview == null)
+					{
+						flowReviews.Controls.Add(CreateReviewPrompt());
+					}
+					else
+					{
+						flowReviews.Controls.Add(CreateUserReviewPanel(userReview));
+					}
+				}
+			}
+
 			foreach (var review in _course.CourseReviews.Where(r => r.IsApproved).OrderByDescending(r => r.CreatedAt).Take(10))
 			{
 				var pnl = new Panel { Width = 700, AutoSize = true, BackColor = ColorTranslator.FromHtml("#F8F9FA"), Padding = new Padding(15), Margin = new Padding(0, 0, 0, 10) };
@@ -484,6 +503,86 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			catch (Exception ex)
 			{
 				MessageBox.Show($"Lỗi khi mở form thanh toán: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+
+		private Panel CreateReviewPrompt()
+		{
+			var pnl = new Panel { Width = 700, Height = 80, BackColor = ColorTranslator.FromHtml("#D1F2EB"), Padding = new Padding(15), Margin = new Padding(0, 0, 0, 15) };
+			var lbl = new Label { Text = "★ Bạn đã mua khóa học này. Hãy chia sẻ trải nghiệm của bạn!", AutoSize = true, Font = new Font("Segoe UI", 10F), Location = new Point(0, 15) };
+			var btn = new Button { Text = "Viết đánh giá", Size = new Size(120, 35), BackColor = ColorTranslator.FromHtml("#007BFF"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Location = new Point(550, 20), Cursor = Cursors.Hand };
+			btn.FlatAppearance.BorderSize = 0;
+			btn.Click += (s, e) => ShowReviewDialog(null);
+			pnl.Controls.Add(lbl);
+			pnl.Controls.Add(btn);
+			return pnl;
+		}
+
+		private Panel CreateUserReviewPanel(CourseReview review)
+		{
+			var pnl = new Panel { Width = 700, Height = 120, BackColor = ColorTranslator.FromHtml("#D4EDDA"), Padding = new Padding(15), Margin = new Padding(0, 0, 0, 15) };
+			var lblTitle = new Label { Text = "✓ Đánh giá của bạn:", AutoSize = true, Font = new Font("Segoe UI", 10F, FontStyle.Bold), Location = new Point(0, 0) };
+			var lblStars = new Label { Text = new string('★', (int)review.Rating) + new string('☆', 5 - (int)review.Rating), AutoSize = true, Font = new Font("Segoe UI", 14F), ForeColor = ColorTranslator.FromHtml("#FFA500"), Location = new Point(0, 25) };
+			var lblComment = new Label { Text = review.Comment ?? "", AutoSize = true, MaximumSize = new Size(500, 0), Location = new Point(0, 55) };
+			var btnEdit = new Button { Text = "✏ Sửa", Size = new Size(80, 30), BackColor = ColorTranslator.FromHtml("#FFC107"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Location = new Point(550, 15), Cursor = Cursors.Hand };
+			var btnDelete = new Button { Text = "🗑 Xóa", Size = new Size(80, 30), BackColor = ColorTranslator.FromHtml("#DC3545"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Location = new Point(550, 55), Cursor = Cursors.Hand };
+			btnEdit.FlatAppearance.BorderSize = 0;
+			btnDelete.FlatAppearance.BorderSize = 0;
+			btnEdit.Click += (s, e) => ShowReviewDialog(review);
+			btnDelete.Click += async (s, e) => await DeleteReview(review.ReviewId);
+			pnl.Controls.AddRange(new Control[] { lblTitle, lblStars, lblComment, btnEdit, btnDelete });
+			return pnl;
+		}
+
+		private void ShowReviewDialog(CourseReview existingReview)
+		{
+			using var form = new Form { Text = existingReview == null ? "Viết đánh giá" : "Sửa đánh giá", Size = new Size(450, 350), StartPosition = FormStartPosition.CenterParent, FormBorderStyle = FormBorderStyle.FixedDialog, MaximizeBox = false };
+			var lblRating = new Label { Text = "Xếp hạng:", Location = new Point(20, 20), AutoSize = true };
+			var numRating = new NumericUpDown { Location = new Point(120, 18), Width = 60, Minimum = 1, Maximum = 5, Value = existingReview?.Rating ?? 5 };
+			var lblComment = new Label { Text = "Nhận xét:", Location = new Point(20, 60), AutoSize = true };
+			var txtComment = new TextBox { Location = new Point(20, 85), Size = new Size(390, 120), Multiline = true, Text = existingReview?.Comment ?? "" };
+			var btnSave = new Button { Text = "Lưu", Location = new Point(250, 230), Size = new Size(80, 35), BackColor = ColorTranslator.FromHtml("#28A745"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+			var btnCancel = new Button { Text = "Hủy", Location = new Point(340, 230), Size = new Size(70, 35), DialogResult = DialogResult.Cancel };
+			btnSave.Click += async (s, e) => { await SaveReview(existingReview, (int)numRating.Value, txtComment.Text); form.DialogResult = DialogResult.OK; };
+			form.Controls.AddRange(new Control[] { lblRating, numRating, lblComment, txtComment, btnSave, btnCancel });
+			if (form.ShowDialog() == DialogResult.OK) LoadReviews();
+		}
+
+		private async System.Threading.Tasks.Task SaveReview(CourseReview existing, int rating, string comment)
+		{
+			try
+			{
+				using var context = new LearningPlatformContext();
+				if (existing == null)
+				{
+					var review = new CourseReview { CourseId = _courseId, UserId = AuthHelper.CurrentUser.UserId, Rating = rating, Comment = comment, CreatedAt = DateTime.Now, IsApproved = true };
+					context.CourseReviews.Add(review);
+				}
+				else
+				{
+					var review = await context.CourseReviews.FindAsync(existing.ReviewId);
+					if (review != null) { review.Rating = rating; review.Comment = comment; }
+				}
+				await context.SaveChangesAsync();
+				await LoadCourseAsync(_courseId);
+				ToastHelper.Show(this.FindForm(), "Đánh giá thành công!");
+			}
+			catch (Exception ex) { MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+		}
+
+		private async System.Threading.Tasks.Task DeleteReview(int reviewId)
+		{
+			if (MessageBox.Show("Xóa đánh giá?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+			{
+				try
+				{
+					using var context = new LearningPlatformContext();
+					var review = await context.CourseReviews.FindAsync(reviewId);
+					if (review != null) { context.CourseReviews.Remove(review); await context.SaveChangesAsync(); }
+					await LoadCourseAsync(_courseId);
+					ToastHelper.Show(this.FindForm(), "Đã xóa đánh giá");
+				}
+				catch (Exception ex) { MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 			}
 		}
 
