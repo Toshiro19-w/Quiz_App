@@ -140,10 +140,38 @@ namespace WinFormsApp1.View.User.Forms
             lblTongCongValue.Text = $"{total:N0} VND";
         }
 
-        private void btnThanhToanMoMo_Click(object sender, EventArgs e)
+        private async void btnThanhToanMoMo_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Chức năng thanh toán MoMo đang được phát triển", "Thông báo",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try
+            {
+                var user = AuthHelper.CurrentUser;
+                if (user == null)
+                {
+                    MessageBox.Show("Vui lòng đăng nhập để thanh toán", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Gọi helper để mở form MoMo và xử lý polling
+                var success = await MoMoPaymentHelper.PayCartAsync(user.UserId, this);
+
+                if (success)
+                {
+                    // Thông báo và đóng form checkout
+                    MessageBox.Show("Thanh toán MoMo thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Thanh toán MoMo không hoàn tất.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    // Reload cart in case some items were removed
+                    LoadCartItems();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi khởi tạo thanh toán MoMo: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnTheTinDung_Click(object sender, EventArgs e)

@@ -58,5 +58,26 @@ namespace WinFormsApp1.Helpers
             // show non-modally; Control implements IWin32Window so this works for UserControl or Form
             toast.Show(owner);
         }
+
+        // Convenience helpers for success/error messages
+        public static void ShowError(Control owner, string message, int durationMs = 3000)
+        {
+            Show(owner, message, durationMs);
+        }
+
+        public static void ShowError(string message, int durationMs = 3000)
+        {
+            Show(null, message, durationMs);
+        }
+
+        public static void ShowSuccess(Control owner, string message, int durationMs = 3000)
+        {
+            Show(owner, message, durationMs);
+        }
+
+        public static void ShowSuccess(string message, int durationMs = 3000)
+        {
+            Show(null, message, durationMs);
+        }
     }
 }
