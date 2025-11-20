@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.ViewModels;
 using WinFormsApp1.View.User.Controls.CourseControls.ContentControls;
+using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 {
@@ -81,10 +82,9 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		// ============================================================
 		public void SaveToViewModel(CourseBuilderViewModel vm)
 		{
-			// Attempt to save current lesson; if validation fails, abort silently so user can fix inline errors
 			if (!SaveCurrentLesson())
 			{
-				return;
+				throw new InvalidOperationException();
 			}
 		}
 
@@ -264,9 +264,9 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 
 			var newContent = new LessonContentBuilderViewModel
 			{
-				Title = "Nội dung mới",
+				Title = "",
 				ContentType = "Theory",
-				Body = "Nhập nội dung ở đây..."
+				Body = ""
 			};
 
 			lesson.Contents.Add(newContent);
@@ -306,10 +306,17 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			// Save current data from old control
 			if (oldControl is IContentControl oldIc)
 			{
-				var savedData = oldIc.SaveToViewModel();
-				contentVm.Title = savedData.Title;
-				contentVm.Body = savedData.Body;
-				contentVm.VideoUrl = savedData.VideoUrl;
+				try
+				{
+					var savedData = oldIc.SaveToViewModel();
+					contentVm.Title = savedData.Title;
+					contentVm.Body = savedData.Body;
+					contentVm.VideoUrl = savedData.VideoUrl;
+				}
+				catch (InvalidOperationException)
+				{
+					// ignore validation errors when changing content type
+				}
 			}
 
 			// Update content type
