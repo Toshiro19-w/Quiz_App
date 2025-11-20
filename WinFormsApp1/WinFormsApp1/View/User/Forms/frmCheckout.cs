@@ -150,11 +150,11 @@ namespace WinFormsApp1.View.User.Forms
         {
             try
             {
+                var user = AuthHelper.CurrentUser;
+                if (user == null) return;
+
                 using (var context = new LearningPlatformContext())
                 {
-                    var user = AuthHelper.CurrentUser;
-                    if (user == null) return;
-
                     var cart = context.ShoppingCarts
                         .Include(c => c.CartItems)
                         .ThenInclude(ci => ci.Course)
@@ -168,10 +168,14 @@ namespace WinFormsApp1.View.User.Forms
                     }
 
                     decimal total = cart.CartItems.Sum(ci => ci.Course.Price);
-                    var firstCourse = cart.CartItems.First().Course;
-                    firstCourse.Price = total;
+                    var tempCourse = new Models.Entities.Course
+                    {
+                        Title = $"Thanh toán {cart.CartItems.Count} khóa học",
+                        Price = total,
+                        CourseId = 0
+                    };
 
-                    var paymentForm = new PaymentForm(firstCourse);
+                    var paymentForm = new PaymentForm(tempCourse, isCartPayment: true);
                     if (paymentForm.ShowDialog() == DialogResult.OK)
                     {
                         this.DialogResult = DialogResult.OK;

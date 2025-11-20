@@ -26,12 +26,14 @@ namespace WinFormsApp1.View.Dialogs
         public decimal Amount { get; set; }
         public string CourseTitle { get; set; }
         public int CourseId { get; set; }
+        private bool _isCartPayment;
 
-        public PaymentQRDialog(string courseTitle, decimal amount, int courseId)
+        public PaymentQRDialog(string courseTitle, decimal amount, int courseId, bool isCartPayment = false)
         {
             CourseTitle = courseTitle;
             Amount = amount;
             CourseId = courseId;
+            _isCartPayment = isCartPayment;
             InitializeComponent();
             SetupUI();
             GenerateQRCode();
@@ -237,7 +239,8 @@ namespace WinFormsApp1.View.Dialogs
         {
             try
             {
-                var qrImage = VietQRService.GeneratePaymentQRCode(Amount, CourseTitle, CourseId);
+                int qrCourseId = _isCartPayment ? 0 : CourseId;
+                var qrImage = VietQRService.GeneratePaymentQRCode(Amount, CourseTitle, qrCourseId);
                 picQRCode.Image = qrImage;
             }
             catch
