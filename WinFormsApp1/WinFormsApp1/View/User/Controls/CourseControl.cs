@@ -166,141 +166,14 @@ namespace WinFormsApp1.View.User.Controls
 
             foreach (var course in courses)
             {
-                var card = CreateCourseCard(course);
-                coursesPanel.Controls.Add(card);
+                // Use the reusable CourseCardControl so design matches everywhere
+                var control = new CourseCardControl();
+                control.Bind(course);
+                control.Margin = new Padding(10);
+                // Ensure fixed size so FlowLayoutPanel doesn't stretch it
+                control.Size = new Size(330, 380);
+                coursesPanel.Controls.Add(control);
             }
-        }
-
-        private Panel CreateCourseCard(Course course)
-        {
-            var card = new Panel
-            {
-                Size = new Size(330, 380),
-                BackColor = CardBackground,
-                BorderStyle = BorderStyle.FixedSingle,
-                Margin = new Padding(10),
-                Cursor = Cursors.Hand
-            };
-
-            card.MouseEnter += (s, e) => card.BackColor = Color.FromArgb(250, 250, 250);
-            card.MouseLeave += (s, e) => card.BackColor = CardBackground;
-
-            // Course image
-            var picBox = new PictureBox
-            {
-                Size = new Size(328, 180),
-                Location = new Point(0, 0),
-                BackColor = Color.FromArgb(240, 240, 240),
-                SizeMode = PictureBoxSizeMode.Zoom,
-                Image = null
-            };
-
-            // Add placeholder icon if no image
-            var lblImagePlaceholder = new Label
-            {
-                Text = "📚",
-                Font = new Font("Segoe UI", 48),
-                TextAlign = ContentAlignment.MiddleCenter,
-                Dock = DockStyle.Fill,
-                BackColor = Color.Transparent,
-                ForeColor = Color.FromArgb(200, 200, 200)
-            };
-            picBox.Controls.Add(lblImagePlaceholder);
-            card.Controls.Add(picBox);
-
-            // Course title
-            var lblTitle = new Label
-            {
-                Text = course.Title,
-                Location = new Point(10, 190),
-                Size = new Size(310, 45),
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                ForeColor = TextPrimary
-            };
-            card.Controls.Add(lblTitle);
-
-            // Author name
-            var lblAuthor = new Label
-            {
-                Text = course.Owner?.FullName ?? "Trần Minh Khoa",
-                Location = new Point(10, 240),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 9),
-                ForeColor = TextSecondary
-            };
-            card.Controls.Add(lblAuthor);
-
-            // Rating
-            var lblRating = new Label
-            {
-                Text = course.TotalReviews > 0 
-                    ? $"{course.AverageRating:0.0} ⭐ ({course.TotalReviews})" 
-                    : "Chưa có đánh giá",
-                Location = new Point(10, 265),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                ForeColor = Warning
-            };
-            card.Controls.Add(lblRating);
-
-            // Price
-            var lblPrice = new Label
-            {
-                Text = course.Price > 0 ? $"{course.Price:N0} đ" : "Miễn phí",
-                Location = new Point(10, 290),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                ForeColor = ButtonPrimary
-            };
-            card.Controls.Add(lblPrice);
-
-            // Buttons panel
-            var btnPanel = new Panel
-            {
-                Location = new Point(10, 330),
-                Size = new Size(310, 40),
-                BackColor = Color.Transparent
-            };
-
-            // View details button
-            var btnView = new Button
-            {
-                Text = "Xem chi tiết",
-                Location = new Point(0, 0),
-                Size = new Size(230, 35),
-                BackColor = Color.White,
-                ForeColor = ButtonPrimary,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                Cursor = Cursors.Hand,
-                Tag = course.CourseId
-            };
-            btnView.FlatAppearance.BorderColor = Border;
-            btnView.FlatAppearance.MouseOverBackColor = Color.FromArgb(245, 245, 245);
-            btnView.Click += BtnView_Click;
-            btnPanel.Controls.Add(btnView);
-
-            // Add to cart button
-            var btnCart = new Button
-            {
-                Text = "🛒",
-                Location = new Point(240, 0),
-                Size = new Size(60, 35),
-                BackColor = ButtonPrimary,
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 14),
-                Cursor = Cursors.Hand,
-                Tag = course.CourseId
-            };
-            btnCart.FlatAppearance.BorderSize = 0;
-            btnCart.FlatAppearance.MouseOverBackColor = ButtonHover;
-            btnCart.Click += BtnAddCart_Click;
-            btnPanel.Controls.Add(btnCart);
-
-            card.Controls.Add(btnPanel);
-
-            return card;
         }
 
         private void BtnView_Click(object sender, EventArgs e)
