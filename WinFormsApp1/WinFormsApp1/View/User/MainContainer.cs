@@ -55,7 +55,8 @@ namespace WinFormsApp1.View.User
             cartDropdown.OnCheckoutClick += (s, e) =>
             {
                 cartDropdown.HideDropdown();
-                NavigateToControl(new Controls.ShopControl());
+                var checkoutForm = new Forms.frmCheckout();
+                checkoutForm.ShowDialog();
             };
 
             // Add to form
