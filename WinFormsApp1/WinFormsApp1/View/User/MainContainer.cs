@@ -91,7 +91,8 @@ namespace WinFormsApp1.View.User
             profileDropdown.OnGioHangClick += (s, e) =>
             {
                 profileDropdown.HideDropdown();
-                NavigateToControl(new Controls.ShopControl());
+                var checkoutForm = new Forms.frmCheckout();
+                checkoutForm.ShowDialog();
             };
 
             profileDropdown.OnBangDieuKhienClick += (s, e) =>
@@ -280,9 +281,9 @@ namespace WinFormsApp1.View.User
             string searchQuery = txtSearch.Text.Trim();
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                var searchControl = new Controls.SearchControl();
-                NavigateToControl(searchControl);
-                // TODO: Pass search query to SearchControl
+                var courseControl = new Controls.CourseControl();
+                NavigateToControl(courseControl);
+                _ = courseControl.SearchCourses(searchQuery);
             }
         }
 
