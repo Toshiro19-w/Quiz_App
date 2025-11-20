@@ -98,22 +98,22 @@
 			// 
 			// lblPrice
 			// 
-			lblPrice.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+			lblPrice.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblPrice.ForeColor = Color.FromArgb(33, 150, 243);
 			lblPrice.Location = new Point(10, 102);
 			lblPrice.Name = "lblPrice";
-			lblPrice.Size = new Size(200, 40);
+			lblPrice.Size = new Size(200, 31);
 			lblPrice.TabIndex = 3;
 			lblPrice.Text = "299,000 đ";
 			// 
 			// pnlActions
 			// 
-			pnlActions.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			pnlActions.Controls.Add(btnAddToCart);
 			pnlActions.Controls.Add(btnView);
-			pnlActions.Location = new Point(2, 146);
+			pnlActions.Dock = DockStyle.Bottom;
+			pnlActions.Location = new Point(12, 136);
 			pnlActions.Name = "pnlActions";
-			pnlActions.Size = new Size(311, 48);
+			pnlActions.Size = new Size(304, 48);
 			pnlActions.TabIndex = 4;
 			// 
 			// btnAddToCart
@@ -122,7 +122,7 @@
 			btnAddToCart.FlatAppearance.BorderSize = 0;
 			btnAddToCart.FlatStyle = FlatStyle.Flat;
 			btnAddToCart.ForeColor = Color.White;
-			btnAddToCart.Location = new Point(231, 4);
+			btnAddToCart.Location = new Point(265, 3);
 			btnAddToCart.Name = "btnAddToCart";
 			btnAddToCart.Size = new Size(36, 36);
 			btnAddToCart.TabIndex = 1;
@@ -136,9 +136,9 @@
 			btnView.FlatAppearance.BorderSize = 2;
 			btnView.FlatStyle = FlatStyle.Flat;
 			btnView.ForeColor = Color.FromArgb(33, 150, 243);
-			btnView.Location = new Point(18, 5);
+			btnView.Location = new Point(29, 4);
 			btnView.Name = "btnView";
-			btnView.Size = new Size(192, 35);
+			btnView.Size = new Size(222, 35);
 			btnView.TabIndex = 0;
 			btnView.Text = "Xem chi tiết";
 			btnView.UseVisualStyleBackColor = false;

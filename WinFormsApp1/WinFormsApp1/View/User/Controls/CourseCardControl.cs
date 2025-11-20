@@ -43,6 +43,24 @@ namespace WinFormsApp1.View.User.Controls
             lblPrice.Text = course.Price > 0 ? $"{course.Price:N0} đ" : "Miễn phí";
             btnView.Tag = course.CourseId;
 
+            // By default show the AddToCart button; we'll hide it for owners or purchasers
+            btnAddToCart.Visible = true;
+
+            // If current user exists, hide the button if they are the owner
+            var userId = AuthHelper.CurrentUser?.UserId;
+            if (userId.HasValue)
+            {
+                if (course.OwnerId == userId.Value)
+                {
+                    btnAddToCart.Visible = false;
+                }
+                else
+                {
+                    // Check asynchronously whether the current user already purchased this course
+                    _ = UpdateAddToCartVisibilityAsync(course.CourseId, userId.Value);
+                }
+            }
+
             // Load cover image if available; otherwise keep Designer placeholder
             picCover.Controls.Clear();
             picCover.Image = null;
@@ -75,6 +93,29 @@ namespace WinFormsApp1.View.User.Controls
                     ForeColor = Color.FromArgb(200, 200, 200)
                 };
                 picCover.Controls.Add(lblImagePlaceholder);
+            }
+        }
+
+        private async System.Threading.Tasks.Task UpdateAddToCartVisibilityAsync(int courseId, int userId)
+        {
+            try
+            {
+                using var context = new LearningPlatformContext();
+                bool purchased = await context.CoursePurchases.AnyAsync(cp => cp.CourseId == courseId && cp.BuyerId == userId);
+
+                // Update UI on the UI thread
+                if (this.IsHandleCreated && !this.Disposing && !this.IsDisposed)
+                {
+                    this.Invoke(() => btnAddToCart.Visible = !purchased);
+                }
+                else
+                {
+                    btnAddToCart.Visible = !purchased;
+                }
+            }
+            catch
+            {
+                // ignore DB errors and leave button visible
             }
         }
 
