@@ -1,11 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
@@ -110,25 +103,7 @@ namespace WinFormsApp1.View.User.Controls
             btnPrevLesson.Click += BtnPrevLesson_Click;
             btnNextLesson.Click += BtnNextLesson_Click;
             btnMarkComplete.Click += BtnMarkComplete_Click;
-
-            if (btnSubmitTest != null)
-            {
-                btnSubmitTest.Click -= BtnSubmitTest_Click;
-                btnSubmitTest.Click += BtnSubmitTest_Click;
-            }
-
-            // Navigation events
-            if (btnPrevLesson != null) btnPrevLesson.Click += BtnPrevLesson_Click;
-            if (btnNextLesson != null) btnNextLesson.Click += BtnNextLesson_Click;
-            if (btnMarkComplete != null) btnMarkComplete.Click += BtnMarkComplete_Click;
         }
-
-        /*private void SetupVideoProgressTimer()
-        {
-            _videoProgressTimer = new System.Windows.Forms.Timer();
-            _videoProgressTimer.Interval = 5000; // 5 seconds
-            _videoProgressTimer.Tick += VideoProgressTimer_Tick;
-        }*/
 
         public async Task LoadLessonAsync(string courseSlug, int lessonId, int? openContentId = null)
         {
@@ -1143,9 +1118,9 @@ namespace WinFormsApp1.View.User.Controls
             _currentFlashcardIndex = 0;
             _isFlipped = false;
 
-            // --- 1. TẠO UI THẺ (CARD) - ĐÃ PHÓNG TO ---
-            int cardWidth = 1000;  // Tăng từ 600 -> 1000
-            int cardHeight = 550;  // Tăng từ 350 -> 550
+            // --- 1. TẠO UI THẺ (CARD)
+            int cardWidth = 1000; 
+            int cardHeight = 550; 
 
             _pnlCardFace = new Panel
             {
@@ -1206,7 +1181,7 @@ namespace WinFormsApp1.View.User.Controls
             _pnlCardFace.Controls.Add(_lblCardCounter);
             _pnlCardFace.Controls.Add(_lblCardContent);
 
-            // --- 2. TẠO NÚT ĐIỀU KHIỂN (TO HƠN) ---
+            // --- 2. TẠO NÚT ĐIỀU KHIỂN ---
             var controlsPanel = new Panel
             {
                 Width = cardWidth,
@@ -1885,7 +1860,6 @@ namespace WinFormsApp1.View.User.Controls
 
                 await context.SaveChangesAsync();
                 await UpdateProgressAsync();
-                // Không gọi LoadSidebarAsync() ở đây để tránh nhân bản chương
             }
             catch (Exception ex)
             {
