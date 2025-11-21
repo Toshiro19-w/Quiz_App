@@ -55,6 +55,26 @@ namespace WinFormsApp1.Helpers
             return null;
         }
 
+        /// <summary>
+        /// Mật khẩu tối thiểu 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt
+        /// </summary>
+        public static bool IsValidPassword(string password)
+        {
+            if (string.IsNullOrEmpty(password)) return false;
+            // At least one lowercase, one uppercase, one digit, one special char, minimum length 6
+            var pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$";
+            return Regex.IsMatch(password, pattern);
+        }
+
+        /// <summary>
+        /// Số điện thoại phải có đúng 10 chữ số
+        /// </summary>
+        public static bool IsValidPhone(string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone)) return false;
+            return Regex.IsMatch(phone.Trim(), "^\\d{10}$");
+        }
+
         public static void ShowValidationError(Form parentForm, string message)
         {
             ToastHelper.Show(parentForm, $"❌ {message}");

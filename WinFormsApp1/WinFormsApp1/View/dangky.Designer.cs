@@ -23,6 +23,7 @@ namespace WinFormsApp1.View
 			lblConfirmPasswordError = new Label();
 			lblPasswordError = new Label();
 			lblEmailError = new Label();
+			lblPhoneError = new Label();
 			lblUsernameError = new Label();
 			lblFullNameError = new Label();
 			txtConfirmPassword = new TextBox();
@@ -52,6 +53,7 @@ namespace WinFormsApp1.View
 			groupBox1.Controls.Add(lblConfirmPasswordError);
 			groupBox1.Controls.Add(lblPasswordError);
 			groupBox1.Controls.Add(lblEmailError);
+			groupBox1.Controls.Add(lblPhoneError);
 			groupBox1.Controls.Add(lblUsernameError);
 			groupBox1.Controls.Add(lblFullNameError);
 			groupBox1.Controls.Add(txtConfirmPassword);
@@ -115,7 +117,7 @@ namespace WinFormsApp1.View
 			lblConfirmPasswordError.AutoSize = true;
 			lblConfirmPasswordError.Font = new Font("Segoe UI", 9F);
 			lblConfirmPasswordError.ForeColor = Color.Red;
-			lblConfirmPasswordError.Location = new Point(71, 637);
+			lblConfirmPasswordError.Location = new Point(71, 646);
 			lblConfirmPasswordError.Margin = new Padding(4, 0, 4, 0);
 			lblConfirmPasswordError.Name = "lblConfirmPasswordError";
 			lblConfirmPasswordError.Size = new Size(0, 25);
@@ -126,7 +128,7 @@ namespace WinFormsApp1.View
 			lblPasswordError.AutoSize = true;
 			lblPasswordError.Font = new Font("Segoe UI", 9F);
 			lblPasswordError.ForeColor = Color.Red;
-			lblPasswordError.Location = new Point(71, 537);
+			lblPasswordError.Location = new Point(71, 546);
 			lblPasswordError.Margin = new Padding(4, 0, 4, 0);
 			lblPasswordError.Name = "lblPasswordError";
 			lblPasswordError.Size = new Size(0, 25);
@@ -142,6 +144,17 @@ namespace WinFormsApp1.View
 			lblEmailError.Name = "lblEmailError";
 			lblEmailError.Size = new Size(0, 25);
 			lblEmailError.TabIndex = 18;
+			// 
+			// lblPhoneError
+			// 
+			lblPhoneError.AutoSize = true;
+			lblPhoneError.Font = new Font("Segoe UI", 9F);
+			lblPhoneError.ForeColor = Color.Red;
+			lblPhoneError.Location = new Point(71, 437);
+			lblPhoneError.Margin = new Padding(4, 0, 4, 0);
+			lblPhoneError.Name = "lblPhoneError";
+			lblPhoneError.Size = new Size(0, 25);
+			lblPhoneError.TabIndex = 19;
 			// 
 			// lblUsernameError
 			// 
@@ -169,7 +182,7 @@ namespace WinFormsApp1.View
 			// 
 			txtConfirmPassword.BorderStyle = BorderStyle.FixedSingle;
 			txtConfirmPassword.Font = new Font("Segoe UI", 11F);
-			txtConfirmPassword.Location = new Point(71, 593);
+			txtConfirmPassword.Location = new Point(71, 602);
 			txtConfirmPassword.Margin = new Padding(4);
 			txtConfirmPassword.Name = "txtConfirmPassword";
 			txtConfirmPassword.Size = new Size(500, 37);
@@ -180,7 +193,7 @@ namespace WinFormsApp1.View
 			// 
 			txtPassword.BorderStyle = BorderStyle.FixedSingle;
 			txtPassword.Font = new Font("Segoe UI", 11F);
-			txtPassword.Location = new Point(71, 493);
+			txtPassword.Location = new Point(71, 502);
 			txtPassword.Margin = new Padding(4);
 			txtPassword.Name = "txtPassword";
 			txtPassword.Size = new Size(500, 37);
@@ -232,7 +245,7 @@ namespace WinFormsApp1.View
 			lblConfirmPassword.AutoSize = true;
 			lblConfirmPassword.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			lblConfirmPassword.ForeColor = Color.FromArgb(64, 64, 64);
-			lblConfirmPassword.Location = new Point(71, 555);
+			lblConfirmPassword.Location = new Point(71, 564);
 			lblConfirmPassword.Margin = new Padding(4, 0, 4, 0);
 			lblConfirmPassword.Name = "lblConfirmPassword";
 			lblConfirmPassword.Size = new Size(194, 28);
@@ -244,7 +257,7 @@ namespace WinFormsApp1.View
 			lblPassword.AutoSize = true;
 			lblPassword.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			lblPassword.ForeColor = Color.FromArgb(64, 64, 64);
-			lblPassword.Location = new Point(71, 455);
+			lblPassword.Location = new Point(71, 464);
 			lblPassword.Margin = new Padding(4, 0, 4, 0);
 			lblPassword.Name = "lblPassword";
 			lblPassword.Size = new Size(102, 28);
@@ -382,6 +395,7 @@ namespace WinFormsApp1.View
         private Label lblEmailError;
         private Label lblPasswordError;
         private Label lblConfirmPasswordError;
-		private PictureBox pictureBox1;
+        private Label lblPhoneError;
+        private PictureBox pictureBox1;
 	}
 }
