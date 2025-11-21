@@ -114,22 +114,38 @@ namespace WinFormsApp1.View.User.Controls
                 Cursor = Cursors.Hand
             };
 
-            // Course image placeholder
-            var imgPanel = new Panel
+            // Course image
+            if (!string.IsNullOrEmpty(course.CoverUrl) && System.IO.File.Exists(course.CoverUrl))
             {
-                Location = new Point(0, 0),
-                Size = new Size(350, 180),
-                BackColor = Color.FromArgb(245, 245, 245)
-            };
-
-            imgPanel.Paint += (s, e) =>
-            {
-                using (var font = new Font("Segoe UI", 48))
+                var pictureBox = new PictureBox
                 {
-                    e.Graphics.DrawString("📚", font, Brushes.Gray, new PointF(130, 50));
-                }
-            };
-            card.Controls.Add(imgPanel);
+                    Location = new Point(0, 0),
+                    Size = new Size(350, 180),
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    Image = Image.FromFile(course.CoverUrl)
+                };
+                pictureBox.Click += (s, e) => NavigateToCourseDetail(course.CourseId);
+                card.Controls.Add(pictureBox);
+            }
+            else
+            {
+                // Fallback placeholder nếu không có ảnh
+                var imgPanel = new Panel
+                {
+                    Location = new Point(0, 0),
+                    Size = new Size(350, 180),
+                    BackColor = Color.FromArgb(245, 245, 245)
+                };
+                imgPanel.Paint += (s, e) =>
+                {
+                    using (var font = new Font("Segoe UI", 48))
+                    {
+                        e.Graphics.DrawString("📚", font, Brushes.Gray, new PointF(130, 50));
+                    }
+                };
+                imgPanel.Click += (s, e) => NavigateToCourseDetail(course.CourseId);
+                card.Controls.Add(imgPanel);
+            }
 
             // Course title
             var lblTitle = new Label
@@ -182,7 +198,6 @@ namespace WinFormsApp1.View.User.Controls
 
             // Click on card to navigate
             card.Click += (s, e) => NavigateToCourseDetail(course.CourseId);
-            imgPanel.Click += (s, e) => NavigateToCourseDetail(course.CourseId);
             lblTitle.Click += (s, e) => NavigateToCourseDetail(course.CourseId);
 
             // Hover effect
