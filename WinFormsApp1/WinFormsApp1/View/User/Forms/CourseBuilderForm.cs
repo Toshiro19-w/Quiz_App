@@ -104,10 +104,7 @@ namespace WinFormsApp1.View.User.Forms
 
         private void HookEvents()
         {
-            btnStep1.Click += (s, e) => LoadStep(0);
-            btnStep2.Click += (s, e) => LoadStep(1);
-            btnStep3.Click += (s, e) => LoadStep(2);
-            btnStep4.Click += (s, e) => LoadStep(3);
+            // Step buttons disabled - use Next/Prev buttons only
         }
 
         private async Task StepNextRequestedAsync(int stepIndex)
