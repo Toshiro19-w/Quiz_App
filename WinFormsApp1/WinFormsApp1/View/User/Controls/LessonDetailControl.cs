@@ -606,6 +606,14 @@ namespace WinFormsApp1.View.User.Controls
             if (contentIndex < 0 || contentIndex >= _currentContents.Count)
                 return;
 
+            // Pause video if currently playing
+            if (_mediaPlayer != null && _mediaPlayer.IsPlaying)
+            {
+                _mediaPlayer.Pause();
+                if (_btnPlayPause != null)
+                    _btnPlayPause.Text = "▶";
+            }
+
             _currentContentIndex = contentIndex;
             var content = _currentContents[contentIndex];
 
@@ -1121,9 +1129,16 @@ namespace WinFormsApp1.View.User.Controls
 
             using var context = new LearningPlatformContext();
             _flashcards = await context.Flashcards
+                .AsNoTracking()
                 .Where(f => f.SetId == content.RefId.Value)
                 .OrderBy(f => f.OrderIndex)
                 .ToListAsync();
+
+            if (_flashcards == null || _flashcards.Count == 0)
+            {
+                MessageBox.Show("Không có flashcard nào trong bộ này.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
             _currentFlashcardIndex = 0;
             _isFlipped = false;
