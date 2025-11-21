@@ -280,7 +280,73 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 				return;
 			}
 
-			ShowPaymentForm();
+			if (_course == null)
+			{
+				MessageBox.Show("Thông tin khóa học chưa được tải.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
+			try
+			{
+				using var context = new LearningPlatformContext();
+
+				// Ensure shopping cart exists
+				var cart = await context.ShoppingCarts.FirstOrDefaultAsync(c => c.UserId == userId.Value);
+				if (cart == null)
+				{
+					cart = new ShoppingCart
+					{
+						UserId = userId.Value,
+						CreatedAt = DateTime.Now
+					};
+					context.ShoppingCarts.Add(cart);
+					await context.SaveChangesAsync();
+				}
+
+				// Add course to cart if not already present
+				var existingItem = await context.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.CartId && ci.CourseId == _course.CourseId);
+				if (existingItem == null)
+				{
+					var cartItem = new CartItem
+					{
+						CartId = cart.CartId,
+						CourseId = _course.CourseId,
+						AddedAt = DateTime.Now
+					};
+					context.CartItems.Add(cartItem);
+					await context.SaveChangesAsync();
+				}
+
+				// Open checkout form so user can proceed to payment
+				using var checkout = new WinFormsApp1.View.User.Forms.frmCheckout();
+				checkout.StartPosition = FormStartPosition.CenterParent;
+				var owner = this.FindForm();
+				DialogResult result;
+				if (owner != null)
+				{
+					result = checkout.ShowDialog(owner);
+				}
+				else
+				{
+					result = checkout.ShowDialog();
+				}
+
+				// If checkout dialog reported success, reload course to update purchase state
+				if (result == DialogResult.OK)
+				{
+					try
+					{
+						await LoadCourseAsync(_courseId);
+						UpdateActionButtons();
+						ToastHelper.Show(this.FindForm(), "Thanh toán thành công! Bạn có thể bắt đầu học ngay.");
+					}
+					catch { /* ignore reload errors */ }
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Lỗi khi thêm vào giỏ hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		private async void btnStartLearning_Click(object sender, EventArgs e)
@@ -478,34 +544,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			MessageBox.Show("Hiển thị thống kê khóa học (lượt mua, tiến độ)", "Thống kê", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
-		private void ShowPaymentForm()
-		{
-			if (_course == null)
-			{
-				MessageBox.Show("Không thể tải thông tin khóa học", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
-
-			try
-			{
-				using (var paymentForm = new PaymentForm(_course))
-				{
-					var result = paymentForm.ShowDialog(this.FindForm());
-
-					if (result == DialogResult.OK)
-					{
-						// Thanh toán thành công, cập nhật giao diện
-						UpdateActionButtons();
-						ToastHelper.Show(this.FindForm(), "Thanh toán thành công! Bạn có thể bắt đầu học ngay.");
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"Lỗi khi mở form thanh toán: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-		}
-
 		private Panel CreateReviewPrompt()
 		{
 			var pnl = new Panel { Width = 700, Height = 80, BackColor = ColorTranslator.FromHtml("#D1F2EB"), Padding = new Padding(15), Margin = new Padding(0, 0, 0, 15) };
@@ -591,9 +629,5 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
 		}
 
-		private void btnStartLearning_Click_1(object sender, EventArgs e)
-		{
-
-		}
 	}
 }

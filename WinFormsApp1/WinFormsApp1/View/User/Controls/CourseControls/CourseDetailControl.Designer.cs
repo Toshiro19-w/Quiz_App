@@ -235,7 +235,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             btnStartLearning.Text = "Bắt đầu học";
             btnStartLearning.UseVisualStyleBackColor = false;
             btnStartLearning.Visible = false;
-            btnStartLearning.Click += btnStartLearning_Click_1;
+            btnStartLearning.Click += btnStartLearning_Click;
             // 
             // btnEditCourse
             // 
