@@ -5,12 +5,12 @@ using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.Admin
 {
-    public partial class SystemSettingsControl : AdminBaseControl
+    public partial class SystemSettingsControl : UserControl
     {
         private TabControl tabControl;
         private TabPage generalTab, securityTab, emailTab, backupTab;
 
-        public SystemSettingsControl() : base()
+        public SystemSettingsControl()
         {
             InitializeComponent();
             SetupLayout();
@@ -24,6 +24,29 @@ namespace WinFormsApp1.View.Admin
             
             this.Controls.Add(tabControl);
             this.Controls.Add(topPanel);
+        }
+
+        private Panel CreateTopPanel(string title)
+        {
+            var topPanel = new Panel
+            {
+                Height = 60,
+                Dock = DockStyle.Top,
+                BackColor = Color.White,
+                Padding = new Padding(20, 10, 20, 10)
+            };
+
+            var titleLabel = new Label
+            {
+                Text = title,
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = Color.Black,
+                AutoSize = true,
+                Location = new Point(20, 15)
+            };
+            topPanel.Controls.Add(titleLabel);
+
+            return topPanel;
         }
 
         private void SetupTabs()
@@ -75,7 +98,7 @@ namespace WinFormsApp1.View.Admin
             };
             btnSaveGeneral.FlatAppearance.BorderSize = 0;
             btnSaveGeneral.Click += (s, e) => ToastHelper.Show(this.FindForm(), "✅ Cài đặt đã được lưu!");
-
+            
             panel.Controls.AddRange(new Control[] { lblSiteName, txtSiteName, lblPageSize, numPageSize, btnSaveGeneral });
             generalTab.Controls.Add(panel);
         }

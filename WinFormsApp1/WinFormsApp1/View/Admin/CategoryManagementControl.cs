@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Models.Entities;
 using WinFormsApp1.Helpers;
+using System.Collections.Generic;
 
 namespace WinFormsApp1.View.Admin
 {
@@ -13,34 +14,32 @@ namespace WinFormsApp1.View.Admin
     {
         private bool isEditing = false;
         private int editingCategoryId = 0;
+        private List<dynamic> _allCategories = new List<dynamic>();
+        private List<dynamic> _filteredCategories = new List<dynamic>();
 
         public CategoryManagementControl() : base()
         {
             InitializeComponent();
         }
         
-        protected override void OnAddButtonClick(object sender, EventArgs e)
-        {
-            BtnAdd_Click(sender, e);
-        }
-        
-        protected override void OnEditButtonClick(object sender, EventArgs e)
-        {
-            BtnEdit_Click(sender, e);
-        }
-        
-        protected override void OnDeleteButtonClick(object sender, EventArgs e)
-        {
-            BtnDelete_Click(sender, e);
-        }
-        
-        protected override void OnRefreshButtonClick(object sender, EventArgs e)
-        {
-            _ = LoadCategoriesAsync();
-        }
+        protected override void OnAddButtonClick(object sender, EventArgs e) => BtnAdd_Click(sender, e);
+        protected override void OnEditButtonClick(object sender, EventArgs e) => BtnEdit_Click(sender, e);
+        protected override void OnDeleteButtonClick(object sender, EventArgs e) => BtnDelete_Click(sender, e);
+        protected override void OnRefreshButtonClick(object sender, EventArgs e) => _ = LoadCategoriesAsync();
 
         private async void CategoryManagementControl_Load(object sender, EventArgs e)
         {
+            // Remove the designer-generated container completely
+            var mainContainer = this.Controls.Find("mainContainer", true).FirstOrDefault();
+            if (mainContainer != null)
+            {
+                this.Controls.Remove(mainContainer);
+                mainContainer.Dispose();
+            }
+
+            // Create a new modern DataGridView using helper method
+            dataGridView = CreateModernDataGridView();
+
             var formPanel = CreateInputForm("Thông tin danh mục",
                 ("Tên danh mục", "txtName", "Nhập tên danh mục...", true, false),
                 ("Mô tả", "txtDescription", "Nhập mô tả...", false, false)
@@ -50,6 +49,7 @@ namespace WinFormsApp1.View.Admin
             WireCrudEvents();
             WireFormEvents();
             SetupSearchFunctionality(dataGridView, "Tên", "Mô_tả");
+            SetupPaginationEvents();
             
             dataGridView.CellClick += DataGridView_CellClick;
             await LoadCategoriesAsync();
@@ -72,26 +72,20 @@ namespace WinFormsApp1.View.Admin
             }
         }
 
-        private void CategoryManagementControl_Resize(object sender, EventArgs e)
-        {
-            AdjustResponsiveLayout(dataGridView, null);
-        }
-
         private async Task LoadCategoriesAsync()
         {
             try
             {
                 var categories = await _adminController.GetCategoriesAsync();
-                var categoryData = categories.Select(c => new
+                _allCategories = categories.Select(c => new
                 {
                     ID = c.CategoryId,
                     Tên = c.Name,
                     Mô_tả = c.Description?.Length > 50 ? c.Description.Substring(0, 50) + "..." : c.Description,
                     Ngày_tạo = c.CreatedAt.ToString("dd/MM/yyyy")
-                }).ToList();
+                }).Cast<dynamic>().ToList();
                 
-                dataGridView.DataSource = categoryData;
-                ApplyModernStyling(dataGridView, null);
+                FilterCategoriesLocally();
                 
                 UpdateDataGridHeaders(dataGridView, new Dictionary<string, string>
                 {
@@ -105,6 +99,62 @@ namespace WinFormsApp1.View.Admin
             {
                 ToastHelper.Show(this.FindForm(), $"Lỗi tải dữ liệu: {ex.Message}");
             }
+        }
+
+        protected override void SetupSearchFunctionality(DataGridView dataGridView, params string[] searchColumns)
+        {
+            if (searchBox != null)
+            {
+                searchBox.TextChanged += (s, e) => FilterCategoriesLocally();
+            }
+        }
+
+        private void FilterCategoriesLocally()
+        {
+            if (_allCategories == null || dataGridView == null) return;
+
+            string searchText = searchBox?.Text?.Trim().ToLower() ?? "";
+
+            _filteredCategories = _allCategories.Where(c =>
+            {
+                bool matchSearch = string.IsNullOrEmpty(searchText) || 
+                                   ((string)c.Tên).ToLower().Contains(searchText) || 
+                                   ((string)c.Mô_tả ?? "").ToLower().Contains(searchText);
+
+                return matchSearch;
+            }).ToList();
+
+            // Update pagination and display
+            paginationHelper.UpdatePagination(_filteredCategories.Count);
+            DisplayCurrentPage();
+        }
+
+        private void DisplayCurrentPage()
+        {
+            if (_filteredCategories == null || dataGridView == null) return;
+
+            var pagedData = paginationHelper.GetPagedData(_filteredCategories).ToList();
+            dataGridView.DataSource = new BindingSource { DataSource = pagedData };
+        }
+
+        private void SetupPaginationEvents()
+        {
+            // Wire up pagination panel if exists
+            var existingPagination = this.Controls.Find("paginationPanel", true).FirstOrDefault();
+            if (existingPagination != null)
+            {
+                this.Controls.Remove(existingPagination);
+            }
+
+            // Create new pagination panel using helper
+            var newPagination = paginationHelper.CreatePaginationPanel((page) => DisplayCurrentPage());
+            this.Controls.Add(newPagination);
+            newPagination.BringToFront();
+        }
+
+        private void CategoryManagementControl_Resize(object sender, EventArgs e)
+        {
+            // Handled automatically by Dock
         }
 
         private void BtnAdd_Click(object sender, EventArgs e)
@@ -193,10 +243,6 @@ namespace WinFormsApp1.View.Admin
             }
         }
 
-
-
-
-
         private async void BtnDelete_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count > 0)
@@ -230,9 +276,5 @@ namespace WinFormsApp1.View.Admin
                 ToastHelper.Show(this.FindForm(), "Vui lòng chọn danh mục để xóa!");
             }
         }
-        
-
-
-
     }
 }

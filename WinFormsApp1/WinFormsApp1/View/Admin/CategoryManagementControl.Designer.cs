@@ -18,16 +18,6 @@ namespace WinFormsApp1.View.Admin
         private Panel mainContainer;
         private Label titleLabel;
 
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         private void InitializeComponent()
         {
             mainContainer = new Panel();
@@ -148,9 +138,6 @@ namespace WinFormsApp1.View.Admin
             txtDescription.Name = "txtDescription";
             txtDescription.Size = new Size(320, 100);
             txtDescription.TabIndex = 2;
-            // 
-            // descLabel
-            // 
             // 
             // txtName
             // 

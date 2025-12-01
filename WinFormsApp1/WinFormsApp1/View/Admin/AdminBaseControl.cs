@@ -12,6 +12,7 @@ namespace WinFormsApp1.View.Admin
     public abstract class AdminBaseControl : UserControl
     {
         protected readonly AdminController _adminController;
+        protected DataGridView dataGridView;
         protected TextBox searchBox;
         protected Panel searchPanel;
         protected PaginationHelper paginationHelper;
@@ -21,6 +22,52 @@ namespace WinFormsApp1.View.Admin
         {
             _adminController = controller ?? new AdminController();
             paginationHelper = new PaginationHelper(50);
+            
+            // DataGridView will be created by child classes or from CreateModernDataGridView
+        }
+
+        /// <summary>
+        /// Tạo một DataGridView hiện đại với styling đẹp
+        /// </summary>
+        protected DataGridView CreateModernDataGridView()
+        {
+            var dgv = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                AutoGenerateColumns = true,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                ReadOnly = true,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect = false,
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
+                ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None,
+                EnableHeadersVisualStyles = false,
+                RowHeadersVisible = false,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                Font = new Font("Segoe UI", 10),
+                GridColor = Color.FromArgb(224, 224, 224)
+            };
+
+            // Modern header styling
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 144, 220);
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(10);
+            dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgv.ColumnHeadersHeight = 45;
+
+            // Modern row styling
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(59, 130, 246);
+            dgv.DefaultCellStyle.SelectionForeColor = Color.White;
+            dgv.DefaultCellStyle.Padding = new Padding(8);
+            dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dgv.RowTemplate.Height = 40;
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
+
+            return dgv;
         }
 
         protected void ApplyModernStyling(DataGridView dataGridView, Panel formPanel)
@@ -168,14 +215,15 @@ namespace WinFormsApp1.View.Admin
             return buttonPanel;
         }
 
-        protected Panel CreateFilterPanel()
+        protected virtual Panel CreateFilterPanel()
         {
             var filterPanel = new Panel
             {
                 Height = 50,
                 Dock = DockStyle.Top,
                 BackColor = Color.White,
-                Padding = new Padding(20, 10, 20, 10)
+                Padding = new Padding(20, 10, 20, 10),
+                Name = "filterPanel"
             };
 
             var showLabel = new Label
@@ -229,16 +277,31 @@ namespace WinFormsApp1.View.Admin
 
             return filterPanel;
         }
+        
+        protected void AddFilterControl(Control control)
+        {
+            var filterPanel = this.Controls.Find("filterPanel", true).FirstOrDefault() as Panel;
+            if (filterPanel != null)
+            {
+                // Position control to the left of search box
+                int leftMargin = 200;
+                int rightOffset = 350;
+                control.Location = new Point(filterPanel.Width - rightOffset, 12);
+                control.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                filterPanel.Controls.Add(control);
+                
+                // Adjust other controls
+                rightOffset += control.Width + 20;
+            }
+        }
 
-        protected void SetupSearchFunctionality(DataGridView dataGridView, params string[] searchColumns)
+        protected virtual void SetupSearchFunctionality(DataGridView dataGridView, params string[] searchColumns)
         {
             if (searchBox != null)
             {
                 searchBox.TextChanged += (s, e) => PerformAdvancedSearch(dataGridView, searchBox.Text, searchColumns);
             }
         }
-
-
 
         protected void SetupLayout(string title, DataGridView dataGridView)
         {

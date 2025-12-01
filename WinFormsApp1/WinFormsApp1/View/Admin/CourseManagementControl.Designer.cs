@@ -22,15 +22,6 @@ namespace WinFormsApp1.View.Admin
         private Label titleLabel;
 
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         private void InitializeComponent()
         {
             mainContainer = new Panel();
@@ -113,7 +104,7 @@ namespace WinFormsApp1.View.Admin
             btnSave.Text = "💾 Lưu";
             btnSave.UseVisualStyleBackColor = false;
             btnSave.Visible = false;
-            btnSave.Click += BtnSave_Click;
+            //btnSave.Click += BtnSave_Click;
             // 
             // btnDelete
             // 

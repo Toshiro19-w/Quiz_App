@@ -20,15 +20,6 @@ namespace WinFormsApp1.View.Admin
         private Panel mainContainer;
         private Label titleLabel;
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         private void InitializeComponent()
         {
             mainContainer = new Panel();
