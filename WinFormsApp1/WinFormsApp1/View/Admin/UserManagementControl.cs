@@ -51,12 +51,48 @@ namespace WinFormsApp1.View.Admin
             AddRoleComboToForm(formPanel);
             
             SetupLayoutWithForm("Quản lý người dùng", dataGridView, formPanel);
+            
+            // Add custom filters AFTER layout is setup
+            SetupCustomFilters();
+            
             WireCrudEvents();
             WireFormEvents();
             SetupSearchFunctionality(dataGridView, "Email", "Họ_tên", "Tên_đăng_nhập");
             SetupPaginationEvents();
             
             await LoadUsersAsync();
+        }
+        
+        /// <summary>
+        /// Setup custom filters for User Management
+        /// </summary>
+        private void SetupCustomFilters()
+        {
+            // Role Filter
+            var roleCombo = new ComboBox
+            {
+                Name = "cboRoleFilter", // Changed name to avoid conflict with form's cboRole
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+            roleCombo.Items.AddRange(new object[] { "Tất cả vai trò", "Admin", "User" });
+            roleCombo.SelectedIndex = 0;
+            roleCombo.SelectedIndexChanged += (s, e) => FilterUsersLocally();
+
+            // Status Filter
+            var statusCombo = new ComboBox
+            {
+                Name = "cboStatusFilter",
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+            statusCombo.Items.AddRange(new object[] { "Tất cả trạng thái", "Hoạt động", "Không hoạt động" });
+            statusCombo.SelectedIndex = 0;
+            statusCombo.SelectedIndexChanged += (s, e) => FilterUsersLocally();
+
+            // Add filters using the new helper method
+            AddCustomFilters(
+                ("Vai trò:", roleCombo),
+                ("Trạng thái:", statusCombo)
+            );
         }
         
         private void AddRoleComboToForm(Panel formPanel)
@@ -96,63 +132,6 @@ namespace WinFormsApp1.View.Admin
             {
                 saveBtn.Click += BtnSave_Click;
             }
-        }
-
-        protected override Panel CreateFilterPanel()
-        {
-            var panel = base.CreateFilterPanel();
-
-            // Role Filter - Updated to only Admin and User
-            var roleLabel = new Label
-            {
-                Text = "Vai trò:",
-                Font = new Font("Segoe UI", 9),
-                AutoSize = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(panel.Width - 550, 15)
-            };
-            panel.Controls.Add(roleLabel);
-
-            var roleCombo = new ComboBox
-            {
-                Items = { "Tất cả vai trò", "Admin", "User" },
-                SelectedIndex = 0,
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 9),
-                Size = new Size(150, 25),
-                Name = "cboRole",
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(panel.Width - 470, 12)
-            };
-            roleCombo.SelectedIndexChanged += (s, e) => FilterUsersLocally();
-            panel.Controls.Add(roleCombo);
-
-            // Status Filter
-            var statusLabel = new Label
-            {
-                Text = "Trạng thái:",
-                Font = new Font("Segoe UI", 9),
-                AutoSize = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(panel.Width - 400, 15)
-            };
-            panel.Controls.Add(statusLabel);
-
-            var statusCombo = new ComboBox
-            {
-                Items = { "Tất cả trạng thái", "Hoạt động", "Không hoạt động" },
-                SelectedIndex = 0,
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 9),
-                Size = new Size(150, 25),
-                Name = "cboStatus",
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(panel.Width - 320, 12)
-            };
-            statusCombo.SelectedIndexChanged += (s, e) => FilterUsersLocally();
-            panel.Controls.Add(statusCombo);
-
-            return panel;
         }
 
         private async Task LoadUsersAsync()
@@ -207,8 +186,9 @@ namespace WinFormsApp1.View.Admin
         {
             if (_allUsers == null || dataGridView == null) return;
 
-            var roleCombo = this.Controls.Find("cboRole", true).FirstOrDefault() as ComboBox;
-            var statusCombo = this.Controls.Find("cboStatus", true).FirstOrDefault() as ComboBox;
+            // Use new filter names
+            var roleCombo = this.Controls.Find("cboRoleFilter", true).FirstOrDefault() as ComboBox;
+            var statusCombo = this.Controls.Find("cboStatusFilter", true).FirstOrDefault() as ComboBox;
 
             string roleFilter = roleCombo?.SelectedIndex > 0 ? roleCombo.Text : "";
             string statusFilter = statusCombo?.SelectedIndex > 0 ? (statusCombo.SelectedIndex == 1 ? "Hoạt động" : "Không hoạt động") : "";
@@ -245,17 +225,15 @@ namespace WinFormsApp1.View.Admin
 
         private void SetupPaginationEvents()
         {
-            // Wire up pagination panel if exists
-            var existingPagination = this.Controls.Find("paginationPanel", true).FirstOrDefault();
-            if (existingPagination != null)
-            {
-                this.Controls.Remove(existingPagination);
-            }
-
             // Create new pagination panel using helper
             var newPagination = paginationHelper.CreatePaginationPanel((page) => DisplayCurrentPage());
-            this.Controls.Add(newPagination);
-            newPagination.BringToFront();
+            
+            // Add to control
+            if (!this.Controls.Contains(newPagination))
+            {
+                this.Controls.Add(newPagination);
+                newPagination.BringToFront();
+            }
         }
 
         private void UserManagementControl_Resize(object sender, EventArgs e)

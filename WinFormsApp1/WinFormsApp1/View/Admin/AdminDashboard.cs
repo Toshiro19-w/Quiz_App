@@ -256,7 +256,9 @@ namespace WinFormsApp1.View.Admin
             CreateSection("📋 Quản lý", "Management", () => {
                 CreateButton("Người dùng", "user-management", "👤");
                 CreateButton("Khóa học", "courses", "📚");
+                CreateButton("Kiểm duyệt", "course-moderation", "✅");
                 CreateButton("Danh mục", "categories", "📁");
+                CreateButton("Flashcard", "flashcards", "🗂️");
             });
 
             yPos += 10;
@@ -329,8 +331,14 @@ namespace WinFormsApp1.View.Admin
                 case "courses":
                     LoadCourseManagement();
                     break;
+                case "course-moderation":
+                    LoadCourseModeration();
+                    break;
                 case "categories":
                     LoadCategoryManagement();
+                    break;
+                case "flashcards":
+                    LoadFlashcardManagement();
                     break;
                 case "system-settings":
                     LoadSystemSettings();
@@ -422,6 +430,14 @@ namespace WinFormsApp1.View.Admin
             courseControl.Dock = DockStyle.Fill;
             contentPanel.Controls.Add(courseControl);
         }
+        
+        private void LoadCourseModeration()
+        {
+            contentPanel.Controls.Clear();
+            var moderationControl = new CourseModerationControl();
+            moderationControl.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(moderationControl);
+        }
 
         private void LoadUserStats()
         {
@@ -461,6 +477,14 @@ namespace WinFormsApp1.View.Admin
             var categoryControl = new CategoryManagementControl();
             categoryControl.Dock = DockStyle.Fill;
             contentPanel.Controls.Add(categoryControl);
+        }
+
+        private void LoadFlashcardManagement()
+        {
+            contentPanel.Controls.Clear();
+            var flashcardControl = new FlashcardManagementControl();
+            flashcardControl.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(flashcardControl);
         }
 
         private void LoadSystemSettings()

@@ -139,17 +139,15 @@ namespace WinFormsApp1.View.Admin
 
         private void SetupPaginationEvents()
         {
-            // Wire up pagination panel if exists
-            var existingPagination = this.Controls.Find("paginationPanel", true).FirstOrDefault();
-            if (existingPagination != null)
-            {
-                this.Controls.Remove(existingPagination);
-            }
-
             // Create new pagination panel using helper
             var newPagination = paginationHelper.CreatePaginationPanel((page) => DisplayCurrentPage());
-            this.Controls.Add(newPagination);
-            newPagination.BringToFront();
+            
+            // Add to control
+            if (!this.Controls.Contains(newPagination))
+            {
+                this.Controls.Add(newPagination);
+                newPagination.BringToFront();
+            }
         }
 
         private void CategoryManagementControl_Resize(object sender, EventArgs e)

@@ -129,11 +129,11 @@ namespace WinFormsApp1.View.User.Controls
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // Title Column - increased width
+            // Title Column
             var pnlTitle = new Panel
             {
                 Location = new Point(175, 10),
-                Size = new Size(450, 54),
+                Size = new Size(380, 54),
                 BackColor = Color.Transparent
             };
 
@@ -141,62 +141,78 @@ namespace WinFormsApp1.View.User.Controls
             {
                 Text = course.Title,
                 Location = new Point(0, 0),
-                Size = new Size(450, 42),
+                Size = new Size(380, 42),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 ForeColor = ColorPalette.TextPrimary,
                 AutoEllipsis = true
             };
             
-
             pnlTitle.Controls.AddRange(new Control[] { lblTitle });
 
-            // Status Column - adjusted position
+            // Moderation Status Column
+            var moderationStatus = GetModerationStatusDisplay(course.ModerationStatus);
+            var lblModeration = new Label
+            {
+                Text = moderationStatus.Text,
+                Location = new Point(560, 15),
+                Size = new Size(120, 24),
+                BackColor = moderationStatus.Color,
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 8, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            // Status Column
             var lblStatus = new Label
             {
                 Text = course.IsPublished ? "Đã xuất bản" : "Nháp",
-                Location = new Point(629, 15),
-                Size = new Size(150, 24),
+                Location = new Point(690, 15),
+                Size = new Size(100, 24),
                 BackColor = course.IsPublished ? Color.FromArgb(40, 167, 69) : Color.FromArgb(108, 117, 125),
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 8, FontStyle.Bold),
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // Price Column - adjusted position
+            // Price Column
             var lblPrice = new Label
             {
                 Text = $"{course.Price:N0} VNĐ",
-                Location = new Point(792, 15),
+                Location = new Point(800, 15),
                 Size = new Size(120, 20),
                 Font = new Font("Segoe UI", 9),
                 ForeColor = ColorPalette.TextPrimary,
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
-            // Created Date Column - adjusted position
+            // Created Date Column
             var lblDate = new Label
             {
                 Text = course.CreatedAt.ToString("dd/MM/yyyy"),
-                Location = new Point(1017, 15),
-                Size = new Size(155, 20),
+                Location = new Point(930, 15),
+                Size = new Size(100, 20),
                 Font = new Font("Segoe UI", 9),
                 ForeColor = ColorPalette.TextPrimary,
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // Action Buttons - adjusted positions for wider table
-            var btnView = CreateActionButton("👁️", ColorPalette.Primary, 1346, "Xem");
+            // Action Buttons
+            var btnSubmit = CreateActionButton("📤", Color.FromArgb(52, 144, 220), 1040, "Gửi duyệt");
+            btnSubmit.Click += (s, e) => SubmitForReview(course);
+            btnSubmit.Visible = (course.ModerationStatus != "Pending" && course.ModerationStatus != "Approved");
+
+            var btnView = CreateActionButton("👁️", ColorPalette.Primary, 1086, "Xem");
             btnView.Click += (s, e) => ViewCourse(course);
 
-            var btnEdit = CreateActionButton("✏️", Color.FromArgb(255, 193, 7), 1406, "Sửa");
+            var btnEdit = CreateActionButton("✏️", Color.FromArgb(255, 193, 7), 1132, "Sửa");
             btnEdit.Click += (s, e) => EditCourse(course);
 
-            var btnDelete = CreateActionButton("🗑️", Color.FromArgb(220, 53, 69), 1466, "Xóa");
+            var btnDelete = CreateActionButton("🗑️", Color.FromArgb(220, 53, 69), 1178, "Xóa");
             btnDelete.Click += (s, e) => DeleteCourse(course);
 
             row.Controls.AddRange(new Control[] {
-                lblId, pnlTitle, lblStatus, lblPrice, lblDate,
-                btnView, btnEdit, btnDelete
+                lblId, pnlTitle, lblModeration, lblStatus, lblPrice, lblDate,
+                btnSubmit, btnView, btnEdit, btnDelete
             });
 
             // Hover effect
@@ -205,7 +221,19 @@ namespace WinFormsApp1.View.User.Controls
 
             return row;
         }
-
+        
+        private (string Text, Color Color) GetModerationStatusDisplay(string status)
+        {
+            return status switch
+            {
+                "Pending" => ("Chờ duyệt", Color.FromArgb(255, 193, 7)),
+                "Approved" => ("Đã duyệt", Color.FromArgb(40, 167, 69)),
+                "Rejected" => ("Từ chối", Color.FromArgb(220, 53, 69)),
+                "NeedsRevision" => ("Cần sửa", Color.FromArgb(255, 152, 0)),
+                _ => ("Chưa gửi", Color.FromArgb(108, 117, 125))
+            };
+        }
+        
         private Button CreateActionButton(string icon, Color color, int x, string tooltip)
         {
             var btn = new Button
@@ -226,6 +254,89 @@ namespace WinFormsApp1.View.User.Controls
             toolTip.SetToolTip(btn, tooltip);
 
             return btn;
+        }
+
+        private async void SubmitForReview(Course course)
+        {
+            try
+            {
+                using var context = new LearningPlatformContext();
+                
+                // Load course with full details for auto-check
+                var fullCourse = await context.Courses
+                    .Include(c => c.CourseChapters)
+                        .ThenInclude(ch => ch.Lessons)
+                            .ThenInclude(l => l.LessonContents)
+                    .FirstOrDefaultAsync(c => c.CourseId == course.CourseId);
+                
+                if (fullCourse == null)
+                {
+                    MessageBox.Show("Không tìm thấy khóa học!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                
+                // Run auto-check
+                var autoCheckResults = Services.CourseModerationService.RunAutoChecks(fullCourse, context);
+                var canPublish = Services.CourseModerationService.CanPublish(autoCheckResults);
+                var autoScore = Services.CourseModerationService.CalculateAutoScore(autoCheckResults);
+                
+                // Show auto-check results
+                var errorCount = autoCheckResults.Count(r => r.Severity == "Error" && !r.Passed);
+                var warningCount = autoCheckResults.Count(r => r.Severity == "Warning" && !r.Passed);
+                
+                var message = $"Kết quả kiểm tra tự động:\n\n";
+                message += $"Điểm: {autoScore}/100\n";
+                message += $"Lỗi: {errorCount}\n";
+                message += $"Cảnh báo: {warningCount}\n\n";
+                
+                if (!canPublish)
+                {
+                    message += "❌ Khóa học chưa đủ điều kiện gửi duyệt.\n\n";
+                    message += "Các lỗi cần sửa:\n";
+                    foreach (var result in autoCheckResults.Where(r => r.Severity == "Error" && !r.Passed))
+                    {
+                        message += $"• {result.Message}\n";
+                    }
+                    
+                    MessageBox.Show(message, "Không thể gửi duyệt", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                
+                if (warningCount > 0)
+                {
+                    message += "⚠️ Có một số cảnh báo. Bạn có muốn tiếp tục gửi duyệt?\n\n";
+                    message += "Các cảnh báo:\n";
+                    foreach (var checkResult in autoCheckResults.Where(r => r.Severity == "Warning" && !r.Passed))
+                    {
+                        message += $"• {checkResult.Message}\n";
+                    }
+                    
+                    var confirmResult = MessageBox.Show(message, "Xác nhận gửi duyệt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (confirmResult != DialogResult.Yes) return;
+                }
+                else
+                {
+                    message += "✅ Khóa học đã sẵn sàng để gửi duyệt.\n\nBạn có muốn gửi khóa học để admin kiểm duyệt?";
+                    var confirmResult = MessageBox.Show(message, "Xác nhận gửi duyệt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (confirmResult != DialogResult.Yes) return;
+                }
+                
+                // Submit for review
+                if (Services.CourseModerationService.SubmitForReview(course.CourseId, context))
+                {
+                    MessageBox.Show("Đã gửi khóa học để kiểm duyệt!\n\nAdmin sẽ xem xét và phản hồi trong thời gian sớm nhất.", 
+                        "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadCourses();
+                }
+                else
+                {
+                    MessageBox.Show("Không thể gửi khóa học!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private async void ViewCourse(Course course)

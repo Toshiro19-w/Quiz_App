@@ -42,6 +42,9 @@ namespace WinFormsApp1.View.Admin
             // Setup base layout with modern Grid
             SetupLayout("Quản lý khóa học", dataGridView);
             
+            // Add custom filters AFTER layout is setup
+            SetupCustomFilters();
+            
             WireCrudEvents();
             SetupSearchFunctionality(dataGridView, "Tên", "Danh_mục", "Mô_tả", "Trạng_thái");
             SetupPaginationEvents();
@@ -49,61 +52,36 @@ namespace WinFormsApp1.View.Admin
             await LoadCoursesAsync();
         }
 
-        protected override Panel CreateFilterPanel()
+        /// <summary>
+        /// Setup custom filters for Course Management
+        /// </summary>
+        private void SetupCustomFilters()
         {
-            var panel = base.CreateFilterPanel();
-
             // Category Filter
-            var categoryLabel = new Label
-            {
-                Text = "Danh mục:",
-                Font = new Font("Segoe UI", 9),
-                AutoSize = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(panel.Width - 600, 15)
-            };
-            panel.Controls.Add(categoryLabel);
-
             var categoryCombo = new ComboBox
             {
-                Items = { "Tất cả danh mục" },
-                SelectedIndex = 0,
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 9),
-                Size = new Size(150, 25),
                 Name = "cboCategory",
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(panel.Width - 520, 12)
+                DropDownStyle = ComboBoxStyle.DropDownList
             };
+            categoryCombo.Items.Add("Tất cả danh mục");
+            categoryCombo.SelectedIndex = 0;
             categoryCombo.SelectedIndexChanged += (s, e) => FilterCoursesLocally();
-            panel.Controls.Add(categoryCombo);
 
             // Status Filter
-            var statusLabel = new Label
-            {
-                Text = "Trạng thái:",
-                Font = new Font("Segoe UI", 9),
-                AutoSize = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(panel.Width - 450, 15)
-            };
-            panel.Controls.Add(statusLabel);
-
             var statusCombo = new ComboBox
             {
-                Items = { "Tất cả", "Đã xuất bản", "Nháp" },
-                SelectedIndex = 0,
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 9),
-                Size = new Size(120, 25),
                 Name = "cboStatus",
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(panel.Width - 370, 12)
+                DropDownStyle = ComboBoxStyle.DropDownList
             };
+            statusCombo.Items.AddRange(new object[] { "Tất cả", "Đã xuất bản", "Nháp" });
+            statusCombo.SelectedIndex = 0;
             statusCombo.SelectedIndexChanged += (s, e) => FilterCoursesLocally();
-            panel.Controls.Add(statusCombo);
 
-            return panel;
+            // Add filters using the new helper method
+            AddCustomFilters(
+                ("Danh mục:", categoryCombo),
+                ("Trạng thái:", statusCombo)
+            );
         }
 
         private async Task LoadCoursesAsync()
@@ -203,17 +181,17 @@ namespace WinFormsApp1.View.Admin
 
         private void SetupPaginationEvents()
         {
-            // Wire up pagination panel if exists
-            var existingPagination = this.Controls.Find("paginationPanel", true).FirstOrDefault();
-            if (existingPagination != null)
-            {
-                this.Controls.Remove(existingPagination);
-            }
-
-            // Create new pagination panel using helper
+            // Don't remove existing pagination - PaginationHelper will create its own
+            // Just create new pagination panel using helper
             var newPagination = paginationHelper.CreatePaginationPanel((page) => DisplayCurrentPage());
-            this.Controls.Add(newPagination);
-            newPagination.BringToFront();
+            
+            // Add to control
+            var parent = this.Parent ?? this;
+            if (!this.Controls.Contains(newPagination))
+            {
+                this.Controls.Add(newPagination);
+                newPagination.BringToFront();
+            }
         }
 
         private void CourseManagementControl_Resize(object sender, EventArgs e)

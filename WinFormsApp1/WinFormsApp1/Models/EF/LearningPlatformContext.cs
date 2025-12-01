@@ -213,6 +213,13 @@ public partial class LearningPlatformContext : DbContext
             entity.Property(e => e.Price).HasColumnType("decimal(12, 2)");
             entity.Property(e => e.Slug).HasMaxLength(200);
             entity.Property(e => e.Title).HasMaxLength(200);
+            
+            // Moderation fields
+            entity.Property(e => e.ModerationStatus)
+                .HasMaxLength(20)
+                .HasDefaultValue("Pending");
+            entity.Property(e => e.RejectionReason).HasMaxLength(4000);
+            entity.Property(e => e.AutoCheckResults).HasMaxLength(4000);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Courses)
                 .HasForeignKey(d => d.CategoryId)
@@ -222,6 +229,12 @@ public partial class LearningPlatformContext : DbContext
                 .HasForeignKey(d => d.OwnerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Courses_Owner");
+                
+            // Add Reviewer relationship
+            entity.HasOne(d => d.Reviewer).WithMany()
+                .HasForeignKey(d => d.ReviewedBy)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Courses_ReviewedBy_Users");
         });
 
         modelBuilder.Entity<CourseCategory>(entity =>
