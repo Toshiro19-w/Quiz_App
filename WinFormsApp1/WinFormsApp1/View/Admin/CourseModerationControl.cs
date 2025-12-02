@@ -184,6 +184,9 @@ namespace WinFormsApp1.View.Admin
                 {
                     var courseId = (int)dataGridView.SelectedRows[0].Cells["CourseId"].Value;
                     _selectedCourse = _pendingCourses.FirstOrDefault(c => c.CourseId == courseId);
+                    
+                    // ✅ Update button states based on course status
+                    UpdateButtonStates();
                 }
             };
 
@@ -194,6 +197,64 @@ namespace WinFormsApp1.View.Admin
                     ShowCourseDetailDialog();
                 }
             };
+        }
+
+        /// <summary>
+        /// Update button states based on selected course status
+        /// </summary>
+        private void UpdateButtonStates()
+        {
+            var btnApprove = this.Controls.Find("btnApprove", true).FirstOrDefault() as Button;
+            var btnReject = this.Controls.Find("btnDelete", true).FirstOrDefault() as Button;
+            var btnRequestRevision = this.Controls.Find("btnRequestRevision", true).FirstOrDefault() as Button;
+
+            if (_selectedCourse == null)
+            {
+                // No course selected - disable all action buttons
+                if (btnApprove != null) btnApprove.Enabled = false;
+                if (btnReject != null) btnReject.Enabled = false;
+                if (btnRequestRevision != null) btnRequestRevision.Enabled = false;
+                return;
+            }
+
+            // Enable/disable based on current status
+            switch (_selectedCourse.ModerationStatus)
+            {
+                case "Pending":
+                    // Chờ duyệt - cho phép tất cả actions
+                    if (btnApprove != null) btnApprove.Enabled = true;
+                    if (btnReject != null) btnReject.Enabled = true;
+                    if (btnRequestRevision != null) btnRequestRevision.Enabled = true;
+                    break;
+
+                case "Approved":
+                    // Đã duyệt - chỉ cho phép từ chối hoặc yêu cầu sửa (re-review)
+                    if (btnApprove != null) btnApprove.Enabled = false;
+                    if (btnReject != null) btnReject.Enabled = true;
+                    if (btnRequestRevision != null) btnRequestRevision.Enabled = true;
+                    break;
+
+                case "Rejected":
+                    // Đã từ chối - không cho phép từ chối lại, nhưng có thể phê duyệt hoặc yêu cầu sửa
+                    if (btnApprove != null) btnApprove.Enabled = true;
+                    if (btnReject != null) btnReject.Enabled = false;
+                    if (btnRequestRevision != null) btnRequestRevision.Enabled = true;
+                    break;
+
+                case "NeedsRevision":
+                    // Cần sửa - user cần fix trước, admin không thể action cho đến khi user submit lại
+                    if (btnApprove != null) btnApprove.Enabled = true;
+                    if (btnReject != null) btnReject.Enabled = true;
+                    if (btnRequestRevision != null) btnRequestRevision.Enabled = false;
+                    break;
+
+                default:
+                    // Unknown status - enable all
+                    if (btnApprove != null) btnApprove.Enabled = true;
+                    if (btnReject != null) btnReject.Enabled = true;
+                    if (btnRequestRevision != null) btnRequestRevision.Enabled = true;
+                    break;
+            }
         }
 
         private async Task LoadPendingCoursesAsync()
@@ -212,6 +273,8 @@ namespace WinFormsApp1.View.Admin
                     .Include(c => c.CourseChapters)
                         .ThenInclude(ch => ch.Lessons)
                             .ThenInclude(l => l.LessonContents)
+                    // ✅ Chỉ load khóa học đã xuất bản (bỏ qua nháp)
+                    .Where(c => c.IsPublished == true)
                     .AsQueryable();
 
                 // Filter by status
@@ -229,6 +292,9 @@ namespace WinFormsApp1.View.Admin
                     .ToListAsync();
 
                 DisplayCourses();
+                
+                // ✅ Update button states after loading
+                UpdateButtonStates();
             }
             catch (Exception ex)
             {
@@ -355,12 +421,16 @@ namespace WinFormsApp1.View.Admin
                 return;
             }
 
+            // ✅ Create responsive dialog form
             using var form = new Form
             {
                 Text = "Chi tiết khóa học - Kiểm duyệt",
-                Size = new Size(900, 700),
+                Size = new Size(1000, 750),
+                MinimumSize = new Size(800, 600),
                 StartPosition = FormStartPosition.CenterParent,
-                FormBorderStyle = FormBorderStyle.Sizable
+                FormBorderStyle = FormBorderStyle.Sizable, // ✅ Allow resize
+                MaximizeBox = true, // ✅ Allow maximize
+                MinimizeBox = false
             };
 
             var panel = new Panel
@@ -403,11 +473,12 @@ namespace WinFormsApp1.View.Admin
             {
                 Text = _selectedCourse.Summary ?? "Chưa có mô tả",
                 Location = new Point(20, yPos),
-                Size = new Size(820, 80),
+                Size = new Size(panel.Width - 60, 80),
                 Multiline = true,
                 ReadOnly = true,
                 ScrollBars = ScrollBars.Vertical,
-                Font = new Font("Segoe UI", 10)
+                Font = new Font("Segoe UI", 10),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right // ✅ Responsive
             };
             panel.Controls.Add(txtDesc);
             yPos += 100;
@@ -445,64 +516,90 @@ namespace WinFormsApp1.View.Admin
 
             yPos += 20;
 
-            // Action buttons
+            // ✅ Responsive button panel at bottom
+            var buttonPanel = new Panel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 70,
+                BackColor = Color.FromArgb(248, 249, 250),
+                Padding = new Padding(20, 15, 20, 15)
+            };
+
             var btnApprove = new Button
             {
                 Text = "Phê duyệt",
                 Size = new Size(120, 40),
-                Location = new Point(20, yPos),
+                Location = new Point(20, 15),
                 BackColor = Color.FromArgb(40, 167, 69),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Anchor = AnchorStyles.Left | AnchorStyles.Bottom
             };
             btnApprove.FlatAppearance.BorderSize = 0;
             btnApprove.Click += (s, e) => { form.DialogResult = DialogResult.OK; ApproveCourse(); form.Close(); };
-            panel.Controls.Add(btnApprove);
+            buttonPanel.Controls.Add(btnApprove);
 
             var btnRequestRevision = new Button
             {
                 Text = "Yêu cầu sửa",
-                Size = new Size(120, 40),
-                Location = new Point(150, yPos),
+                Size = new Size(130, 40),
+                Location = new Point(150, 15),
                 BackColor = Color.FromArgb(255, 193, 7),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Anchor = AnchorStyles.Left | AnchorStyles.Bottom
             };
             btnRequestRevision.FlatAppearance.BorderSize = 0;
             btnRequestRevision.Click += (s, e) => { form.DialogResult = DialogResult.OK; RequestRevision(); form.Close(); };
-            panel.Controls.Add(btnRequestRevision);
+            buttonPanel.Controls.Add(btnRequestRevision);
 
             var btnReject = new Button
             {
                 Text = "Từ chối",
-                Size = new Size(120, 40),
-                Location = new Point(280, yPos),
+                Size = new Size(100, 40),
+                Location = new Point(290, 15),
                 BackColor = Color.FromArgb(220, 53, 69),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Anchor = AnchorStyles.Left | AnchorStyles.Bottom
             };
             btnReject.FlatAppearance.BorderSize = 0;
             btnReject.Click += (s, e) => { form.DialogResult = DialogResult.OK; RejectCourse(); form.Close(); };
-            panel.Controls.Add(btnReject);
+            buttonPanel.Controls.Add(btnReject);
 
             var btnClose = new Button
             {
                 Text = "Đóng",
                 Size = new Size(100, 40),
-                Location = new Point(720, yPos),
+                Location = new Point(form.Width - 140, 15),
                 BackColor = Color.FromArgb(108, 117, 125),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Anchor = AnchorStyles.Right | AnchorStyles.Bottom
             };
             btnClose.FlatAppearance.BorderSize = 0;
             btnClose.Click += (s, e) => form.Close();
-            panel.Controls.Add(btnClose);
+            
+            // ✅ Adjust close button position when form resizes
+            form.Resize += (s, e) => {
+                btnClose.Left = form.Width - 140;
+            };
+            
+            buttonPanel.Controls.Add(btnClose);
 
+            form.Controls.Add(buttonPanel);
             form.Controls.Add(panel);
+            
+            // ✅ Center on screen if no parent
+            if (this.FindForm() == null)
+            {
+                form.StartPosition = FormStartPosition.CenterScreen;
+            }
+            
             form.ShowDialog();
         }
 
@@ -525,8 +622,65 @@ namespace WinFormsApp1.View.Admin
                 return;
             }
 
+            // ✅ Validation: Check if already approved
+            if (_selectedCourse.ModerationStatus == "Approved")
+            {
+                MessageBox.Show("Khóa học này đã được phê duyệt rồi!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // ✅ Validation: Check auto score
+            var autoCheckResults = new List<CourseModerationService.AutoCheckResult>();
+            if (!string.IsNullOrEmpty(_selectedCourse.AutoCheckResults))
+            {
+                try
+                {
+                    autoCheckResults = JsonSerializer.Deserialize<List<CourseModerationService.AutoCheckResult>>(_selectedCourse.AutoCheckResults);
+                }
+                catch { }
+            }
+
+            var autoScore = CourseModerationService.CalculateAutoScore(autoCheckResults);
+            var hasErrors = autoCheckResults.Any(r => r.Severity == "Error" && !r.Passed);
+
+            // ✅ Warning if score is low
+            if (autoScore < 60)
+            {
+                var confirmLowScore = MessageBox.Show(
+                    $"Cảnh báo: Điểm tự động chỉ {autoScore}/100 (thấp).\n\n" +
+                    $"Khóa học có thể chưa đạt chất lượng tốt.\n\n" +
+                    $"Bạn có chắc chắn muốn phê duyệt?",
+                    "Xác nhận phê duyệt với điểm thấp",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (confirmLowScore != DialogResult.Yes) return;
+            }
+
+            // ✅ Error if has critical errors
+            if (hasErrors)
+            {
+                var errorList = string.Join("\n", autoCheckResults
+                    .Where(r => r.Severity == "Error" && !r.Passed)
+                    .Select(r => $"• {r.Message}"));
+
+                var confirmWithErrors = MessageBox.Show(
+                    $"Cảnh báo: Khóa học có lỗi nghiêm trọng:\n\n{errorList}\n\n" +
+                    $"Bạn vẫn muốn phê duyệt?",
+                    "Xác nhận phê duyệt với lỗi",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (confirmWithErrors != DialogResult.Yes) return;
+            }
+
+            // ✅ Final confirmation
             var result = MessageBox.Show(
-                $"Bạn có chắc chắn muốn phê duyệt khóa học '{_selectedCourse.Title}'?",
+                $"Bạn có chắc chắn muốn phê duyệt khóa học:\n\n" +
+                $"'{_selectedCourse.Title}'\n\n" +
+                $"Giảng viên: {_selectedCourse.Owner.FullName}\n" +
+                $"Điểm tự động: {autoScore}/100\n\n" +
+                $"Khóa học sẽ được công khai sau khi phê duyệt.",
                 "Xác nhận phê duyệt",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
@@ -540,8 +694,10 @@ namespace WinFormsApp1.View.Admin
 
                     if (CourseModerationService.ApproveCourse(_selectedCourse.CourseId, adminUserId, context))
                     {
-                        await LogAdminActionAsync("Approve", "Course", _selectedCourse.CourseId, $"Approved course: {_selectedCourse.Title}");
-                        MessageBox.Show("Đã phê duyệt khóa học!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        await LogAdminActionAsync("Approve", "Course", _selectedCourse.CourseId, 
+                            $"Approved course: {_selectedCourse.Title} (Score: {autoScore}/100)");
+                        
+                        ToastHelper.Show(this.FindForm(), "✅ Đã phê duyệt khóa học!");
                         await LoadPendingCoursesAsync();
                     }
                     else
@@ -564,8 +720,40 @@ namespace WinFormsApp1.View.Admin
                 return;
             }
 
+            // ✅ Validation: Check if already rejected
+            if (_selectedCourse.ModerationStatus == "Rejected")
+            {
+                MessageBox.Show("Khóa học này đã bị từ chối rồi!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // ✅ Validation: Require reason
             var reason = ShowReasonDialog("Nhập lý do từ chối:");
-            if (string.IsNullOrWhiteSpace(reason)) return;
+            if (string.IsNullOrWhiteSpace(reason))
+            {
+                MessageBox.Show("Vui lòng nhập lý do từ chối!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // ✅ Validation: Reason must be at least 20 characters
+            if (reason.Length < 20)
+            {
+                MessageBox.Show("Lý do từ chối phải có ít nhất 20 ký tự!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // ✅ Final confirmation
+            var result = MessageBox.Show(
+                $"Bạn có chắc chắn muốn từ chối khóa học:\n\n" +
+                $"'{_selectedCourse.Title}'\n\n" +
+                $"Giảng viên: {_selectedCourse.Owner.FullName}\n\n" +
+                $"Lý do: {reason}\n\n" +
+                $"Khóa học sẽ không được công khai và giảng viên sẽ nhận được thông báo.",
+                "Xác nhận từ chối",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (result != DialogResult.Yes) return;
 
             try
             {
@@ -574,8 +762,10 @@ namespace WinFormsApp1.View.Admin
 
                 if (CourseModerationService.RejectCourse(_selectedCourse.CourseId, adminUserId, reason, context))
                 {
-                    await LogAdminActionAsync("Reject", "Course", _selectedCourse.CourseId, $"Rejected course: {_selectedCourse.Title}. Reason: {reason}");
-                    MessageBox.Show("Đã từ chối khóa học!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    await LogAdminActionAsync("Reject", "Course", _selectedCourse.CourseId, 
+                        $"Rejected course: {_selectedCourse.Title}. Reason: {reason}");
+                    
+                    ToastHelper.Show(this.FindForm(), "✅ Đã từ chối khóa học!");
                     await LoadPendingCoursesAsync();
                 }
                 else
@@ -597,8 +787,67 @@ namespace WinFormsApp1.View.Admin
                 return;
             }
 
-            var reason = ShowReasonDialog("Nhập yêu cầu sửa đổi:");
-            if (string.IsNullOrWhiteSpace(reason)) return;
+            // ✅ Validation: Check if already in NeedsRevision status
+            if (_selectedCourse.ModerationStatus == "NeedsRevision")
+            {
+                MessageBox.Show("Khóa học này đã được yêu cầu sửa đổi rồi!\n\nVui lòng chờ giảng viên cập nhật và gửi lại.", 
+                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // ✅ Validation: Require reason
+            var reason = ShowReasonDialog("Nhập yêu cầu sửa đổi chi tiết:");
+            if (string.IsNullOrWhiteSpace(reason))
+            {
+                MessageBox.Show("Vui lòng nhập yêu cầu sửa đổi!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // ✅ Validation: Reason must be at least 30 characters (more detailed than reject)
+            if (reason.Length < 30)
+            {
+                MessageBox.Show("Yêu cầu sửa đổi phải có ít nhất 30 ký tự để giảng viên hiểu rõ!", 
+                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // ✅ Show suggestion for common issues
+            var autoCheckResults = new List<CourseModerationService.AutoCheckResult>();
+            if (!string.IsNullOrEmpty(_selectedCourse.AutoCheckResults))
+            {
+                try
+                {
+                    autoCheckResults = JsonSerializer.Deserialize<List<CourseModerationService.AutoCheckResult>>(_selectedCourse.AutoCheckResults);
+                }
+                catch { }
+            }
+
+            var issues = autoCheckResults.Where(r => !r.Passed && r.Severity != "Info").ToList();
+            if (issues.Any())
+            {
+                var issueList = string.Join("\n", issues.Select(r => $"• {r.Message}"));
+                var showIssues = MessageBox.Show(
+                    $"Các vấn đề được phát hiện tự động:\n\n{issueList}\n\n" +
+                    $"Bạn có muốn tiếp tục với yêu cầu sửa đổi đã nhập không?",
+                    "Gợi ý vấn đề",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Information);
+
+                if (showIssues != DialogResult.Yes) return;
+            }
+
+            // ✅ Final confirmation
+            var result = MessageBox.Show(
+                $"Bạn có chắc chắn muốn yêu cầu sửa đổi:\n\n" +
+                $"'{_selectedCourse.Title}'\n\n" +
+                $"Giảng viên: {_selectedCourse.Owner.FullName}\n\n" +
+                $"Yêu cầu: {reason}\n\n" +
+                $"Giảng viên sẽ nhận được thông báo và cần cập nhật khóa học.",
+                "Xác nhận yêu cầu sửa đổi",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result != DialogResult.Yes) return;
 
             try
             {
@@ -607,8 +856,10 @@ namespace WinFormsApp1.View.Admin
 
                 if (CourseModerationService.RequestRevision(_selectedCourse.CourseId, adminUserId, reason, context))
                 {
-                    await LogAdminActionAsync("RequestRevision", "Course", _selectedCourse.CourseId, $"Requested revision for course: {_selectedCourse.Title}. Reason: {reason}");
-                    MessageBox.Show("Đã gửi yêu cầu sửa đổi!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    await LogAdminActionAsync("RequestRevision", "Course", _selectedCourse.CourseId, 
+                        $"Requested revision for course: {_selectedCourse.Title}. Reason: {reason}");
+                    
+                    ToastHelper.Show(this.FindForm(), "✅ Đã gửi yêu cầu sửa đổi!");
                     await LoadPendingCoursesAsync();
                 }
                 else
@@ -627,56 +878,115 @@ namespace WinFormsApp1.View.Admin
             using var form = new Form
             {
                 Text = "Nhập lý do",
-                Size = new Size(500, 300),
+                Size = new Size(600, 350),
                 StartPosition = FormStartPosition.CenterParent,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
-                MaximizeBox = false
+                MaximizeBox = false,
+                MinimizeBox = false
             };
 
             var label = new Label
             {
                 Text = prompt,
                 Location = new Point(20, 20),
-                Size = new Size(440, 20),
-                Font = new Font("Segoe UI", 10)
+                Size = new Size(540, 20),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+            };
+
+            var hintLabel = new Label
+            {
+                Text = "Ghi chú: Lý do phải rõ ràng, cụ thể để giảng viên hiểu và cải thiện.",
+                Location = new Point(20, 45),
+                Size = new Size(540, 20),
+                Font = new Font("Segoe UI", 8),
+                ForeColor = Color.Gray
             };
 
             var textBox = new TextBox
             {
-                Location = new Point(20, 50),
-                Size = new Size(440, 120),
+                Location = new Point(20, 70),
+                Size = new Size(540, 130),
                 Multiline = true,
                 ScrollBars = ScrollBars.Vertical,
-                Font = new Font("Segoe UI", 10)
+                Font = new Font("Segoe UI", 10),
+                Name = "txtReason"
+            };
+
+            // ✅ Character count label
+            var charCountLabel = new Label
+            {
+                Text = "0 ký tự (tối thiểu 20)",
+                Location = new Point(20, 205),
+                Size = new Size(540, 20),
+                Font = new Font("Segoe UI", 8),
+                ForeColor = Color.Gray,
+                Name = "lblCharCount"
+            };
+
+            // ✅ Update character count on text change
+            textBox.TextChanged += (s, e) =>
+            {
+                var length = textBox.Text.Length;
+                charCountLabel.Text = $"{length} ký tự (tối thiểu 20)";
+                charCountLabel.ForeColor = length >= 20 ? Color.Green : Color.Red;
             };
 
             var btnOK = new Button
             {
                 Text = "OK",
-                Size = new Size(80, 35),
-                Location = new Point(300, 190),
+                Size = new Size(100, 40),
+                Location = new Point(370, 240),
                 BackColor = ColorPalette.Primary,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                DialogResult = DialogResult.OK
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Name = "btnOK"
             };
             btnOK.FlatAppearance.BorderSize = 0;
+            
+            // ✅ Validate before accepting
+            btnOK.Click += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(textBox.Text))
+                {
+                    MessageBox.Show("Vui lòng nhập lý do!", "Thông báo", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (textBox.Text.Trim().Length < 20)
+                {
+                    MessageBox.Show("Lý do phải có ít nhất 20 ký tự!", "Thông báo", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                form.DialogResult = DialogResult.OK;
+                form.Close();
+            };
 
             var btnCancel = new Button
             {
                 Text = "Hủy",
-                Size = new Size(80, 35),
-                Location = new Point(390, 190),
+                Size = new Size(100, 40),
+                Location = new Point(480, 240),
                 BackColor = Color.Gray,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 DialogResult = DialogResult.Cancel
             };
             btnCancel.FlatAppearance.BorderSize = 0;
 
-            form.Controls.AddRange(new Control[] { label, textBox, btnOK, btnCancel });
+            form.Controls.AddRange(new Control[] { 
+                label, hintLabel, textBox, charCountLabel, btnOK, btnCancel 
+            });
 
-            return form.ShowDialog() == DialogResult.OK ? textBox.Text : null;
+            // ✅ Set Accept/Cancel buttons for Enter/Esc keys
+            form.AcceptButton = btnOK;
+            form.CancelButton = btnCancel;
+
+            return form.ShowDialog() == DialogResult.OK ? textBox.Text.Trim() : null;
         }
     }
 }

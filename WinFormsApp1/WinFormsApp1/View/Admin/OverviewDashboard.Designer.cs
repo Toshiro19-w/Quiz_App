@@ -66,6 +66,7 @@ namespace WinFormsApp1.View.Admin
             // 
             // filterCombo
             // 
+            this.filterCombo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.filterCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.filterCombo.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.filterCombo.FormattingEnabled = true;
@@ -74,17 +75,18 @@ namespace WinFormsApp1.View.Admin
             "Tuần này",
             "Tháng này",
             "Tùy chọn"});
-            this.filterCombo.Location = new System.Drawing.Point(450, 25);
+            this.filterCombo.Location = new System.Drawing.Point(1728, 25);
             this.filterCombo.Name = "filterCombo";
             this.filterCombo.Size = new System.Drawing.Size(150, 25);
             this.filterCombo.TabIndex = 1;
             // 
             // startDatePicker
             // 
+            this.startDatePicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.startDatePicker.CustomFormat = "dd/MM/yyyy";
             this.startDatePicker.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.startDatePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.startDatePicker.Location = new System.Drawing.Point(610, 25);
+            this.startDatePicker.Location = new System.Drawing.Point(1458, 25);
             this.startDatePicker.Name = "startDatePicker";
             this.startDatePicker.Size = new System.Drawing.Size(120, 25);
             this.startDatePicker.TabIndex = 2;
@@ -92,10 +94,11 @@ namespace WinFormsApp1.View.Admin
             // 
             // endDatePicker
             // 
+            this.endDatePicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.endDatePicker.CustomFormat = "dd/MM/yyyy";
             this.endDatePicker.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.endDatePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.endDatePicker.Location = new System.Drawing.Point(740, 25);
+            this.endDatePicker.Location = new System.Drawing.Point(1588, 25);
             this.endDatePicker.Name = "endDatePicker";
             this.endDatePicker.Size = new System.Drawing.Size(120, 25);
             this.endDatePicker.TabIndex = 3;
@@ -103,12 +106,13 @@ namespace WinFormsApp1.View.Admin
             // 
             // applyButton
             // 
+            this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.applyButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(178)))), ((int)(((byte)(172)))));
             this.applyButton.FlatAppearance.BorderSize = 0;
             this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.applyButton.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.applyButton.ForeColor = System.Drawing.Color.White;
-            this.applyButton.Location = new System.Drawing.Point(870, 23);
+            this.applyButton.Location = new System.Drawing.Point(1718, 23);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(80, 30);
             this.applyButton.TabIndex = 4;

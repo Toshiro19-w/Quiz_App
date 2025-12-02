@@ -29,8 +29,32 @@ namespace WinFormsApp1.View.Admin
             SetupLayout("Quản lý Flashcard", dataGridView);
             WireCrudEvents();
             
+            // Add custom filters using new pattern
+            SetupCustomFilters();
+            
             SetupFilterEvents();
-            _ = LoadFlashcardSetsAsync();
+            
+            // ❌ Don't load data immediately - wait for user interaction
+            // _ = LoadFlashcardSetsAsync();
+        }
+
+        /// <summary>
+        /// Setup custom filters for Flashcard Management
+        /// </summary>
+        private void SetupCustomFilters()
+        {
+            // Visibility Filter
+            var visibilityCombo = new ComboBox
+            {
+                Name = "cboVisibility",
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+            visibilityCombo.Items.AddRange(new object[] { "Tất cả", "Public", "Private", "Unlisted" });
+            visibilityCombo.SelectedIndex = 0;
+            visibilityCombo.SelectedIndexChanged += (s, e) => FilterFlashcardsLocally();
+
+            // Add filter using the new helper method
+            AddCustomFilter("Trạng thái:", visibilityCombo);
         }
 
         private void InitializeComponent()
@@ -38,6 +62,10 @@ namespace WinFormsApp1.View.Admin
             this.SuspendLayout();
             this.Name = "FlashcardManagementControl";
             this.Size = new Size(1200, 800);
+            
+            // ✅ Load data after component is initialized
+            this.Load += async (s, e) => await LoadFlashcardSetsAsync();
+            
             this.ResumeLayout(false);
         }
 
@@ -114,54 +142,6 @@ namespace WinFormsApp1.View.Admin
         {
             // Setup search
             SetupSearchFunctionality(dataGridView, "Title", "OwnerName", "Language");
-
-            // Find and wire visibility filter if exists
-            var visibilityCombo = this.Controls.Find("cboVisibility", true).FirstOrDefault() as ComboBox;
-            if (visibilityCombo != null)
-            {
-                visibilityCombo.SelectedIndexChanged += (s, e) => FilterFlashcardsLocally();
-            }
-        }
-
-        protected override Panel CreateFilterPanel()
-        {
-            var panel = base.CreateFilterPanel();
-
-            // Visibility Filter
-            var visibilityCombo = new ComboBox
-            {
-                Items = { "Tất cả", "Public", "Private", "Unlisted" },
-                SelectedIndex = 0,
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 9),
-                Size = new Size(120, 25),
-                Name = "cboVisibility"
-            };
-            visibilityCombo.SelectedIndexChanged += (s, e) => FilterFlashcardsLocally();
-
-            var visibilityLabel = new Label
-            {
-                Text = "Trạng thái:",
-                Font = new Font("Segoe UI", 9),
-                AutoSize = true,
-                Location = new Point(visibilityCombo.Left - 75, 15),
-                Tag = visibilityCombo.Left - 75
-            };
-
-            panel.Controls.Add(visibilityLabel);
-            AddFilterControl(visibilityCombo);
-
-            // Adjust labels position after controls are added
-            panel.Resize += (s, e) =>
-            {
-                var combo = panel.Controls.Find("cboVisibility", false).FirstOrDefault();
-                if (combo != null && visibilityLabel != null)
-                {
-                    visibilityLabel.Left = combo.Left - 75;
-                }
-            };
-
-            return panel;
         }
 
         private void FilterFlashcardsLocally()
@@ -335,14 +315,15 @@ namespace WinFormsApp1.View.Admin
         // Sử dụng form CreateFlashcardControl của User
         private void ShowUserCreateFlashcardForm()
         {
-            // Tạo một form wrapper để chứa CreateFlashcardControl
+            // Tạo một form wrapper responsive để chứa CreateFlashcardControl
             var dialogForm = new Form
             {
                 Text = "Tạo Flashcard Set mới",
-                Size = new Size(950, 700),
+                Size = new Size(1000, 750),
+                MinimumSize = new Size(800, 600),
                 StartPosition = FormStartPosition.CenterParent,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                MaximizeBox = false,
+                FormBorderStyle = FormBorderStyle.Sizable, // ✅ Allow resize
+                MaximizeBox = true, // ✅ Allow maximize
                 MinimizeBox = false
             };
 
@@ -353,8 +334,13 @@ namespace WinFormsApp1.View.Admin
 
             dialogForm.Controls.Add(createControl);
 
+            // ✅ Center on screen if no parent
+            if (this.FindForm() == null)
+            {
+                dialogForm.StartPosition = FormStartPosition.CenterScreen;
+            }
+
             // Hook vào sự kiện để đóng form sau khi tạo thành công
-            // (Bạn có thể cần thêm event vào CreateFlashcardControl nếu chưa có)
             dialogForm.FormClosing += async (s, e) =>
             {
                 // Reload data khi đóng form
@@ -367,14 +353,15 @@ namespace WinFormsApp1.View.Admin
         // Sử dụng form EditFlashcardControl của User
         private void ShowUserEditFlashcardForm(int setId)
         {
-            // Tạo một form wrapper để chứa EditFlashcardControl
+            // Tạo một form wrapper responsive để chứa EditFlashcardControl
             var dialogForm = new Form
             {
                 Text = "Chỉnh sửa Flashcard Set",
-                Size = new Size(950, 700),
+                Size = new Size(1000, 750),
+                MinimumSize = new Size(800, 600),
                 StartPosition = FormStartPosition.CenterParent,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                MaximizeBox = false,
+                FormBorderStyle = FormBorderStyle.Sizable, // ✅ Allow resize
+                MaximizeBox = true, // ✅ Allow maximize
                 MinimizeBox = false
             };
 
@@ -384,6 +371,12 @@ namespace WinFormsApp1.View.Admin
             };
 
             dialogForm.Controls.Add(editControl);
+
+            // ✅ Center on screen if no parent
+            if (this.FindForm() == null)
+            {
+                dialogForm.StartPosition = FormStartPosition.CenterScreen;
+            }
 
             // Hook vào sự kiện để đóng form sau khi lưu thành công
             dialogForm.FormClosing += async (s, e) =>
@@ -401,7 +394,8 @@ namespace WinFormsApp1.View.Admin
             var dialogForm = new Form
             {
                 Text = "Chi tiết Flashcard Set",
-                Size = new Size(1200, 700),
+                Size = new Size(1200, 750),
+                MinimumSize = new Size(900, 600),
                 StartPosition = FormStartPosition.CenterParent,
                 FormBorderStyle = FormBorderStyle.Sizable,
                 MaximizeBox = true,
@@ -414,6 +408,13 @@ namespace WinFormsApp1.View.Admin
             };
 
             dialogForm.Controls.Add(detailControl);
+
+            // ✅ Center on screen if no parent
+            if (this.FindForm() == null)
+            {
+                dialogForm.StartPosition = FormStartPosition.CenterScreen;
+            }
+
             dialogForm.ShowDialog(this.FindForm());
         }
 

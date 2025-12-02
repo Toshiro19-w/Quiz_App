@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Guna.Charts.WinForms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.ViewModels;
+using WinFormsApp1.Helpers;
 using static WinFormsApp1.Helpers.ResponsiveLayoutHelper;
 using static WinFormsApp1.Helpers.UIComponentHelper;
 
@@ -64,10 +65,12 @@ namespace WinFormsApp1.View.Admin
             filterCombo.SelectedIndex = 2; // Default to Month
             filterCombo.SelectedIndexChanged += FilterCombo_SelectedIndexChanged;
 
+            // ✅ DateTimePicker with Vietnamese format
             startDatePicker = new DateTimePicker
             {
                 Location = new Point(270, 18),
-                Format = DateTimePickerFormat.Short,
+                Format = DateTimePickerFormat.Custom,
+                CustomFormat = "dd/MM/yyyy",  // ✅ Vietnamese date format
                 Width = 120,
                 Visible = false
             };
@@ -75,7 +78,8 @@ namespace WinFormsApp1.View.Admin
             endDatePicker = new DateTimePicker
             {
                 Location = new Point(400, 18),
-                Format = DateTimePickerFormat.Short,
+                Format = DateTimePickerFormat.Custom,
+                CustomFormat = "dd/MM/yyyy",  // ✅ Vietnamese date format
                 Width = 120,
                 Visible = false
             };
@@ -150,6 +154,25 @@ namespace WinFormsApp1.View.Admin
             
             // Resize logic
             this.Resize += ExecutiveReportControl_Resize;
+            
+            // ✅ Setup date range validation
+            InitializeDateValidation();
+        }
+
+        /// <summary>
+        /// Initialize date validation for custom date range
+        /// </summary>
+        private void InitializeDateValidation()
+        {
+            // ✅ Initialize DatePickers with default range (last 30 days)
+            DateRangeValidationHelper.InitializeDatePickers(startDatePicker, endDatePicker, 30);
+
+            // ✅ Setup date range validation
+            DateRangeValidationHelper.SetupDateRangeValidation(
+                startDatePicker,
+                endDatePicker,
+                applyButton
+            );
         }
 
         private void ExecutiveReportControl_Load(object sender, EventArgs e)
@@ -179,7 +202,24 @@ namespace WinFormsApp1.View.Admin
             endDatePicker.Visible = isCustom;
             applyButton.Visible = isCustom;
 
-            if (!isCustom)
+            // ✅ Initialize date pickers when switching to custom mode
+            if (isCustom)
+            {
+                // Set end date to today
+                endDatePicker.Value = DateTime.Now;
+                // Set start date to 1 month before end date
+                startDatePicker.Value = endDatePicker.Value.AddMonths(-1);
+                
+                // Validate dates
+                DateRangeValidationHelper.ValidateDateRange(
+                    startDatePicker,
+                    endDatePicker,
+                    applyButton,
+                    Color.FromArgb(14, 165, 233),
+                    Color.Gray
+                );
+            }
+            else
             {
                 ApplyFilter();
             }
@@ -207,6 +247,15 @@ namespace WinFormsApp1.View.Admin
                     end = now.Date.AddDays(1).AddTicks(-1);
                     break;
                 case 3: // Custom
+                    // ✅ Validate using helper with message box
+                    if (!DateRangeValidationHelper.ValidateWithMessage(
+                        startDatePicker,
+                        endDatePicker,
+                        applyButton,
+                        this.FindForm()))
+                    {
+                        return;
+                    }
                     start = startDatePicker.Value.Date;
                     end = endDatePicker.Value.Date.AddDays(1).AddTicks(-1);
                     break;

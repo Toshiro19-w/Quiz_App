@@ -33,12 +33,20 @@ namespace WinFormsApp1.Helpers
 
             foreach (var user in users)
             {
+                // ✅ Get role name using RoleId instead of navigation property
+                string roleName = user.RoleId switch
+                {
+                    1 => "Admin",
+                    2 => "User",
+                    _ => "Unknown"
+                };
+                
                 dataTable.Rows.Add(
                     user.UserId,
                     user.Username,
                     user.Email,
                     user.FullName,
-                    user.Role?.Name ?? "N/A",
+                    roleName,  // ✅ Use mapped role name
                     user.CreatedAt
                 );
             }

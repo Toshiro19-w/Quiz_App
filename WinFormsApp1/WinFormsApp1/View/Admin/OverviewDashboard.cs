@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Guna.Charts.WinForms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.ViewModels;
+using WinFormsApp1.Helpers;
 using static WinFormsApp1.Helpers.ResponsiveLayoutHelper;
 using static WinFormsApp1.Helpers.UIComponentHelper;
 
@@ -23,12 +24,25 @@ namespace WinFormsApp1.View.Admin
 
         private void OverviewDashboard_Load(object sender, EventArgs e)
         {
+            // ✅ Set Vietnamese format for DateTimePickers
+            VietnameseDatePickerHelper.SetVietnameseFormat(false, startDatePicker, endDatePicker);
+            
             // Default to "This Month"
             filterCombo.SelectedIndex = 2; 
             
             // Wire up events
             filterCombo.SelectedIndexChanged += FilterCombo_SelectedIndexChanged;
             applyButton.Click += (s, ev) => ApplyFilter();
+            
+            // ✅ Setup date validation using helper
+            DateRangeValidationHelper.SetupDateRangeValidation(
+                startDatePicker,
+                endDatePicker,
+                applyButton
+            );
+
+            // ✅ Load data immediately on form load
+            _ = ApplyFilter();
 
             // Responsive layout
             Resize += (s, ev) =>
@@ -44,7 +58,60 @@ namespace WinFormsApp1.View.Admin
                 {
                     chartPanel.Width = Width - 40;
                 }
+                
+                // Adjust filter position to align right
+                AdjustFilterPosition();
             };
+            
+            // Initial filter position adjustment
+            AdjustFilterPosition();
+        }
+
+        /// <summary>
+        /// Adjust filter controls position to align right
+        /// </summary>
+        private void AdjustFilterPosition()
+        {
+            if (topPanel == null) return;
+            
+            // Calculate positions from right edge
+            int rightMargin = 20;
+            int spacing = 10;
+            
+            // Apply button (rightmost)
+            if (applyButton.Visible)
+            {
+                applyButton.Location = new Point(
+                    topPanel.Width - applyButton.Width - rightMargin,
+                    25
+                );
+                
+                // End date picker
+                endDatePicker.Location = new Point(
+                    applyButton.Left - endDatePicker.Width - spacing,
+                    25
+                );
+                
+                // Start date picker
+                startDatePicker.Location = new Point(
+                    endDatePicker.Left - startDatePicker.Width - spacing,
+                    25
+                );
+                
+                // Filter combo
+                filterCombo.Location = new Point(
+                    startDatePicker.Left - filterCombo.Width - spacing,
+                    25
+                );
+            }
+            else
+            {
+                // Only filter combo visible, align to right
+                filterCombo.Location = new Point(
+                    topPanel.Width - filterCombo.Width - rightMargin,
+                    25
+                );
+            }
         }
 
         private void FilterCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -54,13 +121,33 @@ namespace WinFormsApp1.View.Admin
             endDatePicker.Visible = isCustom;
             applyButton.Visible = isCustom;
 
-            if (!isCustom)
+            // Adjust positions when visibility changes
+            AdjustFilterPosition();
+
+            // ✅ Initialize date pickers when switching to custom mode
+            if (isCustom)
             {
-                ApplyFilter();
+                // Set end date to today
+                endDatePicker.Value = DateTime.Now;
+                // Set start date to 1 month before end date
+                startDatePicker.Value = endDatePicker.Value.AddMonths(-1);
+                
+                // Validate dates
+                DateRangeValidationHelper.ValidateDateRange(
+                    startDatePicker,
+                    endDatePicker,
+                    applyButton,
+                    Color.FromArgb(56, 178, 172),
+                    Color.Gray
+                );
+            }
+            else
+            {
+                _ = ApplyFilter();
             }
         }
 
-        private async void ApplyFilter()
+        private async System.Threading.Tasks.Task ApplyFilter()
         {
             DateTime? start = null;
             DateTime? end = null;
@@ -83,6 +170,15 @@ namespace WinFormsApp1.View.Admin
                     end = now.Date.AddDays(1).AddTicks(-1);
                     break;
                 case 3: // Custom
+                    // ✅ Validate using helper with message box
+                    if (!DateRangeValidationHelper.ValidateWithMessage(
+                        startDatePicker,
+                        endDatePicker,
+                        applyButton,
+                        this.FindForm()))
+                    {
+                        return;
+                    }
                     start = startDatePicker.Value.Date;
                     end = endDatePicker.Value.Date.AddDays(1).AddTicks(-1);
                     break;

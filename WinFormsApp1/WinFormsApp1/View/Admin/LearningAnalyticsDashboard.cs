@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Guna.Charts.WinForms;
 using WinFormsApp1.Controllers;
+using WinFormsApp1.Helpers;
 using static WinFormsApp1.Helpers.ResponsiveLayoutHelper;
 using static WinFormsApp1.Helpers.UIComponentHelper;
 using WinFormsApp1.ViewModels;
@@ -29,9 +30,15 @@ namespace WinFormsApp1.View.Admin
 
         private async void InitializeFilterControls()
         {
-            // Set default dates
-            startDatePicker.Value = DateTime.Now.AddMonths(-1);
-            endDatePicker.Value = DateTime.Now;
+            // ✅ Set default dates using helper
+            DateRangeValidationHelper.InitializeDatePickers(startDatePicker, endDatePicker, 30);
+
+            // ✅ Setup date range validation
+            DateRangeValidationHelper.SetupDateRangeValidation(
+                startDatePicker,
+                endDatePicker,
+                applyButton
+            );
 
             // Load categories
             categoryCombo.Items.Clear();
@@ -51,8 +58,7 @@ namespace WinFormsApp1.View.Admin
             applyButton.Click += (s, e) => LoadData();
             resetButton.Click += (s, e) =>
             {
-                startDatePicker.Value = DateTime.Now.AddMonths(-1);
-                endDatePicker.Value = DateTime.Now;
+                DateRangeValidationHelper.InitializeDatePickers(startDatePicker, endDatePicker, 30);
                 categoryCombo.SelectedIndex = 0;
                 LoadData();
             };
@@ -78,6 +84,16 @@ namespace WinFormsApp1.View.Admin
         {
             try
             {
+                // ✅ Validate date range before loading
+                if (!DateRangeValidationHelper.ValidateWithMessage(
+                    startDatePicker,
+                    endDatePicker,
+                    applyButton,
+                    this.FindForm()))
+                {
+                    return;
+                }
+
                 var startDate = startDatePicker.Value;
                 var endDate = endDatePicker.Value;
                 var category = categoryCombo.SelectedItem?.ToString();
