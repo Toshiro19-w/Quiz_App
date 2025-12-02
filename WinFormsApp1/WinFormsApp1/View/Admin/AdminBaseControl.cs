@@ -12,71 +12,73 @@ namespace WinFormsApp1.View.Admin
     public abstract class AdminBaseControl : UserControl
     {
         protected readonly AdminController _adminController;
+        protected DataGridView dataGridView;
         protected TextBox searchBox;
-        protected Panel searchPanel;
         protected PaginationHelper paginationHelper;
-        protected Panel paginationPanel;
+        protected Panel inputFormPanel;
+        protected bool isFormVisible = false;
 
         protected AdminBaseControl(AdminController controller = null)
         {
             _adminController = controller ?? new AdminController();
             paginationHelper = new PaginationHelper(50);
+            
+            // Handle DPI changes
+            this.Font = SystemFonts.MessageBoxFont;
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+            
+            // Subscribe to DPI changed events
+            this.HandleCreated += OnHandleCreated;
         }
 
-        protected void ApplyModernStyling(DataGridView dataGridView, Panel formPanel)
+        private void OnHandleCreated(object sender, EventArgs e)
         {
-            if (dataGridView == null) return;
+            // Hook into Windows message to detect DPI changes
+            this.HandleDestroyed += (s, args) => { };
+        }
 
-            // Modern DataGridView styling
-            dataGridView.BorderStyle = BorderStyle.FixedSingle;
-            dataGridView.BackgroundColor = Color.White;
-            dataGridView.GridColor = Color.FromArgb(224, 224, 224);
-            dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.Single;
-            
-            // Header styling
-            dataGridView.EnableHeadersVisualStyles = false;
-            dataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-            dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
-            dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
-            dataGridView.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
-            dataGridView.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView.ColumnHeadersHeight = 35;
-            
-            // Row styling
-            dataGridView.DefaultCellStyle.BackColor = Color.White;
-            dataGridView.DefaultCellStyle.ForeColor = Color.Black;
-            dataGridView.DefaultCellStyle.Font = new Font("Segoe UI", 9);
-            dataGridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
-            dataGridView.RowTemplate.Height = 35;
-            
-            // Selection styling
-            dataGridView.DefaultCellStyle.SelectionBackColor = Color.FromArgb(51, 122, 183);
-            dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
-            
-            // Behavior
-            dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView.MultiSelect = false;
-            dataGridView.AllowUserToAddRows = false;
-            dataGridView.AllowUserToDeleteRows = false;
-            dataGridView.ReadOnly = true;
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            // Format headers
-            dataGridView.DataBindingComplete += (s, e) =>
+        /// <summary>
+        /// Tạo một DataGridView hiện đại với styling đẹp
+        /// </summary>
+        protected DataGridView CreateModernDataGridView()
+        {
+            var dgv = new DataGridView
             {
-                foreach (DataGridViewColumn column in dataGridView.Columns)
-                {
-                    column.HeaderText = column.HeaderText.Replace("_", " ");
-                }
+                Dock = DockStyle.Fill,
+                AutoGenerateColumns = true,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                ReadOnly = true,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect = false,
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
+                ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None,
+                EnableHeadersVisualStyles = false,
+                RowHeadersVisible = false,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                Font = new Font("Segoe UI", 10),
+                GridColor = Color.FromArgb(224, 224, 224)
             };
 
-            if (formPanel != null)
-            {
-                formPanel.BorderStyle = BorderStyle.None;
-                formPanel.BackColor = Color.White;
-                formPanel.Padding = new Padding(20);
-            }
+            // Modern header styling
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 144, 220);
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(10);
+            dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgv.ColumnHeadersHeight = 45;
+
+            // Modern row styling
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(59, 130, 246);
+            dgv.DefaultCellStyle.SelectionForeColor = Color.White;
+            dgv.DefaultCellStyle.Padding = new Padding(8);
+            dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dgv.RowTemplate.Height = 40;
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
+
+            return dgv;
         }
 
         protected Panel CreateTopPanel(string title)
@@ -168,16 +170,18 @@ namespace WinFormsApp1.View.Admin
             return buttonPanel;
         }
 
-        protected Panel CreateFilterPanel()
+        protected virtual Panel CreateFilterPanel()
         {
             var filterPanel = new Panel
             {
                 Height = 50,
                 Dock = DockStyle.Top,
                 BackColor = Color.White,
-                Padding = new Padding(20, 10, 20, 10)
+                Padding = new Padding(20, 10, 20, 10),
+                Name = "filterPanel"
             };
 
+            // Left side - "Hiển thị X dữ liệu"
             var showLabel = new Label
             {
                 Text = "Hiển thị",
@@ -194,7 +198,8 @@ namespace WinFormsApp1.View.Admin
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Font = new Font("Segoe UI", 9),
                 Size = new Size(60, 25),
-                Location = new Point(70, 12)
+                Location = new Point(75, 12),
+                Name = "cboEntries"
             };
             filterPanel.Controls.Add(entriesCombo);
 
@@ -203,42 +208,129 @@ namespace WinFormsApp1.View.Admin
                 Text = "dữ liệu",
                 Font = new Font("Segoe UI", 9),
                 AutoSize = true,
-                Location = new Point(140, 15)
+                Location = new Point(145, 15)
             };
             filterPanel.Controls.Add(entriesLabel);
 
+            // Right side - Search box
+            searchBox = new TextBox
+            {
+                Font = new Font("Segoe UI", 9),
+                Size = new Size(250, 25),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                Location = new Point(filterPanel.Width - 270, 12),
+                BorderStyle = BorderStyle.FixedSingle,
+                Name = "txtSearch"
+            };
+            
             var searchLabel = new Label
             {
                 Text = "Tìm kiếm:",
                 Font = new Font("Segoe UI", 9),
                 AutoSize = true,
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(filterPanel.Width - 300, 15)
+                Location = new Point(searchBox.Left - 70, 15)
             };
+            
             filterPanel.Controls.Add(searchLabel);
-
-            searchBox = new TextBox
-            {
-                Font = new Font("Segoe UI", 9),
-                Size = new Size(200, 25),
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(filterPanel.Width - 220, 12),
-                BorderStyle = BorderStyle.FixedSingle
-            };
             filterPanel.Controls.Add(searchBox);
+
+            // Handle resize to adjust search box position
+            filterPanel.Resize += (s, e) =>
+            {
+                searchBox.Left = filterPanel.Width - 270;
+                searchLabel.Left = searchBox.Left - 70;
+            };
 
             return filterPanel;
         }
+        
+        /// <summary>
+        /// Helper method để thêm custom filter controls vào filter panel.
+        /// Gọi method này SAU KHI SetupLayout() đã chạy xong.
+        /// </summary>
+        /// <param name="labelText">Text của label (VD: "Danh mục:")</param>
+        /// <param name="comboBox">ComboBox đã được config sẵn</param>
+        protected void AddCustomFilter(string labelText, ComboBox comboBox)
+        {
+            var filterPanel = this.Controls.Find("filterPanel", true).FirstOrDefault() as Panel;
+            if (filterPanel == null)
+            {
+                System.Diagnostics.Debug.WriteLine("WARNING: filterPanel not found. Call this after SetupLayout()");
+                return;
+            }
 
-        protected void SetupSearchFunctionality(DataGridView dataGridView, params string[] searchColumns)
+            // Count existing custom filters (exclude cboEntries)
+            var existingFilters = filterPanel.Controls.OfType<ComboBox>()
+                .Where(c => c.Name != null && c.Name.StartsWith("cbo") && c.Name != "cboEntries")
+                .Count();
+
+            // Calculate position
+            int baseX = 400;
+            int spacing = 230; // label (70) + combo (150) + gap (10)
+            int xPos = baseX + (existingFilters * spacing);
+
+            // Position the ComboBox
+            comboBox.Location = new Point(xPos, 12);
+            comboBox.Size = new Size(150, 25);
+            comboBox.Font = new Font("Segoe UI", 9);
+            
+            // Add ComboBox first
+            filterPanel.Controls.Add(comboBox);
+
+            // Create and add label
+            var label = new Label
+            {
+                Text = labelText,
+                Font = new Font("Segoe UI", 9),
+                AutoSize = true,
+                Location = new Point(xPos - 75, 15),
+                Name = $"lbl{comboBox.Name}"
+            };
+            filterPanel.Controls.Add(label);
+            
+            System.Diagnostics.Debug.WriteLine($"Added filter: {labelText} at position {xPos}");
+        }
+        
+        /// <summary>
+        /// Helper method để thêm nhiều custom filters cùng lúc
+        /// </summary>
+        protected void AddCustomFilters(params (string label, ComboBox combo)[] filters)
+        {
+            foreach (var filter in filters)
+            {
+                AddCustomFilter(filter.label, filter.combo);
+            }
+        }
+        
+        protected void AddFilterControl(Control control)
+        {
+            var filterPanel = this.Controls.Find("filterPanel", true).FirstOrDefault() as Panel;
+            if (filterPanel == null) return;
+
+            // Position controls in the middle area (between left info and right search)
+            var existingFilters = filterPanel.Controls.OfType<ComboBox>()
+                .Where(c => c.Name != null && c.Name.StartsWith("cbo") && c.Name != "cboEntries")
+                .Count();
+
+            // Fixed position in center, không anchor
+            int baseX = 400;
+            int spacing = 230; // label (70) + combo (150) + gap (10)
+            
+            control.Location = new Point(baseX + (existingFilters * spacing), 12);
+            filterPanel.Controls.Add(control);
+            
+            // Store the original X position for resize handling
+            control.Tag = control.Location.X;
+        }
+
+        protected virtual void SetupSearchFunctionality(DataGridView dataGridView, params string[] searchColumns)
         {
             if (searchBox != null)
             {
                 searchBox.TextChanged += (s, e) => PerformAdvancedSearch(dataGridView, searchBox.Text, searchColumns);
             }
         }
-
-
 
         protected void SetupLayout(string title, DataGridView dataGridView)
         {
@@ -248,12 +340,10 @@ namespace WinFormsApp1.View.Admin
             var topPanel = CreateTopPanel(title);
             var buttonPanel = CreateCrudButtonPanel();
             var filterPanel = CreateFilterPanel();
-            var paginationPanel = CreatePaginationPanel();
             
             dataGridView.Dock = DockStyle.Fill;
             
             this.Controls.Add(dataGridView);
-            this.Controls.Add(paginationPanel);
             this.Controls.Add(filterPanel);
             this.Controls.Add(buttonPanel);
             this.Controls.Add(topPanel);
@@ -269,12 +359,10 @@ namespace WinFormsApp1.View.Admin
             var topPanel = CreateTopPanel(title);
             var buttonPanel = CreateCrudButtonPanel();
             var filterPanel = CreateFilterPanel();
-            var paginationPanel = CreatePaginationPanel();
             
             dataGridView.Dock = DockStyle.Fill;
             
             this.Controls.Add(dataGridView);
-            this.Controls.Add(paginationPanel);
             this.Controls.Add(filterPanel);
             this.Controls.Add(buttonPanel);
             this.Controls.Add(topPanel);
@@ -282,9 +370,6 @@ namespace WinFormsApp1.View.Admin
             
             this.ResumeLayout();
         }
-        
-        protected Panel inputFormPanel;
-        protected bool isFormVisible = false;
 
         protected virtual void OnAddButtonClick(object sender, EventArgs e) { }
         protected virtual void OnEditButtonClick(object sender, EventArgs e) { }
@@ -628,61 +713,6 @@ namespace WinFormsApp1.View.Admin
             }
         }
 
-        protected Panel CreatePaginationPanel()
-        {
-            var paginationPanel = new Panel
-            {
-                Height = 50,
-                Dock = DockStyle.Bottom,
-                BackColor = Color.White,
-                Padding = new Padding(20, 10, 20, 10)
-            };
-
-            var infoLabel = new Label
-            {
-                Text = "Hiển thị 1 tới 1 của 1 dữ liệu",
-                Font = new Font("Segoe UI", 9),
-                AutoSize = true,
-                Location = new Point(20, 15)
-            };
-            paginationPanel.Controls.Add(infoLabel);
-
-            var buttonPanel = new Panel
-            {
-                Size = new Size(300, 30),
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(paginationPanel.Width - 320, 10)
-            };
-
-            var firstBtn = CreatePaginationButton("Đầu tiên", 0);
-            var prevBtn = CreatePaginationButton("Trước", 80);
-            var currentBtn = CreatePaginationButton("1", 140, true);
-            var nextBtn = CreatePaginationButton("Sau", 170);
-            var lastBtn = CreatePaginationButton("Cuối cùng", 220);
-
-            buttonPanel.Controls.AddRange(new Control[] { firstBtn, prevBtn, currentBtn, nextBtn, lastBtn });
-            paginationPanel.Controls.Add(buttonPanel);
-
-            return paginationPanel;
-        }
-
-        private Button CreatePaginationButton(string text, int x, bool isActive = false)
-        {
-            return new Button
-            {
-                Text = text,
-                Size = new Size(text == "1" ? 25 : 70, 25),
-                Location = new Point(x, 0),
-                BackColor = isActive ? Color.FromArgb(51, 122, 183) : Color.FromArgb(108, 117, 125),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 8),
-                Enabled = !isActive
-            };
-        }
-
-
-
         protected async Task LogAdminActionAsync(string action, string entityType, int? entityId = null, string details = null)
         {
             try
@@ -694,42 +724,6 @@ namespace WinFormsApp1.View.Admin
             {
                 ValidationHelper.ShowValidationError(this.FindForm(), ex.Message);
                 throw;
-            }
-        }
-
-        protected bool ValidateInput(string validationResult)
-        {
-            if (!string.IsNullOrEmpty(validationResult))
-            {
-                ValidationHelper.ShowValidationError(this.FindForm(), validationResult);
-                return false;
-            }
-            return true;
-        }
-
-
-
-        protected string GetTextValue(TextBox textBox)
-        {
-            return textBox?.Text ?? "";
-        }
-
-        protected void SetTextValue(TextBox textBox, string value)
-        {
-            if (textBox != null)
-                textBox.Text = value ?? "";
-        }
-
-        protected void AdjustResponsiveLayout(DataGridView dataGridView, Panel formPanel, int breakpoint = 1100, int rightOffset = 420)
-        {
-            // Layout responsive - có thể để trống hoặc implement sau
-        }
-
-        protected void AdjustBottomPanelLayout(Panel bottomPanel, int minHeight = 300)
-        {
-            if (bottomPanel != null)
-            {
-                bottomPanel.Height = Math.Max(minHeight, (int)(this.Height * 0.35));
             }
         }
 
@@ -750,11 +744,148 @@ namespace WinFormsApp1.View.Admin
             {
                 _adminController?.Dispose();
                 searchBox?.Dispose();
-                searchPanel?.Dispose();
-                paginationPanel?.Dispose();
                 inputFormPanel?.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Override WndProc to handle DPI change messages
+        /// </summary>
+        protected override void WndProc(ref Message m)
+        {
+            const int WM_DPICHANGED = 0x02E0;
+            
+            if (m.Msg == WM_DPICHANGED)
+            {
+                // Extract new DPI from wParam
+                int newDpi = (int)(m.WParam.ToInt64() & 0xFFFF);
+                float dpiScale = newDpi / 96f;
+                
+                // Update UI elements
+                UpdateUiForDpi(dpiScale);
+            }
+            
+            base.WndProc(ref m);
+        }
+
+        /// <summary>
+        /// Update UI elements when DPI changes
+        /// </summary>
+        private void UpdateUiForDpi(float dpiScale)
+        {
+            // Update DataGridView font and sizing
+            if (dataGridView != null)
+            {
+                try
+                {
+                    dataGridView.Font = new Font("Segoe UI", 10 * dpiScale, FontStyle.Regular, GraphicsUnit.Point);
+                    dataGridView.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11 * dpiScale, FontStyle.Bold, GraphicsUnit.Point);
+                    dataGridView.ColumnHeadersHeight = (int)(45 * dpiScale);
+                    dataGridView.RowTemplate.Height = (int)(40 * dpiScale);
+                }
+                catch { /* Ignore font scaling errors */ }
+            }
+
+            // Update search box
+            if (searchBox != null)
+            {
+                try
+                {
+                    searchBox.Font = new Font("Segoe UI", 9 * dpiScale, FontStyle.Regular, GraphicsUnit.Point);
+                }
+                catch { /* Ignore font scaling errors */ }
+            }
+
+            // Update all buttons
+            UpdateButtonsDpi(dpiScale);
+
+            // Update input form if visible
+            if (inputFormPanel != null && inputFormPanel.Visible)
+            {
+                UpdateInputFormDpi(dpiScale);
+            }
+
+            // Force layout refresh
+            try
+            {
+                this.PerformLayout();
+            }
+            catch { /* Ignore layout errors */ }
+        }
+
+        private void UpdateButtonsDpi(float dpiScale)
+        {
+            try
+            {
+                // Update CRUD buttons
+                var buttons = this.Controls.Find("btnAdd", true)
+                    .Concat(this.Controls.Find("btnEdit", true))
+                    .Concat(this.Controls.Find("btnDelete", true))
+                    .Concat(this.Controls.Find("btnRefresh", true))
+                    .OfType<Button>();
+
+                foreach (var btn in buttons)
+                {
+                    btn.Font = new Font("Segoe UI", 9 * dpiScale, FontStyle.Bold, GraphicsUnit.Point);
+                    btn.Height = (int)(35 * dpiScale);
+                }
+
+                // Update filter controls
+                var filterPanel = this.Controls.Find("filterPanel", true).FirstOrDefault() as Panel;
+                if (filterPanel != null)
+                {
+                    foreach (Control control in filterPanel.Controls)
+                    {
+                        if (control is Label label)
+                        {
+                            label.Font = new Font("Segoe UI", 9 * dpiScale, FontStyle.Regular, GraphicsUnit.Point);
+                        }
+                        else if (control is ComboBox combo)
+                        {
+                            combo.Font = new Font("Segoe UI", 9 * dpiScale, FontStyle.Regular, GraphicsUnit.Point);
+                        }
+                        else if (control is TextBox textBox)
+                        {
+                            textBox.Font = new Font("Segoe UI", 9 * dpiScale, FontStyle.Regular, GraphicsUnit.Point);
+                        }
+                    }
+                }
+            }
+            catch { /* Ignore button update errors */ }
+        }
+
+        private void UpdateInputFormDpi(float dpiScale)
+        {
+            if (inputFormPanel == null) return;
+
+            try
+            {
+                // Update form width
+                inputFormPanel.Width = (int)(350 * dpiScale);
+
+                // Update all controls in input form
+                foreach (var control in GetAllControls(inputFormPanel))
+                {
+                    if (control is Label label)
+                    {
+                        if (label.Font.Bold)
+                            label.Font = new Font("Segoe UI", 10 * dpiScale, FontStyle.Bold, GraphicsUnit.Point);
+                        else
+                            label.Font = new Font("Segoe UI", 9 * dpiScale, FontStyle.Regular, GraphicsUnit.Point);
+                    }
+                    else if (control is TextBox textBox)
+                    {
+                        textBox.Font = new Font("Segoe UI", 10 * dpiScale, FontStyle.Regular, GraphicsUnit.Point);
+                    }
+                    else if (control is Button btn)
+                    {
+                        btn.Font = new Font("Segoe UI", 10 * dpiScale, FontStyle.Bold, GraphicsUnit.Point);
+                        btn.Height = (int)(35 * dpiScale);
+                    }
+                }
+            }
+            catch { /* Ignore form update errors */ }
         }
     }
 }

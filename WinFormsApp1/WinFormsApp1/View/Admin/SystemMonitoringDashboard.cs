@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Guna.Charts.WinForms;
 using WinFormsApp1.Controllers;
+using WinFormsApp1.Helpers;
 using static WinFormsApp1.Helpers.ResponsiveLayoutHelper;
 using static WinFormsApp1.Helpers.UIComponentHelper;
 using WinFormsApp1.ViewModels;
@@ -21,26 +24,65 @@ namespace WinFormsApp1.View.Admin
 
         private void SystemMonitoringDashboard_Load(object sender, EventArgs e)
         {
+            InitializeFilterControls();
             LoadData();
+        }
+
+        private void InitializeFilterControls()
+        {
+            // ✅ Set default dates using helper
+            DateRangeValidationHelper.InitializeDatePickers(startDatePicker, endDatePicker, 30);
+
+            // ✅ Setup date range validation
+            DateRangeValidationHelper.SetupDateRangeValidation(
+                startDatePicker,
+                endDatePicker,
+                applyButton
+            );
+
+            // Wire up events
+            applyButton.Click += (s, e) => LoadData();
+            resetButton.Click += (s, e) =>
+            {
+                DateRangeValidationHelper.InitializeDatePickers(startDatePicker, endDatePicker, 30);
+                LoadData();
+            };
+
+            // Responsive layout
+            Resize += (s, e) =>
+            {
+                if (statsFlowPanel != null)
+                {
+                    statsFlowPanel.Width = Width - 40;
+                    int cardWidth = (Width - 65) / 3;
+                    foreach (Control card in statsFlowPanel.Controls)
+                        card.Width = cardWidth;
+                }
+                if (chartsFlowPanel != null)
+                {
+                    chartsFlowPanel.Width = Width - 40;
+                }
+            };
         }
 
         private async void LoadData()
         {
-            Controls.Clear();
-
-            var titleLabel = new Label
-            {
-                Text = "⚙️ Giám sát hệ thống",
-                Font = new Font("Segoe UI", 24, FontStyle.Bold),
-                Location = new Point(20, 20),
-                AutoSize = true,
-                ForeColor = Color.FromArgb(45, 55, 72)
-            };
-            Controls.Add(titleLabel);
-
             try
             {
-                var systemStats = await _controller.GetSystemAnalyticsAsync();
+                // ✅ Validate date range before loading
+                if (!DateRangeValidationHelper.ValidateWithMessage(
+                    startDatePicker,
+                    endDatePicker,
+                    applyButton,
+                    this.FindForm()))
+                {
+                    return;
+                }
+
+                var startDate = startDatePicker.Value;
+                var endDate = endDatePicker.Value;
+
+                var systemStats = await _controller.GetSystemAnalyticsAsync(startDate, endDate);
                 CreateSystemStatsCards(systemStats);
                 CreateSystemCharts(systemStats);
             }
@@ -52,17 +94,8 @@ namespace WinFormsApp1.View.Admin
 
         private void CreateSystemStatsCards(SystemAnalytics stats)
         {
-            var flowPanel = new FlowLayoutPanel
-            {
-                Location = new Point(20, 80),
-                Width = Width - 40,
-                Height = 145,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-                WrapContents = false,
-                FlowDirection = FlowDirection.LeftToRight,
-                Name = "flowPanel"
-            };
-
+            statsFlowPanel.Controls.Clear();
+            
             var cards = new[]
             {
                 new { Title = "📧 Thông báo", Value = stats.TotalNotifications.ToString(), Color = Color.FromArgb(14, 165, 233) },
@@ -75,31 +108,13 @@ namespace WinFormsApp1.View.Admin
             {
                 var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(cardWidth, 130));
                 card.Margin = new Padding(0, 0, 15, 0);
-                flowPanel.Controls.Add(card);
+                statsFlowPanel.Controls.Add(card);
             }
-
-            Controls.Add(flowPanel);
-            Resize += (s, e) => {
-                flowPanel.Width = Width - 40;
-                cardWidth = (Width - 65) / 3;
-                foreach (Control card in flowPanel.Controls)
-                    card.Width = cardWidth;
-            };
         }
 
         private void CreateSystemCharts(SystemAnalytics stats)
         {
-            var flowPanel = Controls.Find("flowPanel", false).FirstOrDefault();
-            int yPos = flowPanel != null ? flowPanel.Bottom + 20 : 245;
-
-            var chartFlow = new FlowLayoutPanel
-            {
-                Location = new Point(20, yPos),
-                Width = Width - 40,
-                AutoSize = true,
-                WrapContents = true,
-                FlowDirection = FlowDirection.LeftToRight
-            };
+            chartsFlowPanel.Controls.Clear();
 
             var notifPanel = CreateResponsiveChartPanel("📧 Số lượng thông báo gửi ra", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
             notifPanel.Margin = new Padding(0, 0, 20, 0);
@@ -108,15 +123,12 @@ namespace WinFormsApp1.View.Admin
                 ("Chờ gửi", stats.NotificationsPending, Color.FromArgb(251, 191, 36))
             });
             notifPanel.Controls.Add(notifChart);
-            chartFlow.Controls.Add(notifPanel);
+            chartsFlowPanel.Controls.Add(notifPanel);
 
             var auditPanel = CreateResponsiveChartPanel("📋 Nhật ký hoạt động người dùng", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
             var auditList = CreateAuditLogsList(auditPanel, stats.RecentAuditLogs);
             auditPanel.Controls.Add(auditList);
-            chartFlow.Controls.Add(auditPanel);
-
-            Controls.Add(chartFlow);
-            Resize += (s, e) => chartFlow.Width = Width - 40;
+            chartsFlowPanel.Controls.Add(auditPanel);
         }
 
         private GunaChart CreateDoughnutChart(Panel parent, (string Label, int Value, Color Color)[] data)
@@ -142,26 +154,6 @@ namespace WinFormsApp1.View.Admin
             return chart;
         }
 
-        private GunaChart CreateBarChart(Panel parent, (string Label, int Value, Color Color)[] data)
-        {
-            var chart = new GunaChart
-            {
-                Location = new Point(10, 50),
-                Size = new Size(parent.Width - 20, parent.Height - 60),
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom
-            };
-
-            var dataset = new GunaBarDataset { Label = "Thống kê" };
-            foreach (var item in data)
-            {
-                dataset.DataPoints.Add(item.Label, item.Value);
-                dataset.FillColors.Add(item.Color);
-            }
-
-            chart.Datasets.Add(dataset);
-            return chart;
-        }
-
         private Panel CreateAuditLogsList(Panel parent, List<(string Action, string Username, DateTime CreatedAt)> logs)
         {
             var listPanel = new Panel
@@ -178,7 +170,7 @@ namespace WinFormsApp1.View.Admin
             {
                 var logLabel = new Label
                 {
-                    Text = $"{log.CreatedAt:HH:mm dd/MM} - {log.Username}: {log.Action}",
+                    Text = $"{log.CreatedAt:dd/MM/yyyy HH:mm} - {log.Username}: {log.Action}",
                     Location = new Point(10, yPos),
                     Size = new Size(listPanel.Width - 30, 20),
                     Font = new Font("Segoe UI", 8),
@@ -190,7 +182,5 @@ namespace WinFormsApp1.View.Admin
 
             return listPanel;
         }
-
-
     }
 }

@@ -21,6 +21,9 @@ namespace WinFormsApp1.View.User.Forms
         {
             InitializeComponent();
             InitializeForm();
+            
+            // Enable scrolling for content panel to prevent button obscuring
+            pnlContent.AutoScroll = true;
 
             // default behavior: load step 0 now that steps are initialized and vm is default
             LoadStep(0, animate: false);

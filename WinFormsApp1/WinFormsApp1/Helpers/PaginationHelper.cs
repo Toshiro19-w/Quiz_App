@@ -54,38 +54,45 @@ namespace WinFormsApp1.Helpers
 
             paginationPanel.Controls.Clear();
 
+            // Info label on the left
             var infoLabel = new Label
             {
                 Text = $"Trang {CurrentPage} / {TotalPages} (Tổng: {TotalItems} mục)",
-                Location = new Point(10, 10),
+                Location = new Point(20, 12),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 9)
+                Font = new Font("Segoe UI", 9),
+                ForeColor = Color.FromArgb(75, 85, 99),
+                Name = "lblPaginationInfo"
             };
             paginationPanel.Controls.Add(infoLabel);
 
             if (TotalPages <= 1) return;
 
+            // Pagination buttons on the right
             int buttonY = 8;
             int buttonWidth = 30;
             int buttonHeight = 25;
             int spacing = 5;
+            int startX = paginationPanel.Width - 400; // Start from right side
 
             // First page button
             var firstBtn = CreatePageButton("<<", 1, buttonWidth, buttonHeight);
-            firstBtn.Location = new Point(200, buttonY);
+            firstBtn.Location = new Point(startX, buttonY);
             firstBtn.Enabled = CurrentPage > 1;
+            firstBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             paginationPanel.Controls.Add(firstBtn);
 
             // Previous page button
             var prevBtn = CreatePageButton("<", CurrentPage - 1, buttonWidth, buttonHeight);
-            prevBtn.Location = new Point(235, buttonY);
+            prevBtn.Location = new Point(startX + buttonWidth + spacing, buttonY);
             prevBtn.Enabled = CurrentPage > 1;
+            prevBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             paginationPanel.Controls.Add(prevBtn);
 
             // Page number buttons
             int startPage = Math.Max(1, CurrentPage - 2);
             int endPage = Math.Min(TotalPages, CurrentPage + 2);
-            int xPos = 270;
+            int xPos = startX + (buttonWidth + spacing) * 2;
 
             for (int i = startPage; i <= endPage; i++)
             {
@@ -93,6 +100,7 @@ namespace WinFormsApp1.Helpers
                 pageBtn.Location = new Point(xPos, buttonY);
                 pageBtn.BackColor = i == CurrentPage ? Color.FromArgb(52, 144, 220) : Color.White;
                 pageBtn.ForeColor = i == CurrentPage ? Color.White : Color.Black;
+                pageBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                 paginationPanel.Controls.Add(pageBtn);
                 xPos += buttonWidth + spacing;
             }
@@ -101,12 +109,14 @@ namespace WinFormsApp1.Helpers
             var nextBtn = CreatePageButton(">", CurrentPage + 1, buttonWidth, buttonHeight);
             nextBtn.Location = new Point(xPos, buttonY);
             nextBtn.Enabled = CurrentPage < TotalPages;
+            nextBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             paginationPanel.Controls.Add(nextBtn);
 
             // Last page button
             var lastBtn = CreatePageButton(">>", TotalPages, buttonWidth, buttonHeight);
-            lastBtn.Location = new Point(xPos + 35, buttonY);
+            lastBtn.Location = new Point(xPos + buttonWidth + spacing, buttonY);
             lastBtn.Enabled = CurrentPage < TotalPages;
+            lastBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             paginationPanel.Controls.Add(lastBtn);
         }
 
@@ -117,10 +127,12 @@ namespace WinFormsApp1.Helpers
                 Text = text,
                 Size = new Size(width, height),
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 8),
-                Tag = targetPage
+                Font = new Font("Segoe UI", 8, FontStyle.Bold),
+                Tag = targetPage,
+                Cursor = Cursors.Hand
             };
             button.FlatAppearance.BorderSize = 1;
+            button.FlatAppearance.BorderColor = Color.FromArgb(209, 213, 219);
             button.Click += (s, e) => GoToPage(targetPage);
             return button;
         }

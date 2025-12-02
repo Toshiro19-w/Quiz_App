@@ -739,4 +739,63 @@ GO
 -- Test xem điểm trung bình được cập nhật
 SELECT Title, AverageRating, TotalReviews FROM dbo.Courses;
 GO
+-- 1. Thêm các cột mới vào bảng Courses
+ALTER TABLE Courses
+ADD 
+    ModerationStatus NVARCHAR(20) DEFAULT 'Pending' NOT NULL,
+    SubmittedForReviewAt DATETIME2 NULL,
+    ReviewedBy INT NULL,
+    ReviewedAt DATETIME2 NULL,
+    RejectionReason NVARCHAR(MAX) NULL,
+    AutoCheckResults NVARCHAR(MAX) NULL;
 
+-- 2. Thêm khóa ngoại liên kết với Users (Reviewer)
+ALTER TABLE Courses
+ADD CONSTRAINT FK_Courses_ReviewedBy_Users 
+FOREIGN KEY (ReviewedBy) REFERENCES Users(UserId);
+
+-- 3. Thêm index cho tìm kiếm nhanh
+CREATE INDEX IX_Courses_ModerationStatus ON Courses(ModerationStatus);
+CREATE INDEX IX_Courses_SubmittedForReviewAt ON Courses(SubmittedForReviewAt);
+CREATE INDEX IX_Courses_ReviewedBy ON Courses(ReviewedBy);
+
+-- 4. Thêm check constraint cho ModerationStatus
+ALTER TABLE Courses
+ADD CONSTRAINT CK_Courses_ModerationStatus 
+CHECK (ModerationStatus IN ('Pending', 'Approved', 'Rejected', 'NeedsRevision'));
+
+-- 5. Cập nhật các khóa học hiện tại
+-- Đặt các khóa học đã publish thành Approved
+UPDATE Courses 
+SET ModerationStatus = 'Approved'
+WHERE IsPublished = 1;
+
+-- Đặt các khóa học chưa publish thành chưa gửi (null sẽ được xử lý trong code)
+UPDATE Courses 
+SET ModerationStatus = 'Pending'
+WHERE IsPublished = 0 AND ModerationStatus = 'Pending';
+GO
+
+-- 6. Script để rollback nếu cần
+/*
+-- Xóa khóa ngoại
+ALTER TABLE Courses DROP CONSTRAINT FK_Courses_ReviewedBy_Users;
+
+-- Xóa check constraint
+ALTER TABLE Courses DROP CONSTRAINT CK_Courses_ModerationStatus;
+
+-- Xóa indexes
+DROP INDEX IX_Courses_ModerationStatus ON Courses;
+DROP INDEX IX_Courses_SubmittedForReviewAt ON Courses;
+DROP INDEX IX_Courses_ReviewedBy ON Courses;
+
+-- Xóa các cột
+ALTER TABLE Courses DROP COLUMN ModerationStatus;
+ALTER TABLE Courses DROP COLUMN SubmittedForReviewAt;
+ALTER TABLE Courses DROP COLUMN ReviewedBy;
+ALTER TABLE Courses DROP COLUMN ReviewedAt;
+ALTER TABLE Courses DROP COLUMN RejectionReason;
+ALTER TABLE Courses DROP COLUMN AutoCheckResults;
+*/
+
+select * from Courses

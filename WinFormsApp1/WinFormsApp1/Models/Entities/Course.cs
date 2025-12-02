@@ -22,6 +22,19 @@ public partial class Course
     public decimal Price { get; set; }
 
     public bool IsPublished { get; set; }
+    
+    // Moderation fields
+    public string ModerationStatus { get; set; } = "Pending"; // Pending, Approved, Rejected, NeedsRevision
+    
+    public DateTime? SubmittedForReviewAt { get; set; }
+    
+    public int? ReviewedBy { get; set; }
+    
+    public DateTime? ReviewedAt { get; set; }
+    
+    public string? RejectionReason { get; set; }
+    
+    public string? AutoCheckResults { get; set; } // JSON với kết quả kiểm tra tự động
 
     public decimal AverageRating { get; set; }
 
@@ -48,4 +61,6 @@ public partial class Course
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
     public virtual User Owner { get; set; } = null!;
+    
+    public virtual User? Reviewer { get; set; }
 }

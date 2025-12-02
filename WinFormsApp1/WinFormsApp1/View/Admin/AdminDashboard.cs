@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.View.User;
+using WinFormsApp1.ViewModels;
 using static WinFormsApp1.Helpers.ColorPalette;
 
 namespace WinFormsApp1.View.Admin
@@ -17,6 +19,13 @@ namespace WinFormsApp1.View.Admin
         private Panel topPanel;
         private Panel contentPanel;
         private Button selectedButton;
+        private bool isSidebarCollapsed = false;
+        private Dictionary<string, bool> _menuSectionStates = new Dictionary<string, bool>
+        {
+            { "Dashboard", true },
+            { "Management", true },
+            { "Reports", true }
+        };
 
         public AdminDashboard()
         {
@@ -39,7 +48,7 @@ namespace WinFormsApp1.View.Admin
             topPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 70, // Giảm từ 120 xuống 70
+                Height = 70,
                 BackColor = Primary
             };
 
@@ -47,14 +56,14 @@ namespace WinFormsApp1.View.Admin
             var logoPanel = new Panel
             {
                 Dock = DockStyle.Left,
-                Width = 200, // Giảm width
+                Width = 200,
                 BackColor = Color.Transparent
             };
 
             var logoLabel = new Label
             {
                 Text = "YMEDU",
-                Font = new Font("Segoe UI", 18, FontStyle.Bold), // Giảm font size
+                Font = new Font("Segoe UI", 18, FontStyle.Bold),
                 ForeColor = Color.FromArgb(214, 188, 132),
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleLeft,
@@ -67,21 +76,19 @@ namespace WinFormsApp1.View.Admin
             var profilePanel = new Panel
             {
                 Dock = DockStyle.Right,
-                Width = 300, // Giảm width
+                Width = 300,
                 BackColor = Color.Transparent
             };
 
             var userLabel = new Label
             {
                 Text = AuthHelper.CurrentUser != null ? $"{AuthHelper.CurrentUser.FullName} ({AuthHelper.GetRoleName()})" : "Quản trị viên",
-                Font = new Font("Segoe UI", 10), // Giảm font size
+                Font = new Font("Segoe UI", 10),
                 ForeColor = Color.White,
-                Location = new Point(15, 25), // Điều chỉnh position
+                Location = new Point(15, 25),
                 AutoSize = true,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left
             };
-
-
 
             // Use layout within profilePanel
             profilePanel.Controls.Add(userLabel);
@@ -125,169 +132,166 @@ namespace WinFormsApp1.View.Admin
 
         private void CreateSidebarMenu()
         {
-            int yPos = 20;
+            sidebarPanel.Controls.Clear();
+            int yPos = 10;
 
-            // Dashboard header
-            var dashboardHeader = new Label
+            // Toggle Button
+            var toggleBtn = new Button
             {
-                Text = "📊 Dashboard",
-                Size = new Size(230, 35),
-                Location = new Point(10, yPos),
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-            sidebarPanel.Controls.Add(dashboardHeader);
-            yPos += 40;
-
-            var dashboardItems = new[]
-            {
-                new { Text = "   📋 Tổng quan", Tag = "overview" },
-                new { Text = "   👥 Người dùng", Tag = "users" },
-                new { Text = "   📖 Học tập", Tag = "learning" },
-                new { Text = "   💰 Doanh thu", Tag = "revenue" },
-                new { Text = "   ⚙️ Hệ thống", Tag = "system" }
-            };
-
-            foreach (var item in dashboardItems)
-            {
-                var btn = new Button
-                {
-                    Text = item.Text,
-                    Size = new Size(230, 40),
-                    Location = new Point(10, yPos),
-                    FlatStyle = FlatStyle.Flat,
-                    BackColor = Color.Transparent,
-                    ForeColor = Color.FromArgb(200, 200, 200),
-                    Font = new Font("Segoe UI", 9),
-                    TextAlign = ContentAlignment.MiddleLeft,
-                    Tag = item.Tag,
-                    Cursor = Cursors.Hand
-                };
-                btn.FlatAppearance.BorderSize = 0;
-                btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(74, 85, 104);
-                btn.Click += MenuButton_Click;
-                sidebarPanel.Controls.Add(btn);
-                yPos += 42;
-
-                if (item.Tag == "overview")
-                {
-                    selectedButton = btn;
-                    btn.BackColor = PrimaryDark;
-                }
-            }
-
-            yPos += 10;
-
-            // Management section
-            var managementHeader = new Label
-            {
-                Text = "📋 Quản lý",
-                Size = new Size(230, 35),
-                Location = new Point(10, yPos),
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-            sidebarPanel.Controls.Add(managementHeader);
-            yPos += 40;
-
-            var managementItems = new[]
-            {
-                new { Text = "   👤 Người dùng", Tag = "user-management" },
-                new { Text = "   📚 Khóa học", Tag = "courses" },
-                new { Text = "   📁 Danh mục", Tag = "categories" },
-                new { Text = "   📝 Bài kiểm tra", Tag = "tests" }
-            };
-
-            foreach (var item in managementItems)
-            {
-                var btn = new Button
-                {
-                    Text = item.Text,
-                    Size = new Size(230, 40),
-                    Location = new Point(10, yPos),
-                    FlatStyle = FlatStyle.Flat,
-                    BackColor = Color.Transparent,
-                    ForeColor = Color.FromArgb(200, 200, 200),
-                    Font = new Font("Segoe UI", 9),
-                    TextAlign = ContentAlignment.MiddleLeft,
-                    Tag = item.Tag,
-                    Cursor = Cursors.Hand
-                };
-                btn.FlatAppearance.BorderSize = 0;
-                btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(74, 85, 104);
-                btn.Click += MenuButton_Click;
-                sidebarPanel.Controls.Add(btn);
-                yPos += 42;
-            }
-
-            yPos += 10;
-
-            // Reports section
-            var reportsHeader = new Label
-            {
-                Text = "📊 Báo cáo",
-                Size = new Size(230, 35),
-                Location = new Point(10, yPos),
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-            sidebarPanel.Controls.Add(reportsHeader);
-            yPos += 40;
-
-            var reportItems = new[]
-            {
-                new { Text = "   📄 Báo cáo người dùng", Tag = "report-users" },
-                new { Text = "   📚 Báo cáo khóa học", Tag = "report-courses" },
-                new { Text = "   📝 Báo cáo bài kiểm tra", Tag = "report-tests" },
-                new { Text = "   💰 Báo cáo doanh thu", Tag = "report-revenue" },
-                new { Text = "   ⚙️ Báo cáo hệ thống", Tag = "report-system" }
-            };
-
-            foreach (var item in reportItems)
-            {
-                var btn = new Button
-                {
-                    Text = item.Text,
-                    Size = new Size(230, 40),
-                    Location = new Point(10, yPos),
-                    FlatStyle = FlatStyle.Flat,
-                    BackColor = Color.Transparent,
-                    ForeColor = Color.FromArgb(200, 200, 200),
-                    Font = new Font("Segoe UI", 9),
-                    TextAlign = ContentAlignment.MiddleLeft,
-                    Tag = item.Tag,
-                    Cursor = Cursors.Hand
-                };
-                btn.FlatAppearance.BorderSize = 0;
-                btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(74, 85, 104);
-                btn.Click += MenuButton_Click;
-                sidebarPanel.Controls.Add(btn);
-                yPos += 42;
-            }
-
-            yPos += 10;
-
-            // Home button
-            var homeBtn = new Button
-            {
-                Text = "🏠 Trang chủ",
-                Size = new Size(230, 45),
-                Location = new Point(10, yPos),
+                Text = isSidebarCollapsed ? "▶" : "◀",
+                Size = new Size(40, 40),
+                Location = new Point(isSidebarCollapsed ? 10 : 200, 10),
                 FlatStyle = FlatStyle.Flat,
                 BackColor = Color.Transparent,
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 10),
-                TextAlign = ContentAlignment.MiddleLeft,
-                Tag = "home",
-                Cursor = Cursors.Hand
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
-            homeBtn.FlatAppearance.BorderSize = 0;
-            homeBtn.FlatAppearance.MouseOverBackColor = Color.FromArgb(74, 85, 104);
-            homeBtn.Click += MenuButton_Click;
-            sidebarPanel.Controls.Add(homeBtn);
+            toggleBtn.FlatAppearance.BorderSize = 0;
+            toggleBtn.Click += (s, e) => ToggleSidebar();
+            sidebarPanel.Controls.Add(toggleBtn);
+
+            yPos += 50;
+
+            // Helper to create collapsible sections
+            void CreateSection(string title, string key, Action createButtons)
+            {
+                if (isSidebarCollapsed)
+                {
+                    createButtons();
+                    return;
+                }
+
+                bool isExpanded = _menuSectionStates.ContainsKey(key) ? _menuSectionStates[key] : true;
+                string arrow = isExpanded ? "▼" : "▶";
+
+                var headerBtn = new Button
+                {
+                    Text = $"{arrow} {title}",
+                    Size = new Size(230, 35),
+                    Location = new Point(10, yPos),
+                    FlatStyle = FlatStyle.Flat,
+                    BackColor = Color.Transparent,
+                    ForeColor = Color.White,
+                    Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    Cursor = Cursors.Hand
+                };
+                headerBtn.FlatAppearance.BorderSize = 0;
+                headerBtn.FlatAppearance.MouseOverBackColor = Color.FromArgb(55, 65, 81);
+                headerBtn.Click += (s, e) =>
+                {
+                    if (_menuSectionStates.ContainsKey(key))
+                        _menuSectionStates[key] = !isExpanded;
+                    else
+                        _menuSectionStates[key] = false;
+                        
+                    CreateSidebarMenu();
+                };
+
+                sidebarPanel.Controls.Add(headerBtn);
+                yPos += 40;
+
+                if (isExpanded)
+                {
+                    createButtons();
+                }
+            }
+
+            // Helper to create buttons
+            void CreateButton(string text, string tag, string icon)
+            {
+                var btn = new Button
+                {
+                    Text = isSidebarCollapsed ? icon : $"   {icon} {text}",
+                    Size = new Size(isSidebarCollapsed ? 40 : 230, 40),
+                    Location = new Point(10, yPos),
+                    FlatStyle = FlatStyle.Flat,
+                    BackColor = Color.Transparent,
+                    ForeColor = Color.FromArgb(200, 200, 200),
+                    Font = new Font("Segoe UI", 9),
+                    TextAlign = isSidebarCollapsed ? ContentAlignment.MiddleCenter : ContentAlignment.MiddleLeft,
+                    Tag = tag,
+                    Cursor = Cursors.Hand
+                };
+                btn.FlatAppearance.BorderSize = 0;
+                btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(74, 85, 104);
+                btn.Click += MenuButton_Click;
+                
+                // Tooltip for collapsed mode
+                if (isSidebarCollapsed)
+                {
+                    var tip = new ToolTip();
+                    tip.SetToolTip(btn, text);
+                }
+
+                sidebarPanel.Controls.Add(btn);
+                yPos += 42;
+
+                if (selectedButton != null && selectedButton.Tag?.ToString() == tag)
+                {
+                    btn.BackColor = Color.FromArgb(74, 85, 104);
+                    selectedButton = btn; // Update reference
+                }
+                else if (selectedButton == null && tag == "overview")
+                {
+                    selectedButton = btn;
+                    btn.BackColor = Color.FromArgb(74, 85, 104); // PrimaryDark
+                }
+            }
+
+            // Dashboard Section
+            CreateSection("📊 Dashboard", "Dashboard", () => {
+                CreateButton("Tổng quan", "overview", "📋");
+                CreateButton("Người dùng", "users", "👥");
+                CreateButton("Học tập", "learning", "📖");
+                CreateButton("Doanh thu", "revenue", "💰");
+                CreateButton("Hệ thống", "system", "⚙️");
+            });
+
+            yPos += 10;
+
+            // Management Section
+            CreateSection("📋 Quản lý", "Management", () => {
+                CreateButton("Người dùng", "user-management", "👤");
+                CreateButton("Khóa học", "courses", "📚");
+                CreateButton("Kiểm duyệt", "course-moderation", "✅");
+                CreateButton("Danh mục", "categories", "📁");
+                CreateButton("Flashcard", "flashcards", "🗂️");
+            });
+
+            yPos += 10;
+
+            // Reports Section
+            CreateSection("📊 Báo cáo", "Reports", () => {
+                CreateButton("Tổng hợp", "report-executive", "📈");
+                CreateButton("Báo cáo người dùng", "report-users", "📄");
+                CreateButton("Báo cáo khóa học", "report-courses", "📚");
+                CreateButton("Báo cáo doanh thu", "report-revenue", "💰");
+                CreateButton("Báo cáo hệ thống", "report-system", "⚙️");
+            });
+            
+            // Home Button
+            yPos += 20;
+            CreateButton("Trang chủ", "home", "🏠");
+        }
+
+        private void ToggleSidebar()
+        {
+            isSidebarCollapsed = !isSidebarCollapsed;
+            
+            if (isSidebarCollapsed)
+            {
+                sidebarPanel.Width = 60;
+            }
+            else
+            {
+                sidebarPanel.Width = 250;
+            }
+            
+            // Recreate menu to adjust text/icons
+            CreateSidebarMenu();
         }
 
         private void MenuButton_Click(object sender, EventArgs e)
@@ -327,23 +331,26 @@ namespace WinFormsApp1.View.Admin
                 case "courses":
                     LoadCourseManagement();
                     break;
-                case "tests":
-                    LoadTestManagement();
+                case "course-moderation":
+                    LoadCourseModeration();
                     break;
                 case "categories":
                     LoadCategoryManagement();
                     break;
+                case "flashcards":
+                    LoadFlashcardManagement();
+                    break;
                 case "system-settings":
                     LoadSystemSettings();
+                    break;
+                case "report-executive":
+                    LoadExecutiveReport();
                     break;
                 case "report-users":
                     LoadUserReport();
                     break;
                 case "report-courses":
                     LoadCourseReport();
-                    break;
-                case "report-tests":
-                    LoadTestReport();
                     break;
                 case "report-revenue":
                     LoadRevenueReportDetail();
@@ -423,13 +430,13 @@ namespace WinFormsApp1.View.Admin
             courseControl.Dock = DockStyle.Fill;
             contentPanel.Controls.Add(courseControl);
         }
-
-        private void LoadTestManagement()
+        
+        private void LoadCourseModeration()
         {
             contentPanel.Controls.Clear();
-            var testControl = new TestManagementControl();
-            testControl.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(testControl);
+            var moderationControl = new CourseModerationControl();
+            moderationControl.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(moderationControl);
         }
 
         private void LoadUserStats()
@@ -472,12 +479,28 @@ namespace WinFormsApp1.View.Admin
             contentPanel.Controls.Add(categoryControl);
         }
 
+        private void LoadFlashcardManagement()
+        {
+            contentPanel.Controls.Clear();
+            var flashcardControl = new FlashcardManagementControl();
+            flashcardControl.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(flashcardControl);
+        }
+
         private void LoadSystemSettings()
         {
             contentPanel.Controls.Clear();
             var systemSettings = new SystemSettingsControl();
             systemSettings.Dock = DockStyle.Fill;
             contentPanel.Controls.Add(systemSettings);
+        }
+
+        private void LoadExecutiveReport()
+        {
+            contentPanel.Controls.Clear();
+            var executiveReport = new ExecutiveReportControl();
+            executiveReport.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(executiveReport);
         }
 
         private async void LoadUserReport()
@@ -502,21 +525,6 @@ namespace WinFormsApp1.View.Admin
                 var courses = await _adminController.GetCoursesAsync();
                 var reportForm = new ReportViewerForm();
                 ReportHelper.GenerateCourseReport(reportForm.GetReportViewer(), courses);
-                reportForm.ShowDialog();
-            }
-            catch (Exception ex)
-            {
-                ToastHelper.Show(this, $"Lỗi tạo báo cáo: {ex.Message}");
-            }
-        }
-
-        private async void LoadTestReport()
-        {
-            try
-            {
-                var tests = await _adminController.GetTestsAsync();
-                var reportForm = new ReportViewerForm();
-                ReportHelper.GenerateTestReport(reportForm.GetReportViewer(), tests);
                 reportForm.ShowDialog();
             }
             catch (Exception ex)
@@ -560,16 +568,5 @@ namespace WinFormsApp1.View.Admin
             _adminController?.Dispose();
             base.OnFormClosed(e);
         }
-    
-    }
-
-    public class DashboardStats
-    {
-        public int TotalUsers { get; set; }
-        public int TotalCourses { get; set; }
-        public int TotalClasses { get; set; }
-        public int TotalTests { get; set; }
-        public decimal TotalRevenue { get; set; }
-        public int TotalTestResults { get; set; }
     }
 }

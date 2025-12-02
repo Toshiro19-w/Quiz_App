@@ -1,53 +1,100 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Guna.Charts.WinForms;
 using WinFormsApp1.Controllers;
+using WinFormsApp1.Helpers;
 using static WinFormsApp1.Helpers.ResponsiveLayoutHelper;
 using static WinFormsApp1.Helpers.UIComponentHelper;
 using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.View.Admin
 {
-    public partial class RevenueDashboard : AdminBaseControl
+    public partial class RevenueDashboard : UserControl
     {
-        public RevenueDashboard() : base()
+        private readonly AdminController _adminController;
+
+        public RevenueDashboard()
         {
+            _adminController = new AdminController();
             InitializeComponent();
+            InitializeFilterControls();
+        }
+
+        private void InitializeFilterControls()
+        {
+            // Initialize ComboBox items
+            statusCombo.Items.AddRange(new object[] { "Tất cả", "Đã thanh toán", "Chờ thanh toán", "Hoàn tiền" });
+            statusCombo.SelectedIndex = 0;
+
+            providerCombo.Items.AddRange(new object[] { "Tất cả", "VNPay", "Stripe", "Khác" });
+            providerCombo.SelectedIndex = 0;
+
+            // Initialize DatePickers
+            DateRangeValidationHelper.InitializeDatePickers(startDatePicker, endDatePicker, 30);
+
+            // ✅ Setup date range validation
+            DateRangeValidationHelper.SetupDateRangeValidation(
+                startDatePicker,
+                endDatePicker,
+                applyButton
+            );
+
+            // Wire up events
+            applyButton.Click += (s, e) => LoadData();
+            resetButton.Click += (s, e) => {
+                DateRangeValidationHelper.InitializeDatePickers(startDatePicker, endDatePicker, 30);
+                statusCombo.SelectedIndex = 0;
+                providerCombo.SelectedIndex = 0;
+                LoadData();
+            };
+
+            // Resize handlers
+            Resize += (s, e) => {
+                if (statsFlowPanel != null)
+                {
+                    statsFlowPanel.Width = Width - 40;
+                    int cardWidth = (Width - 85) / 4;
+                    foreach (Control card in statsFlowPanel.Controls)
+                        card.Width = cardWidth;
+                }
+                if (chartsFlowPanel != null)
+                {
+                    chartsFlowPanel.Width = Width - 40;
+                }
+            };
         }
 
         private void RevenueDashboard_Load(object sender, EventArgs e)
         {
-            SetupLayout();
             LoadData();
-        }
-
-        private void SetupLayout()
-        {
-            var topPanel = CreateTopPanel("Phân tích doanh thu");
-            this.Controls.Add(topPanel);
         }
 
         private async void LoadData()
         {
-            Controls.Clear();
-
-            var titleLabel = new Label
-            {
-                Text = "💰 Phân tích doanh thu",
-                Font = new Font("Segoe UI", 24, FontStyle.Bold),
-                Location = new Point(20, 20),
-                AutoSize = true,
-                ForeColor = Color.FromArgb(45, 55, 72)
-            };
-            Controls.Add(titleLabel);
-
             try
             {
-                var revenueStats = await _adminController.GetRevenueAnalyticsAsync();
-                var monthlyRevenue = await _adminController.GetMonthlyRevenueAsync();
+                // ✅ Validate date range before loading
+                if (!DateRangeValidationHelper.ValidateWithMessage(
+                    startDatePicker,
+                    endDatePicker,
+                    applyButton,
+                    this.FindForm()))
+                {
+                    return;
+                }
+
+                var startDate = startDatePicker.Value;
+                var endDate = endDatePicker.Value;
+                var status = statusCombo.SelectedItem?.ToString();
+                var provider = providerCombo.SelectedItem?.ToString();
+
+                var revenueStats = await _adminController.GetRevenueAnalyticsAsync(startDate, endDate, status, provider);
+                var revenueTrend = await _adminController.GetRevenueTrendAsync(startDate, endDate);
                 CreateRevenueStatsCards(revenueStats);
-                CreateRevenueCharts(revenueStats, monthlyRevenue);
+                CreateRevenueCharts(revenueStats, revenueTrend);
             }
             catch (Exception ex)
             {
@@ -57,16 +104,7 @@ namespace WinFormsApp1.View.Admin
 
         private void CreateRevenueStatsCards(RevenueAnalytics stats)
         {
-            var flowPanel = new FlowLayoutPanel
-            {
-                Location = new Point(20, 80),
-                Width = Width - 40,
-                Height = 145,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-                WrapContents = false,
-                FlowDirection = FlowDirection.LeftToRight,
-                Name = "flowPanel"
-            };
+            statsFlowPanel.Controls.Clear();
 
             var cards = new[]
             {
@@ -81,36 +119,38 @@ namespace WinFormsApp1.View.Admin
             {
                 var card = CreateStatsCard(cardData.Title, cardData.Value, cardData.Color, new Point(0, 0), new Size(cardWidth, 130));
                 card.Margin = new Padding(0, 0, 15, 0);
-                flowPanel.Controls.Add(card);
+                statsFlowPanel.Controls.Add(card);
             }
-
-            Controls.Add(flowPanel);
-            Resize += (s, e) => {
-                flowPanel.Width = Width - 40;
-                cardWidth = (Width - 85) / 4;
-                foreach (Control card in flowPanel.Controls)
-                    card.Width = cardWidth;
-            };
         }
 
-        private void CreateRevenueCharts(RevenueAnalytics stats, Dictionary<int, decimal> monthlyRevenue)
+        private void CreateRevenueCharts(RevenueAnalytics stats, Dictionary<string, decimal> revenueTrend)
         {
-            var flowPanel = Controls.Find("flowPanel", false).FirstOrDefault();
-            int yPos = flowPanel != null ? flowPanel.Bottom + 20 : 245;
-
-            var monthlyPanel = CreateResponsiveChartPanel("📈 Doanh thu 12 tháng", new Point(20, yPos), new Size(Width - 40, 400), AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
-            var monthlyChart = CreateBarChart(monthlyPanel, monthlyRevenue);
-            monthlyPanel.Controls.Add(monthlyChart);
-            Controls.Add(monthlyPanel);
-
-            var chartFlow = new FlowLayoutPanel
+            // Monthly Chart
+            monthlyChartPanel.Controls.Clear();
+            // We need to add the title label for the chart panel manually or use the helper
+            // The helper 'CreateResponsiveChartPanel' creates a panel with a label. 
+            // Since we already have the panel 'monthlyChartPanel', we can just add the chart to it.
+            // But we need the title. Let's add a title label to monthlyChartPanel if it doesn't exist.
+            
+            if (monthlyChartPanel.Controls.Find("chartTitle", false).Length == 0)
             {
-                Location = new Point(20, monthlyPanel.Bottom + 20),
-                Width = Width - 40,
-                AutoSize = true,
-                WrapContents = true,
-                FlowDirection = FlowDirection.LeftToRight
-            };
+                var title = new Label
+                {
+                    Text = "📈 Xu hướng doanh thu",
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                    Location = new Point(10, 10),
+                    AutoSize = true,
+                    Name = "chartTitle"
+                };
+                monthlyChartPanel.Controls.Add(title);
+            }
+
+            var monthlyChart = CreateBarChart(monthlyChartPanel, revenueTrend);
+            monthlyChartPanel.Controls.Add(monthlyChart);
+
+
+            // Other Charts
+            chartsFlowPanel.Controls.Clear();
 
             var statusPanel = CreateResponsiveChartPanel("💳 Trạng thái thanh toán", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
             statusPanel.Margin = new Padding(0, 0, 20, 0);
@@ -120,7 +160,7 @@ namespace WinFormsApp1.View.Admin
                 ("Hoàn tiền", stats.RefundedCount, Color.FromArgb(239, 68, 68))
             });
             statusPanel.Controls.Add(statusChart);
-            chartFlow.Controls.Add(statusPanel);
+            chartsFlowPanel.Controls.Add(statusPanel);
 
             var providerPanel = CreateResponsiveChartPanel("🏦 Nhà cung cấp thanh toán", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
             var providerChart = CreateDoughnutChart(providerPanel, new[] {
@@ -129,13 +169,10 @@ namespace WinFormsApp1.View.Admin
                 ("Khác", stats.OtherPaymentCount, Color.FromArgb(156, 163, 175))
             });
             providerPanel.Controls.Add(providerChart);
-            chartFlow.Controls.Add(providerPanel);
-
-            Controls.Add(chartFlow);
-            Resize += (s, e) => chartFlow.Width = Width - 40;
+            chartsFlowPanel.Controls.Add(providerPanel);
         }
 
-        private GunaChart CreateBarChart(Panel parent, Dictionary<int, decimal> monthlyRevenue)
+        private GunaChart CreateBarChart(Panel parent, Dictionary<string, decimal> revenueTrend)
         {
             var chart = new GunaChart
             {
@@ -150,9 +187,9 @@ namespace WinFormsApp1.View.Admin
             };
             dataset.FillColors.Add(Color.FromArgb(14, 165, 233));
 
-            for (int i = 1; i <= 12; i++)
+            foreach (var item in revenueTrend)
             {
-                dataset.DataPoints.Add("T" + i, (double)monthlyRevenue[i]);
+                dataset.DataPoints.Add(item.Key, (double)item.Value);
             }
 
             chart.Datasets.Add(dataset);
@@ -182,9 +219,5 @@ namespace WinFormsApp1.View.Admin
             chart.YAxes.Display = false;
             return chart;
         }
-
-
-
-
     }
 }
