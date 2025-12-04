@@ -3,6 +3,7 @@ using WinFormsApp1.ViewModels;
 using System.Drawing;
 using System;
 using System.Collections.Generic;
+using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 {
@@ -40,13 +41,15 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			btnAddFlashcard.Click += (s, e) => AddFlashcardItem();
 
 			// Set default selection and add event handler
-			cboContentType.SelectedIndex = 2; // FlashcardSet
+			cboContentType.SelectedIndex = 2; // Bộ thẻ ghi nhớ
 			cboContentType.SelectedIndexChanged += (s, e) =>
 			{
-				var type = cboContentType.SelectedItem?.ToString();
-				if (type != null && type != "FlashcardSet")
+				var vietnameseType = cboContentType.SelectedItem?.ToString();
+				if (vietnameseType != null && vietnameseType != "Bộ thẻ ghi nhớ")
 				{
-					ContentTypeChanged?.Invoke(this, type);
+					// Chuyển sang tiếng Anh trước khi trigger event
+					var englishType = ContentTypeHelper.ToEnglish(vietnameseType);
+					ContentTypeChanged?.Invoke(this, englishType);
 				}
 			};
 
@@ -134,7 +137,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 		{
 			var vm = new LessonContentBuilderViewModel
 			{
-				ContentType = "FlashcardSet",
+				ContentType = "FlashcardSet", // Lưu bằng tiếng Anh
 				Title = txtTitle.Text.Trim(),
 				FlashcardSetTitle = txtTitle.Text.Trim(),
 				FlashcardSetDesc = txtDesc.Text.Trim(),

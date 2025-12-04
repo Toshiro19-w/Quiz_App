@@ -30,26 +30,26 @@
 			// 
 			// txtFront
 			// 
-			txtFront.Font = new Font("Microsoft Sans Serif", 10F);
-			txtFront.Location = new Point(37, 82);
+			txtFront.Font = new Font("Microsoft Sans Serif", 12F);
+			txtFront.Location = new Point(37, 84);
 			txtFront.Multiline = true;
 			txtFront.Name = "txtFront";
-			txtFront.Size = new Size(600, 28);
+			txtFront.Size = new Size(635, 28);
 			txtFront.TabIndex = 5;
 			// 
 			// txtBack
 			// 
-			txtBack.Font = new Font("Microsoft Sans Serif", 10F);
-			txtBack.Location = new Point(756, 82);
+			txtBack.Font = new Font("Microsoft Sans Serif", 12F);
+			txtBack.Location = new Point(744, 84);
 			txtBack.Multiline = true;
 			txtBack.Name = "txtBack";
-			txtBack.Size = new Size(600, 28);
+			txtBack.Size = new Size(612, 28);
 			txtBack.TabIndex = 3;
 			// 
 			// txtHint
 			// 
-			txtHint.Font = new Font("Microsoft Sans Serif", 10F);
-			txtHint.Location = new Point(37, 149);
+			txtHint.Font = new Font("Microsoft Sans Serif", 12F);
+			txtHint.Location = new Point(37, 156);
 			txtHint.Multiline = true;
 			txtHint.Name = "txtHint";
 			txtHint.Size = new Size(1319, 28);
@@ -67,28 +67,28 @@
 			// 
 			// lblFront
 			// 
-			lblFront.Font = new Font("Segoe UI", 10F);
-			lblFront.Location = new Point(37, 49);
+			lblFront.Font = new Font("Microsoft Sans Serif", 12F);
+			lblFront.Location = new Point(37, 51);
 			lblFront.Name = "lblFront";
-			lblFront.Size = new Size(114, 30);
+			lblFront.Size = new Size(120, 30);
 			lblFront.TabIndex = 6;
 			lblFront.Text = "Mặt trước:";
 			// 
 			// lblBack
 			// 
-			lblBack.Font = new Font("Segoe UI", 10F);
-			lblBack.Location = new Point(756, 49);
+			lblBack.Font = new Font("Microsoft Sans Serif", 12F);
+			lblBack.Location = new Point(744, 51);
 			lblBack.Name = "lblBack";
-			lblBack.Size = new Size(96, 30);
+			lblBack.Size = new Size(122, 30);
 			lblBack.TabIndex = 4;
 			lblBack.Text = "Mặt sau:";
 			// 
 			// lblHint
 			// 
-			lblHint.Font = new Font("Segoe UI", 10F);
-			lblHint.Location = new Point(37, 116);
+			lblHint.Font = new Font("Microsoft Sans Serif", 12F);
+			lblHint.Location = new Point(37, 123);
 			lblHint.Name = "lblHint";
-			lblHint.Size = new Size(171, 30);
+			lblHint.Size = new Size(187, 30);
 			lblHint.TabIndex = 2;
 			lblHint.Text = "Gợi ý (tùy chọn):";
 			// 

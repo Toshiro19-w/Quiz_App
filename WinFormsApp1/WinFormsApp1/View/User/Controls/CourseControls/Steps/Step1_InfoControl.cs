@@ -19,8 +19,24 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		public Step1_InfoControl()
 		{
 			InitializeComponent();
+			
+			// Enable double buffering for smooth scrolling
+			EnableDoubleBuffering(this);
+			
 			HookEvents();
 			_ = LoadCategoriesAsync();
+		}
+		
+		/// <summary>
+		/// Enable double buffering for a control to reduce flicker
+		/// </summary>
+		private void EnableDoubleBuffering(Control control)
+		{
+			typeof(Control).InvokeMember("DoubleBuffered",
+				System.Reflection.BindingFlags.SetProperty |
+				System.Reflection.BindingFlags.Instance |
+				System.Reflection.BindingFlags.NonPublic,
+				null, control, new object[] { true });
 		}
 
 		private void HookEvents()

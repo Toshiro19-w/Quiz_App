@@ -53,7 +53,7 @@
 			pnlCard.Name = "pnlCard";
 			pnlCard.Padding = new Padding(18);
 			pnlCard.ShadowColor = Color.Black;
-			pnlCard.Size = new Size(1530, 800);
+			pnlCard.Size = new Size(1530, 830);
 			pnlCard.TabIndex = 0;
 			// 
 			// lblHeader
@@ -92,8 +92,9 @@
 			pnlPreview.Controls.Add(pnlCourseStructure);
 			pnlPreview.Location = new Point(20, 88);
 			pnlPreview.Name = "pnlPreview";
-			pnlPreview.Size = new Size(1492, 592);
+			pnlPreview.Size = new Size(1492, 644);
 			pnlPreview.TabIndex = 1;
+			pnlPreview.Paint += pnlPreview_Paint;
 			// 
 			// lblCourseInfoHeader
 			// 
@@ -108,70 +109,82 @@
 			// lblTitleLabel
 			// 
 			lblTitleLabel.AutoSize = true;
-			lblTitleLabel.Location = new Point(20, 60);
+			lblTitleLabel.Font = new Font("Segoe UI", 12F);
+			lblTitleLabel.Location = new Point(34, 72);
 			lblTitleLabel.Name = "lblTitleLabel";
-			lblTitleLabel.Size = new Size(73, 25);
+			lblTitleLabel.Size = new Size(99, 32);
 			lblTitleLabel.TabIndex = 1;
 			lblTitleLabel.Text = "Tiêu đề:";
 			// 
 			// lblTitleValue
 			// 
 			lblTitleValue.AutoSize = true;
-			lblTitleValue.Location = new Point(20, 80);
+			lblTitleValue.Font = new Font("Segoe UI", 12F);
+			lblTitleValue.Location = new Point(139, 72);
 			lblTitleValue.Name = "lblTitleValue";
-			lblTitleValue.Size = new Size(0, 25);
+			lblTitleValue.Size = new Size(89, 32);
 			lblTitleValue.TabIndex = 2;
+			lblTitleValue.Text = "tieu de";
 			// 
 			// lblSlugLabel
 			// 
 			lblSlugLabel.AutoSize = true;
-			lblSlugLabel.Location = new Point(500, 60);
+			lblSlugLabel.Font = new Font("Segoe UI", 12F);
+			lblSlugLabel.Location = new Point(706, 72);
 			lblSlugLabel.Name = "lblSlugLabel";
-			lblSlugLabel.Size = new Size(51, 25);
+			lblSlugLabel.Size = new Size(66, 32);
 			lblSlugLabel.TabIndex = 3;
 			lblSlugLabel.Text = "Slug:";
 			// 
 			// lblSlugValue
 			// 
 			lblSlugValue.AutoSize = true;
-			lblSlugValue.Location = new Point(500, 80);
+			lblSlugValue.Font = new Font("Segoe UI", 12F);
+			lblSlugValue.Location = new Point(778, 72);
 			lblSlugValue.Name = "lblSlugValue";
-			lblSlugValue.Size = new Size(0, 25);
+			lblSlugValue.Size = new Size(105, 32);
 			lblSlugValue.TabIndex = 4;
+			lblSlugValue.Text = "slug text";
 			// 
 			// lblPriceLabel
 			// 
 			lblPriceLabel.AutoSize = true;
-			lblPriceLabel.Location = new Point(20, 120);
+			lblPriceLabel.Font = new Font("Segoe UI", 12F);
+			lblPriceLabel.Location = new Point(34, 137);
 			lblPriceLabel.Name = "lblPriceLabel";
-			lblPriceLabel.Size = new Size(41, 25);
+			lblPriceLabel.Size = new Size(53, 32);
 			lblPriceLabel.TabIndex = 5;
 			lblPriceLabel.Text = "Giá:";
 			// 
 			// lblPriceValue
 			// 
 			lblPriceValue.AutoSize = true;
-			lblPriceValue.Location = new Point(20, 140);
+			lblPriceValue.Font = new Font("Segoe UI", 12F);
+			lblPriceValue.Location = new Point(93, 137);
 			lblPriceValue.Name = "lblPriceValue";
-			lblPriceValue.Size = new Size(0, 25);
+			lblPriceValue.Size = new Size(86, 32);
 			lblPriceValue.TabIndex = 6;
+			lblPriceValue.Text = "giatext";
 			// 
 			// lblStatusLabel
 			// 
 			lblStatusLabel.AutoSize = true;
-			lblStatusLabel.Location = new Point(500, 120);
+			lblStatusLabel.Font = new Font("Segoe UI", 12F);
+			lblStatusLabel.Location = new Point(706, 137);
 			lblStatusLabel.Name = "lblStatusLabel";
-			lblStatusLabel.Size = new Size(93, 25);
+			lblStatusLabel.Size = new Size(125, 32);
 			lblStatusLabel.TabIndex = 7;
 			lblStatusLabel.Text = "Trạng thái:";
 			// 
 			// lblStatusValue
 			// 
 			lblStatusValue.AutoSize = true;
-			lblStatusValue.Location = new Point(500, 140);
+			lblStatusValue.Font = new Font("Segoe UI", 12F);
+			lblStatusValue.Location = new Point(837, 137);
 			lblStatusValue.Name = "lblStatusValue";
-			lblStatusValue.Size = new Size(0, 25);
+			lblStatusValue.Size = new Size(157, 32);
 			lblStatusValue.TabIndex = 8;
+			lblStatusValue.Text = "trangthai text";
 			// 
 			// lblStructureHeader
 			// 
@@ -186,59 +199,68 @@
 			// lblChaptersLabel
 			// 
 			lblChaptersLabel.AutoSize = true;
-			lblChaptersLabel.Location = new Point(20, 240);
+			lblChaptersLabel.Font = new Font("Segoe UI", 12F);
+			lblChaptersLabel.Location = new Point(40, 254);
 			lblChaptersLabel.Name = "lblChaptersLabel";
-			lblChaptersLabel.Size = new Size(103, 25);
+			lblChaptersLabel.Size = new Size(134, 32);
 			lblChaptersLabel.TabIndex = 10;
 			lblChaptersLabel.Text = "Số chương:";
 			// 
 			// lblChaptersValue
 			// 
 			lblChaptersValue.AutoSize = true;
-			lblChaptersValue.Location = new Point(20, 260);
+			lblChaptersValue.Font = new Font("Segoe UI", 12F);
+			lblChaptersValue.Location = new Point(180, 254);
 			lblChaptersValue.Name = "lblChaptersValue";
-			lblChaptersValue.Size = new Size(0, 25);
+			lblChaptersValue.Size = new Size(54, 32);
 			lblChaptersValue.TabIndex = 11;
+			lblChaptersValue.Text = "text";
 			// 
 			// lblLessonsLabel
 			// 
 			lblLessonsLabel.AutoSize = true;
-			lblLessonsLabel.Location = new Point(500, 240);
+			lblLessonsLabel.Font = new Font("Segoe UI", 12F);
+			lblLessonsLabel.Location = new Point(700, 254);
 			lblLessonsLabel.Name = "lblLessonsLabel";
-			lblLessonsLabel.Size = new Size(100, 25);
+			lblLessonsLabel.Size = new Size(131, 32);
 			lblLessonsLabel.TabIndex = 12;
 			lblLessonsLabel.Text = "Số bài học:";
 			// 
 			// lblLessonsValue
 			// 
 			lblLessonsValue.AutoSize = true;
-			lblLessonsValue.Location = new Point(500, 260);
+			lblLessonsValue.Font = new Font("Segoe UI", 12F);
+			lblLessonsValue.Location = new Point(837, 254);
 			lblLessonsValue.Name = "lblLessonsValue";
-			lblLessonsValue.Size = new Size(0, 25);
+			lblLessonsValue.Size = new Size(54, 32);
 			lblLessonsValue.TabIndex = 13;
+			lblLessonsValue.Text = "text";
 			// 
 			// lblContentsLabel
 			// 
 			lblContentsLabel.AutoSize = true;
-			lblContentsLabel.Location = new Point(20, 300);
+			lblContentsLabel.Font = new Font("Segoe UI", 12F);
+			lblContentsLabel.Location = new Point(40, 321);
 			lblContentsLabel.Name = "lblContentsLabel";
-			lblContentsLabel.Size = new Size(134, 25);
+			lblContentsLabel.Size = new Size(178, 32);
 			lblContentsLabel.TabIndex = 14;
 			lblContentsLabel.Text = "Tổng nội dung:";
 			// 
 			// lblContentsValue
 			// 
 			lblContentsValue.AutoSize = true;
-			lblContentsValue.Location = new Point(20, 320);
+			lblContentsValue.Font = new Font("Segoe UI", 12F);
+			lblContentsValue.Location = new Point(224, 321);
 			lblContentsValue.Name = "lblContentsValue";
-			lblContentsValue.Size = new Size(0, 25);
+			lblContentsValue.Size = new Size(54, 32);
 			lblContentsValue.TabIndex = 15;
+			lblContentsValue.Text = "text";
 			// 
 			// lblCourseStructureHeader
 			// 
 			lblCourseStructureHeader.AutoSize = true;
 			lblCourseStructureHeader.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-			lblCourseStructureHeader.Location = new Point(20, 380);
+			lblCourseStructureHeader.Location = new Point(20, 402);
 			lblCourseStructureHeader.Name = "lblCourseStructureHeader";
 			lblCourseStructureHeader.Size = new Size(254, 38);
 			lblCourseStructureHeader.TabIndex = 16;
@@ -247,33 +269,35 @@
 			// pnlCourseStructure
 			// 
 			pnlCourseStructure.AutoScroll = true;
-			pnlCourseStructure.Location = new Point(20, 420);
+			pnlCourseStructure.Location = new Point(20, 452);
 			pnlCourseStructure.Name = "pnlCourseStructure";
-			pnlCourseStructure.Size = new Size(1450, 149);
+			pnlCourseStructure.Size = new Size(1450, 171);
 			pnlCourseStructure.TabIndex = 17;
 			// 
 			// btnSaveDraft
 			// 
 			btnSaveDraft.CustomizableEdges = customizableEdges1;
 			btnSaveDraft.FillColor = Color.Silver;
-			btnSaveDraft.Font = new Font("Segoe UI", 9F);
+			btnSaveDraft.Font = new Font("Segoe UI", 10F);
 			btnSaveDraft.ForeColor = Color.White;
-			btnSaveDraft.Location = new Point(191, 743);
+			btnSaveDraft.Image = Properties.Resources.draft;
+			btnSaveDraft.Location = new Point(192, 773);
 			btnSaveDraft.Name = "btnSaveDraft";
 			btnSaveDraft.ShadowDecoration.CustomizableEdges = customizableEdges2;
-			btnSaveDraft.Size = new Size(140, 36);
+			btnSaveDraft.Size = new Size(150, 40);
 			btnSaveDraft.TabIndex = 2;
 			btnSaveDraft.Text = "Lưu nháp";
 			// 
 			// btnPublish
 			// 
 			btnPublish.CustomizableEdges = customizableEdges3;
-			btnPublish.Font = new Font("Segoe UI", 9F);
+			btnPublish.Font = new Font("Segoe UI", 10F);
 			btnPublish.ForeColor = Color.White;
-			btnPublish.Location = new Point(351, 743);
+			btnPublish.Image = Properties.Resources.publishing;
+			btnPublish.Location = new Point(352, 773);
 			btnPublish.Name = "btnPublish";
 			btnPublish.ShadowDecoration.CustomizableEdges = customizableEdges4;
-			btnPublish.Size = new Size(140, 36);
+			btnPublish.Size = new Size(150, 40);
 			btnPublish.TabIndex = 3;
 			btnPublish.Text = "Xuất bản";
 			// 
@@ -281,12 +305,13 @@
 			// 
 			btnPrev.CustomizableEdges = customizableEdges5;
 			btnPrev.FillColor = Color.FromArgb(255, 128, 0);
-			btnPrev.Font = new Font("Segoe UI", 9F);
+			btnPrev.Font = new Font("Segoe UI", 10F);
 			btnPrev.ForeColor = Color.White;
-			btnPrev.Location = new Point(30, 743);
+			btnPrev.Image = Properties.Resources.previous;
+			btnPrev.Location = new Point(31, 773);
 			btnPrev.Name = "btnPrev";
 			btnPrev.ShadowDecoration.CustomizableEdges = customizableEdges5;
-			btnPrev.Size = new Size(140, 36);
+			btnPrev.Size = new Size(150, 40);
 			btnPrev.TabIndex = 4;
 			btnPrev.Text = "Quay lại";
 			// 
@@ -294,7 +319,7 @@
 			// 
 			Controls.Add(pnlCard);
 			Name = "Step4_PublishControl";
-			Size = new Size(1530, 800);
+			Size = new Size(1530, 830);
 			pnlCard.ResumeLayout(false);
 			pnlPreview.ResumeLayout(false);
 			pnlPreview.PerformLayout();

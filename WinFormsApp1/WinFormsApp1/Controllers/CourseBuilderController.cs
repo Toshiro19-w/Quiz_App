@@ -254,6 +254,32 @@ namespace WinFormsApp1.Controllers
                         int contentIdx = 0;
                         foreach (var c in lsDto.Contents)
                         {
+                            // LOGGING MỚI: Debug giá trị ContentType trước khi lưu
+                            Debug.WriteLine($"[SaveCourseAsync] BEFORE SAVE - ContentType='{c.ContentType}' (Length={c.ContentType?.Length})");
+                            
+                            // Kiểm tra và chuẩn hóa ContentType
+                            if (string.IsNullOrWhiteSpace(c.ContentType))
+                            {
+                                c.ContentType = "Theory"; // Mặc định
+                                Debug.WriteLine($"[SaveCourseAsync] ContentType was null/empty, set to 'Theory'");
+                            }
+                            else
+                            {
+                                // Loại bỏ khoảng trắng thừa
+                                c.ContentType = c.ContentType.Trim();
+                                
+                                // Kiểm tra và chuẩn hóa giá trị
+                                if (!new[] { "Video", "Theory", "FlashcardSet", "Test" }.Contains(c.ContentType))
+                                {
+                                    Debug.WriteLine($"[SaveCourseAsync] INVALID ContentType detected: '{c.ContentType}'");
+                                    MessageBox.Show($"Giá trị ContentType không hợp lệ: '{c.ContentType}'. Chỉ chấp nhận: Video, Theory, FlashcardSet, Test", 
+                                        "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    throw new InvalidOperationException($"Invalid ContentType: '{c.ContentType}'");
+                                }
+                            }
+                            
+                            Debug.WriteLine($"[SaveCourseAsync] AFTER NORMALIZE - ContentType='{c.ContentType}'");
+                            
                             // Log incoming content for diagnosis
                             Debug.WriteLine($"SaveCourseAsync: Saving content for LessonId={lesson.LessonId} Type={c.ContentType} Title='{c.Title}' BodyLen={c.Body?.Length ?? 0} RefId={(c.RefId.HasValue ? c.RefId.Value.ToString() : "NULL")} VideoUrl='{c.VideoUrl}'");
 
@@ -412,10 +438,18 @@ namespace WinFormsApp1.Controllers
                                 Debug.WriteLine($"SaveCourseAsync: Warning - content RefId is null after processing. LessonId={lesson.LessonId} ContentType={c.ContentType} Title='{c.Title}'");
                             }
 
+                            // VALIDATION CUỐI CÙNG: Đảm bảo ContentType hợp lệ
+                            var validTypes = new[] { "Video", "Theory", "FlashcardSet", "Test" };
+                            if (!validTypes.Contains(c.ContentType))
+                            {
+                                Debug.WriteLine($"[CRITICAL] Invalid ContentType before INSERT: '{c.ContentType}'");
+                                throw new InvalidOperationException($"ContentType không hợp lệ: '{c.ContentType}'. Chỉ chấp nhận: {string.Join(", ", validTypes)}");
+                            }
+
                             var lc = new LessonContent
                             {
                                 LessonId = lesson.LessonId,
-                                ContentType = c.ContentType ?? "Theory",
+                                ContentType = c.ContentType,
                                 Title = c.Title,
                                 Body = c.Body,
                                 VideoUrl = c.VideoUrl,

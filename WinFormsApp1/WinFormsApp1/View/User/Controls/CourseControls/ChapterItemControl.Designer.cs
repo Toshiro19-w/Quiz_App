@@ -29,11 +29,12 @@
 			// 
 			lblTitle.BackColor = Color.WhiteSmoke;
 			lblTitle.BorderStyle = BorderStyle.None;
-			lblTitle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+			lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
 			lblTitle.Location = new Point(46, 8);
 			lblTitle.Name = "lblTitle";
-			lblTitle.Size = new Size(1346, 27);
+			lblTitle.Size = new Size(1346, 32);
 			lblTitle.TabIndex = 2;
+			lblTitle.Text = "chuong";
 			// 
 			// btnAddLesson
 			// 

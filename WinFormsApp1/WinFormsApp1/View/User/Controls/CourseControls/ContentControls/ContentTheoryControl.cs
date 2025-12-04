@@ -1,6 +1,7 @@
 using System.Windows.Forms;
 using WinFormsApp1.ViewModels;
 using System.Drawing;
+using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 {
@@ -36,14 +37,17 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 
 		private void OnContentTypeChanged()
 		{
-			var type = cboContentType.SelectedItem?.ToString();
+			var vietnameseType = cboContentType.SelectedItem?.ToString();
 
-			// ALWAYS FIRE EVENT
-			if (type != null)
-				ContentTypeChanged?.Invoke(this, type);
+			// ALWAYS FIRE EVENT - chuyển sang tiếng Anh
+			if (vietnameseType != null)
+			{
+				var englishType = ContentTypeHelper.ToEnglish(vietnameseType);
+				ContentTypeChanged?.Invoke(this, englishType);
+			}
 
 			// local UI change only for Theory control
-			if (type == "Video")
+			if (vietnameseType == "Video")
 			{
 				lblBody.Visible = false;
 				txtBody.Visible = false;
@@ -60,10 +64,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             if (vm == null) return;
             var contentType = string.IsNullOrEmpty(vm.ContentType) ? "Theory" : vm.ContentType;
             
+            // Chuyển sang tiếng Việt để hiển thị
+            var vietnameseType = ContentTypeHelper.ToVietnamese(contentType);
+            
             // Find and set the correct item
             for (int i = 0; i < cboContentType.Items.Count; i++)
             {
-                if (cboContentType.Items[i].ToString() == contentType)
+                if (cboContentType.Items[i].ToString() == vietnameseType)
                 {
                     cboContentType.SelectedIndex = i;
                     break;
@@ -76,9 +83,10 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 
         public LessonContentBuilderViewModel SaveToViewModel()
         {
+            var vietnameseType = cboContentType.SelectedItem?.ToString() ?? "Lý thuyết";
             return new LessonContentBuilderViewModel
             {
-                ContentType = cboContentType.SelectedItem?.ToString() ?? "Theory",
+                ContentType = ContentTypeHelper.ToEnglish(vietnameseType), // Lưu bằng tiếng Anh
                 Title = txtTitle.Text.Trim(),
                 Body = txtBody.Text
             };

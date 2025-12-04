@@ -39,72 +39,72 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			// lblQuestionType
 			// 
 			lblQuestionType.AutoSize = true;
-			lblQuestionType.Font = new Font("Segoe UI", 10F);
+			lblQuestionType.Font = new Font("Segoe UI", 12F);
 			lblQuestionType.Location = new Point(24, 45);
 			lblQuestionType.Name = "lblQuestionType";
-			lblQuestionType.Size = new Size(120, 28);
+			lblQuestionType.Size = new Size(147, 32);
 			lblQuestionType.TabIndex = 1;
 			lblQuestionType.Text = "Loại câu hỏi:";
 			// 
 			// cboQuestionType
 			// 
 			cboQuestionType.DropDownStyle = ComboBoxStyle.DropDownList;
-			cboQuestionType.Font = new Font("Segoe UI", 10F);
+			cboQuestionType.Font = new Font("Segoe UI", 12F);
 			cboQuestionType.FormattingEnabled = true;
 			cboQuestionType.Items.AddRange(new object[] { "Trắc nghiệm (1 đáp án)", "Trắc nghiệm (nhiều đáp án)", "Đúng/Sai" });
-			cboQuestionType.Location = new Point(158, 39);
+			cboQuestionType.Location = new Point(172, 39);
 			cboQuestionType.Name = "cboQuestionType";
-			cboQuestionType.Size = new Size(280, 36);
+			cboQuestionType.Size = new Size(266, 40);
 			cboQuestionType.TabIndex = 2;
 			// 
 			// lblQuestion
 			// 
 			lblQuestion.AutoSize = true;
-			lblQuestion.Font = new Font("Segoe UI", 10F);
+			lblQuestion.Font = new Font("Segoe UI", 12F);
 			lblQuestion.Location = new Point(24, 95);
 			lblQuestion.Name = "lblQuestion";
-			lblQuestion.Size = new Size(82, 28);
+			lblQuestion.Size = new Size(101, 32);
 			lblQuestion.TabIndex = 3;
 			lblQuestion.Text = "Câu hỏi:";
 			// 
 			// txtQuestion
 			// 
-			txtQuestion.Font = new Font("Segoe UI", 10F);
-			txtQuestion.Location = new Point(158, 92);
+			txtQuestion.Font = new Font("Segoe UI", 12F);
+			txtQuestion.Location = new Point(172, 92);
 			txtQuestion.Multiline = true;
 			txtQuestion.Name = "txtQuestion";
 			txtQuestion.ScrollBars = ScrollBars.Vertical;
-			txtQuestion.Size = new Size(1228, 80);
+			txtQuestion.Size = new Size(1214, 80);
 			txtQuestion.TabIndex = 4;
 			// 
 			// lblPoint
 			// 
 			lblPoint.AutoSize = true;
-			lblPoint.Font = new Font("Segoe UI", 10F);
-			lblPoint.Location = new Point(24, 203);
+			lblPoint.Font = new Font("Segoe UI", 12F);
+			lblPoint.Location = new Point(24, 197);
 			lblPoint.Name = "lblPoint";
-			lblPoint.Size = new Size(62, 28);
+			lblPoint.Size = new Size(76, 32);
 			lblPoint.TabIndex = 5;
 			lblPoint.Text = "Điểm:";
 			// 
 			// numPoint
 			// 
 			numPoint.DecimalPlaces = 1;
-			numPoint.Font = new Font("Segoe UI", 10F);
-			numPoint.Location = new Point(158, 200);
+			numPoint.Font = new Font("Segoe UI", 12F);
+			numPoint.Location = new Point(172, 194);
 			numPoint.Minimum = new decimal(new int[] { 5, 0, 0, 65536 });
 			numPoint.Name = "numPoint";
-			numPoint.Size = new Size(153, 34);
+			numPoint.Size = new Size(139, 39);
 			numPoint.TabIndex = 6;
 			numPoint.Value = new decimal(new int[] { 1, 0, 0, 0 });
 			// 
 			// lblAnswers
 			// 
 			lblAnswers.AutoSize = true;
-			lblAnswers.Font = new Font("Segoe UI", 10F);
-			lblAnswers.Location = new Point(24, 245);
+			lblAnswers.Font = new Font("Segoe UI", 12F);
+			lblAnswers.Location = new Point(24, 243);
 			lblAnswers.Name = "lblAnswers";
-			lblAnswers.Size = new Size(415, 28);
+			lblAnswers.Size = new Size(511, 32);
 			lblAnswers.TabIndex = 7;
 			lblAnswers.Text = "Các đáp án: (Chọn checkbox cho đáp án đúng)";
 			// 
@@ -113,9 +113,9 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			pnlAnswers.AutoScroll = true;
 			pnlAnswers.BorderStyle = BorderStyle.FixedSingle;
 			pnlAnswers.Font = new Font("Segoe UI", 10F);
-			pnlAnswers.Location = new Point(24, 277);
+			pnlAnswers.Location = new Point(24, 283);
 			pnlAnswers.Name = "pnlAnswers";
-			pnlAnswers.Size = new Size(1362, 150);
+			pnlAnswers.Size = new Size(1362, 193);
 			pnlAnswers.TabIndex = 8;
 			// 
 			// btnAddAnswer
@@ -125,9 +125,9 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			btnAddAnswer.FlatStyle = FlatStyle.Flat;
 			btnAddAnswer.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
 			btnAddAnswer.ForeColor = Color.White;
-			btnAddAnswer.Location = new Point(24, 447);
+			btnAddAnswer.Location = new Point(24, 494);
 			btnAddAnswer.Name = "btnAddAnswer";
-			btnAddAnswer.Size = new Size(150, 36);
+			btnAddAnswer.Size = new Size(170, 40);
 			btnAddAnswer.TabIndex = 9;
 			btnAddAnswer.Text = "+ Thêm đáp án";
 			btnAddAnswer.UseVisualStyleBackColor = false;
@@ -162,7 +162,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			Controls.Add(lblQuestionType);
 			Controls.Add(lblQuestionNumber);
 			Name = "TestQuestionItemControl";
-			Size = new Size(1398, 495);
+			Size = new Size(1398, 549);
 			((System.ComponentModel.ISupportInitialize)numPoint).EndInit();
 			ResumeLayout(false);
 			PerformLayout();

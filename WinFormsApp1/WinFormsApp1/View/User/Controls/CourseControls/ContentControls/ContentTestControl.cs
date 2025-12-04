@@ -51,12 +51,14 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             btnDeleteContent.Click += (s, e) => DeleteRequested?.Invoke(this);
 
             // Set default selection and add event handler
-            cboContentType.SelectedIndex = 3; // Test
+            cboContentType.SelectedIndex = 3; // Bài kiểm tra
             cboContentType.SelectedIndexChanged += (s, e) => {
-                var type = cboContentType.SelectedItem?.ToString();
-                if (type != null && type != "Test")
+                var vietnameseType = cboContentType.SelectedItem?.ToString();
+                if (vietnameseType != null && vietnameseType != "Bài kiểm tra")
                 {
-                    ContentTypeChanged?.Invoke(this, type);
+                    // Chuyển sang tiếng Anh trước khi trigger event
+                    var englishType = ContentTypeHelper.ToEnglish(vietnameseType);
+                    ContentTypeChanged?.Invoke(this, englishType);
                 }
             };
 
@@ -214,7 +216,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             {
                 ContentId = _contentId,
                 RefId = _refId,
-                ContentType = "Test",
+                ContentType = "Test", // Lưu bằng tiếng Anh
                 Title = txtTitle.Text.Trim(),
                 // Use txtTitle as test title as well
                 TestTitle = txtTitle.Text.Trim(),

@@ -56,10 +56,11 @@
 			btnAddChapter.CustomizableEdges = customizableEdges7;
 			btnAddChapter.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
 			btnAddChapter.ForeColor = Color.White;
+			btnAddChapter.Image = Properties.Resources.add;
 			btnAddChapter.Location = new Point(18, 105);
 			btnAddChapter.Name = "btnAddChapter";
 			btnAddChapter.ShadowDecoration.CustomizableEdges = customizableEdges8;
-			btnAddChapter.Size = new Size(171, 36);
+			btnAddChapter.Size = new Size(186, 40);
 			btnAddChapter.TabIndex = 1;
 			btnAddChapter.Text = "Thêm chương";
 			// 
@@ -68,7 +69,7 @@
 			flpChapters.AutoScroll = true;
 			flpChapters.Location = new Point(18, 170);
 			flpChapters.Name = "flpChapters";
-			flpChapters.Size = new Size(1500, 508);
+			flpChapters.Size = new Size(1500, 522);
 			flpChapters.TabIndex = 2;
 			// 
 			// btnPrev
@@ -77,10 +78,11 @@
 			btnPrev.FillColor = Color.FromArgb(255, 128, 0);
 			btnPrev.Font = new Font("Segoe UI", 10F);
 			btnPrev.ForeColor = Color.White;
+			btnPrev.Image = Properties.Resources.previous;
 			btnPrev.Location = new Point(25, 743);
 			btnPrev.Name = "btnPrev";
 			btnPrev.ShadowDecoration.CustomizableEdges = customizableEdges10;
-			btnPrev.Size = new Size(120, 36);
+			btnPrev.Size = new Size(150, 40);
 			btnPrev.TabIndex = 3;
 			btnPrev.Text = "Quay lại";
 			// 
@@ -89,10 +91,11 @@
 			btnNext.CustomizableEdges = customizableEdges11;
 			btnNext.Font = new Font("Segoe UI", 10F);
 			btnNext.ForeColor = Color.White;
-			btnNext.Location = new Point(165, 743);
+			btnNext.Image = Properties.Resources.next;
+			btnNext.Location = new Point(183, 743);
 			btnNext.Name = "btnNext";
 			btnNext.ShadowDecoration.CustomizableEdges = customizableEdges12;
-			btnNext.Size = new Size(140, 36);
+			btnNext.Size = new Size(150, 40);
 			btnNext.TabIndex = 4;
 			btnNext.Text = "Tiếp tục";
 			// 
