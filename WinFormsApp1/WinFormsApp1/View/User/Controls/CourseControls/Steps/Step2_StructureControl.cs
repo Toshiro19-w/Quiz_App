@@ -8,6 +8,9 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
         {
             InitializeComponent();
             
+            // Enable double buffering for smoother scrolling
+            EnableDoubleBuffering(flpChapters);
+            
             // Đảm bảo nút được kích hoạt
             btnAddChapter.Enabled = true;
             btnAddChapter.Visible = true;
@@ -16,6 +19,18 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
             btnAddChapter.Click += BtnAddChapter_Click;
             btnPrev.Click += (s,e)=> OnPrevRequested?.Invoke(this, EventArgs.Empty);
             btnNext.Click += (s,e)=> OnNextRequested?.Invoke(this, EventArgs.Empty);
+        }
+        
+        /// <summary>
+        /// Enable double buffering for a control to reduce flicker
+        /// </summary>
+        private void EnableDoubleBuffering(Control control)
+        {
+            typeof(Control).InvokeMember("DoubleBuffered",
+                System.Reflection.BindingFlags.SetProperty |
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic,
+                null, control, new object[] { true });
         }
         
         private void BtnAddChapter_Click(object sender, EventArgs e)
@@ -56,19 +71,27 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 
 		public void LoadFromViewModel(CourseBuilderViewModel vm)
 		{
-			flpChapters.Controls.Clear();
-			chapterCounter = 0;
+            // Suspend layout for better performance
+            flpChapters.SuspendLayout();
+            
+            flpChapters.Controls.Clear();
+            chapterCounter = 0;
 
-			if (vm?.Chapters == null || vm.Chapters.Count == 0)
-				return;
+            if (vm?.Chapters == null || vm.Chapters.Count == 0)
+            {
+                flpChapters.ResumeLayout(true);
+                return;
+            }
 
-			foreach (var ch in vm.Chapters)
-			{
-				// Sử dụng AddChapter để đảm bảo event được kết nối
-				AddChapter(ch);
-				chapterCounter++;
-			}
-		}
+            foreach (var ch in vm.Chapters)
+            {
+                // Sử dụng AddChapter để đảm bảo event được kết nối
+                AddChapter(ch);
+                chapterCounter++;
+            }
+            
+            flpChapters.ResumeLayout(true);
+        }
 
 
 		public void SaveToViewModel(CourseBuilderViewModel vm)

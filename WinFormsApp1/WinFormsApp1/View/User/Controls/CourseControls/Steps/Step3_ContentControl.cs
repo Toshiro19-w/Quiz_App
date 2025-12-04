@@ -18,12 +18,27 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		public Step3_ContentControl()
 		{
 			InitializeComponent();
+			
+			// Enable double buffering for smoother scrolling - QUAN TRỌNG cho Step3
+			EnableDoubleBuffering(flpContents);
 
 			btnPrev.Click += (s, e) => OnPrevRequested?.Invoke(this, EventArgs.Empty);
 			btnNext.Click += (s, e) => OnNextRequested?.Invoke(this, EventArgs.Empty);
 
 			cmbLessonSelector.SelectedIndexChanged += (s, e) => ChangeSelectedLesson();
 			btnAddContent.Click += (s, e) => AddNewContent();
+		}
+		
+		/// <summary>
+		/// Enable double buffering for a control to reduce flicker
+		/// </summary>
+		private void EnableDoubleBuffering(Control control)
+		{
+			typeof(Control).InvokeMember("DoubleBuffered",
+				System.Reflection.BindingFlags.SetProperty |
+				System.Reflection.BindingFlags.Instance |
+				System.Reflection.BindingFlags.NonPublic,
+				null, control, new object[] { true });
 		}
 
 		public event EventHandler? OnPrevRequested;
@@ -198,6 +213,9 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			if (_vm == null) return;
 			if (cmbLessonSelector.SelectedItem is not ComboItem item) return;
 
+			// Suspend layout for better performance
+			flpContents.SuspendLayout();
+			
 			// Use direct reference if available, fallback to index-based lookup
 			var lesson = item.Lesson ?? _vm.Chapters[item.ChapterIndex].Lessons[item.LessonIndex];
 
@@ -212,6 +230,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				}
 				else
 				{
+					flpContents.ResumeLayout(true);
 					return;
 				}
 			}
@@ -246,6 +265,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 
 				flpContents.Controls.Add(ctl);
 			}
+			
+			flpContents.ResumeLayout(true);
 		}
 
 		// ============================================================
@@ -281,7 +302,10 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				=> OnContentTypeChanged(ctl, newType, newContent);
 			ctl.DeleteRequested += (s) => OnContentDeleteRequested(ctl, newContent);
 
+			// Suspend layout before adding control
+			flpContents.SuspendLayout();
 			flpContents.Controls.Add(ctl);
+			flpContents.ResumeLayout(true);
 		}
 
 		// ============================================================
@@ -303,6 +327,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		// ============================================================
 		private void OnContentTypeChanged(Control oldControl, string newType, LessonContentBuilderViewModel contentVm)
 		{
+			// newType đã là tiếng Anh từ ContentTypeHelper			
+			
 			// Save current data from old control
 			if (oldControl is IContentControl oldIc)
 			{
@@ -319,7 +345,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				}
 			}
 
-			// Update content type
+			// Update content type (newType đã là tiếng Anh)
 			contentVm.ContentType = newType;
 
 			// Create new control
@@ -354,12 +380,17 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				testCtl.ContentTypeChanged += (s, type) => OnContentTypeChanged(newControl, type, contentVm);
 			}
 
+			// Suspend layout before replacing control
+			flpContents.SuspendLayout();
+			
 			// Replace control in FlowLayoutPanel
 			var index = flpContents.Controls.IndexOf(oldControl);
 			flpContents.Controls.RemoveAt(index);
 			flpContents.Controls.Add(newControl);
 			flpContents.Controls.SetChildIndex(newControl, index);
 
+			flpContents.ResumeLayout(true);
+			
 			// Dispose old control
 			oldControl.Dispose();
 		}
@@ -371,8 +402,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		{
 			if (MessageBox.Show("Bạn có chắc muốn xóa nội dung này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
 			{
+				// Suspend layout before removing
+				flpContents.SuspendLayout();
+				
 				// Remove from UI
 				flpContents.Controls.Remove(control);
+				
+				flpContents.ResumeLayout(true);
 				
 				// Remove from ViewModel
 				if (cmbLessonSelector.SelectedItem is ComboItem item)

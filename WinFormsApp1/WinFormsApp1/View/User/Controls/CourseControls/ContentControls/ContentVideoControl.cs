@@ -42,9 +42,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			cboContentType.SelectedIndex = 1; // Video
 			cboContentType.SelectedIndexChanged += (s, e) =>
 			{
-				var type = cboContentType.SelectedItem?.ToString();
-				if (type != "Video")
-					ContentTypeChanged?.Invoke(this, type);
+				var vietnameseType = cboContentType.SelectedItem?.ToString();
+				if (vietnameseType != "Video")
+				{
+					// Chuyển sang tiếng Anh trước khi trigger event
+					var englishType = ContentTypeHelper.ToEnglish(vietnameseType);
+					ContentTypeChanged?.Invoke(this, englishType);
+				}
 			};
 		}
 
@@ -165,10 +169,15 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			}
 			return new LessonContentBuilderViewModel
 			{
-				ContentType = "Video",
+				ContentType = "Video", // Lưu bằng tiếng Anh
 				Title = txtTitle.Text.Trim(),
 				VideoUrl = txtVideoPath.Text.Trim()
 			};
+		}
+
+		private void ContentVideoControl_Load(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

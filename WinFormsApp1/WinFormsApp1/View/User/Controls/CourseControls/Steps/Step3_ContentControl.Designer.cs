@@ -39,7 +39,7 @@
 			pnlCard.Name = "pnlCard";
 			pnlCard.Padding = new Padding(18);
 			pnlCard.ShadowColor = Color.Black;
-			pnlCard.Size = new Size(1530, 800);
+			pnlCard.Size = new Size(1530, 830);
 			pnlCard.TabIndex = 0;
 			// 
 			// lblHeader
@@ -62,7 +62,7 @@
 			cmbLessonSelector.DrawMode = DrawMode.OwnerDrawFixed;
 			cmbLessonSelector.DropDownStyle = ComboBoxStyle.DropDownList;
 			cmbLessonSelector.FocusedColor = Color.Empty;
-			cmbLessonSelector.Font = new Font("Segoe UI", 10F);
+			cmbLessonSelector.Font = new Font("Segoe UI", 12F);
 			cmbLessonSelector.ForeColor = Color.FromArgb(68, 88, 112);
 			cmbLessonSelector.ItemHeight = 30;
 			cmbLessonSelector.Location = new Point(19, 83);
@@ -74,12 +74,13 @@
 			// btnAddContent
 			// 
 			btnAddContent.CustomizableEdges = customizableEdges3;
-			btnAddContent.Font = new Font("Segoe UI", 9F);
+			btnAddContent.Font = new Font("Segoe UI", 10F);
 			btnAddContent.ForeColor = Color.White;
-			btnAddContent.Location = new Point(484, 83);
+			btnAddContent.Image = Properties.Resources.add;
+			btnAddContent.Location = new Point(484, 81);
 			btnAddContent.Name = "btnAddContent";
 			btnAddContent.ShadowDecoration.CustomizableEdges = customizableEdges4;
-			btnAddContent.Size = new Size(170, 36);
+			btnAddContent.Size = new Size(190, 40);
 			btnAddContent.TabIndex = 2;
 			btnAddContent.Text = "Thêm nội dung";
 			// 
@@ -88,7 +89,7 @@
 			flpContents.AutoScroll = true;
 			flpContents.Location = new Point(19, 133);
 			flpContents.Name = "flpContents";
-			flpContents.Size = new Size(1493, 569);
+			flpContents.Size = new Size(1493, 608);
 			flpContents.TabIndex = 3;
 			// 
 			// btnPrev
@@ -97,10 +98,11 @@
 			btnPrev.FillColor = Color.FromArgb(255, 128, 0);
 			btnPrev.Font = new Font("Segoe UI", 10F);
 			btnPrev.ForeColor = Color.White;
-			btnPrev.Location = new Point(29, 743);
+			btnPrev.Image = Properties.Resources.previous;
+			btnPrev.Location = new Point(21, 769);
 			btnPrev.Name = "btnPrev";
 			btnPrev.ShadowDecoration.CustomizableEdges = customizableEdges6;
-			btnPrev.Size = new Size(120, 36);
+			btnPrev.Size = new Size(150, 40);
 			btnPrev.TabIndex = 4;
 			btnPrev.Text = "Quay lại";
 			// 
@@ -109,18 +111,21 @@
 			btnNext.CustomizableEdges = customizableEdges7;
 			btnNext.Font = new Font("Segoe UI", 10F);
 			btnNext.ForeColor = Color.White;
-			btnNext.Location = new Point(167, 743);
+			btnNext.Image = Properties.Resources.next;
+			btnNext.ImageAlign = HorizontalAlignment.Left;
+			btnNext.Location = new Point(177, 769);
 			btnNext.Name = "btnNext";
 			btnNext.ShadowDecoration.CustomizableEdges = customizableEdges8;
-			btnNext.Size = new Size(140, 36);
+			btnNext.Size = new Size(149, 40);
 			btnNext.TabIndex = 5;
-			btnNext.Text = "Xem trước & Xuất bản";
+			btnNext.Text = "Xem trước";
+			btnNext.TextAlign = HorizontalAlignment.Left;
 			// 
 			// Step3_ContentControl
 			// 
 			Controls.Add(pnlCard);
 			Name = "Step3_ContentControl";
-			Size = new Size(1530, 800);
+			Size = new Size(1530, 830);
 			pnlCard.ResumeLayout(false);
 			ResumeLayout(false);
 		}

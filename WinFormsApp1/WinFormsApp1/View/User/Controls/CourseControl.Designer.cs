@@ -20,279 +20,288 @@ namespace WinFormsApp1.View.User.Controls
             base.Dispose(disposing);
         }
 
-        #region Component Designer generated code
+		#region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-            this.filterPanel = new System.Windows.Forms.Panel();
-            this.lblFilterHeader = new System.Windows.Forms.Label();
-            this.lblRatingHeader = new System.Windows.Forms.Label();
-            this.chkRating4Plus = new System.Windows.Forms.CheckBox();
-            this.chkRating3To4 = new System.Windows.Forms.CheckBox();
-            this.chkRating2To3 = new System.Windows.Forms.CheckBox();
-            this.chkRating1To2 = new System.Windows.Forms.CheckBox();
-            this.lblPriceHeader = new System.Windows.Forms.Label();
-            this.chkFree = new System.Windows.Forms.CheckBox();
-            this.chkPaid = new System.Windows.Forms.CheckBox();
-            this.mainContentPanel = new System.Windows.Forms.Panel();
-            this.coursesPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.headerPanel = new System.Windows.Forms.Panel();
-            this.lblHeader = new System.Windows.Forms.Label();
-            this.lblCourseCount = new System.Windows.Forms.Label();
-            this.lblSortLabel = new System.Windows.Forms.Label();
-            this.cmbSort = new System.Windows.Forms.ComboBox();
-            this.filterPanel.SuspendLayout();
-            this.mainContentPanel.SuspendLayout();
-            this.headerPanel.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // filterPanel
-            // 
-            this.filterPanel.BackColor = System.Drawing.Color.White;
-            this.filterPanel.Controls.Add(this.chkPaid);
-            this.filterPanel.Controls.Add(this.chkFree);
-            this.filterPanel.Controls.Add(this.lblPriceHeader);
-            this.filterPanel.Controls.Add(this.chkRating1To2);
-            this.filterPanel.Controls.Add(this.chkRating2To3);
-            this.filterPanel.Controls.Add(this.chkRating3To4);
-            this.filterPanel.Controls.Add(this.chkRating4Plus);
-            this.filterPanel.Controls.Add(this.lblRatingHeader);
-            this.filterPanel.Controls.Add(this.lblFilterHeader);
-            this.filterPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.filterPanel.Location = new System.Drawing.Point(20, 80);
-            this.filterPanel.Name = "filterPanel";
-            this.filterPanel.Padding = new System.Windows.Forms.Padding(20);
-            this.filterPanel.Size = new System.Drawing.Size(280, 600);
-            this.filterPanel.TabIndex = 0;
-            // 
-            // lblFilterHeader
-            // 
-            this.lblFilterHeader.AutoSize = false;
-            this.lblFilterHeader.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
-            this.lblFilterHeader.Location = new System.Drawing.Point(20, 20);
-            this.lblFilterHeader.Name = "lblFilterHeader";
-            this.lblFilterHeader.Size = new System.Drawing.Size(240, 30);
-            this.lblFilterHeader.TabIndex = 0;
-            this.lblFilterHeader.Text = "Bộ lọc";
-            // 
-            // lblRatingHeader
-            // 
-            this.lblRatingHeader.AutoSize = false;
-            this.lblRatingHeader.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblRatingHeader.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.lblRatingHeader.Location = new System.Drawing.Point(20, 70);
-            this.lblRatingHeader.Name = "lblRatingHeader";
-            this.lblRatingHeader.Size = new System.Drawing.Size(240, 25);
-            this.lblRatingHeader.TabIndex = 1;
-            this.lblRatingHeader.Text = "Đánh giá";
-            // 
-            // chkRating4Plus
-            // 
-            this.chkRating4Plus.AutoSize = true;
-            this.chkRating4Plus.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkRating4Plus.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.chkRating4Plus.ForeColor = System.Drawing.Color.FromArgb(100, 100, 100);
-            this.chkRating4Plus.Location = new System.Drawing.Point(20, 105);
-            this.chkRating4Plus.Name = "chkRating4Plus";
-            this.chkRating4Plus.Size = new System.Drawing.Size(200, 23);
-            this.chkRating4Plus.TabIndex = 2;
-            this.chkRating4Plus.Text = "4.0 trở lên ⭐⭐⭐⭐";
-            this.chkRating4Plus.UseVisualStyleBackColor = true;
-            this.chkRating4Plus.CheckedChanged += FilterChanged;
-            // 
-            // chkRating3To4
-            // 
-            this.chkRating3To4.AutoSize = true;
-            this.chkRating3To4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkRating3To4.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.chkRating3To4.ForeColor = System.Drawing.Color.FromArgb(100, 100, 100);
-            this.chkRating3To4.Location = new System.Drawing.Point(20, 140);
-            this.chkRating3To4.Name = "chkRating3To4";
-            this.chkRating3To4.Size = new System.Drawing.Size(150, 23);
-            this.chkRating3To4.TabIndex = 3;
-            this.chkRating3To4.Text = "3.0 - 3.9 ⭐⭐⭐";
-            this.chkRating3To4.UseVisualStyleBackColor = true;
-            this.chkRating3To4.CheckedChanged += FilterChanged;
-            // 
-            // chkRating2To3
-            // 
-            this.chkRating2To3.AutoSize = true;
-            this.chkRating2To3.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkRating2To3.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.chkRating2To3.ForeColor = System.Drawing.Color.FromArgb(100, 100, 100);
-            this.chkRating2To3.Location = new System.Drawing.Point(20, 175);
-            this.chkRating2To3.Name = "chkRating2To3";
-            this.chkRating2To3.Size = new System.Drawing.Size(130, 23);
-            this.chkRating2To3.TabIndex = 4;
-            this.chkRating2To3.Text = "2.0 - 2.9 ⭐⭐";
-            this.chkRating2To3.UseVisualStyleBackColor = true;
-            this.chkRating2To3.CheckedChanged += FilterChanged;
-            // 
-            // chkRating1To2
-            // 
-            this.chkRating1To2.AutoSize = true;
-            this.chkRating1To2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkRating1To2.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.chkRating1To2.ForeColor = System.Drawing.Color.FromArgb(100, 100, 100);
-            this.chkRating1To2.Location = new System.Drawing.Point(20, 210);
-            this.chkRating1To2.Name = "chkRating1To2";
-            this.chkRating1To2.Size = new System.Drawing.Size(100, 23);
-            this.chkRating1To2.TabIndex = 5;
-            this.chkRating1To2.Text = "1.0 - 1.9 ⭐";
-            this.chkRating1To2.UseVisualStyleBackColor = true;
-            this.chkRating1To2.CheckedChanged += FilterChanged;
-            // 
-            // lblPriceHeader
-            // 
-            this.lblPriceHeader.AutoSize = false;
-            this.lblPriceHeader.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblPriceHeader.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.lblPriceHeader.Location = new System.Drawing.Point(20, 260);
-            this.lblPriceHeader.Name = "lblPriceHeader";
-            this.lblPriceHeader.Size = new System.Drawing.Size(240, 25);
-            this.lblPriceHeader.TabIndex = 6;
-            this.lblPriceHeader.Text = "Giá";
-            // 
-            // chkFree
-            // 
-            this.chkFree.AutoSize = true;
-            this.chkFree.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkFree.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.chkFree.ForeColor = System.Drawing.Color.FromArgb(100, 100, 100);
-            this.chkFree.Location = new System.Drawing.Point(20, 295);
-            this.chkFree.Name = "chkFree";
-            this.chkFree.Size = new System.Drawing.Size(120, 23);
-            this.chkFree.TabIndex = 7;
-            this.chkFree.Text = "💚 Miễn phí";
-            this.chkFree.UseVisualStyleBackColor = true;
-            this.chkFree.CheckedChanged += FilterChanged;
-            // 
-            // chkPaid
-            // 
-            this.chkPaid.AutoSize = true;
-            this.chkPaid.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkPaid.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.chkPaid.ForeColor = System.Drawing.Color.FromArgb(100, 100, 100);
-            this.chkPaid.Location = new System.Drawing.Point(20, 330);
-            this.chkPaid.Name = "chkPaid";
-            this.chkPaid.Size = new System.Drawing.Size(100, 23);
-            this.chkPaid.TabIndex = 8;
-            this.chkPaid.Text = "💵 Trả phí";
-            this.chkPaid.UseVisualStyleBackColor = true;
-            this.chkPaid.CheckedChanged += FilterChanged;
-            // 
-            // mainContentPanel
-            // 
-            this.mainContentPanel.BackColor = System.Drawing.Color.FromArgb(248, 249, 250);
-            this.mainContentPanel.Controls.Add(this.coursesPanel);
-            this.mainContentPanel.Controls.Add(this.headerPanel);
-            this.mainContentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainContentPanel.Location = new System.Drawing.Point(300, 80);
-            this.mainContentPanel.Name = "mainContentPanel";
-            this.mainContentPanel.Padding = new System.Windows.Forms.Padding(20, 0, 0, 0);
-            this.mainContentPanel.Size = new System.Drawing.Size(880, 600);
-            this.mainContentPanel.TabIndex = 1;
-            // 
-            // headerPanel
-            // 
-            this.headerPanel.BackColor = System.Drawing.Color.FromArgb(248, 249, 250);
-            this.headerPanel.Controls.Add(this.cmbSort);
-            this.headerPanel.Controls.Add(this.lblSortLabel);
-            this.headerPanel.Controls.Add(this.lblCourseCount);
-            this.headerPanel.Controls.Add(this.lblHeader);
-            this.headerPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.headerPanel.Location = new System.Drawing.Point(20, 0);
-            this.headerPanel.Name = "headerPanel";
-            this.headerPanel.Size = new System.Drawing.Size(860, 60);
-            this.headerPanel.TabIndex = 0;
-            // 
-            // lblHeader
-            // 
-            this.lblHeader.AutoSize = false;
-            this.lblHeader.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
-            this.lblHeader.Location = new System.Drawing.Point(0, 10);
-            this.lblHeader.Name = "lblHeader";
-            this.lblHeader.Size = new System.Drawing.Size(300, 35);
-            this.lblHeader.TabIndex = 0;
-            this.lblHeader.Text = "Tất cả khóa học";
-            // 
-            // lblCourseCount
-            // 
-            this.lblCourseCount.AutoSize = true;
-            this.lblCourseCount.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.lblCourseCount.ForeColor = System.Drawing.Color.FromArgb(100, 100, 100);
-            this.lblCourseCount.Location = new System.Drawing.Point(400, 20);
-            this.lblCourseCount.Name = "lblCourseCount";
-            this.lblCourseCount.Size = new System.Drawing.Size(80, 20);
-            this.lblCourseCount.TabIndex = 1;
-            this.lblCourseCount.Text = "0 khóa học";
-            // 
-            // lblSortLabel
-            // 
-            this.lblSortLabel.AutoSize = true;
-            this.lblSortLabel.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.lblSortLabel.ForeColor = System.Drawing.Color.FromArgb(100, 100, 100);
-            this.lblSortLabel.Location = new System.Drawing.Point(500, 20);
-            this.lblSortLabel.Name = "lblSortLabel";
-            this.lblSortLabel.Size = new System.Drawing.Size(100, 20);
-            this.lblSortLabel.TabIndex = 2;
-            this.lblSortLabel.Text = "Sắp xếp theo";
-            // 
-            // cmbSort
-            // 
-            this.cmbSort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSort.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbSort.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cmbSort.FormattingEnabled = true;
-            this.cmbSort.Items.AddRange(new object[] {
-            "Phổ biến nhất",
-            "Đánh giá cao nhất",
-            "Mới nhất",
-            "Giá thấp đến cao",
-            "Giá cao đến thấp"});
-            this.cmbSort.Location = new System.Drawing.Point(610, 17);
-            this.cmbSort.Name = "cmbSort";
-            this.cmbSort.Size = new System.Drawing.Size(200, 25);
-            this.cmbSort.TabIndex = 3;
-            this.cmbSort.SelectedIndexChanged += SortChanged;
-            // 
-            // coursesPanel
-            // 
-            this.coursesPanel.AutoScroll = true;
-            this.coursesPanel.BackColor = System.Drawing.Color.FromArgb(248, 249, 250);
-            this.coursesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.coursesPanel.Location = new System.Drawing.Point(20, 60);
-            this.coursesPanel.Name = "coursesPanel";
-            this.coursesPanel.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.coursesPanel.Size = new System.Drawing.Size(860, 540);
-            this.coursesPanel.TabIndex = 1;
-            // 
-            // CourseControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(248, 249, 250);
-            this.Controls.Add(this.mainContentPanel);
-            this.Controls.Add(this.filterPanel);
-            this.Name = "CourseControl";
-            this.Padding = new System.Windows.Forms.Padding(20, 80, 20, 20);
-            this.Size = new System.Drawing.Size(1200, 700);
-            this.filterPanel.ResumeLayout(false);
-            this.filterPanel.PerformLayout();
-            this.mainContentPanel.ResumeLayout(false);
-            this.headerPanel.ResumeLayout(false);
-            this.headerPanel.PerformLayout();
-            this.ResumeLayout(false);
+		/// <summary> 
+		/// Required method for Designer support - do not modify 
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			filterPanel = new Panel();
+			chkPaid = new CheckBox();
+			chkFree = new CheckBox();
+			lblPriceHeader = new Label();
+			chkRating1To2 = new CheckBox();
+			chkRating2To3 = new CheckBox();
+			chkRating3To4 = new CheckBox();
+			chkRating4Plus = new CheckBox();
+			lblRatingHeader = new Label();
+			lblFilterHeader = new Label();
+			mainContentPanel = new Panel();
+			coursesPanel = new FlowLayoutPanel();
+			headerPanel = new Panel();
+			cmbSort = new ComboBox();
+			lblSortLabel = new Label();
+			lblCourseCount = new Label();
+			lblHeader = new Label();
+			filterPanel.SuspendLayout();
+			mainContentPanel.SuspendLayout();
+			headerPanel.SuspendLayout();
+			SuspendLayout();
+			// 
+			// filterPanel
+			// 
+			filterPanel.BackColor = Color.White;
+			filterPanel.Controls.Add(chkPaid);
+			filterPanel.Controls.Add(chkFree);
+			filterPanel.Controls.Add(lblPriceHeader);
+			filterPanel.Controls.Add(chkRating1To2);
+			filterPanel.Controls.Add(chkRating2To3);
+			filterPanel.Controls.Add(chkRating3To4);
+			filterPanel.Controls.Add(chkRating4Plus);
+			filterPanel.Controls.Add(lblRatingHeader);
+			filterPanel.Controls.Add(lblFilterHeader);
+			filterPanel.Dock = DockStyle.Left;
+			filterPanel.Location = new Point(29, 133);
+			filterPanel.Margin = new Padding(4, 5, 4, 5);
+			filterPanel.Name = "filterPanel";
+			filterPanel.Padding = new Padding(29, 33, 29, 33);
+			filterPanel.Size = new Size(400, 1001);
+			filterPanel.TabIndex = 0;
+			// 
+			// chkPaid
+			// 
+			chkPaid.AutoSize = true;
+			chkPaid.Cursor = Cursors.Hand;
+			chkPaid.Font = new Font("Segoe UI", 10F);
+			chkPaid.ForeColor = Color.FromArgb(100, 100, 100);
+			chkPaid.Location = new Point(29, 550);
+			chkPaid.Margin = new Padding(4, 5, 4, 5);
+			chkPaid.Name = "chkPaid";
+			chkPaid.Size = new Size(128, 32);
+			chkPaid.TabIndex = 8;
+			chkPaid.Text = "💵 Trả phí";
+			chkPaid.UseVisualStyleBackColor = true;
+			chkPaid.CheckedChanged += FilterChanged;
+			// 
+			// chkFree
+			// 
+			chkFree.AutoSize = true;
+			chkFree.Cursor = Cursors.Hand;
+			chkFree.Font = new Font("Segoe UI", 10F);
+			chkFree.ForeColor = Color.FromArgb(100, 100, 100);
+			chkFree.Location = new Point(29, 492);
+			chkFree.Margin = new Padding(4, 5, 4, 5);
+			chkFree.Name = "chkFree";
+			chkFree.Size = new Size(147, 32);
+			chkFree.TabIndex = 7;
+			chkFree.Text = "💚 Miễn phí";
+			chkFree.UseVisualStyleBackColor = true;
+			chkFree.CheckedChanged += FilterChanged;
+			// 
+			// lblPriceHeader
+			// 
+			lblPriceHeader.Cursor = Cursors.Hand;
+			lblPriceHeader.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			lblPriceHeader.Location = new Point(29, 433);
+			lblPriceHeader.Margin = new Padding(4, 0, 4, 0);
+			lblPriceHeader.Name = "lblPriceHeader";
+			lblPriceHeader.Size = new Size(343, 42);
+			lblPriceHeader.TabIndex = 6;
+			lblPriceHeader.Text = "Giá";
+			// 
+			// chkRating1To2
+			// 
+			chkRating1To2.AutoSize = true;
+			chkRating1To2.Cursor = Cursors.Hand;
+			chkRating1To2.Font = new Font("Segoe UI", 10F);
+			chkRating1To2.ForeColor = Color.FromArgb(100, 100, 100);
+			chkRating1To2.Location = new Point(29, 350);
+			chkRating1To2.Margin = new Padding(4, 5, 4, 5);
+			chkRating1To2.Name = "chkRating1To2";
+			chkRating1To2.Size = new Size(130, 32);
+			chkRating1To2.TabIndex = 5;
+			chkRating1To2.Text = "1.0 - 1.9 ⭐";
+			chkRating1To2.UseVisualStyleBackColor = true;
+			chkRating1To2.CheckedChanged += FilterChanged;
+			// 
+			// chkRating2To3
+			// 
+			chkRating2To3.AutoSize = true;
+			chkRating2To3.Cursor = Cursors.Hand;
+			chkRating2To3.Font = new Font("Segoe UI", 10F);
+			chkRating2To3.ForeColor = Color.FromArgb(100, 100, 100);
+			chkRating2To3.Location = new Point(29, 292);
+			chkRating2To3.Margin = new Padding(4, 5, 4, 5);
+			chkRating2To3.Name = "chkRating2To3";
+			chkRating2To3.Size = new Size(147, 32);
+			chkRating2To3.TabIndex = 4;
+			chkRating2To3.Text = "2.0 - 2.9 ⭐⭐";
+			chkRating2To3.UseVisualStyleBackColor = true;
+			chkRating2To3.CheckedChanged += FilterChanged;
+			// 
+			// chkRating3To4
+			// 
+			chkRating3To4.AutoSize = true;
+			chkRating3To4.Cursor = Cursors.Hand;
+			chkRating3To4.Font = new Font("Segoe UI", 10F);
+			chkRating3To4.ForeColor = Color.FromArgb(100, 100, 100);
+			chkRating3To4.Location = new Point(29, 233);
+			chkRating3To4.Margin = new Padding(4, 5, 4, 5);
+			chkRating3To4.Name = "chkRating3To4";
+			chkRating3To4.Size = new Size(164, 32);
+			chkRating3To4.TabIndex = 3;
+			chkRating3To4.Text = "3.0 - 3.9 ⭐⭐⭐";
+			chkRating3To4.UseVisualStyleBackColor = true;
+			chkRating3To4.CheckedChanged += FilterChanged;
+			// 
+			// chkRating4Plus
+			// 
+			chkRating4Plus.AutoSize = true;
+			chkRating4Plus.Cursor = Cursors.Hand;
+			chkRating4Plus.Font = new Font("Segoe UI", 10F);
+			chkRating4Plus.ForeColor = Color.FromArgb(100, 100, 100);
+			chkRating4Plus.Location = new Point(29, 175);
+			chkRating4Plus.Margin = new Padding(4, 5, 4, 5);
+			chkRating4Plus.Name = "chkRating4Plus";
+			chkRating4Plus.Size = new Size(199, 32);
+			chkRating4Plus.TabIndex = 2;
+			chkRating4Plus.Text = "4.0 trở lên ⭐⭐⭐⭐";
+			chkRating4Plus.UseVisualStyleBackColor = true;
+			chkRating4Plus.CheckedChanged += FilterChanged;
+			// 
+			// lblRatingHeader
+			// 
+			lblRatingHeader.Cursor = Cursors.Hand;
+			lblRatingHeader.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			lblRatingHeader.Location = new Point(29, 117);
+			lblRatingHeader.Margin = new Padding(4, 0, 4, 0);
+			lblRatingHeader.Name = "lblRatingHeader";
+			lblRatingHeader.Size = new Size(343, 42);
+			lblRatingHeader.TabIndex = 1;
+			lblRatingHeader.Text = "Đánh giá";
+			// 
+			// lblFilterHeader
+			// 
+			lblFilterHeader.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+			lblFilterHeader.Location = new Point(29, 33);
+			lblFilterHeader.Margin = new Padding(4, 0, 4, 0);
+			lblFilterHeader.Name = "lblFilterHeader";
+			lblFilterHeader.Size = new Size(343, 50);
+			lblFilterHeader.TabIndex = 0;
+			lblFilterHeader.Text = "Bộ lọc";
+			// 
+			// mainContentPanel
+			// 
+			mainContentPanel.BackColor = Color.FromArgb(248, 249, 250);
+			mainContentPanel.Controls.Add(coursesPanel);
+			mainContentPanel.Controls.Add(headerPanel);
+			mainContentPanel.Dock = DockStyle.Fill;
+			mainContentPanel.Location = new Point(429, 133);
+			mainContentPanel.Margin = new Padding(4, 5, 4, 5);
+			mainContentPanel.Name = "mainContentPanel";
+			mainContentPanel.Padding = new Padding(29, 0, 0, 0);
+			mainContentPanel.Size = new Size(1256, 1001);
+			mainContentPanel.TabIndex = 1;
+			// 
+			// coursesPanel
+			// 
+			coursesPanel.AutoScroll = true;
+			coursesPanel.BackColor = Color.FromArgb(248, 249, 250);
+			coursesPanel.Dock = DockStyle.Fill;
+			coursesPanel.Location = new Point(29, 100);
+			coursesPanel.Margin = new Padding(4, 5, 4, 5);
+			coursesPanel.Name = "coursesPanel";
+			coursesPanel.Padding = new Padding(0, 17, 0, 0);
+			coursesPanel.Size = new Size(1227, 901);
+			coursesPanel.TabIndex = 1;
+			// 
+			// headerPanel
+			// 
+			headerPanel.BackColor = Color.FromArgb(248, 249, 250);
+			headerPanel.Controls.Add(cmbSort);
+			headerPanel.Controls.Add(lblSortLabel);
+			headerPanel.Controls.Add(lblCourseCount);
+			headerPanel.Controls.Add(lblHeader);
+			headerPanel.Dock = DockStyle.Top;
+			headerPanel.Location = new Point(29, 0);
+			headerPanel.Margin = new Padding(4, 5, 4, 5);
+			headerPanel.Name = "headerPanel";
+			headerPanel.Size = new Size(1227, 100);
+			headerPanel.TabIndex = 0;
+			// 
+			// cmbSort
+			// 
+			cmbSort.DropDownStyle = ComboBoxStyle.DropDownList;
+			cmbSort.FlatStyle = FlatStyle.Flat;
+			cmbSort.Font = new Font("Segoe UI", 10F);
+			cmbSort.FormattingEnabled = true;
+			cmbSort.Items.AddRange(new object[] { "Phổ biến nhất", "Đánh giá cao nhất", "Mới nhất", "Giá thấp đến cao", "Giá cao đến thấp" });
+			cmbSort.Location = new Point(871, 28);
+			cmbSort.Margin = new Padding(4, 5, 4, 5);
+			cmbSort.Name = "cmbSort";
+			cmbSort.Size = new Size(284, 36);
+			cmbSort.TabIndex = 3;
+			cmbSort.SelectedIndexChanged += SortChanged;
+			// 
+			// lblSortLabel
+			// 
+			lblSortLabel.AutoSize = true;
+			lblSortLabel.Font = new Font("Segoe UI", 11F);
+			lblSortLabel.ForeColor = Color.FromArgb(100, 100, 100);
+			lblSortLabel.Location = new Point(714, 33);
+			lblSortLabel.Margin = new Padding(4, 0, 4, 0);
+			lblSortLabel.Name = "lblSortLabel";
+			lblSortLabel.Size = new Size(140, 30);
+			lblSortLabel.TabIndex = 2;
+			lblSortLabel.Text = "Sắp xếp theo";
+			// 
+			// lblCourseCount
+			// 
+			lblCourseCount.AutoSize = true;
+			lblCourseCount.Font = new Font("Segoe UI", 11F);
+			lblCourseCount.ForeColor = Color.FromArgb(100, 100, 100);
+			lblCourseCount.Location = new Point(571, 33);
+			lblCourseCount.Margin = new Padding(4, 0, 4, 0);
+			lblCourseCount.Name = "lblCourseCount";
+			lblCourseCount.Size = new Size(119, 30);
+			lblCourseCount.TabIndex = 1;
+			lblCourseCount.Text = "0 khóa học";
+			// 
+			// lblHeader
+			// 
+			lblHeader.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+			lblHeader.Location = new Point(4, 17);
+			lblHeader.Margin = new Padding(4, 0, 4, 0);
+			lblHeader.Name = "lblHeader";
+			lblHeader.Size = new Size(425, 58);
+			lblHeader.TabIndex = 0;
+			lblHeader.Text = "Tất cả khóa học";
+			// 
+			// CourseControl
+			// 
+			AutoScaleDimensions = new SizeF(10F, 25F);
+			AutoScaleMode = AutoScaleMode.Font;
+			BackColor = Color.FromArgb(248, 249, 250);
+			Controls.Add(mainContentPanel);
+			Controls.Add(filterPanel);
+			Margin = new Padding(4, 5, 4, 5);
+			Name = "CourseControl";
+			Padding = new Padding(29, 133, 29, 33);
+			Size = new Size(1714, 1167);
+			filterPanel.ResumeLayout(false);
+			filterPanel.PerformLayout();
+			mainContentPanel.ResumeLayout(false);
+			headerPanel.ResumeLayout(false);
+			headerPanel.PerformLayout();
+			ResumeLayout(false);
 
-        }
+		}
 
-        #endregion
+		#endregion
 
-        private System.Windows.Forms.Panel filterPanel;
+		private System.Windows.Forms.Panel filterPanel;
         private System.Windows.Forms.Label lblFilterHeader;
         private System.Windows.Forms.Label lblRatingHeader;
         private System.Windows.Forms.CheckBox chkRating4Plus;

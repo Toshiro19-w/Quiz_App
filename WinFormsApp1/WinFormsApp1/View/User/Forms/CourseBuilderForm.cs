@@ -19,11 +19,20 @@ namespace WinFormsApp1.View.User.Forms
 
         public CourseBuilderForm()
         {
+            // Enable double buffering for smooth scrolling
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | 
+                     ControlStyles.AllPaintingInWmPaint | 
+                     ControlStyles.UserPaint, true);
+            UpdateStyles();
+
             InitializeComponent();
             InitializeForm();
             
             // Enable scrolling for content panel to prevent button obscuring
             pnlContent.AutoScroll = true;
+            
+            // Enable double buffering for content panel
+            EnableDoubleBuffering(pnlContent);
 
             // default behavior: load step 0 now that steps are initialized and vm is default
             LoadStep(0, animate: false);
@@ -54,6 +63,19 @@ namespace WinFormsApp1.View.User.Forms
                 {
                     LoadStep(0, animate: false);
                 }
+            }
+        }
+        
+        /// <summary>
+        /// Override CreateParams to add WS_EX_COMPOSITED for better rendering
+        /// </summary>
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
+                return cp;
             }
         }
 
@@ -143,12 +165,31 @@ namespace WinFormsApp1.View.User.Forms
             var prev = Math.Max(0, currentStep - 1);
             LoadStep(prev);
         }
+        
+        /// <summary>
+        /// Enable double buffering for a control to reduce flicker
+        /// </summary>
+        private void EnableDoubleBuffering(Control control)
+        {
+            typeof(Control).InvokeMember("DoubleBuffered",
+                System.Reflection.BindingFlags.SetProperty |
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic,
+                null, control, new object[] { true });
+        }
 
         private void LoadStep(int stepIndex, bool animate = true)
         {
             if (stepIndex < 0 || stepIndex >= steps.Length) return;
+            
+            // Suspend layout to prevent flickering
+            pnlContent.SuspendLayout();
+            
             var newControl = steps[stepIndex];
             newControl.Dock = DockStyle.Fill;
+            
+            // Enable double buffering for step controls
+            EnableDoubleBuffering(newControl);
 
             // call save current step if exists
             if (pnlContent.Controls.Count > 0)
@@ -177,11 +218,21 @@ namespace WinFormsApp1.View.User.Forms
                 oldCtrl.Left = 0;
                 newControl.Left = pnlContent.Width;
                 pnlContent.Controls.Add(newControl);
+                
+                pnlContent.ResumeLayout(true);
+                
                 var t = new System.Windows.Forms.Timer { Interval = 15 };
                 t.Tick += (s, e) => {
                     int step = 40;
-                    if (newControl.Left <= 0) { t.Stop(); pnlContent.Controls.Remove(oldCtrl); t.Dispose(); ((IStepControl)newControl).OnEnter(); return; }
-                    newControl.Left -= step; oldCtrl.Left -= step;
+                    if (newControl.Left <= 0) { 
+                        t.Stop(); 
+                        pnlContent.Controls.Remove(oldCtrl); 
+                        t.Dispose(); 
+                        ((IStepControl)newControl).OnEnter(); 
+                        return; 
+                    }
+                    newControl.Left -= step; 
+                    oldCtrl.Left -= step;
                 };
                 t.Start();
             }
@@ -189,6 +240,7 @@ namespace WinFormsApp1.View.User.Forms
             {
                 pnlContent.Controls.Clear();
                 pnlContent.Controls.Add(newControl);
+                pnlContent.ResumeLayout(true);
                 ((IStepControl)newControl).OnEnter();
             }
 

@@ -34,63 +34,64 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			btnPlay = new Button();
 			btnReplay = new Button();
 			btnMute = new Button();
+			panel1 = new Panel();
 			((System.ComponentModel.ISupportInitialize)videoView).BeginInit();
 			SuspendLayout();
 			// 
 			// cboContentType
 			// 
 			cboContentType.DropDownStyle = ComboBoxStyle.DropDownList;
-			cboContentType.Font = new Font("Segoe UI", 10F);
-			cboContentType.Items.AddRange(new object[] { "Theory", "Video", "FlashcardSet", "Test" });
-			cboContentType.Location = new Point(39, 102);
+			cboContentType.Font = new Font("Segoe UI", 12F);
+			cboContentType.Items.AddRange(new object[] { "Lý thuyết", "Video", "Bộ thẻ ghi nhớ", "Bài kiểm tra" });
+			cboContentType.Location = new Point(39, 85);
 			cboContentType.Name = "cboContentType";
-			cboContentType.Size = new Size(609, 36);
+			cboContentType.Size = new Size(300, 40);
 			cboContentType.TabIndex = 0;
 			// 
 			// lblType
 			// 
 			lblType.AutoSize = true;
-			lblType.Font = new Font("Segoe UI", 10F);
-			lblType.Location = new Point(39, 66);
+			lblType.Font = new Font("Segoe UI", 12F);
+			lblType.Location = new Point(39, 47);
 			lblType.Name = "lblType";
-			lblType.Size = new Size(136, 28);
+			lblType.Size = new Size(166, 32);
 			lblType.TabIndex = 1;
 			lblType.Text = "Loại nội dung:";
 			// 
 			// txtTitle
 			// 
-			txtTitle.Font = new Font("Segoe UI", 10F);
-			txtTitle.Location = new Point(39, 182);
+			txtTitle.Font = new Font("Segoe UI", 12F);
+			txtTitle.Location = new Point(39, 169);
 			txtTitle.Name = "txtTitle";
-			txtTitle.Size = new Size(833, 34);
+			txtTitle.Size = new Size(833, 39);
 			txtTitle.TabIndex = 3;
 			// 
 			// lblTitle
 			// 
 			lblTitle.AutoSize = true;
-			lblTitle.Font = new Font("Segoe UI", 10F);
-			lblTitle.Location = new Point(39, 149);
+			lblTitle.Font = new Font("Segoe UI", 12F);
+			lblTitle.Location = new Point(39, 133);
 			lblTitle.Name = "lblTitle";
-			lblTitle.Size = new Size(79, 28);
+			lblTitle.Size = new Size(99, 32);
 			lblTitle.TabIndex = 2;
 			lblTitle.Text = "Tiêu đề:";
 			// 
 			// txtVideoPath
 			// 
-			txtVideoPath.Font = new Font("Segoe UI", 10F);
-			txtVideoPath.Location = new Point(39, 262);
+			txtVideoPath.Font = new Font("Segoe UI", 12F);
+			txtVideoPath.Location = new Point(39, 252);
 			txtVideoPath.Name = "txtVideoPath";
 			txtVideoPath.ReadOnly = true;
-			txtVideoPath.Size = new Size(833, 34);
+			txtVideoPath.Size = new Size(833, 39);
 			txtVideoPath.TabIndex = 5;
 			// 
 			// lblVideo
 			// 
 			lblVideo.AutoSize = true;
-			lblVideo.Font = new Font("Segoe UI", 10F);
-			lblVideo.Location = new Point(39, 228);
+			lblVideo.Font = new Font("Segoe UI", 12F);
+			lblVideo.Location = new Point(39, 215);
 			lblVideo.Name = "lblVideo";
-			lblVideo.Size = new Size(67, 28);
+			lblVideo.Size = new Size(81, 32);
 			lblVideo.TabIndex = 4;
 			lblVideo.Text = "Video:";
 			// 
@@ -99,7 +100,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			btnBrowse.Font = new Font("Segoe UI", 10F);
 			btnBrowse.Location = new Point(39, 310);
 			btnBrowse.Name = "btnBrowse";
-			btnBrowse.Size = new Size(120, 35);
+			btnBrowse.Size = new Size(141, 40);
 			btnBrowse.TabIndex = 6;
 			btnBrowse.Text = "Chọn video";
 			// 
@@ -153,8 +154,20 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			btnMute.TabIndex = 11;
 			btnMute.Text = "🔊 Mute";
 			// 
+			// panel1
+			// 
+			panel1.BackColor = Color.FromArgb(255, 128, 0);
+			panel1.Dock = DockStyle.Left;
+			panel1.Location = new Point(0, 0);
+			panel1.Name = "panel1";
+			panel1.Size = new Size(10, 398);
+			panel1.TabIndex = 12;
+			// 
 			// ContentVideoControl
 			// 
+			BackColor = Color.White;
+			BorderStyle = BorderStyle.FixedSingle;
+			Controls.Add(panel1);
 			Controls.Add(cboContentType);
 			Controls.Add(lblType);
 			Controls.Add(lblTitle);
@@ -168,10 +181,12 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			Controls.Add(btnReplay);
 			Controls.Add(btnMute);
 			Name = "ContentVideoControl";
-			Size = new Size(1450, 400);
+			Size = new Size(1448, 398);
+			Load += ContentVideoControl_Load;
 			((System.ComponentModel.ISupportInitialize)videoView).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
+		private Panel panel1;
 	}
 }

@@ -62,7 +62,7 @@
 			pnlCard.Name = "pnlCard";
 			pnlCard.Padding = new Padding(18);
 			pnlCard.ShadowColor = Color.Black;
-			pnlCard.Size = new Size(1530, 800);
+			pnlCard.Size = new Size(1530, 830);
 			pnlCard.TabIndex = 0;
 			pnlCard.Paint += pnlCard_Paint;
 			// 
@@ -74,17 +74,17 @@
 			lblHeader.Location = new Point(40, 11);
 			lblHeader.Margin = new Padding(0);
 			lblHeader.Name = "lblHeader";
-			lblHeader.Size = new Size(1418, 57);
+			lblHeader.Size = new Size(1457, 57);
 			lblHeader.TabIndex = 0;
 			lblHeader.Text = "Thông tin khóa học";
 			lblHeader.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// lblTitleLabel
 			// 
-			lblTitleLabel.Font = new Font("Segoe UI", 10F);
-			lblTitleLabel.Location = new Point(39, 99);
+			lblTitleLabel.Font = new Font("Segoe UI", 12F);
+			lblTitleLabel.Location = new Point(39, 90);
 			lblTitleLabel.Name = "lblTitleLabel";
-			lblTitleLabel.Size = new Size(1418, 29);
+			lblTitleLabel.Size = new Size(1457, 29);
 			lblTitleLabel.TabIndex = 1;
 			lblTitleLabel.Text = "Tiêu đề";
 			// 
@@ -92,23 +92,23 @@
 			// 
 			txtTitle.CustomizableEdges = customizableEdges1;
 			txtTitle.DefaultText = "";
-			txtTitle.Font = new Font("Segoe UI", 10F);
+			txtTitle.Font = new Font("Segoe UI", 12F);
 			txtTitle.ForeColor = Color.Black;
-			txtTitle.Location = new Point(40, 133);
+			txtTitle.Location = new Point(40, 127);
 			txtTitle.Margin = new Padding(4, 5, 4, 5);
 			txtTitle.Name = "txtTitle";
 			txtTitle.PlaceholderText = "Tiêu đề khóa học";
 			txtTitle.SelectedText = "";
 			txtTitle.ShadowDecoration.CustomizableEdges = customizableEdges2;
-			txtTitle.Size = new Size(1418, 36);
+			txtTitle.Size = new Size(1457, 36);
 			txtTitle.TabIndex = 1;
 			// 
 			// lblSlugLabel
 			// 
-			lblSlugLabel.Font = new Font("Segoe UI", 10F);
+			lblSlugLabel.Font = new Font("Segoe UI", 12F);
 			lblSlugLabel.Location = new Point(39, 183);
 			lblSlugLabel.Name = "lblSlugLabel";
-			lblSlugLabel.Size = new Size(1418, 35);
+			lblSlugLabel.Size = new Size(1457, 35);
 			lblSlugLabel.TabIndex = 2;
 			lblSlugLabel.Text = "URL Slug";
 			// 
@@ -116,38 +116,38 @@
 			// 
 			txtSlug.CustomizableEdges = customizableEdges3;
 			txtSlug.DefaultText = "";
-			txtSlug.Font = new Font("Segoe UI", 10F);
-			txtSlug.Location = new Point(40, 222);
+			txtSlug.Font = new Font("Segoe UI", 12F);
+			txtSlug.Location = new Point(40, 224);
 			txtSlug.Margin = new Padding(4, 5, 4, 5);
 			txtSlug.Name = "txtSlug";
 			txtSlug.PlaceholderText = "URL slug";
 			txtSlug.SelectedText = "";
 			txtSlug.ShadowDecoration.CustomizableEdges = customizableEdges4;
-			txtSlug.Size = new Size(1418, 36);
+			txtSlug.Size = new Size(1457, 36);
 			txtSlug.TabIndex = 2;
 			// 
 			// lblSummaryLabel
 			// 
-			lblSummaryLabel.Font = new Font("Microsoft Sans Serif", 10F);
-			lblSummaryLabel.Location = new Point(38, 277);
+			lblSummaryLabel.Font = new Font("Microsoft Sans Serif", 12F);
+			lblSummaryLabel.Location = new Point(38, 280);
 			lblSummaryLabel.Name = "lblSummaryLabel";
-			lblSummaryLabel.Size = new Size(739, 24);
+			lblSummaryLabel.Size = new Size(739, 29);
 			lblSummaryLabel.TabIndex = 3;
 			lblSummaryLabel.Text = "Mô tả ngắn";
 			// 
 			// txtSummary
 			// 
-			txtSummary.Font = new Font("Microsoft Sans Serif", 10F);
-			txtSummary.Location = new Point(39, 304);
+			txtSummary.Font = new Font("Microsoft Sans Serif", 12F);
+			txtSummary.Location = new Point(39, 315);
 			txtSummary.Name = "txtSummary";
-			txtSummary.Size = new Size(1418, 120);
+			txtSummary.Size = new Size(1457, 120);
 			txtSummary.TabIndex = 3;
 			txtSummary.Text = "";
 			// 
 			// lblCategoryLabel
 			// 
-			lblCategoryLabel.Font = new Font("Microsoft Sans Serif", 10F);
-			lblCategoryLabel.Location = new Point(40, 448);
+			lblCategoryLabel.Font = new Font("Microsoft Sans Serif", 12F);
+			lblCategoryLabel.Location = new Point(40, 456);
 			lblCategoryLabel.Name = "lblCategoryLabel";
 			lblCategoryLabel.Size = new Size(466, 28);
 			lblCategoryLabel.TabIndex = 4;
@@ -160,10 +160,10 @@
 			cmbCategory.DrawMode = DrawMode.OwnerDrawFixed;
 			cmbCategory.DropDownStyle = ComboBoxStyle.DropDownList;
 			cmbCategory.FocusedColor = Color.Empty;
-			cmbCategory.Font = new Font("Microsoft Sans Serif", 10F);
+			cmbCategory.Font = new Font("Microsoft Sans Serif", 12F);
 			cmbCategory.ForeColor = Color.FromArgb(68, 88, 112);
 			cmbCategory.ItemHeight = 30;
-			cmbCategory.Location = new Point(40, 478);
+			cmbCategory.Location = new Point(40, 492);
 			cmbCategory.Name = "cmbCategory";
 			cmbCategory.ShadowDecoration.CustomizableEdges = customizableEdges6;
 			cmbCategory.Size = new Size(506, 36);
@@ -171,8 +171,8 @@
 			// 
 			// lblPriceLabel
 			// 
-			lblPriceLabel.Font = new Font("Microsoft Sans Serif", 10F);
-			lblPriceLabel.Location = new Point(38, 542);
+			lblPriceLabel.Font = new Font("Microsoft Sans Serif", 12F);
+			lblPriceLabel.Location = new Point(38, 547);
 			lblPriceLabel.Name = "lblPriceLabel";
 			lblPriceLabel.Size = new Size(508, 28);
 			lblPriceLabel.TabIndex = 5;
@@ -182,8 +182,8 @@
 			// 
 			txtPrice.CustomizableEdges = customizableEdges7;
 			txtPrice.DefaultText = "";
-			txtPrice.Font = new Font("Microsoft Sans Serif", 10F);
-			txtPrice.Location = new Point(38, 572);
+			txtPrice.Font = new Font("Microsoft Sans Serif", 12F);
+			txtPrice.Location = new Point(38, 583);
 			txtPrice.Margin = new Padding(4, 5, 4, 5);
 			txtPrice.Name = "txtPrice";
 			txtPrice.PlaceholderText = "Giá (VNĐ)";
@@ -194,8 +194,8 @@
 			// 
 			// lblCoverLabel
 			// 
-			lblCoverLabel.Font = new Font("Microsoft Sans Serif", 10F);
-			lblCoverLabel.Location = new Point(839, 440);
+			lblCoverLabel.Font = new Font("Microsoft Sans Serif", 12F);
+			lblCoverLabel.Location = new Point(839, 455);
 			lblCoverLabel.Name = "lblCoverLabel";
 			lblCoverLabel.Size = new Size(98, 31);
 			lblCoverLabel.TabIndex = 6;
@@ -206,19 +206,20 @@
 			btnUploadCover.CustomizableEdges = customizableEdges9;
 			btnUploadCover.Font = new Font("Microsoft Sans Serif", 10F);
 			btnUploadCover.ForeColor = Color.White;
-			btnUploadCover.Location = new Point(943, 436);
+			btnUploadCover.Image = Properties.Resources.up_loading;
+			btnUploadCover.Location = new Point(1006, 450);
 			btnUploadCover.Name = "btnUploadCover";
 			btnUploadCover.ShadowDecoration.CustomizableEdges = customizableEdges10;
-			btnUploadCover.Size = new Size(120, 36);
+			btnUploadCover.Size = new Size(155, 40);
 			btnUploadCover.TabIndex = 6;
 			btnUploadCover.Text = "Upload ảnh";
 			// 
 			// picCover
 			// 
 			picCover.BorderStyle = BorderStyle.FixedSingle;
-			picCover.Location = new Point(839, 478);
+			picCover.Location = new Point(839, 496);
 			picCover.Name = "picCover";
-			picCover.Size = new Size(279, 214);
+			picCover.Size = new Size(322, 233);
 			picCover.SizeMode = PictureBoxSizeMode.Zoom;
 			picCover.TabIndex = 7;
 			picCover.TabStop = false;
@@ -226,9 +227,10 @@
 			// btnNext
 			// 
 			btnNext.CustomizableEdges = customizableEdges11;
-			btnNext.Font = new Font("Segoe UI", 9F);
+			btnNext.Font = new Font("Segoe UI", 10F);
 			btnNext.ForeColor = Color.White;
-			btnNext.Location = new Point(40, 739);
+			btnNext.Image = Properties.Resources.next;
+			btnNext.Location = new Point(39, 750);
 			btnNext.Name = "btnNext";
 			btnNext.ShadowDecoration.CustomizableEdges = customizableEdges12;
 			btnNext.Size = new Size(140, 40);
@@ -239,7 +241,7 @@
 			// 
 			Controls.Add(pnlCard);
 			Name = "Step1_InfoControl";
-			Size = new Size(1530, 800);
+			Size = new Size(1530, 830);
 			pnlCard.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)picCover).EndInit();
 			ResumeLayout(false);
