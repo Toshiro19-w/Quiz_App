@@ -92,6 +92,12 @@ public partial class LearningPlatformContext : DbContext
 
     public virtual DbSet<UserSetting> UserSettings { get; set; }
 
+    public virtual DbSet<Discount> Discounts { get; set; }
+
+    public virtual DbSet<DiscountUsage> DiscountUsages { get; set; }
+
+    public virtual DbSet<DiscountCourse> DiscountCourses { get; set; }
+
 	//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
 	//        => optionsBuilder.UseSqlServer("Server=localhost,1434;Initial Catalog=LearningPlatform;Persist Security Info=True;User ID=solar;Password=@Abcd@1234;Encrypt=True;Trust Server Certificate=True");
@@ -103,8 +109,6 @@ public partial class LearningPlatformContext : DbContext
 			optionsBuilder.UseSqlServer(conn);
 		}
 	}
-
-
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AttemptAnswer>(entity =>
@@ -496,10 +500,18 @@ public partial class LearningPlatformContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(12, 2)");
 
+            entity.Property(e => e.OriginalAmount).HasColumnType("decimal(12, 2)");
+            entity.Property(e => e.DiscountAmount).HasColumnType("decimal(12, 2)");
+
             entity.HasOne(d => d.Buyer).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.BuyerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Orders_User");
+
+            entity.HasOne(d => d.Discount).WithMany()
+                .HasForeignKey(d => d.DiscountId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Orders_Discount");
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
@@ -780,6 +792,79 @@ public partial class LearningPlatformContext : DbContext
                 .HasForeignKey<UserSetting>(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UserSettings_User");
+        });
+
+        modelBuilder.Entity<Discount>(entity =>
+        {
+            entity.HasKey(e => e.DiscountId).HasName("PK__Discount__E43F6D96");
+
+            entity.HasIndex(e => e.Code, "UQ_Discounts_Code").IsUnique();
+
+            entity.Property(e => e.Code)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Name).HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.DiscountType)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValue("Percentage");
+            entity.Property(e => e.DiscountValue).HasColumnType("decimal(12, 2)");
+            entity.Property(e => e.MinOrderAmount).HasColumnType("decimal(12, 2)");
+            entity.Property(e => e.MaxDiscountAmount).HasColumnType("decimal(12, 2)");
+            entity.Property(e => e.UsageCount).HasDefaultValue(0);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.ApplyToAllCourses).HasDefaultValue(true);
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValue("Active");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+
+            entity.HasOne(d => d.Creator).WithMany()
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Discounts_Creator");
+        });
+
+        modelBuilder.Entity<DiscountUsage>(entity =>
+        {
+            entity.HasKey(e => e.UsageId).HasName("PK__DiscountUsage");
+
+            entity.Property(e => e.DiscountAmount).HasColumnType("decimal(12, 2)");
+            entity.Property(e => e.UsedAt).HasDefaultValueSql("(sysutcdatetime())");
+
+            entity.HasOne(d => d.Discount).WithMany(p => p.DiscountUsages)
+                .HasForeignKey(d => d.DiscountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DiscountUsage_Discount");
+
+            entity.HasOne(d => d.User).WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DiscountUsage_User");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.DiscountUsages)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DiscountUsage_Order");
+        });
+
+        modelBuilder.Entity<DiscountCourse>(entity =>
+        {
+            entity.HasKey(e => e.DiscountCourseId).HasName("PK__DiscountCourse");
+
+            entity.HasIndex(e => new { e.DiscountId, e.CourseId }, "UQ_DiscountCourse").IsUnique();
+
+            entity.HasOne(d => d.Discount).WithMany(p => p.DiscountCourses)
+                .HasForeignKey(d => d.DiscountId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_DiscountCourse_Discount");
+
+            entity.HasOne(d => d.Course).WithMany()
+                .HasForeignKey(d => d.CourseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_DiscountCourse_Course");
         });
 
         OnModelCreatingPartial(modelBuilder);

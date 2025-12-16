@@ -11,6 +11,21 @@ public partial class Order
 
     public decimal TotalAmount { get; set; }
 
+    /// <summary>
+    /// Tổng tiền gốc trước khi giảm giá
+    /// </summary>
+    public decimal? OriginalAmount { get; set; }
+
+    /// <summary>
+    /// Số tiền được giảm
+    /// </summary>
+    public decimal? DiscountAmount { get; set; }
+
+    /// <summary>
+    /// Mã giảm giá đã áp dụng (nếu có)
+    /// </summary>
+    public int? DiscountId { get; set; }
+
     public string Currency { get; set; } = null!;
 
     public string Status { get; set; } = null!;
@@ -21,7 +36,11 @@ public partial class Order
 
     public virtual User Buyer { get; set; } = null!;
 
+    public virtual Discount? Discount { get; set; }
+
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+
+    public virtual ICollection<DiscountUsage> DiscountUsages { get; set; } = new List<DiscountUsage>();
 }

@@ -16,7 +16,10 @@ namespace WinFormsApp1.Service.PaymentService
             _momoService = new MoMoPaymentService();
         }
 
-        public async Task<PaymentResult> PayCartWithMoMoAsync(int userId)
+        /// <summary>
+        /// Thanh toán giỏ hàng với mã giảm giá (nếu có)
+        /// </summary>
+        public async Task<PaymentResult> PayCartWithMoMoAsync(int userId, int? discountId = null, decimal discountAmount = 0)
         {
             try
             {
@@ -49,13 +52,21 @@ namespace WinFormsApp1.Service.PaymentService
                 }
 
                 var cartItems = cart.CartItems.ToList();
-                var total = cartItems.Sum(x => x.Course.Price);
+                var originalTotal = cartItems.Sum(x => x.Course.Price);
+                
+                // Tính tổng tiền sau khi giảm giá
+                var finalTotal = originalTotal - discountAmount;
+                if (finalTotal < 0) finalTotal = 0;
 
-                // 2. Tạo Order
+                // 2. Tạo Order với thông tin giảm giá
                 var order = new Order
                 {
                     BuyerId = userId,
-                    TotalAmount = total,
+                    TotalAmount = finalTotal,
+                    OriginalAmount = originalTotal,
+                    DiscountAmount = discountAmount > 0 ? discountAmount : null,
+                    DiscountId = discountId,
+                    Currency = "VND",
                     Status = "Pending",
                     CreatedAt = DateTime.Now
                 };
@@ -90,13 +101,13 @@ namespace WinFormsApp1.Service.PaymentService
                 }
                 await _context.SaveChangesAsync();
 
-                // 5. Tạo Payment
+                // 5. Tạo Payment với số tiền sau giảm giá
                 var orderIdStr = $"CART_{order.OrderId}_{DateTime.Now:yyyyMMddHHmmss}";
                 var payment = new Payment
                 {
                     OrderId = order.OrderId,
                     Provider = "MoMo",
-                    Amount = total,
+                    Amount = finalTotal, // Số tiền thực thanh toán
                     Currency = "VND",
                     Status = "Pending",
                     RawPayload = orderIdStr
@@ -105,8 +116,12 @@ namespace WinFormsApp1.Service.PaymentService
                 _context.Payments.Add(payment);
                 await _context.SaveChangesAsync();
 
-                // 6. Gọi MoMo API
-                var momo = await _momoService.CreatePaymentAsync(total, "Thanh toán khóa học", orderIdStr);
+                // 6. Gọi MoMo API với số tiền sau giảm giá
+                var orderInfo = discountAmount > 0 
+                    ? $"Thanh toán khóa học (Giảm {discountAmount:N0} VNĐ)" 
+                    : "Thanh toán khóa học";
+                    
+                var momo = await _momoService.CreatePaymentAsync(finalTotal, orderInfo, orderIdStr);
 
                 if (momo.resultCode == 0)
                 {
@@ -118,7 +133,8 @@ namespace WinFormsApp1.Service.PaymentService
                         Success = true,
                         PaymentUrl = momo.payUrl,
                         OrderId = orderIdStr,
-                        Message = "Tạo thanh toán thành công"
+                        Message = "Tạo thanh toán thành công",
+                        InternalOrderId = order.OrderId
                     };
                 }
 
@@ -135,7 +151,10 @@ namespace WinFormsApp1.Service.PaymentService
             }
         }
 
-        public async Task<PaymentResult> PaySingleCourseWithMoMoAsync(int userId, int courseId)
+        /// <summary>
+        /// Thanh toán khóa học đơn lẻ với mã giảm giá (nếu có)
+        /// </summary>
+        public async Task<PaymentResult> PaySingleCourseWithMoMoAsync(int userId, int courseId, int? discountId = null, decimal discountAmount = 0)
         {
             try
             {
@@ -171,11 +190,19 @@ namespace WinFormsApp1.Service.PaymentService
                     return new PaymentResult { Success = false, Message = "Bạn đã sở hữu khóa học này" };
                 }
 
-                // 1. Tạo Order
+                var originalPrice = course.Price;
+                var finalPrice = originalPrice - discountAmount;
+                if (finalPrice < 0) finalPrice = 0;
+
+                // 1. Tạo Order với thông tin giảm giá
                 var order = new Order
                 {
                     BuyerId = userId,
-                    TotalAmount = course.Price,
+                    TotalAmount = finalPrice,
+                    OriginalAmount = originalPrice,
+                    DiscountAmount = discountAmount > 0 ? discountAmount : null,
+                    DiscountId = discountId,
+                    Currency = "VND",
                     Status = "Pending",
                     CreatedAt = DateTime.Now
                 };
@@ -188,7 +215,7 @@ namespace WinFormsApp1.Service.PaymentService
                 {
                     OrderId = order.OrderId,
                     CourseId = courseId,
-                    Price = course.Price
+                    Price = originalPrice
                 });
                 await _context.SaveChangesAsync();
 
@@ -197,20 +224,20 @@ namespace WinFormsApp1.Service.PaymentService
                 {
                     BuyerId = userId,
                     CourseId = courseId,
-                    PricePaid = course.Price,
+                    PricePaid = finalPrice, // Giá đã giảm
                     Currency = "VND",
                     Status = "Pending",
                     PurchasedAt = DateTime.UtcNow
                 });
                 await _context.SaveChangesAsync();
 
-                // 4. Tạo Payment
+                // 4. Tạo Payment với số tiền sau giảm giá
                 var orderIdStr = $"COURSE_{courseId}_{DateTime.Now:yyyyMMddHHmmss}";
                 var payment = new Payment
                 {
                     OrderId = order.OrderId,
                     Provider = "MoMo",
-                    Amount = course.Price,
+                    Amount = finalPrice,
                     Currency = "VND",
                     Status = "Pending",
                     RawPayload = orderIdStr
@@ -219,8 +246,12 @@ namespace WinFormsApp1.Service.PaymentService
                 _context.Payments.Add(payment);
                 await _context.SaveChangesAsync();
 
-                // 5. Gọi MoMo API
-                var momo = await _momoService.CreatePaymentAsync(course.Price, $"Mua khóa học: {course.Title}", orderIdStr);
+                // 5. Gọi MoMo API với số tiền sau giảm giá
+                var orderInfo = discountAmount > 0 
+                    ? $"Mua khóa học: {course.Title} (Giảm {discountAmount:N0} VNĐ)" 
+                    : $"Mua khóa học: {course.Title}";
+                    
+                var momo = await _momoService.CreatePaymentAsync(finalPrice, orderInfo, orderIdStr);
 
                 if (momo.resultCode == 0)
                 {
@@ -232,7 +263,8 @@ namespace WinFormsApp1.Service.PaymentService
                         Success = true,
                         PaymentUrl = momo.payUrl,
                         OrderId = orderIdStr,
-                        Message = "Tạo thanh toán thành công"
+                        Message = "Tạo thanh toán thành công",
+                        InternalOrderId = order.OrderId
                     };
                 }
 
@@ -268,8 +300,30 @@ namespace WinFormsApp1.Service.PaymentService
 
                 // 2. Cập nhật Order
                 payment.Order.Status = "Paid";
+                payment.Order.PaidAt = DateTime.UtcNow;
 
-                // 3. Cập nhật Purchases
+                // 3. Ghi nhận sử dụng mã giảm giá (nếu có)
+                if (payment.Order.DiscountId.HasValue && payment.Order.DiscountAmount.HasValue)
+                {
+                    var discountUsage = new DiscountUsage
+                    {
+                        DiscountId = payment.Order.DiscountId.Value,
+                        UserId = payment.Order.BuyerId,
+                        OrderId = payment.Order.OrderId,
+                        DiscountAmount = payment.Order.DiscountAmount.Value,
+                        UsedAt = DateTime.UtcNow
+                    };
+                    _context.DiscountUsages.Add(discountUsage);
+
+                    // Tăng UsageCount của Discount
+                    var discount = await _context.Discounts.FindAsync(payment.Order.DiscountId.Value);
+                    if (discount != null)
+                    {
+                        discount.UsageCount++;
+                    }
+                }
+
+                // 4. Cập nhật Purchases
                 var orderItems = await _context.OrderItems
                     .Where(i => i.OrderId == payment.Order.OrderId)
                     .ToListAsync();
@@ -289,7 +343,7 @@ namespace WinFormsApp1.Service.PaymentService
                     }
                 }
 
-                // 4. Xóa giỏ hàng: tìm ShoppingCart của người mua và xóa CartItems
+                // 5. Xóa giỏ hàng
                 var cart = await _context.ShoppingCarts
                     .Include(sc => sc.CartItems)
                     .FirstOrDefaultAsync(sc => sc.UserId == payment.Order.BuyerId);
@@ -346,5 +400,6 @@ namespace WinFormsApp1.Service.PaymentService
         public string Message { get; set; } = "";
         public string PaymentUrl { get; set; } = "";
         public string OrderId { get; set; } = "";
+        public int InternalOrderId { get; set; } // Order ID trong database
     }
 }

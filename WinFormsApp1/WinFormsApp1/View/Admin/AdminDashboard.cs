@@ -247,7 +247,6 @@ namespace WinFormsApp1.View.Admin
                 CreateButton("Người dùng", "users", "👥");
                 CreateButton("Học tập", "learning", "📖");
                 CreateButton("Doanh thu", "revenue", "💰");
-                CreateButton("Hệ thống", "system", "⚙️");
             });
 
             yPos += 10;
@@ -259,6 +258,9 @@ namespace WinFormsApp1.View.Admin
                 CreateButton("Kiểm duyệt", "course-moderation", "✅");
                 CreateButton("Danh mục", "categories", "📁");
                 CreateButton("Flashcard", "flashcards", "🗂️");
+                CreateButton("Lịch sử hoạt động", "audit-logs", "📜");
+                // Thêm item "Mã giảm giá" vào sidebar
+                CreateButton("Mã giảm giá", "discounts", "🏷️");
             });
 
             yPos += 10;
@@ -269,7 +271,6 @@ namespace WinFormsApp1.View.Admin
                 CreateButton("Báo cáo người dùng", "report-users", "📄");
                 CreateButton("Báo cáo khóa học", "report-courses", "📚");
                 CreateButton("Báo cáo doanh thu", "report-revenue", "💰");
-                CreateButton("Báo cáo hệ thống", "report-system", "⚙️");
             });
             
             // Home Button
@@ -322,9 +323,6 @@ namespace WinFormsApp1.View.Admin
                 case "revenue":
                     LoadRevenueReport();
                     break;
-                case "system":
-                    LoadSystemStats();
-                    break;
                 case "user-management":
                     LoadUserManagement();
                     break;
@@ -339,6 +337,9 @@ namespace WinFormsApp1.View.Admin
                     break;
                 case "flashcards":
                     LoadFlashcardManagement();
+                    break;
+                case "audit-logs":
+                    LoadAuditLogManagement();
                     break;
                 case "system-settings":
                     LoadSystemSettings();
@@ -355,16 +356,23 @@ namespace WinFormsApp1.View.Admin
                 case "report-revenue":
                     LoadRevenueReportDetail();
                     break;
-                case "report-system":
-                    LoadSystemReport();
-                    break;
                 case "home":
                     GoToHomePage();
+                    break;
+                case "discounts":
+                    LoadDiscountManagementControl();
                     break;
                 default:
                     ToastHelper.Show(this, $"Chức năng {button?.Text} đang được phát triển");
                     break;
             }
+        }
+        private void LoadDiscountManagementControl()
+        {
+            contentPanel.Controls.Clear();
+            var courseControl = new DiscountManagementControl();
+            courseControl.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(courseControl);
         }
 
         private void GoToHomePage()
@@ -463,14 +471,6 @@ namespace WinFormsApp1.View.Admin
             contentPanel.Controls.Add(revenueDashboard);
         }
 
-        private void LoadSystemStats()
-        {
-            contentPanel.Controls.Clear();
-            var systemDashboard = new SystemMonitoringDashboard();
-            systemDashboard.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(systemDashboard);
-        }
-
         private void LoadCategoryManagement()
         {
             contentPanel.Controls.Clear();
@@ -548,19 +548,12 @@ namespace WinFormsApp1.View.Admin
             }
         }
 
-        private async void LoadSystemReport()
+        private void LoadAuditLogManagement()
         {
-            try
-            {
-                var system = await _adminController.GetSystemAnalyticsAsync();
-                var reportForm = new ReportViewerForm();
-                ReportHelper.GenerateSystemReport(reportForm.GetReportViewer(), system);
-                reportForm.ShowDialog();
-            }
-            catch (Exception ex)
-            {
-                ToastHelper.Show(this, $"Lỗi tạo báo cáo: {ex.Message}");
-            }
+            contentPanel.Controls.Clear();
+            var auditLogControl = new AuditLogManagementControl();
+            auditLogControl.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(auditLogControl);
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)

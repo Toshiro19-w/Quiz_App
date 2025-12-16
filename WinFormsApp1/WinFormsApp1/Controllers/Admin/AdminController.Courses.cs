@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
+using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.Controllers
 {
@@ -56,6 +58,10 @@ namespace WinFormsApp1.Controllers
 
                     context.Courses.Add(course);
                     await context.SaveChangesAsync();
+                    
+                    // Log action
+                    await AuditHelper.LogCourseCreateAsync(course);
+                    
                     return true;
                 }
                 catch (ArgumentException)
@@ -64,6 +70,7 @@ namespace WinFormsApp1.Controllers
                 }
                 catch (Exception ex)
                 {
+                    await AuditHelper.LogErrorAsync(AuditActions.CourseCreate, AuditEntityTypes.Course, null, ex);
                     throw new Exception($"Lỗi khi tạo khóa học: {ex.Message}");
                 }
             }
@@ -85,6 +92,16 @@ namespace WinFormsApp1.Controllers
                     if (string.IsNullOrWhiteSpace(course.Slug)) course.Slug = course.Title.ToLower().Replace(" ", "-");
                     if (await CourseSlugExistsAsync(course.Slug, course.CourseId)) throw new ArgumentException("Slug đã tồn tại cho khóa học khác.");
 
+                    // Capture state for audit
+                    var beforeCourse = new Course
+                    {
+                        Title = dbCourse.Title,
+                        Price = dbCourse.Price,
+                        IsPublished = dbCourse.IsPublished,
+                        CategoryId = dbCourse.CategoryId
+                    };
+                    var wasPublished = dbCourse.IsPublished;
+
                     // update allowed fields
                     dbCourse.Title = course.Title;
                     dbCourse.Summary = course.Summary;
@@ -96,6 +113,17 @@ namespace WinFormsApp1.Controllers
 
                     context.Courses.Update(dbCourse);
                     await context.SaveChangesAsync();
+
+                    // Log publish/unpublish separately
+                    if (!wasPublished && course.IsPublished)
+                    {
+                        await AuditHelper.LogCoursePublishAsync(course.CourseId, course.Title);
+                    }
+                    else
+                    {
+                        await AuditHelper.LogCourseUpdateAsync(beforeCourse, dbCourse);
+                    }
+
                     return true;
                 }
                 catch (ArgumentException)
@@ -104,6 +132,7 @@ namespace WinFormsApp1.Controllers
                 }
                 catch (Exception ex)
                 {
+                    await AuditHelper.LogErrorAsync(AuditActions.CourseUpdate, AuditEntityTypes.Course, course.CourseId, ex);
                     throw new Exception($"Lỗi khi cập nhật khóa học: {ex.Message}");
                 }
             }
@@ -118,12 +147,16 @@ namespace WinFormsApp1.Controllers
                     var course = await context.Courses.FindAsync(id);
                     if (course == null) throw new Exception("Khóa học không tồn tại.");
 
+                    // Log before delete
+                    await AuditHelper.LogCourseDeleteAsync(course);
+
                     context.Courses.Remove(course);
                     await context.SaveChangesAsync();
                     return true;
                 }
                 catch (Exception ex)
                 {
+                    await AuditHelper.LogErrorAsync(AuditActions.CourseDelete, AuditEntityTypes.Course, id, ex);
                     throw new Exception($"Lỗi khi xóa khóa học: {ex.Message}");
                 }
             }
@@ -161,6 +194,11 @@ namespace WinFormsApp1.Controllers
 
                     context.CourseChapters.Add(chapter);
                     await context.SaveChangesAsync();
+                    
+                    // Log action
+                    await AuditHelper.LogActionAsync("CHAPTER_CREATE", AuditEntityTypes.CourseChapter, chapter.ChapterId, 
+                        $"Tạo chương '{chapter.Title}' cho khóa học #{chapter.CourseId}");
+                    
                     return true;
                 }
                 catch (Exception ex)
@@ -187,6 +225,11 @@ namespace WinFormsApp1.Controllers
                     dbChapter.OrderIndex = chapter.OrderIndex;
 
                     await context.SaveChangesAsync();
+                    
+                    // Log action
+                    await AuditHelper.LogActionAsync("CHAPTER_UPDATE", AuditEntityTypes.CourseChapter, chapter.ChapterId,
+                        $"Cập nhật chương '{chapter.Title}'");
+                    
                     return true;
                 }
                 catch (Exception ex)
@@ -207,9 +250,16 @@ namespace WinFormsApp1.Controllers
                         .FirstOrDefaultAsync(c => c.ChapterId == chapterId);
                     if (chapter == null) throw new Exception("Chương không tồn tại");
 
+                    var chapterTitle = chapter.Title;
+                    
                     context.Lessons.RemoveRange(chapter.Lessons);
                     context.CourseChapters.Remove(chapter);
                     await context.SaveChangesAsync();
+                    
+                    // Log action
+                    await AuditHelper.LogActionAsync("CHAPTER_DELETE", AuditEntityTypes.CourseChapter, chapterId,
+                        $"Xóa chương '{chapterTitle}'");
+                    
                     return true;
                 }
                 catch (Exception ex)
@@ -240,6 +290,11 @@ namespace WinFormsApp1.Controllers
                     lesson.CreatedAt = DateTime.UtcNow;
                     context.Lessons.Add(lesson);
                     await context.SaveChangesAsync();
+                    
+                    // Log action
+                    await AuditHelper.LogActionAsync("LESSON_CREATE", AuditEntityTypes.Lesson, lesson.LessonId,
+                        $"Tạo bài học '{lesson.Title}'");
+                    
                     return true;
                 }
                 catch (Exception ex)
@@ -268,6 +323,11 @@ namespace WinFormsApp1.Controllers
                     dbLesson.UpdatedAt = DateTime.UtcNow;
 
                     await context.SaveChangesAsync();
+                    
+                    // Log action
+                    await AuditHelper.LogActionAsync("LESSON_UPDATE", AuditEntityTypes.Lesson, lesson.LessonId,
+                        $"Cập nhật bài học '{lesson.Title}'");
+                    
                     return true;
                 }
                 catch (Exception ex)
@@ -286,8 +346,15 @@ namespace WinFormsApp1.Controllers
                     var lesson = await context.Lessons.FindAsync(lessonId);
                     if (lesson == null) throw new Exception("Bài học không tồn tại");
 
+                    var lessonTitle = lesson.Title;
+                    
                     context.Lessons.Remove(lesson);
                     await context.SaveChangesAsync();
+                    
+                    // Log action
+                    await AuditHelper.LogActionAsync("LESSON_DELETE", AuditEntityTypes.Lesson, lessonId,
+                        $"Xóa bài học '{lessonTitle}'");
+                    
                     return true;
                 }
                 catch (Exception ex)
@@ -317,6 +384,10 @@ namespace WinFormsApp1.Controllers
 
                     context.CourseCategories.Add(category);
                     await context.SaveChangesAsync();
+                    
+                    // Log action
+                    await AuditHelper.LogCategoryCreateAsync(category);
+                    
                     return true;
                 }
                 catch (Exception ex)
@@ -342,6 +413,10 @@ namespace WinFormsApp1.Controllers
                     dbCategory.Description = category.Description;
 
                     await context.SaveChangesAsync();
+                    
+                    // Log action
+                    await AuditHelper.LogCategoryUpdateAsync(category.CategoryId, category.Name);
+                    
                     return true;
                 }
                 catch (Exception ex)
@@ -367,8 +442,14 @@ namespace WinFormsApp1.Controllers
                         throw new Exception("Không thể xóa danh mục vì có khóa học đang sử dụng");
                     }
 
+                    var categoryName = category.Name;
+                    
                     context.CourseCategories.Remove(category);
                     await context.SaveChangesAsync();
+                    
+                    // Log action
+                    await AuditHelper.LogCategoryDeleteAsync(id, categoryName);
+                    
                     return true;
                 }
                 catch (Exception ex)
