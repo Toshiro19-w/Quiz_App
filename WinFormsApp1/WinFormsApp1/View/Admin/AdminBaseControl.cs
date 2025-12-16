@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -17,6 +18,12 @@ namespace WinFormsApp1.View.Admin
         protected PaginationHelper paginationHelper;
         protected Panel inputFormPanel;
         protected bool isFormVisible = false;
+        
+        // Filter panel components
+        protected Panel filterPanel;
+        protected FlowLayoutPanel filterLeftPanel;
+        protected FlowLayoutPanel filterCenterPanel;
+        protected FlowLayoutPanel filterRightPanel;
 
         protected AdminBaseControl(AdminController controller = null)
         {
@@ -172,75 +179,118 @@ namespace WinFormsApp1.View.Admin
 
         protected virtual Panel CreateFilterPanel()
         {
-            var filterPanel = new Panel
+            filterPanel = new Panel
             {
                 Height = 50,
                 Dock = DockStyle.Top,
                 BackColor = Color.White,
-                Padding = new Padding(20, 10, 20, 10),
                 Name = "filterPanel"
             };
 
-            // Left side - "Hiển thị X dữ liệu"
+            // Use TableLayoutPanel for responsive layout
+            var tableLayout = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 3,
+                RowCount = 1,
+                BackColor = Color.White,
+                Padding = new Padding(15, 5, 15, 5)
+            };
+            
+            // Left: 15%, Center: 55%, Right: 30%
+            tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15F));
+            tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55F));
+            tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+
+            // Left panel - "Hiển thị X dữ liệu"
+            filterLeftPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false,
+                AutoSize = false,
+                Margin = new Padding(0)
+            };
+
             var showLabel = new Label
             {
                 Text = "Hiển thị",
                 Font = new Font("Segoe UI", 9),
                 AutoSize = true,
-                Location = new Point(20, 15)
+                Margin = new Padding(0, 8, 5, 0)
             };
-            filterPanel.Controls.Add(showLabel);
 
             var entriesCombo = new ComboBox
             {
-                Items = { "10", "25", "50", "100" },
-                SelectedIndex = 0,
+                Name = "cboEntries",
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Font = new Font("Segoe UI", 9),
-                Size = new Size(60, 25),
-                Location = new Point(75, 12),
-                Name = "cboEntries"
+                Width = 55,
+                Margin = new Padding(0, 4, 5, 0)
             };
-            filterPanel.Controls.Add(entriesCombo);
+            entriesCombo.Items.AddRange(new object[] { "10", "25", "50", "100" });
+            entriesCombo.SelectedIndex = 2; // Default 50
 
             var entriesLabel = new Label
             {
                 Text = "dữ liệu",
                 Font = new Font("Segoe UI", 9),
                 AutoSize = true,
-                Location = new Point(145, 15)
+                Margin = new Padding(0, 8, 0, 0)
             };
-            filterPanel.Controls.Add(entriesLabel);
 
-            // Right side - Search box
+            filterLeftPanel.Controls.AddRange(new Control[] { showLabel, entriesCombo, entriesLabel });
+
+            // Center panel - Custom filters will be added here
+            filterCenterPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = true,
+                AutoSize = false,
+                Margin = new Padding(0),
+                Name = "filterCenterPanel"
+            };
+
+            // Right panel - Search box
+            filterRightPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.RightToLeft,
+                WrapContents = false,
+                AutoSize = false,
+                Margin = new Padding(0)
+            };
+
             searchBox = new TextBox
             {
+                Name = "txtSearch",
                 Font = new Font("Segoe UI", 9),
-                Size = new Size(250, 25),
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(filterPanel.Width - 270, 12),
+                Width = 220,
                 BorderStyle = BorderStyle.FixedSingle,
-                Name = "txtSearch"
+                Margin = new Padding(0, 4, 0, 0)
             };
-            
+            TextBoxHelper.SetPlaceholder(searchBox, "Tìm kiếm...", true);
+
             var searchLabel = new Label
             {
                 Text = "Tìm kiếm:",
                 Font = new Font("Segoe UI", 9),
                 AutoSize = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(searchBox.Left - 70, 15)
+                Margin = new Padding(0, 8, 8, 0)
             };
-            
-            filterPanel.Controls.Add(searchLabel);
-            filterPanel.Controls.Add(searchBox);
 
-            // Handle resize to adjust search box position
-            filterPanel.Resize += (s, e) =>
-            {
-                searchBox.Left = filterPanel.Width - 270;
-                searchLabel.Left = searchBox.Left - 70;
-            };
+            // Add in reverse order for RightToLeft flow
+            filterRightPanel.Controls.Add(searchBox);
+            filterRightPanel.Controls.Add(searchLabel);
+
+            // Add panels to table layout
+            tableLayout.Controls.Add(filterLeftPanel, 0, 0);
+            tableLayout.Controls.Add(filterCenterPanel, 1, 0);
+            tableLayout.Controls.Add(filterRightPanel, 2, 0);
+
+            filterPanel.Controls.Add(tableLayout);
 
             return filterPanel;
         }
@@ -249,47 +299,41 @@ namespace WinFormsApp1.View.Admin
         /// Helper method để thêm custom filter controls vào filter panel.
         /// Gọi method này SAU KHI SetupLayout() đã chạy xong.
         /// </summary>
-        /// <param name="labelText">Text của label (VD: "Danh mục:")</param>
-        /// <param name="comboBox">ComboBox đã được config sẵn</param>
         protected void AddCustomFilter(string labelText, ComboBox comboBox)
         {
-            var filterPanel = this.Controls.Find("filterPanel", true).FirstOrDefault() as Panel;
-            if (filterPanel == null)
+            if (filterCenterPanel == null)
             {
-                System.Diagnostics.Debug.WriteLine("WARNING: filterPanel not found. Call this after SetupLayout()");
-                return;
+                var fp = this.Controls.Find("filterPanel", true).FirstOrDefault() as Panel;
+                if (fp == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("WARNING: filterPanel not found. Call this after SetupLayout()");
+                    return;
+                }
+                
+                filterCenterPanel = fp.Controls.Find("filterCenterPanel", true).FirstOrDefault() as FlowLayoutPanel;
+                if (filterCenterPanel == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("WARNING: filterCenterPanel not found");
+                    return;
+                }
             }
 
-            // Count existing custom filters (exclude cboEntries)
-            var existingFilters = filterPanel.Controls.OfType<ComboBox>()
-                .Where(c => c.Name != null && c.Name.StartsWith("cbo") && c.Name != "cboEntries")
-                .Count();
-
-            // Calculate position
-            int baseX = 400;
-            int spacing = 230; // label (70) + combo (150) + gap (10)
-            int xPos = baseX + (existingFilters * spacing);
-
-            // Position the ComboBox
-            comboBox.Location = new Point(xPos, 12);
-            comboBox.Size = new Size(150, 25);
-            comboBox.Font = new Font("Segoe UI", 9);
-            
-            // Add ComboBox first
-            filterPanel.Controls.Add(comboBox);
-
-            // Create and add label
             var label = new Label
             {
                 Text = labelText,
                 Font = new Font("Segoe UI", 9),
                 AutoSize = true,
-                Location = new Point(xPos - 75, 15),
+                Margin = new Padding(5, 8, 3, 0),
                 Name = $"lbl{comboBox.Name}"
             };
-            filterPanel.Controls.Add(label);
+
+            comboBox.Font = new Font("Segoe UI", 9);
+            comboBox.Margin = new Padding(0, 4, 10, 0);
             
-            System.Diagnostics.Debug.WriteLine($"Added filter: {labelText} at position {xPos}");
+            filterCenterPanel.Controls.Add(label);
+            filterCenterPanel.Controls.Add(comboBox);
+            
+            System.Diagnostics.Debug.WriteLine($"Added filter: {labelText}");
         }
         
         /// <summary>
@@ -303,25 +347,45 @@ namespace WinFormsApp1.View.Admin
             }
         }
         
+        /// <summary>
+        /// Thêm DateTimePicker vào filter panel
+        /// </summary>
+        protected void AddDateFilter(string labelText, DateTimePicker datePicker)
+        {
+            if (filterCenterPanel == null)
+            {
+                var fp = this.Controls.Find("filterPanel", true).FirstOrDefault() as Panel;
+                filterCenterPanel = fp?.Controls.Find("filterCenterPanel", true).FirstOrDefault() as FlowLayoutPanel;
+                if (filterCenterPanel == null) return;
+            }
+
+            var label = new Label
+            {
+                Text = labelText,
+                Font = new Font("Segoe UI", 9),
+                AutoSize = true,
+                Margin = new Padding(5, 8, 3, 0)
+            };
+
+            datePicker.Font = new Font("Segoe UI", 9);
+            datePicker.Format = DateTimePickerFormat.Short;
+            datePicker.Margin = new Padding(0, 4, 10, 0);
+
+            filterCenterPanel.Controls.Add(label);
+            filterCenterPanel.Controls.Add(datePicker);
+        }
+        
         protected void AddFilterControl(Control control)
         {
-            var filterPanel = this.Controls.Find("filterPanel", true).FirstOrDefault() as Panel;
-            if (filterPanel == null) return;
+            if (filterCenterPanel == null)
+            {
+                var fp = this.Controls.Find("filterPanel", true).FirstOrDefault() as Panel;
+                filterCenterPanel = fp?.Controls.Find("filterCenterPanel", true).FirstOrDefault() as FlowLayoutPanel;
+                if (filterCenterPanel == null) return;
+            }
 
-            // Position controls in the middle area (between left info and right search)
-            var existingFilters = filterPanel.Controls.OfType<ComboBox>()
-                .Where(c => c.Name != null && c.Name.StartsWith("cbo") && c.Name != "cboEntries")
-                .Count();
-
-            // Fixed position in center, không anchor
-            int baseX = 400;
-            int spacing = 230; // label (70) + combo (150) + gap (10)
-            
-            control.Location = new Point(baseX + (existingFilters * spacing), 12);
-            filterPanel.Controls.Add(control);
-            
-            // Store the original X position for resize handling
-            control.Tag = control.Location.X;
+            control.Margin = new Padding(5, 4, 10, 0);
+            filterCenterPanel.Controls.Add(control);
         }
 
         protected virtual void SetupSearchFunctionality(DataGridView dataGridView, params string[] searchColumns)
@@ -339,12 +403,12 @@ namespace WinFormsApp1.View.Admin
             
             var topPanel = CreateTopPanel(title);
             var buttonPanel = CreateCrudButtonPanel();
-            var filterPanel = CreateFilterPanel();
+            var filterPnl = CreateFilterPanel();
             
             dataGridView.Dock = DockStyle.Fill;
             
             this.Controls.Add(dataGridView);
-            this.Controls.Add(filterPanel);
+            this.Controls.Add(filterPnl);
             this.Controls.Add(buttonPanel);
             this.Controls.Add(topPanel);
             
@@ -358,12 +422,12 @@ namespace WinFormsApp1.View.Admin
             
             var topPanel = CreateTopPanel(title);
             var buttonPanel = CreateCrudButtonPanel();
-            var filterPanel = CreateFilterPanel();
+            var filterPnl = CreateFilterPanel();
             
             dataGridView.Dock = DockStyle.Fill;
             
             this.Controls.Add(dataGridView);
-            this.Controls.Add(filterPanel);
+            this.Controls.Add(filterPnl);
             this.Controls.Add(buttonPanel);
             this.Controls.Add(topPanel);
             this.Controls.Add(formPanel);
@@ -460,10 +524,8 @@ namespace WinFormsApp1.View.Admin
                     UseSystemPasswordChar = field.isPassword
                 };
                 
-                // Set placeholder using TextBoxHelper
                 TextBoxHelper.SetPlaceholder(textBox, field.placeholder, true);
                 
-                // Add real-time validation
                 textBox.TextChanged += (s, e) => ValidateField(field.name, field.required, field.isPassword);
                 textBox.Leave += (s, e) => ValidateField(field.name, field.required, field.isPassword);
 
@@ -549,7 +611,6 @@ namespace WinFormsApp1.View.Admin
         {
             if (inputFormPanel == null) return;
             
-            // Get all TextBox controls recursively
             var textBoxes = GetAllControls(inputFormPanel).OfType<TextBox>();
             
             foreach (var textBox in textBoxes)
@@ -576,7 +637,6 @@ namespace WinFormsApp1.View.Admin
         {
             if (inputFormPanel == null) return;
             
-            // Get all Label controls that are error labels
             var errorLabels = GetAllControls(inputFormPanel).OfType<Label>()
                 .Where(l => l.Name != null && l.Name.EndsWith("Error"));
             
@@ -613,27 +673,22 @@ namespace WinFormsApp1.View.Admin
         {
             var value = GetFormValue(fieldName).Trim();
             
-            // Clear previous error
             HideFieldError(fieldName);
             
-            // Required field validation
             if (required && string.IsNullOrEmpty(value))
             {
                 ShowFieldError(fieldName, GetRequiredErrorMessage(fieldName));
                 return;
             }
             
-            // Skip validation if field is empty and not required
             if (string.IsNullOrEmpty(value)) return;
             
-            // Email validation
             if (fieldName.ToLower().Contains("email") && !value.Contains("@"))
             {
                 ShowFieldError(fieldName, "Email không hợp lệ");
                 return;
             }
             
-            // Password validation
             if (isPassword && value.Length < 6)
             {
                 ShowFieldError(fieldName, "Mật khẩu phải có ít nhất 6 ký tự");
@@ -702,13 +757,11 @@ namespace WinFormsApp1.View.Admin
                 }
                 catch
                 {
-                    // Nếu lỗi, sử dụng SearchHelper
                     SearchHelper.FilterDataGridView(dataGridView, searchText, searchColumns);
                 }
             }
             else
             {
-                // Không có BindingSource, sử dụng SearchHelper
                 SearchHelper.FilterDataGridView(dataGridView, searchText, searchColumns);
             }
         }
@@ -749,32 +802,23 @@ namespace WinFormsApp1.View.Admin
             base.Dispose(disposing);
         }
 
-        /// <summary>
-        /// Override WndProc to handle DPI change messages
-        /// </summary>
         protected override void WndProc(ref Message m)
         {
             const int WM_DPICHANGED = 0x02E0;
             
             if (m.Msg == WM_DPICHANGED)
             {
-                // Extract new DPI from wParam
                 int newDpi = (int)(m.WParam.ToInt64() & 0xFFFF);
                 float dpiScale = newDpi / 96f;
                 
-                // Update UI elements
                 UpdateUiForDpi(dpiScale);
             }
             
             base.WndProc(ref m);
         }
 
-        /// <summary>
-        /// Update UI elements when DPI changes
-        /// </summary>
         private void UpdateUiForDpi(float dpiScale)
         {
-            // Update DataGridView font and sizing
             if (dataGridView != null)
             {
                 try
@@ -784,41 +828,36 @@ namespace WinFormsApp1.View.Admin
                     dataGridView.ColumnHeadersHeight = (int)(45 * dpiScale);
                     dataGridView.RowTemplate.Height = (int)(40 * dpiScale);
                 }
-                catch { /* Ignore font scaling errors */ }
+                catch { }
             }
 
-            // Update search box
             if (searchBox != null)
             {
                 try
                 {
                     searchBox.Font = new Font("Segoe UI", 9 * dpiScale, FontStyle.Regular, GraphicsUnit.Point);
                 }
-                catch { /* Ignore font scaling errors */ }
+                catch { }
             }
 
-            // Update all buttons
             UpdateButtonsDpi(dpiScale);
 
-            // Update input form if visible
             if (inputFormPanel != null && inputFormPanel.Visible)
             {
                 UpdateInputFormDpi(dpiScale);
             }
 
-            // Force layout refresh
             try
             {
                 this.PerformLayout();
             }
-            catch { /* Ignore layout errors */ }
+            catch { }
         }
 
         private void UpdateButtonsDpi(float dpiScale)
         {
             try
             {
-                // Update CRUD buttons
                 var buttons = this.Controls.Find("btnAdd", true)
                     .Concat(this.Controls.Find("btnEdit", true))
                     .Concat(this.Controls.Find("btnDelete", true))
@@ -831,11 +870,9 @@ namespace WinFormsApp1.View.Admin
                     btn.Height = (int)(35 * dpiScale);
                 }
 
-                // Update filter controls
-                var filterPanel = this.Controls.Find("filterPanel", true).FirstOrDefault() as Panel;
                 if (filterPanel != null)
                 {
-                    foreach (Control control in filterPanel.Controls)
+                    foreach (var control in GetAllControls(filterPanel))
                     {
                         if (control is Label label)
                         {
@@ -852,7 +889,7 @@ namespace WinFormsApp1.View.Admin
                     }
                 }
             }
-            catch { /* Ignore button update errors */ }
+            catch { }
         }
 
         private void UpdateInputFormDpi(float dpiScale)
@@ -861,10 +898,8 @@ namespace WinFormsApp1.View.Admin
 
             try
             {
-                // Update form width
                 inputFormPanel.Width = (int)(350 * dpiScale);
 
-                // Update all controls in input form
                 foreach (var control in GetAllControls(inputFormPanel))
                 {
                     if (control is Label label)
@@ -885,7 +920,7 @@ namespace WinFormsApp1.View.Admin
                     }
                 }
             }
-            catch { /* Ignore form update errors */ }
+            catch { }
         }
     }
 }
