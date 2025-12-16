@@ -259,6 +259,8 @@ namespace WinFormsApp1.View.Admin
                 CreateButton("Danh mục", "categories", "📁");
                 CreateButton("Flashcard", "flashcards", "🗂️");
                 CreateButton("Lịch sử hoạt động", "audit-logs", "📜");
+                // Thêm item "Mã giảm giá" vào sidebar
+                CreateButton("Mã giảm giá", "discounts", "🏷️");
             });
 
             yPos += 10;
@@ -357,10 +359,20 @@ namespace WinFormsApp1.View.Admin
                 case "home":
                     GoToHomePage();
                     break;
+                case "discounts":
+                    LoadDiscountManagementControl();
+                    break;
                 default:
                     ToastHelper.Show(this, $"Chức năng {button?.Text} đang được phát triển");
                     break;
             }
+        }
+        private void LoadDiscountManagementControl()
+        {
+            contentPanel.Controls.Clear();
+            var courseControl = new DiscountManagementControl();
+            courseControl.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(courseControl);
         }
 
         private void GoToHomePage()

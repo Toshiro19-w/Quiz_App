@@ -6,13 +6,17 @@ namespace WinFormsApp1.Helpers
     public static class MoMoPaymentHelper
     {
         /// <summary>
-        /// Thanh toán toàn bộ giỏ hàng bằng MoMo
+        /// Thanh toán toàn bộ giỏ hàng bằng MoMo (có hỗ trợ mã giảm giá)
         /// </summary>
-        public static async Task<bool> PayCartAsync(int userId, Form parentForm = null)
+        /// <param name="userId">ID người dùng</param>
+        /// <param name="parentForm">Form cha</param>
+        /// <param name="discountId">ID mã giảm giá (nếu có)</param>
+        /// <param name="discountAmount">Số tiền giảm giá</param>
+        public static async Task<bool> PayCartAsync(int userId, Form parentForm = null, int? discountId = null, decimal discountAmount = 0)
         {
             try
             {
-                var paymentForm = new MoMoPaymentForm(userId);
+                var paymentForm = new MoMoPaymentForm(userId, null, discountId, discountAmount);
 
                 if (parentForm != null)
                 {
@@ -33,13 +37,18 @@ namespace WinFormsApp1.Helpers
         }
 
         /// <summary>
-        /// Thanh toán khóa học đơn lẻ bằng MoMo
+        /// Thanh toán khóa học đơn lẻ bằng MoMo (có hỗ trợ mã giảm giá)
         /// </summary>
-        public static async Task<bool> PaySingleCourseAsync(int userId, int courseId, Form parentForm = null)
+        /// <param name="userId">ID người dùng</param>
+        /// <param name="courseId">ID khóa học</param>
+        /// <param name="parentForm">Form cha</param>
+        /// <param name="discountId">ID mã giảm giá (nếu có)</param>
+        /// <param name="discountAmount">Số tiền giảm giá</param>
+        public static async Task<bool> PaySingleCourseAsync(int userId, int courseId, Form parentForm = null, int? discountId = null, decimal discountAmount = 0)
         {
             try
             {
-                var paymentForm = new MoMoPaymentForm(userId, courseId);
+                var paymentForm = new MoMoPaymentForm(userId, courseId, discountId, discountAmount);
 
                 if (parentForm != null)
                 {

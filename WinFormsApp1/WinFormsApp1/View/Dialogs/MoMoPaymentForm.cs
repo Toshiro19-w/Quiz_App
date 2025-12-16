@@ -10,17 +10,28 @@ namespace WinFormsApp1.View.Dialogs
         private readonly int _userId;
         private readonly int? _courseId;
         private readonly bool _isCartPayment;
+        private readonly int? _discountId;
+        private readonly decimal _discountAmount;
         private string _currentOrderId = "";
 
         public bool PaymentCompleted { get; private set; }
 
-        public MoMoPaymentForm(int userId, int? courseId = null)
+        /// <summary>
+        /// Constructor cho thanh toán giỏ hàng hoặc khóa học đơn lẻ
+        /// </summary>
+        /// <param name="userId">ID người dùng</param>
+        /// <param name="courseId">ID khóa học (null nếu thanh toán giỏ hàng)</param>
+        /// <param name="discountId">ID mã giảm giá (nếu có)</param>
+        /// <param name="discountAmount">Số tiền giảm giá</param>
+        public MoMoPaymentForm(int userId, int? courseId = null, int? discountId = null, decimal discountAmount = 0)
         {
             InitializeComponent();
             _paymentService = new CartPaymentService();
             _userId = userId;
             _courseId = courseId;
             _isCartPayment = courseId == null;
+            _discountId = discountId;
+            _discountAmount = discountAmount;
 
             SetupForm();
         }
@@ -52,13 +63,19 @@ namespace WinFormsApp1.View.Dialogs
             };
 
             // Thông tin thanh toán
+            var infoText = _isCartPayment ? "Thanh toán toàn bộ giỏ hàng" : "Thanh toán khóa học";
+            if (_discountAmount > 0)
+            {
+                infoText += $"\n(Đã áp dụng giảm giá: -{_discountAmount:N0} VND)";
+            }
+            
             var infoLabel = new Label
             {
-                Text = _isCartPayment ? "Thanh toán toàn bộ giỏ hàng" : "Thanh toán khóa học",
+                Text = infoText,
                 Font = new Font("Segoe UI", 12),
                 TextAlign = ContentAlignment.MiddleCenter,
                 Dock = DockStyle.Top,
-                Height = 30
+                Height = _discountAmount > 0 ? 50 : 30
             };
 
             // Status label
@@ -125,11 +142,12 @@ namespace WinFormsApp1.View.Dialogs
                 PaymentResult result;
                 if (_isCartPayment)
                 {
-                    result = await _paymentService.PayCartWithMoMoAsync(_userId);
+                    // Truyền discountId và discountAmount vào service
+                    result = await _paymentService.PayCartWithMoMoAsync(_userId, _discountId, _discountAmount);
                 }
                 else
                 {
-                    result = await _paymentService.PaySingleCourseWithMoMoAsync(_userId, _courseId.Value);
+                    result = await _paymentService.PaySingleCourseWithMoMoAsync(_userId, _courseId!.Value, _discountId, _discountAmount);
                 }
 
                 if (result.Success)
@@ -178,7 +196,7 @@ namespace WinFormsApp1.View.Dialogs
             {
                 if (this.IsDisposed || this.Disposing) break;
 
-                await Task.Delay(5000); // Giảm xuống 5s để nhanh hơn
+                await Task.Delay(5000);
                 statusLabel.Text = $"Đang kiểm tra ({i + 1}/30)...";
 
                 try
@@ -228,7 +246,5 @@ namespace WinFormsApp1.View.Dialogs
                 progressBar.Style = ProgressBarStyle.Blocks;
             }
         }
-
-
     }
 }

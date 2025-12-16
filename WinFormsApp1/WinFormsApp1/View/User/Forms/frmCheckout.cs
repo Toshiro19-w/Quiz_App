@@ -6,11 +6,20 @@ using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.View.User.Components;
 using Microsoft.EntityFrameworkCore;
+using WinFormsApp1.Service;
+using WinFormsApp1.Models.Entities;
 
 namespace WinFormsApp1.View.User.Forms
 {
     public partial class frmCheckout : Form
     {
+        // Discount state
+        private decimal _originalTotal = 0;
+        private decimal _discountAmount = 0;
+        private decimal _finalAmount = 0;
+        private Discount? _appliedDiscount = null;
+        private System.Collections.Generic.List<int> _courseIds = new();
+
         public frmCheckout()
         {
             InitializeComponent();
@@ -20,6 +29,7 @@ namespace WinFormsApp1.View.User.Forms
         private void LoadCartItems()
         {
             panelCartItems.Controls.Clear();
+            _courseIds.Clear();
 
             try
             {
@@ -60,10 +70,16 @@ namespace WinFormsApp1.View.User.Forms
                             yPos += 135;
 
                             total += item.Course.Price;
+                            _courseIds.Add(item.Course.CourseId);
                         }
                     }
 
-                    UpdateSummary(cart.CartItems.Count, total);
+                    _originalTotal = total;
+                    _finalAmount = total;
+                    _discountAmount = 0;
+                    _appliedDiscount = null;
+
+                    UpdateSummary(cart.CartItems.Count, total, 0, total);
                 }
             }
             catch (Exception ex)
@@ -84,7 +100,7 @@ namespace WinFormsApp1.View.User.Forms
 
             var iconLabel = new Label
             {
-        
+                Text = "🛒",
                 Font = new Font("Segoe UI", 72),
                 Location = new Point(150, 20),
                 AutoSize = true
@@ -102,7 +118,7 @@ namespace WinFormsApp1.View.User.Forms
             emptyPanel.Controls.Add(messageLabel);
 
             panelCartItems.Controls.Add(emptyPanel);
-            UpdateSummary(0, 0);
+            UpdateSummary(0, 0, 0, 0);
         }
 
         private void RemoveCartItem(int cartItemId)
@@ -121,6 +137,13 @@ namespace WinFormsApp1.View.User.Forms
                         {
                             context.CartItems.Remove(cartItem);
                             context.SaveChanges();
+                            
+                            // Reset discount when cart changes
+                            _appliedDiscount = null;
+                            txtDiscountCode.Text = "";
+                            lblDiscountMessage.Text = "";
+                            lblDiscountMessage.Visible = false;
+                            
                             LoadCartItems();
                         }
                     }
@@ -133,10 +156,25 @@ namespace WinFormsApp1.View.User.Forms
             }
         }
 
-        private void UpdateSummary(int count, decimal total)
+        private void UpdateSummary(int count, decimal subtotal, decimal discount, decimal total)
         {
             lblSoKhoaHocValue.Text = count.ToString();
-            lblTamTinhValue.Text = $"{total:N0} VND";
+            lblTamTinhValue.Text = $"{subtotal:N0} VND";
+            
+            // Show discount if applied
+            if (discount > 0)
+            {
+                lblGiamGia.Visible = true;
+                lblGiamGiaValue.Visible = true;
+                lblGiamGiaValue.Text = $"-{discount:N0} VND";
+                lblGiamGiaValue.ForeColor = Color.FromArgb(40, 167, 69);
+            }
+            else
+            {
+                lblGiamGia.Visible = false;
+                lblGiamGiaValue.Visible = false;
+            }
+            
             lblTongCongValue.Text = $"{total:N0} VND";
         }
 
@@ -151,12 +189,17 @@ namespace WinFormsApp1.View.User.Forms
                     return;
                 }
 
-                // Gọi helper để mở form MoMo và xử lý polling
-                var success = await MoMoPaymentHelper.PayCartAsync(user.UserId, this);
+                // Truyền thông tin mã giảm giá vào MoMo payment
+                var discountId = _appliedDiscount?.DiscountId;
+                var success = await MoMoPaymentHelper.PayCartAsync(
+                    user.UserId, 
+                    this, 
+                    discountId, 
+                    _discountAmount
+                );
 
                 if (success)
                 {
-                    // Thông báo và đóng form checkout
                     MessageBox.Show("Thanh toán MoMo thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
@@ -164,7 +207,6 @@ namespace WinFormsApp1.View.User.Forms
                 else
                 {
                     MessageBox.Show("Thanh toán MoMo không hoàn tất.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    // Reload cart in case some items were removed
                     LoadCartItems();
                 }
             }
@@ -195,11 +237,10 @@ namespace WinFormsApp1.View.User.Forms
                         return;
                     }
 
-                    decimal total = cart.CartItems.Sum(ci => ci.Course.Price);
-                    var tempCourse = new Models.Entities.Course
+                    var tempCourse = new Course
                     {
                         Title = $"Thanh toán {cart.CartItems.Count} khóa học",
-                        Price = total,
+                        Price = _finalAmount, // Use final amount with discount
                         CourseId = 0
                     };
 
@@ -220,7 +261,104 @@ namespace WinFormsApp1.View.User.Forms
 
         private void panelMain_Paint(object sender, PaintEventArgs e)
         {
+        }
 
+        private async void btnApplyDiscount_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var user = AuthHelper.CurrentUser;
+                if (user == null)
+                {
+                    ShowDiscountMessage("Vui lòng đăng nhập để áp dụng mã giảm giá", false);
+                    return;
+                }
+
+                string code = txtDiscountCode.Text.Trim();
+                if (string.IsNullOrEmpty(code))
+                {
+                    ShowDiscountMessage("Vui lòng nhập mã giảm giá", false);
+                    return;
+                }
+
+                // Disable button during validation
+                btnApplyDiscount.Enabled = false;
+                btnApplyDiscount.Text = "Đang kiểm tra...";
+
+                // Validate discount
+                var result = await DiscountService.ValidateDiscountAsync(code, user.UserId, _originalTotal, _courseIds);
+
+                if (result.IsValid && result.Discount != null)
+                {
+                    _appliedDiscount = result.Discount;
+                    _discountAmount = result.DiscountAmount;
+                    _finalAmount = result.FinalAmount;
+
+                    ShowDiscountMessage($"✓ Áp dụng thành công! Giảm {_discountAmount:N0} VND", true);
+                    
+                    // Update summary with discount
+                    UpdateSummary(_courseIds.Count, _originalTotal, _discountAmount, _finalAmount);
+                    
+                    // Change button to remove discount
+                    btnApplyDiscount.Text = "Xóa mã";
+                    btnApplyDiscount.BackColor = Color.FromArgb(220, 53, 69);
+                    btnApplyDiscount.Click -= btnApplyDiscount_Click;
+                    btnApplyDiscount.Click += btnRemoveDiscount_Click;
+                    txtDiscountCode.Enabled = false;
+                }
+                else
+                {
+                    ShowDiscountMessage($"✗ {result.Message}", false);
+                    btnApplyDiscount.Text = "Áp dụng";
+                }
+
+                btnApplyDiscount.Enabled = true;
+            }
+            catch (Exception ex)
+            {
+                ShowDiscountMessage($"Lỗi: {ex.Message}", false);
+                btnApplyDiscount.Enabled = true;
+                btnApplyDiscount.Text = "Áp dụng";
+            }
+        }
+
+        private void btnRemoveDiscount_Click(object? sender, EventArgs e)
+        {
+            // Reset discount
+            _appliedDiscount = null;
+            _discountAmount = 0;
+            _finalAmount = _originalTotal;
+
+            // Update UI
+            ShowDiscountMessage("", false);
+            lblDiscountMessage.Visible = false;
+            UpdateSummary(_courseIds.Count, _originalTotal, 0, _originalTotal);
+
+            // Reset button
+            btnApplyDiscount.Text = "Áp dụng";
+            btnApplyDiscount.BackColor = Color.FromArgb(40, 167, 69);
+            btnApplyDiscount.Click -= btnRemoveDiscount_Click;
+            btnApplyDiscount.Click += btnApplyDiscount_Click;
+            txtDiscountCode.Enabled = true;
+            txtDiscountCode.Text = "";
+            txtDiscountCode.Focus();
+        }
+
+        private void ShowDiscountMessage(string message, bool isSuccess)
+        {
+            lblDiscountMessage.Text = message;
+            lblDiscountMessage.ForeColor = isSuccess ? Color.FromArgb(40, 167, 69) : Color.FromArgb(220, 53, 69);
+            lblDiscountMessage.Visible = !string.IsNullOrEmpty(message);
+        }
+
+        private void txtDiscountCode_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Apply discount on Enter key
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                btnApplyDiscount_Click(sender, e);
+                e.Handled = true;
+            }
         }
     }
 }

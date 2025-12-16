@@ -437,11 +437,13 @@ CREATE TABLE dbo.Certificates (
 );
 GO
 
-
-CREATE TABLE Orders (
+CREATE TABLE dbo.Orders (
     OrderId INT IDENTITY(1,1) PRIMARY KEY,
     BuyerId INT NOT NULL,
     TotalAmount DECIMAL(12,2) NOT NULL,
+    OriginalAmount DECIMAL(12,2) NULL,
+    DiscountAmount DECIMAL(12,2) NULL,
+    DiscountId INT NULL,
     Currency NVARCHAR(10) NOT NULL DEFAULT 'VND',
     Status VARCHAR(20) NOT NULL, -- Pending/Paid/Failed
     CreatedAt DATETIME2(7) NOT NULL DEFAULT SYSUTCDATETIME(),
@@ -451,7 +453,7 @@ CREATE TABLE Orders (
         REFERENCES dbo.Users(UserId)
 );
 
-CREATE TABLE OrderItems (
+CREATE TABLE dbo.OrderItems (
     ItemId INT IDENTITY(1,1) PRIMARY KEY,
     OrderId INT NOT NULL,
     CourseId INT NOT NULL,
@@ -463,6 +465,7 @@ CREATE TABLE OrderItems (
     CONSTRAINT FK_OrderItems_Course FOREIGN KEY (CourseId)
         REFERENCES Courses(CourseId) ON DELETE CASCADE
 );
+
 CREATE TABLE Payments (
     PaymentId INT IDENTITY(1,1) PRIMARY KEY,
     OrderId INT NOT NULL,
@@ -477,6 +480,69 @@ CREATE TABLE Payments (
     CONSTRAINT FK_Payments_Order FOREIGN KEY (OrderId)
         REFERENCES Orders(OrderId) ON DELETE CASCADE
 );
+
+/* =========================================================
+   DISCOUNT TABLES
+   ========================================================= */
+CREATE TABLE dbo.Discounts (
+    DiscountId INT IDENTITY(1,1) PRIMARY KEY,
+    Code VARCHAR(50) NOT NULL,
+    Name NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(500) NULL,
+    DiscountType VARCHAR(20) NOT NULL DEFAULT 'Percentage', -- Percentage / FixedAmount
+    DiscountValue DECIMAL(12, 2) NOT NULL,
+    MinOrderAmount DECIMAL(12, 2) NULL,
+    MaxDiscountAmount DECIMAL(12, 2) NULL,
+    StartDate DATETIME2(7) NOT NULL DEFAULT SYSUTCDATETIME(),
+    EndDate DATETIME2(7) NOT NULL DEFAULT DATEADD(YEAR, 1, SYSUTCDATETIME()),
+    UsageLimit INT NULL,
+    UsageCount INT NOT NULL DEFAULT 0,
+    UsageLimitPerUser INT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    ApplyToAllCourses BIT NOT NULL DEFAULT 1,
+    Status VARCHAR(20) NOT NULL DEFAULT 'Active', -- Active / Inactive / Expired
+    CreatedBy INT NOT NULL,
+    CreatedAt DATETIME2(7) NOT NULL DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2(7) NULL,
+    
+    CONSTRAINT UQ_Discounts_Code UNIQUE (Code),
+    CONSTRAINT CK_Discounts_Type CHECK (DiscountType IN ('Percentage', 'FixedAmount')),
+    CONSTRAINT CK_Discounts_Status CHECK (Status IN ('Active', 'Inactive', 'Expired')),
+    CONSTRAINT FK_Discounts_Creator FOREIGN KEY (CreatedBy) REFERENCES dbo.Users(UserId)
+);
+GO
+
+CREATE TABLE dbo.DiscountUsages (
+    UsageId INT IDENTITY(1,1) PRIMARY KEY,
+    DiscountId INT NOT NULL,
+    UserId INT NOT NULL,
+    OrderId INT NOT NULL,
+    DiscountAmount DECIMAL(12, 2) NOT NULL,
+    UsedAt DATETIME2(7) NOT NULL DEFAULT SYSUTCDATETIME(),
+    
+    CONSTRAINT FK_DiscountUsage_Discount FOREIGN KEY (DiscountId) REFERENCES dbo.Discounts(DiscountId),
+    CONSTRAINT FK_DiscountUsage_User FOREIGN KEY (UserId) REFERENCES dbo.Users(UserId),
+    CONSTRAINT FK_DiscountUsage_Order FOREIGN KEY (OrderId) REFERENCES dbo.Orders(OrderId)
+);
+GO
+
+CREATE TABLE dbo.DiscountCourses (
+    DiscountCourseId INT IDENTITY(1,1) PRIMARY KEY,
+    DiscountId INT NOT NULL,
+    CourseId INT NOT NULL,
+    
+    CONSTRAINT FK_DiscountCourse_Discount FOREIGN KEY (DiscountId) REFERENCES dbo.Discounts(DiscountId) ON DELETE CASCADE,
+    CONSTRAINT FK_DiscountCourse_Course FOREIGN KEY (CourseId) REFERENCES dbo.Courses(CourseId) ON DELETE CASCADE,
+    CONSTRAINT UQ_DiscountCourse UNIQUE (DiscountId, CourseId)
+);
+GO
+
+-- Add FK for Orders.DiscountId (after Discounts table is created)
+ALTER TABLE dbo.Orders
+ADD CONSTRAINT FK_Orders_Discount 
+FOREIGN KEY (DiscountId) REFERENCES dbo.Discounts(DiscountId)
+ON DELETE SET NULL;
+GO
 
 /* =========================================================
    7) LIBRARIES (save/favorite)
@@ -776,26 +842,9 @@ SET ModerationStatus = 'Pending'
 WHERE IsPublished = 0 AND ModerationStatus = 'Pending';
 GO
 
--- 6. Script để rollback nếu cần
-/*
--- Xóa khóa ngoại
-ALTER TABLE Courses DROP CONSTRAINT FK_Courses_ReviewedBy_Users;
-
--- Xóa check constraint
-ALTER TABLE Courses DROP CONSTRAINT CK_Courses_ModerationStatus;
-
--- Xóa indexes
-DROP INDEX IX_Courses_ModerationStatus ON Courses;
-DROP INDEX IX_Courses_SubmittedForReviewAt ON Courses;
-DROP INDEX IX_Courses_ReviewedBy ON Courses;
-
--- Xóa các cột
-ALTER TABLE Courses DROP COLUMN ModerationStatus;
-ALTER TABLE Courses DROP COLUMN SubmittedForReviewAt;
-ALTER TABLE Courses DROP COLUMN ReviewedBy;
-ALTER TABLE Courses DROP COLUMN ReviewedAt;
-ALTER TABLE Courses DROP COLUMN RejectionReason;
-ALTER TABLE Courses DROP COLUMN AutoCheckResults;
-*/
-
-select * from Courses
+/* =========================================================
+   END OF SCRIPT
+   ========================================================= */
+PRINT 'Database schema created successfully!';
+PRINT 'Default password for all users: 123456';
+GO

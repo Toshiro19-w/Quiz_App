@@ -306,31 +306,12 @@ namespace WinFormsApp1.View.Admin
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font("Segoe UI", 9),
                 Enabled = false,
-                Margin = new Padding(0, 2, 20, 0)
+                Margin = new Padding(0, 2, 0, 0)
             };
             _btnNextPage.FlatAppearance.BorderSize = 0;
             _btnNextPage.Click += async (s, e) => await GoToNextPageAsync();
 
-            var lblPageSize = new Label
-            {
-                Text = "Hiển thị:",
-                AutoSize = true,
-                Font = new Font("Segoe UI", 9),
-                Margin = new Padding(0, 8, 5, 0)
-            };
-
-            _cboPageSize = new ComboBox
-            {
-                Width = 60,
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 9),
-                Margin = new Padding(0, 2, 0, 0)
-            };
-            _cboPageSize.Items.AddRange(new object[] { "25", "50", "100", "200" });
-            _cboPageSize.SelectedItem = "50";
-            _cboPageSize.SelectedIndexChanged += async (s, e) => await ChangePageSizeAsync();
-
-            flowPanel.Controls.AddRange(new Control[] { _lblPageInfo, _btnPrevPage, _btnNextPage, lblPageSize, _cboPageSize });
+            flowPanel.Controls.AddRange(new Control[] { _lblPageInfo, _btnPrevPage, _btnNextPage });
             paginationPanel.Controls.Add(flowPanel);
             this.Controls.Add(paginationPanel);
         }
@@ -434,13 +415,14 @@ namespace WinFormsApp1.View.Admin
                 Width = width,
                 Height = 75,
                 BackColor = Color.White,
-                Margin = new Padding(0, 0, 15, 0)
+                Margin = new Padding(0, 0, 15, 0),
+                Padding = new Padding(3) // Add padding to prevent content from overlapping border
             };
             
             card.Paint += (s, e) =>
             {
                 using var pen = new Pen(color, 2);
-                e.Graphics.DrawRectangle(pen, 0, 0, card.Width - 1, card.Height - 1);
+                e.Graphics.DrawRectangle(pen, 1, 1, card.Width - 3, card.Height - 3);
             };
 
             var lblTitle = new Label
@@ -448,17 +430,18 @@ namespace WinFormsApp1.View.Admin
                 Text = title,
                 Font = new Font("Segoe UI", 9),
                 ForeColor = Color.Gray,
-                Location = new Point(12, 10),
+                Location = new Point(12, 8),
                 AutoSize = true
             };
 
             var lblValue = new Label
             {
                 Text = value,
-                Font = new Font("Segoe UI", 18, FontStyle.Bold),
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
                 ForeColor = color,
-                Location = new Point(12, 35),
-                AutoSize = true
+                Location = new Point(12, 32),
+                AutoSize = true,
+                MaximumSize = new Size(width - 24, 30) // Prevent overflow
             };
 
             card.Controls.AddRange(new Control[] { lblTitle, lblValue });
