@@ -9,10 +9,12 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
 {
     public partial class EditProfileTab : UserControl
     {
+        private Panel cardPanel;
+        private PictureBox avatarBox;
         private TextBox txtFullName;
         private TextBox txtUsername;
-        private Label lblUsernameNote;
         private TextBox txtPhone;
+        private TextBox txtBio;
         private Button btnSave;
 
         public EditProfileTab()
@@ -23,105 +25,232 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
 
         private void InitializeComponent()
         {
-            this.BackColor = Color.White;
-            this.Size = new Size(760, 550);
+            this.BackColor = Color.FromArgb(248, 249, 250);
+            this.Dock = DockStyle.Fill;
+            this.Padding = new Padding(30);
+
+            // Main card panel - anchor to expand
+            cardPanel = new Panel
+            {
+                Location = new Point(30, 30),
+                BackColor = Color.White,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom,
+                Padding = new Padding(40),
+                AutoScroll = true
+            };
+            cardPanel.Paint += (s, e) =>
+            {
+                using var pen = new Pen(Color.FromArgb(230, 230, 230), 1);
+                e.Graphics.DrawRectangle(pen, 0, 0, cardPanel.Width - 1, cardPanel.Height - 1);
+            };
 
             int yPos = 30;
 
-            // Full Name
-            var lblFullName = new Label
+            // Section title
+            var lblSectionTitle = new Label
             {
-                Text = "Họ và tên",
-                Location = new Point(30, yPos),
+                Text = "👤 Thông tin cá nhân",
+                Location = new Point(40, yPos),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
                 ForeColor = ColorPalette.TextPrimary
             };
-            this.Controls.Add(lblFullName);
-            yPos += 35;
+            cardPanel.Controls.Add(lblSectionTitle);
+            yPos += 50;
 
-            txtFullName = new TextBox
+            // Avatar section
+            var avatarPanel = new Panel
             {
-                Location = new Point(30, yPos),
-                Size = new Size(400, 35),
-                Font = new Font("Segoe UI", 10),
-                BorderStyle = BorderStyle.FixedSingle
+                Location = new Point(40, yPos),
+                Height = 100,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+                BackColor = Color.FromArgb(248, 249, 250)
             };
-            this.Controls.Add(txtFullName);
-            yPos += 60;
-
-            // Username
-            var lblUsername = new Label
+            avatarPanel.Paint += (s, e) =>
             {
-                Text = "Tên người dùng",
-                Location = new Point(30, yPos),
+                using var pen = new Pen(Color.FromArgb(220, 220, 220), 1);
+                e.Graphics.DrawRectangle(pen, 0, 0, avatarPanel.Width - 1, avatarPanel.Height - 1);
+            };
+
+            avatarBox = new PictureBox
+            {
+                Location = new Point(20, 15),
+                Size = new Size(70, 70),
+                BackColor = Color.FromArgb(88, 56, 255),
+                SizeMode = PictureBoxSizeMode.CenterImage
+            };
+            MakeCircular(avatarBox);
+            avatarPanel.Controls.Add(avatarBox);
+
+            var lblAvatarInfo = new Label
+            {
+                Text = "Ảnh đại diện",
+                Location = new Point(110, 20),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 ForeColor = ColorPalette.TextPrimary
             };
-            this.Controls.Add(lblUsername);
-            yPos += 35;
+            avatarPanel.Controls.Add(lblAvatarInfo);
 
-            txtUsername = new TextBox
+            var lblAvatarNote = new Label
             {
-                Location = new Point(30, yPos),
-                Size = new Size(400, 35),
-                Font = new Font("Segoe UI", 10),
-                BorderStyle = BorderStyle.FixedSingle,
-                ReadOnly = true,
-                BackColor = Color.FromArgb(245, 245, 245)
-            };
-            this.Controls.Add(txtUsername);
-            yPos += 40;
-
-            lblUsernameNote = new Label
-            {
-                Text = "Tên người dùng không thể thay đổi",
-                Location = new Point(450, yPos - 35),
+                Text = "Ảnh đại diện được tạo tự động từ tên của bạn",
+                Location = new Point(110, 45),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 9),
                 ForeColor = Color.Gray
             };
-            this.Controls.Add(lblUsernameNote);
-            yPos += 40;
+            avatarPanel.Controls.Add(lblAvatarNote);
+
+            cardPanel.Controls.Add(avatarPanel);
+            yPos += 120;
+
+            // Full Name and Username in a row
+            var lblFullName = new Label
+            {
+                Text = "Họ và tên",
+                Location = new Point(40, yPos),
+                AutoSize = true,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                ForeColor = ColorPalette.TextPrimary
+            };
+            cardPanel.Controls.Add(lblFullName);
+
+            var lblUsername = new Label
+            {
+                Text = "Tên người dùng",
+                Location = new Point(400, yPos),
+                AutoSize = true,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                ForeColor = ColorPalette.TextPrimary
+            };
+            cardPanel.Controls.Add(lblUsername);
+            yPos += 28;
+
+            txtFullName = new TextBox
+            {
+                Location = new Point(40, yPos),
+                Size = new Size(320, 40),
+                Font = new Font("Segoe UI", 11),
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            cardPanel.Controls.Add(txtFullName);
+
+            txtUsername = new TextBox
+            {
+                Location = new Point(400, yPos),
+                Size = new Size(320, 40),
+                Font = new Font("Segoe UI", 11),
+                BorderStyle = BorderStyle.FixedSingle,
+                ReadOnly = true,
+                BackColor = Color.FromArgb(245, 245, 245)
+            };
+            cardPanel.Controls.Add(txtUsername);
+
+            var lblUsernameNote = new Label
+            {
+                Text = "🔒 Không thể thay đổi",
+                Location = new Point(400, yPos + 42),
+                AutoSize = true,
+                Font = new Font("Segoe UI", 8),
+                ForeColor = Color.Gray
+            };
+            cardPanel.Controls.Add(lblUsernameNote);
+            yPos += 85;
 
             // Phone
             var lblPhone = new Label
             {
                 Text = "Số điện thoại",
-                Location = new Point(30, yPos),
+                Location = new Point(40, yPos),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 ForeColor = ColorPalette.TextPrimary
             };
-            this.Controls.Add(lblPhone);
-            yPos += 35;
+            cardPanel.Controls.Add(lblPhone);
+            yPos += 28;
 
             txtPhone = new TextBox
             {
-                Location = new Point(30, yPos),
-                Size = new Size(400, 35),
-                Font = new Font("Segoe UI", 10),
-                BorderStyle = BorderStyle.FixedSingle
+                Location = new Point(40, yPos),
+                Size = new Size(320, 40),
+                Font = new Font("Segoe UI", 11),
+                BorderStyle = BorderStyle.FixedSingle,
+                PlaceholderText = "Nhập số điện thoại..."
             };
-            this.Controls.Add(txtPhone);
-            yPos += 60;
+            cardPanel.Controls.Add(txtPhone);
+            yPos += 70;
+
+            // Bio
+            var lblBio = new Label
+            {
+                Text = "Giới thiệu bản thân",
+                Location = new Point(40, yPos),
+                AutoSize = true,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                ForeColor = ColorPalette.TextPrimary
+            };
+            cardPanel.Controls.Add(lblBio);
+            yPos += 28;
+
+            txtBio = new TextBox
+            {
+                Location = new Point(40, yPos),
+                Size = new Size(680, 80),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+                Font = new Font("Segoe UI", 10),
+                BorderStyle = BorderStyle.FixedSingle,
+                Multiline = true,
+                PlaceholderText = "Viết vài dòng giới thiệu về bản thân bạn..."
+            };
+            cardPanel.Controls.Add(txtBio);
+            yPos += 100;
 
             // Save button
             btnSave = new Button
             {
-                Text = "lưu thay đổi",
-                Location = new Point(30, yPos),
-                Size = new Size(150, 40),
+                Text = "💾 Lưu thay đổi",
+                Location = new Point(40, yPos),
+                Size = new Size(175, 45),
                 BackColor = Color.FromArgb(88, 56, 255),
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand
             };
             btnSave.FlatAppearance.BorderSize = 0;
             btnSave.Click += btnSave_Click;
-            this.Controls.Add(btnSave);
+            cardPanel.Controls.Add(btnSave);
+
+            this.Controls.Add(cardPanel);
+
+            // Handle resize
+            this.Resize += EditProfileTab_Resize;
+        }
+
+        private void EditProfileTab_Resize(object? sender, EventArgs e)
+        {
+            cardPanel.Width = this.Width - 60;
+            cardPanel.Height = this.Height - 60;
+            
+            // Update avatar panel width
+            foreach (Control c in cardPanel.Controls)
+            {
+                if (c is Panel p && p.Height == 100)
+                {
+                    p.Width = cardPanel.Width - 80;
+                }
+            }
+            
+            // Update bio width
+            txtBio.Width = cardPanel.Width - 80;
+        }
+
+        private void MakeCircular(PictureBox pictureBox)
+        {
+            System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+            path.AddEllipse(0, 0, pictureBox.Width, pictureBox.Height);
+            pictureBox.Region = new Region(path);
         }
 
         private void LoadProfileData()
@@ -131,14 +260,57 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                 txtFullName.Text = AuthHelper.CurrentUser.FullName;
                 txtUsername.Text = AuthHelper.CurrentUser.Username;
                 txtPhone.Text = AuthHelper.CurrentUser.Phone ?? "";
+                
+                DrawInitialsOnAvatar(GetInitials(AuthHelper.CurrentUser.FullName));
+
+                try
+                {
+                    using var context = new LearningPlatformContext();
+                    var profile = context.UserProfiles.FirstOrDefault(p => p.UserId == AuthHelper.CurrentUser.UserId);
+                    if (profile != null)
+                    {
+                        txtBio.Text = profile.Bio ?? "";
+                    }
+                }
+                catch { }
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private string GetInitials(string fullName)
+        {
+            if (string.IsNullOrWhiteSpace(fullName)) return "U";
+            var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length >= 2)
+                return $"{parts[0][0]}{parts[parts.Length - 1][0]}".ToUpper();
+            else if (parts.Length == 1)
+                return parts[0][0].ToString().ToUpper();
+            return "U";
+        }
+
+        private void DrawInitialsOnAvatar(string initials)
+        {
+            Bitmap bmp = new Bitmap(avatarBox.Width, avatarBox.Height);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                g.Clear(Color.FromArgb(88, 56, 255));
+
+                using (Font font = new Font("Segoe UI", 22, FontStyle.Bold))
+                {
+                    SizeF textSize = g.MeasureString(initials, font);
+                    float x = (bmp.Width - textSize.Width) / 2;
+                    float y = (bmp.Height - textSize.Height) / 2;
+                    g.DrawString(initials, font, Brushes.White, x, y);
+                }
+            }
+            avatarBox.Image = bmp;
+        }
+
+        private void btnSave_Click(object? sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtFullName.Text))
             {
-                ToastHelper.Show(this, "Vui lòng nhập họ tên!");
+                ToastHelper.Show(this, "❌ Vui lòng nhập họ tên!");
                 return;
             }
 
@@ -154,23 +326,37 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                         {
                             dbUser.FullName = txtFullName.Text.Trim();
                             dbUser.Phone = txtPhone.Text.Trim();
+
+                            var profile = context.UserProfiles.FirstOrDefault(p => p.UserId == user.UserId);
+                            if (profile != null)
+                            {
+                                profile.Bio = txtBio.Text.Trim();
+                            }
+                            else
+                            {
+                                context.UserProfiles.Add(new Models.Entities.UserProfile
+                                {
+                                    UserId = user.UserId,
+                                    Bio = txtBio.Text.Trim()
+                                });
+                            }
+
                             context.SaveChanges();
 
-                            // Cập nhật AuthHelper.CurrentUser
                             AuthHelper.CurrentUser.FullName = dbUser.FullName;
                             AuthHelper.CurrentUser.Phone = dbUser.Phone;
 
-                            // Cập nhật UI MainContainer
+                            DrawInitialsOnAvatar(GetInitials(dbUser.FullName));
                             UpdateMainContainerUI();
 
-                            ToastHelper.Show(this, "Cập nhật thông tin thành công!");
+                            ToastHelper.Show(this, "✓ Cập nhật thông tin thành công!");
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this, $"Lỗi khi lưu thông tin: {ex.Message}");
+                ToastHelper.Show(this, $"❌ Lỗi: {ex.Message}");
             }
         }
 
@@ -179,19 +365,18 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             var mainContainer = this.FindForm() as MainContainer;
             if (mainContainer != null)
             {
-                // Tìm lblUserName và btnProfile
                 var lblUserName = FindControl(mainContainer, "lblUserName") as Label;
                 var btnProfile = FindControl(mainContainer, "btnProfile") as Button;
 
                 if (lblUserName != null)
-                    lblUserName.Text = AuthHelper.CurrentUser.FullName;
+                    lblUserName.Text = AuthHelper.CurrentUser?.FullName ?? "";
 
                 if (btnProfile != null)
-                    btnProfile.Text = GetInitials(AuthHelper.CurrentUser.FullName);
+                    btnProfile.Text = GetInitials(AuthHelper.CurrentUser?.FullName ?? "");
             }
         }
 
-        private Control FindControl(Control parent, string name)
+        private Control? FindControl(Control parent, string name)
         {
             foreach (Control c in parent.Controls)
             {
@@ -200,17 +385,6 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                 if (found != null) return found;
             }
             return null;
-        }
-
-        private string GetInitials(string fullName)
-        {
-            if (string.IsNullOrWhiteSpace(fullName)) return "U";
-            var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length >= 2)
-                return $"{parts[0][0]}{parts[parts.Length - 1][0]}".ToUpper();
-            else if (parts.Length == 1)
-                return parts[0][0].ToString().ToUpper();
-            return "U";
         }
     }
 }
