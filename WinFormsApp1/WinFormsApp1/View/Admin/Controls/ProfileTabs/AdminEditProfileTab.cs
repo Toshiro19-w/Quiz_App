@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
 
-namespace WinFormsApp1.View.User.Controls.ProfileTabs
+namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 {
-    public partial class EditProfileTab : UserControl
+    public partial class AdminEditProfileTab : UserControl
     {
         private Panel cardPanel;
         private PictureBox avatarBox;
@@ -17,7 +17,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
         private TextBox txtBio;
         private Button btnSave;
 
-        public EditProfileTab()
+        public AdminEditProfileTab()
         {
             InitializeComponent();
             LoadProfileData();
@@ -49,7 +49,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             // Section title
             var lblSectionTitle = new Label
             {
-                Text = "👤 Thông tin cá nhân",
+                Text = "👤 Thông tin cá nhân Admin",
                 Location = new Point(40, yPos),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 14, FontStyle.Bold),
@@ -76,7 +76,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             {
                 Location = new Point(20, 15),
                 Size = new Size(70, 70),
-                BackColor = Color.FromArgb(88, 56, 255),
+                BackColor = Color.FromArgb(45, 55, 72),
                 SizeMode = PictureBoxSizeMode.CenterImage
             };
             MakeCircular(avatarBox);
@@ -212,7 +212,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                 Text = "💾 Lưu thay đổi",
                 Location = new Point(40, yPos),
                 Size = new Size(175, 45),
-                BackColor = Color.FromArgb(88, 56, 255),
+                BackColor = Color.FromArgb(45, 55, 72),
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 FlatStyle = FlatStyle.Flat,
@@ -225,14 +225,14 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             this.Controls.Add(cardPanel);
 
             // Handle resize
-            this.Resize += EditProfileTab_Resize;
+            this.Resize += AdminEditProfileTab_Resize;
         }
 
-        private void EditProfileTab_Resize(object? sender, EventArgs e)
+        private void AdminEditProfileTab_Resize(object? sender, EventArgs e)
         {
             cardPanel.Width = this.Width - 60;
             cardPanel.Height = this.Height - 60;
-            
+
             // Update avatar panel width
             foreach (Control c in cardPanel.Controls)
             {
@@ -241,7 +241,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                     p.Width = cardPanel.Width - 80;
                 }
             }
-            
+
             // Update bio width
             txtBio.Width = cardPanel.Width - 80;
         }
@@ -260,7 +260,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                 txtFullName.Text = AuthHelper.CurrentUser.FullName;
                 txtUsername.Text = AuthHelper.CurrentUser.Username;
                 txtPhone.Text = AuthHelper.CurrentUser.Phone ?? "";
-                
+
                 DrawInitialsOnAvatar(GetInitials(AuthHelper.CurrentUser.FullName));
 
                 try
@@ -278,13 +278,13 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
 
         private string GetInitials(string fullName)
         {
-            if (string.IsNullOrWhiteSpace(fullName)) return "U";
+            if (string.IsNullOrWhiteSpace(fullName)) return "A";
             var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length >= 2)
                 return $"{parts[0][0]}{parts[parts.Length - 1][0]}".ToUpper();
             else if (parts.Length == 1)
                 return parts[0][0].ToString().ToUpper();
-            return "U";
+            return "A";
         }
 
         private void DrawInitialsOnAvatar(string initials)
@@ -293,7 +293,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                g.Clear(Color.FromArgb(88, 56, 255));
+                g.Clear(Color.FromArgb(45, 55, 72)); // Admin color theme
 
                 using (Font font = new Font("Segoe UI", 22, FontStyle.Bold))
                 {
@@ -347,7 +347,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                             AuthHelper.CurrentUser.Phone = dbUser.Phone;
 
                             DrawInitialsOnAvatar(GetInitials(dbUser.FullName));
-                            UpdateMainContainerUI();
+                            UpdateAdminDashboardUI();
 
                             ToastHelper.Show(this, "✓ Cập nhật thông tin thành công!");
                         }
@@ -360,31 +360,15 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             }
         }
 
-        private void UpdateMainContainerUI()
+        private void UpdateAdminDashboardUI()
         {
-            var mainContainer = this.FindForm() as MainContainer;
-            if (mainContainer != null)
+            // Update the AdminDashboard top panel user label if needed
+            var adminDashboard = this.FindForm() as AdminDashboard;
+            if (adminDashboard != null)
             {
-                var lblUserName = FindControl(mainContainer, "lblUserName") as Label;
-                var btnProfile = FindControl(mainContainer, "btnProfile") as Button;
-
-                if (lblUserName != null)
-                    lblUserName.Text = AuthHelper.CurrentUser?.FullName ?? "";
-
-                if (btnProfile != null)
-                    btnProfile.Text = GetInitials(AuthHelper.CurrentUser?.FullName ?? "");
+                // The AdminDashboard will be updated when re-loaded
+                // For now, just refresh current display
             }
-        }
-
-        private Control? FindControl(Control parent, string name)
-        {
-            foreach (Control c in parent.Controls)
-            {
-                if (c.Name == name) return c;
-                var found = FindControl(c, name);
-                if (found != null) return found;
-            }
-            return null;
         }
     }
 }

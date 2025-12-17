@@ -76,26 +76,79 @@ namespace WinFormsApp1.View.Admin
             var profilePanel = new Panel
             {
                 Dock = DockStyle.Right,
-                Width = 300,
+                Width = 350,
                 BackColor = Color.Transparent
             };
 
+            // Avatar button (circular)
+            var avatarButton = new Button
+            {
+                Size = new Size(40, 40),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.FromArgb(74, 85, 104),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Text = GetInitials(AuthHelper.CurrentUser?.FullName ?? "A"),
+                Cursor = Cursors.Hand,
+                Anchor = AnchorStyles.None
+            };
+            avatarButton.FlatAppearance.BorderSize = 0;
+            avatarButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(94, 105, 124);
+            MakeCircular(avatarButton);
+            avatarButton.Click += (s, e) => LoadAdminProfile();
+
+            // User info label (clickable)
             var userLabel = new Label
             {
-                Text = AuthHelper.CurrentUser != null ? $"{AuthHelper.CurrentUser.FullName} ({AuthHelper.GetRoleName()})" : "Quản trị viên",
-                Font = new Font("Segoe UI", 10),
+                Text = AuthHelper.CurrentUser != null ? $"{AuthHelper.CurrentUser.FullName}" : "Quản trị viên",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 ForeColor = Color.White,
-                Location = new Point(15, 25),
                 AutoSize = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left
+                Cursor = Cursors.Hand
+            };
+            userLabel.Click += (s, e) => LoadAdminProfile();
+
+            // Role label
+            var roleLabel = new Label
+            {
+                Text = AuthHelper.GetRoleName(),
+                Font = new Font("Segoe UI", 9),
+                ForeColor = Color.FromArgb(200, 200, 200),
+                AutoSize = true
             };
 
-            // Use layout within profilePanel
-            profilePanel.Controls.Add(userLabel);
-            profilePanel.Padding = new Padding(10, 0, 20, 0);
+            // Notification bell button (thay vì profile icon)
+            var notificationBtn = new Button
+            {
+                Text = "🔔",
+                Size = new Size(35, 35),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.Transparent,
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 14),
+                Cursor = Cursors.Hand
+            };
+            notificationBtn.FlatAppearance.BorderSize = 0;
+            notificationBtn.FlatAppearance.MouseOverBackColor = Color.FromArgb(74, 85, 104);
+            notificationBtn.Click += (s, e) => ShowNotifications();
+
+            // Add tooltip
+            var tooltip = new ToolTip();
+            tooltip.SetToolTip(avatarButton, "Hồ sơ cá nhân");
+            tooltip.SetToolTip(userLabel, "Nhấn để xem hồ sơ cá nhân");
+            tooltip.SetToolTip(notificationBtn, "Thông báo");
+
+            // Add controls to profile panel
+            profilePanel.Controls.AddRange(new Control[] { avatarButton, userLabel, roleLabel, notificationBtn });
+            
+            // Position controls on resize
             profilePanel.Resize += (s, e) =>
             {
-                userLabel.Location = new Point(15, (profilePanel.ClientSize.Height - userLabel.Height) / 2);
+                int centerY = profilePanel.ClientSize.Height / 2;
+                avatarButton.Location = new Point(15, centerY - avatarButton.Height / 2);
+                userLabel.Location = new Point(65, centerY - 15);
+                roleLabel.Location = new Point(65, centerY + 5);
+                notificationBtn.Location = new Point(profilePanel.Width - 55, centerY - notificationBtn.Height / 2);
             };
 
             topPanel.Controls.AddRange(new Control[] { logoPanel, profilePanel });
@@ -128,6 +181,24 @@ namespace WinFormsApp1.View.Admin
             mainPanel.Controls.Add(contentPanel);
 
             Controls.AddRange(new Control[] { mainPanel, sidebarPanel, topPanel });
+        }
+
+        private string GetInitials(string fullName)
+        {
+            if (string.IsNullOrWhiteSpace(fullName)) return "A";
+            var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length >= 2)
+                return $"{parts[0][0]}{parts[parts.Length - 1][0]}".ToUpper();
+            else if (parts.Length == 1)
+                return parts[0][0].ToString().ToUpper();
+            return "A";
+        }
+
+        private void MakeCircular(Control control)
+        {
+            System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+            path.AddEllipse(0, 0, control.Width, control.Height);
+            control.Region = new Region(path);
         }
 
         private void CreateSidebarMenu()
@@ -273,7 +344,7 @@ namespace WinFormsApp1.View.Admin
                 CreateButton("Báo cáo doanh thu", "report-revenue", "💰");
             });
             
-            // Home Button
+            // Home Button only (Profile moved to header)
             yPos += 20;
             CreateButton("Trang chủ", "home", "🏠");
         }
@@ -367,6 +438,21 @@ namespace WinFormsApp1.View.Admin
                     break;
             }
         }
+
+        private void LoadAdminProfile()
+        {
+            contentPanel.Controls.Clear();
+            var adminProfile = new AdminProfile();
+            adminProfile.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(adminProfile);
+        }
+
+        private void ShowNotifications()
+        {
+            // TODO: Implement notification dropdown or panel
+            ToastHelper.Show(this, "🔔 Không có thông báo mới");
+        }
+
         private void LoadDiscountManagementControl()
         {
             contentPanel.Controls.Clear();

@@ -1,0 +1,322 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve">
+    <value>Nền tảng học tập YMEDU</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Lưu</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Hủy</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Xóa</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Sửa</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Thêm</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Tìm kiếm</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Làm mới</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Đóng</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Có</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Không</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Xác nhận</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Thành công</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Lỗi</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Cảnh báo</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value>Thông tin</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Đang tải...</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Đăng xuất</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Đăng ký</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Mật khẩu</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Xác nhận mật khẩu</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Quên mật khẩu?</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Ghi nhớ đăng nhập</value>
+  </data>
+  <data name="LoginSuccess" xml:space="preserve">
+    <value>Đăng nhập thành công!</value>
+  </data>
+  <data name="LoginFailed" xml:space="preserve">
+    <value>Email hoặc mật khẩu không chính xác!</value>
+  </data>
+  <data name="LogoutConfirm" xml:space="preserve">
+    <value>Bạn có chắc chắn muốn đăng xuất?</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Hồ sơ</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Cài đặt</value>
+  </data>
+  <data name="AccountSettings" xml:space="preserve">
+    <value>Cài đặt tài khoản</value>
+  </data>
+  <data name="EditProfile" xml:space="preserve">
+    <value>Chỉnh sửa hồ sơ</value>
+  </data>
+  <data name="PurchaseHistory" xml:space="preserve">
+    <value>Lịch sử mua hàng</value>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Họ và tên</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Tên người dùng</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Số điện thoại</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Đổi mật khẩu</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Đổi email</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Mật khẩu hiện tại</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Mật khẩu mới</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Trang chủ</value>
+  </data>
+  <data name="Courses" xml:space="preserve">
+    <value>Khóa học</value>
+  </data>
+  <data name="MyCourses" xml:space="preserve">
+    <value>Khóa học của tôi</value>
+  </data>
+  <data name="Library" xml:space="preserve">
+    <value>Thư viện</value>
+  </data>
+  <data name="Flashcards" xml:space="preserve">
+    <value>Flashcards</value>
+  </data>
+  <data name="Tests" xml:space="preserve">
+    <value>Bài kiểm tra</value>
+  </data>
+  <data name="Shop" xml:space="preserve">
+    <value>Cửa hàng</value>
+  </data>
+  <data name="Cart" xml:space="preserve">
+    <value>Giỏ hàng</value>
+  </data>
+  <data name="MyCart" xml:space="preserve">
+    <value>Giỏ hàng của tôi</value>
+  </data>
+  <data name="Learning" xml:space="preserve">
+    <value>Học tập</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Bảng điều khiển</value>
+  </data>
+  <data name="Revenue" xml:space="preserve">
+    <value>Doanh thu</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Ngôn ngữ</value>
+  </data>
+  <data name="SelectLanguage" xml:space="preserve">
+    <value>Chọn ngôn ngữ</value>
+  </data>
+  <data name="Vietnamese" xml:space="preserve">
+    <value>Tiếng Việt</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>Tiếng Anh</value>
+  </data>
+  <data name="LanguageChanged" xml:space="preserve">
+    <value>Ngôn ngữ đã được thay đổi!</value>
+  </data>
+  <data name="CourseTitle" xml:space="preserve">
+    <value>Tên khóa học</value>
+  </data>
+  <data name="CourseDescription" xml:space="preserve">
+    <value>Mô tả khóa học</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Giá</value>
+  </data>
+  <data name="Free" xml:space="preserve">
+    <value>Miễn phí</value>
+  </data>
+  <data name="Enroll" xml:space="preserve">
+    <value>Đăng ký học</value>
+  </data>
+  <data name="StartLearning" xml:space="preserve">
+    <value>Bắt đầu học</value>
+  </data>
+  <data name="ContinueLearning" xml:space="preserve">
+    <value>Tiếp tục học</value>
+  </data>
+  <data name="AddToCart" xml:space="preserve">
+    <value>Thêm vào giỏ hàng</value>
+  </data>
+  <data name="BuyNow" xml:space="preserve">
+    <value>Mua ngay</value>
+  </data>
+  <data name="ViewCourse" xml:space="preserve">
+    <value>Xem khóa học</value>
+  </data>
+  <data name="CreateCourse" xml:space="preserve">
+    <value>Tạo khóa học</value>
+  </data>
+  <data name="EditCourse" xml:space="preserve">
+    <value>Sửa khóa học</value>
+  </data>
+  <data name="DeleteCourse" xml:space="preserve">
+    <value>Xóa khóa học</value>
+  </data>
+  <data name="PublishCourse" xml:space="preserve">
+    <value>Xuất bản khóa học</value>
+  </data>
+  <data name="Chapter" xml:space="preserve">
+    <value>Chương</value>
+  </data>
+  <data name="Lesson" xml:space="preserve">
+    <value>Bài học</value>
+  </data>
+  <data name="Payment" xml:space="preserve">
+    <value>Thanh toán</value>
+  </data>
+  <data name="Checkout" xml:space="preserve">
+    <value>Thanh toán</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Tổng cộng</value>
+  </data>
+  <data name="PaymentSuccess" xml:space="preserve">
+    <value>Thanh toán thành công!</value>
+  </data>
+  <data name="PaymentFailed" xml:space="preserve">
+    <value>Thanh toán thất bại!</value>
+  </data>
+  <data name="PaymentPending" xml:space="preserve">
+    <value>Đang chờ thanh toán</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Trường này là bắt buộc</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>Email không hợp lệ</value>
+  </data>
+  <data name="PasswordTooShort" xml:space="preserve">
+    <value>Mật khẩu phải có ít nhất 6 ký tự</value>
+  </data>
+  <data name="PasswordNotMatch" xml:space="preserve">
+    <value>Mật khẩu xác nhận không khớp</value>
+  </data>
+  <data name="PleaseEnterAllFields" xml:space="preserve">
+    <value>Vui lòng nhập đầy đủ thông tin!</value>
+  </data>
+  <data name="WelcomeBack" xml:space="preserve">
+    <value>Chào mừng trở lại, {0}!</value>
+  </data>
+  <data name="SaveSuccess" xml:space="preserve">
+    <value>Lưu thành công!</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>Lưu thất bại!</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Bạn có chắc chắn muốn xóa?</value>
+  </data>
+  <data name="DeleteSuccess" xml:space="preserve">
+    <value>Xóa thành công!</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Xóa thất bại!</value>
+  </data>
+  <data name="AddedToCart" xml:space="preserve">
+    <value>Đã thêm vào giỏ hàng!</value>
+  </data>
+  <data name="AlreadyInCart" xml:space="preserve">
+    <value>Sản phẩm đã có trong giỏ hàng!</value>
+  </data>
+  <data name="CartEmpty" xml:space="preserve">
+    <value>Giỏ hàng trống</value>
+  </data>
+</root>

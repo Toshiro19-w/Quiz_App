@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 
 namespace WinFormsApp1.View.User.Components
 {
@@ -15,6 +16,9 @@ namespace WinFormsApp1.View.User.Components
         private System.Windows.Forms.Timer fadeTimer;
         private int targetOpacity = 100;
         private int currentOpacity = 0;
+        
+        // Language selector controls
+        private Label lblCurrentLanguage;
         
         public event EventHandler? OnHocTapClick;
         public event EventHandler? OnGioHangClick;
@@ -30,14 +34,31 @@ namespace WinFormsApp1.View.User.Components
         public ProfileDropdown()
         {
             InitializeComponent();
+            
+            // Subscribe to language change event
+            LanguageHelper.LanguageChanged += OnLanguageChanged;
+        }
+
+        private void OnLanguageChanged(object? sender, EventArgs e)
+        {
+            // Update UI when language changes
+            UpdateLanguageDisplay();
+        }
+
+        private void UpdateLanguageDisplay()
+        {
+            if (lblCurrentLanguage != null)
+            {
+                lblCurrentLanguage.Text = $"{LanguageHelper.CurrentLanguageName} ▼";
+            }
         }
 
         private void InitializeComponent()
         {
-            this.Width = 300;
-            this.Height = 520;
+            this.Width = 280;
             this.BackColor = Color.White;
             this.Visible = false;
+            this.AutoSize = false;
 
             // Create border panel for shadow effect
             this.Paint += ProfileDropdown_Paint;
@@ -46,7 +67,7 @@ namespace WinFormsApp1.View.User.Components
             headerPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 100,
+                Height = 90,
                 BackColor = Color.White,
                 Padding = new Padding(15)
             };
@@ -54,8 +75,8 @@ namespace WinFormsApp1.View.User.Components
             // Avatar
             avatarBox = new PictureBox
             {
-                Width = 60,
-                Height = 60,
+                Width = 50,
+                Height = 50,
                 Location = new Point(15, 20),
                 BackColor = Color.FromArgb(64, 64, 64),
                 SizeMode = PictureBoxSizeMode.CenterImage
@@ -66,20 +87,22 @@ namespace WinFormsApp1.View.User.Components
             lblName = new Label
             {
                 Text = "Tên User",
-                Location = new Point(85, 25),
+                Location = new Point(75, 20),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                ForeColor = ColorPalette.TextPrimary
+                ForeColor = ColorPalette.TextPrimary,
+                MaximumSize = new Size(180, 0)
             };
 
             // Email Label
             lblEmail = new Label
             {
                 Text = "email@example.com",
-                Location = new Point(85, 50),
+                Location = new Point(75, 45),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 9),
-                ForeColor = ColorPalette.TextSecondary
+                ForeColor = ColorPalette.TextSecondary,
+                MaximumSize = new Size(180, 0)
             };
 
             headerPanel.Controls.Add(avatarBox);
@@ -91,43 +114,44 @@ namespace WinFormsApp1.View.User.Components
             {
                 Dock = DockStyle.Fill,
                 BackColor = Color.White,
-                Padding = new Padding(0, 10, 0, 0),
+                Padding = new Padding(0, 5, 0, 0),
                 AutoScroll = false
             };
 
             int yPos = 0;
 
             // Menu Items - create buttons then wire to events so subscribers added later are called
-            var btnHocTap = AddMenuItem("Học tập", ref yPos);
+            var btnHocTap = AddMenuItem($"📚 {LanguageHelper.GetString("Learning")}", ref yPos);
             btnHocTap.Click += (s, e) => OnHocTapClick?.Invoke(s, e);
 
-            var btnGioHang = AddMenuItem("Giỏ hàng của tôi", ref yPos);
+            var btnGioHang = AddMenuItem($"🛒 {LanguageHelper.GetString("MyCart")}", ref yPos);
             btnGioHang.Click += (s, e) => OnGioHangClick?.Invoke(s, e);
             
             // Separator for teacher/admin
             if (AuthHelper.CurrentUser != null && !AuthHelper.IsUser())
             {
                 AddSeparator(ref yPos);
-                var btnBangDieuKhien = AddMenuItem("Bảng điều khiển của giảng viên", ref yPos);
+                var btnBangDieuKhien = AddMenuItem($"📊 {LanguageHelper.GetString("Dashboard")}", ref yPos);
+                btnBangDieuKhien.ForeColor = Color.FromArgb(88, 56, 255);
                 btnBangDieuKhien.Click += (s, e) => OnBangDieuKhienClick?.Invoke(s, e);
             }
 
             AddSeparator(ref yPos);
             
             // Cập nhật các menu item này để trigger event với tab index
-            var btnCaiDat = AddMenuItem("Cài đặt tài khoản", ref yPos);
+            var btnCaiDat = AddMenuItem($"⚙️ {LanguageHelper.GetString("AccountSettings")}", ref yPos);
             btnCaiDat.Click += (s, e) => {
                 OnProfileTabClick?.Invoke(this, 0); // Tab index 0
                 OnCaiDatClick?.Invoke(s, e);
             };
 
-            var btnChinhSua = AddMenuItem("Chỉnh sửa hồ sơ", ref yPos);
+            var btnChinhSua = AddMenuItem($"✏️ {LanguageHelper.GetString("EditProfile")}", ref yPos);
             btnChinhSua.Click += (s, e) => {
                 OnProfileTabClick?.Invoke(this, 1); // Tab index 1
                 OnChinhSuaClick?.Invoke(s, e);
             };
 
-            var btnLichSu = AddMenuItem("Lịch sử mua hàng", ref yPos);
+            var btnLichSu = AddMenuItem($"📜 {LanguageHelper.GetString("PurchaseHistory")}", ref yPos);
             btnLichSu.Click += (s, e) => {
                 OnProfileTabClick?.Invoke(this, 2); // Tab index 2
                 OnLichSuMuaHangClick?.Invoke(s, e);
@@ -141,9 +165,14 @@ namespace WinFormsApp1.View.User.Components
             AddSeparator(ref yPos);
             
             // Logout - ensure event invoked when button clicked even if subscribers added after construction
-            var btnLogout = AddMenuItem("Đăng xuất", ref yPos);
+            var btnLogout = AddMenuItem($"🚪 {LanguageHelper.GetString("Logout")}", ref yPos);
             btnLogout.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            btnLogout.ForeColor = Color.FromArgb(220, 53, 69);
             btnLogout.Click += (s, e) => OnDangXuatClick?.Invoke(s, e);
+
+            // Calculate total height
+            int totalHeight = 90 + yPos + 10; // header + menu items + padding
+            this.Height = totalHeight;
 
             this.Controls.Add(menuPanel);
             this.Controls.Add(headerPanel);
@@ -213,15 +242,16 @@ namespace WinFormsApp1.View.User.Components
             var btn = new Button
             {
                 Text = text,
-                Width = menuPanel.Width,
-                Height = 50,
+                Dock = DockStyle.None,
+                Width = this.Width,
+                Height = 45,
                 Location = new Point(0, yPos),
                 BackColor = Color.White,
                 ForeColor = ColorPalette.TextPrimary,
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font("Segoe UI", 10),
                 TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(20, 0, 0, 0),
+                Padding = new Padding(15, 0, 0, 0),
                 Cursor = Cursors.Hand
             };
 
@@ -229,7 +259,7 @@ namespace WinFormsApp1.View.User.Components
             btn.FlatAppearance.MouseOverBackColor = ColorPalette.Background;
 
             menuPanel.Controls.Add(btn);
-            yPos += 50;
+            yPos += 45;
 
             return btn;
         }
@@ -238,22 +268,22 @@ namespace WinFormsApp1.View.User.Components
         {
             var separator = new Panel
             {
-                Width = menuPanel.Width - 20,
+                Width = this.Width - 30,
                 Height = 1,
-                Location = new Point(10, yPos + 5),
+                Location = new Point(15, yPos + 5),
                 BackColor = ColorPalette.Border
             };
 
             menuPanel.Controls.Add(separator);
-            yPos += 10;
+            yPos += 12;
         }
 
         private void AddLanguageSelector(ref int yPos)
         {
             var langPanel = new Panel
             {
-                Width = menuPanel.Width,
-                Height = 50,
+                Width = this.Width,
+                Height = 45,
                 Location = new Point(0, yPos),
                 BackColor = Color.White,
                 Cursor = Cursors.Hand
@@ -261,17 +291,17 @@ namespace WinFormsApp1.View.User.Components
 
             var lblNgonNgu = new Label
             {
-                Text = "Ngôn ngữ",
-                Location = new Point(20, 15),
+                Text = $"🌐 {LanguageHelper.GetString("Language")}",
+                Location = new Point(15, 12),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 10),
                 ForeColor = ColorPalette.TextPrimary
             };
 
-            var lblTiengViet = new Label
+            lblCurrentLanguage = new Label
             {
-                Text = "🌐 Tiếng Việt",
-                Location = new Point(200, 15),
+                Text = $"{LanguageHelper.CurrentLanguageName} ▼",
+                Location = new Point(165, 12),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 9),
                 ForeColor = ColorPalette.TextSecondary,
@@ -279,15 +309,28 @@ namespace WinFormsApp1.View.User.Components
             };
 
             langPanel.Controls.Add(lblNgonNgu);
-            langPanel.Controls.Add(lblTiengViet);
+            langPanel.Controls.Add(lblCurrentLanguage);
 
+            // Hover effects
             langPanel.MouseEnter += (s, e) => langPanel.BackColor = ColorPalette.Background;
             langPanel.MouseLeave += (s, e) => langPanel.BackColor = Color.White;
             lblNgonNgu.MouseEnter += (s, e) => langPanel.BackColor = ColorPalette.Background;
-            lblTiengViet.MouseEnter += (s, e) => langPanel.BackColor = ColorPalette.Background;
+            lblCurrentLanguage.MouseEnter += (s, e) => langPanel.BackColor = ColorPalette.Background;
+
+            // Click to open language selector dialog
+            void OpenLanguageDialog(object? s, EventArgs e)
+            {
+                HideDropdown();
+                var dialog = new LanguageSelectorDialog();
+                dialog.ShowDialog(this.FindForm());
+            }
+
+            langPanel.Click += OpenLanguageDialog;
+            lblNgonNgu.Click += OpenLanguageDialog;
+            lblCurrentLanguage.Click += OpenLanguageDialog;
 
             menuPanel.Controls.Add(langPanel);
-            yPos += 50;
+            yPos += 45;
         }
 
         public void LoadUserInfo()
@@ -324,7 +367,7 @@ namespace WinFormsApp1.View.User.Components
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                 g.Clear(Color.FromArgb(64, 64, 64));
 
-                using (Font font = new Font("Segoe UI", 20, FontStyle.Bold))
+                using (Font font = new Font("Segoe UI", 18, FontStyle.Bold))
                 {
                     SizeF textSize = g.MeasureString(initials, font);
                     float x = (bmp.Width - textSize.Width) / 2;
@@ -362,6 +405,15 @@ namespace WinFormsApp1.View.User.Components
             // Start fade out animation
             targetOpacity = 0;
             fadeTimer.Start();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                LanguageHelper.LanguageChanged -= OnLanguageChanged;
+            }
+            base.Dispose(disposing);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace WinFormsApp1.View.User
+namespace WinFormsApp1.View.Admin
 {
-    partial class UserProfile
+    partial class AdminProfile
     {
         /// <summary> 
         /// Required designer variable.
@@ -32,7 +32,6 @@
             this.contentPanel = new System.Windows.Forms.Panel();
             this.tabPanel = new System.Windows.Forms.Panel();
             this.tabUnderline = new System.Windows.Forms.Panel();
-            this.btnLichSu = new System.Windows.Forms.Button();
             this.btnChinhSua = new System.Windows.Forms.Button();
             this.btnCaiDat = new System.Windows.Forms.Button();
             this.titleLabel = new System.Windows.Forms.Label();
@@ -70,7 +69,6 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabPanel.BackColor = System.Drawing.Color.White;
             this.tabPanel.Controls.Add(this.tabUnderline);
-            this.tabPanel.Controls.Add(this.btnLichSu);
             this.tabPanel.Controls.Add(this.btnChinhSua);
             this.tabPanel.Controls.Add(this.btnCaiDat);
             this.tabPanel.Location = new System.Drawing.Point(0, 80);
@@ -80,26 +78,11 @@
             // 
             // tabUnderline
             // 
-            this.tabUnderline.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(88)))), ((int)(((byte)(56)))), ((int)(((byte)(255)))));
+            this.tabUnderline.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(55)))), ((int)(((byte)(72)))));
             this.tabUnderline.Location = new System.Drawing.Point(0, 73);
             this.tabUnderline.Name = "tabUnderline";
             this.tabUnderline.Size = new System.Drawing.Size(200, 4);
             this.tabUnderline.TabIndex = 3;
-            // 
-            // btnLichSu
-            // 
-            this.btnLichSu.BackColor = System.Drawing.Color.White;
-            this.btnLichSu.FlatAppearance.BorderSize = 0;
-            this.btnLichSu.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLichSu.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.btnLichSu.ForeColor = System.Drawing.Color.Gray;
-            this.btnLichSu.Location = new System.Drawing.Point(400, 0);
-            this.btnLichSu.Name = "btnLichSu";
-            this.btnLichSu.Size = new System.Drawing.Size(200, 73);
-            this.btnLichSu.TabIndex = 2;
-            this.btnLichSu.Text = "Lịch sử mua hàng";
-            this.btnLichSu.UseVisualStyleBackColor = false;
-            this.btnLichSu.Click += new System.EventHandler(this.btnLichSu_Click);
             // 
             // btnChinhSua
             // 
@@ -136,19 +119,19 @@
             this.titleLabel.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
             this.titleLabel.Location = new System.Drawing.Point(0, 15);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(208, 54);
+            this.titleLabel.Size = new System.Drawing.Size(350, 54);
             this.titleLabel.TabIndex = 0;
-            this.titleLabel.Text = "Tài khoản";
+            this.titleLabel.Text = "Tài khoản Admin";
             // 
-            // UserProfile
+            // AdminProfile
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
             this.Controls.Add(this.containerPanel);
-            this.Name = "UserProfile";
+            this.Name = "AdminProfile";
             this.Size = new System.Drawing.Size(1476, 801);
-            this.Resize += new System.EventHandler(this.UserProfile_Resize);
+            this.Resize += new System.EventHandler(this.AdminProfile_Resize);
             this.containerPanel.ResumeLayout(false);
             this.containerPanel.PerformLayout();
             this.tabPanel.ResumeLayout(false);
@@ -162,7 +145,6 @@
         private System.Windows.Forms.Panel tabPanel;
         private System.Windows.Forms.Button btnCaiDat;
         private System.Windows.Forms.Button btnChinhSua;
-        private System.Windows.Forms.Button btnLichSu;
         private System.Windows.Forms.Panel tabUnderline;
         private System.Windows.Forms.Panel contentPanel;
     }

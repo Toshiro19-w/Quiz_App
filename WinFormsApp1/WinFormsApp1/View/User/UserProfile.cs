@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.View.User.Controls.ProfileTabs;
 
 namespace WinFormsApp1.View.User
@@ -9,37 +10,87 @@ namespace WinFormsApp1.View.User
     public partial class UserProfile : UserControl
     {
         private UserControl? currentTabControl;
+        private int currentTabIndex = 0;
+        private const int TAB_COUNT = 3;
 
         public UserProfile()
         {
             InitializeComponent();
-            CenterContainer();
+            ApplyLocalization();
             LoadTab(new AccountSettingsTab());
+            SetActiveTab(btnCaiDat, 0);
+            
+            // Subscribe to language change event
+            LanguageHelper.LanguageChanged += OnLanguageChanged;
         }
 
         // Constructor với tab index
         public UserProfile(int tabIndex)
         {
             InitializeComponent();
-            CenterContainer();
+            ApplyLocalization();
             SwitchToTab(tabIndex);
+            
+            // Subscribe to language change event
+            LanguageHelper.LanguageChanged += OnLanguageChanged;
         }
 
-        private void CenterContainer()
+        private void OnLanguageChanged(object? sender, EventArgs e)
         {
-            // Center containerPanel horizontally
-            int x = (this.Width - containerPanel.Width) / 2;
-            containerPanel.Location = new Point(x, 75);
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            btnCaiDat.Text = LanguageHelper.GetString("Settings");
+            btnChinhSua.Text = LanguageHelper.GetString("EditProfile");
+            btnLichSu.Text = LanguageHelper.GetString("PurchaseHistory");
         }
 
         private void UserProfile_Resize(object sender, EventArgs e)
         {
-            CenterContainer();
+            UpdateTabLayout();
+        }
+
+        private void UpdateTabLayout()
+        {
+            if (tabPanel == null || tabPanel.Width <= 0) return;
+
+            // Tính toán chiều rộng mỗi tab button
+            int availableWidth = tabPanel.Width;
+            int tabWidth = Math.Max(150, availableWidth / TAB_COUNT); // Minimum 150px
+
+            // Giới hạn tối đa để không quá rộng
+            tabWidth = Math.Min(tabWidth, 250);
+
+            // Update kích thước và vị trí các tab buttons
+            btnCaiDat.Size = new Size(tabWidth, 73);
+            btnCaiDat.Location = new Point(0, 0);
+
+            btnChinhSua.Size = new Size(tabWidth, 73);
+            btnChinhSua.Location = new Point(tabWidth, 0);
+
+            btnLichSu.Size = new Size(tabWidth, 73);
+            btnLichSu.Location = new Point(tabWidth * 2, 0);
+
+            // Update underline
+            UpdateUnderlinePosition();
+        }
+
+        private void UpdateUnderlinePosition()
+        {
+            if (tabUnderline == null) return;
+
+            int tabWidth = btnCaiDat.Width;
+            tabUnderline.Size = new Size(tabWidth, 4);
+            tabUnderline.Location = new Point(tabWidth * currentTabIndex, 73);
         }
 
         // Method public để switch tab từ bên ngoài
         public void SwitchToTab(int tabIndex)
         {
+            currentTabIndex = tabIndex;
+
             switch (tabIndex)
             {
                 case 0:
@@ -47,11 +98,11 @@ namespace WinFormsApp1.View.User
                     LoadTab(new AccountSettingsTab());
                     break;
                 case 1:
-                    SetActiveTab(btnChinhSua, 270);
+                    SetActiveTab(btnChinhSua, 1);
                     LoadTab(new EditProfileTab());
                     break;
                 case 2:
-                    SetActiveTab(btnLichSu, 540);
+                    SetActiveTab(btnLichSu, 2);
                     LoadTab(new PurchaseHistoryTab());
                     break;
                 default:
@@ -76,22 +127,24 @@ namespace WinFormsApp1.View.User
             SwitchToTab(2);
         }
 
-        private void SetActiveTab(Button activeButton, int underlineX)
+        private void SetActiveTab(Button activeButton, int tabIndex)
         {
+            currentTabIndex = tabIndex;
+
             // Reset all buttons to inactive state
-            btnCaiDat.Font = new Font("Segoe UI", 15F);
+            btnCaiDat.Font = new Font("Segoe UI", 12F);
             btnCaiDat.ForeColor = Color.Gray;
-            btnChinhSua.Font = new Font("Segoe UI", 15F);
+            btnChinhSua.Font = new Font("Segoe UI", 12F);
             btnChinhSua.ForeColor = Color.Gray;
-            btnLichSu.Font = new Font("Segoe UI", 15F);
+            btnLichSu.Font = new Font("Segoe UI", 12F);
             btnLichSu.ForeColor = Color.Gray;
 
             // Set active button
-            activeButton.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+            activeButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             activeButton.ForeColor = ColorPalette.TextPrimary;
 
-            // Move underline
-            tabUnderline.Location = new Point(underlineX, 83);
+            // Update underline position
+            UpdateUnderlinePosition();
         }
 
         private void LoadTab(UserControl tabControl)
@@ -107,6 +160,29 @@ namespace WinFormsApp1.View.User
             currentTabControl = tabControl;
             currentTabControl.Dock = DockStyle.Fill;
             contentPanel.Controls.Add(currentTabControl);
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            UpdateTabLayout();
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            UpdateTabLayout();
+        }
+
+        private void UnsubscribeLanguageEvent()
+        {
+            LanguageHelper.LanguageChanged -= OnLanguageChanged;
+        }
+
+        // Call this method when the control is being disposed
+        public void Cleanup()
+        {
+            UnsubscribeLanguageEvent();
         }
     }
 }

@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
 
-namespace WinFormsApp1.View.User.Controls.ProfileTabs
+namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 {
-    public partial class AccountSettingsTab : UserControl
+    public partial class AdminAccountSettingsTab : UserControl
     {
         private Panel cardPanel;
         private Panel emailContainer;
@@ -18,7 +18,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
         private TextBox txtPassword;
         private Button btnEditPassword;
 
-        public AccountSettingsTab()
+        public AdminAccountSettingsTab()
         {
             InitializeComponent();
             LoadAccountData();
@@ -49,7 +49,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             // Section title
             var lblSectionTitle = new Label
             {
-                Text = "🔐 Bảo mật tài khoản",
+                Text = "🔐 Bảo mật tài khoản Admin",
                 Location = new Point(40, yPos),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 14, FontStyle.Bold),
@@ -57,6 +57,18 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             };
             cardPanel.Controls.Add(lblSectionTitle);
             yPos += 50;
+
+            // Role info
+            var lblRole = new Label
+            {
+                Text = $"Vai trò: {AuthHelper.GetRoleName()}",
+                Location = new Point(40, yPos),
+                AutoSize = true,
+                Font = new Font("Segoe UI", 10),
+                ForeColor = Color.FromArgb(88, 56, 255)
+            };
+            cardPanel.Controls.Add(lblRole);
+            yPos += 40;
 
             // Email section
             lblEmail = new Label
@@ -97,7 +109,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                 Text = "Thay đổi",
                 Size = new Size(100, 35),
                 FlatStyle = FlatStyle.Flat,
-                BackColor = Color.FromArgb(88, 56, 255),
+                BackColor = Color.FromArgb(45, 55, 72),
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 Cursor = Cursors.Hand
@@ -148,7 +160,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             btnEditPassword = new Button
             {
                 Text = "Đổi mật khẩu",
-                Size = new Size(120, 35),  // Increased width
+                Size = new Size(120, 35),
                 FlatStyle = FlatStyle.Flat,
                 BackColor = Color.FromArgb(108, 117, 125),
                 ForeColor = Color.White,
@@ -165,7 +177,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             // Info note
             var lblNote = new Label
             {
-                Text = "💡 Để bảo mật tài khoản, bạn nên sử dụng mật khẩu mạnh và thay đổi định kỳ.",
+                Text = "💡 Với vai trò quản trị viên, bạn nên sử dụng mật khẩu mạnh và bảo mật cao.",
                 Location = new Point(40, yPos),
                 Font = new Font("Segoe UI", 9),
                 ForeColor = Color.FromArgb(108, 117, 125),
@@ -177,22 +189,22 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             this.Controls.Add(cardPanel);
 
             // Handle resize
-            this.Resize += AccountSettingsTab_Resize;
-            this.Load += (s, e) => AccountSettingsTab_Resize(s, e);
+            this.Resize += AdminAccountSettingsTab_Resize;
+            this.Load += (s, e) => AdminAccountSettingsTab_Resize(s, e);
         }
 
-        private void AccountSettingsTab_Resize(object? sender, EventArgs e)
+        private void AdminAccountSettingsTab_Resize(object? sender, EventArgs e)
         {
             cardPanel.Width = this.Width - 60;
-            
+
             // Update containers
             emailContainer.Width = cardPanel.Width - 80;
             passwordContainer.Width = cardPanel.Width - 80;
-            
+
             // Update textboxes
             txtEmail.Width = emailContainer.Width - 140;
             txtPassword.Width = passwordContainer.Width - 160;
-            
+
             // Position buttons at right
             btnEditEmail.Location = new Point(emailContainer.Width - btnEditEmail.Width - 10, 10);
             btnEditPassword.Location = new Point(passwordContainer.Width - btnEditPassword.Width - 10, 10);
@@ -208,7 +220,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
 
         private void btnEditEmail_Click(object? sender, EventArgs e)
         {
-            using (var dialog = new ChangeEmailDialog())
+            using (var dialog = new AdminChangeEmailDialog())
             {
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
@@ -220,7 +232,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
 
         private void btnEditPassword_Click(object? sender, EventArgs e)
         {
-            using (var dialog = new ChangePasswordDialog())
+            using (var dialog = new AdminChangePasswordDialog())
             {
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
@@ -230,22 +242,22 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
         }
     }
 
-    // Dialog đổi email
-    public class ChangeEmailDialog : Form
+    // Dialog đổi email cho Admin
+    public class AdminChangeEmailDialog : Form
     {
         private TextBox txtNewEmail;
         private TextBox txtPassword;
         private Button btnSave;
         private Button btnCancel;
 
-        public ChangeEmailDialog()
+        public AdminChangeEmailDialog()
         {
             InitializeComponent();
         }
 
         private void InitializeComponent()
         {
-            this.Text = "Thay đổi Email";
+            this.Text = "Thay đổi Email - Admin";
             this.Size = new Size(480, 320);
             this.StartPosition = FormStartPosition.CenterParent;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -315,7 +327,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                 Text = "Lưu thay đổi",
                 Location = new Point(335, 225),
                 Size = new Size(95, 40),
-                BackColor = Color.FromArgb(88, 56, 255),
+                BackColor = Color.FromArgb(45, 55, 72),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font("Segoe UI", 10, FontStyle.Bold)
@@ -366,8 +378,8 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
         }
     }
 
-    // Dialog đổi mật khẩu
-    public class ChangePasswordDialog : Form
+    // Dialog đổi mật khẩu cho Admin
+    public class AdminChangePasswordDialog : Form
     {
         private TextBox txtCurrentPassword;
         private TextBox txtNewPassword;
@@ -375,14 +387,14 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
         private Button btnSave;
         private Button btnCancel;
 
-        public ChangePasswordDialog()
+        public AdminChangePasswordDialog()
         {
             InitializeComponent();
         }
 
         private void InitializeComponent()
         {
-            this.Text = "Thay đổi Mật khẩu";
+            this.Text = "Thay đổi Mật khẩu - Admin";
             this.Size = new Size(480, 400);
             this.StartPosition = FormStartPosition.CenterParent;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -479,7 +491,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                 Text = "Lưu thay đổi",
                 Location = new Point(335, yPos),
                 Size = new Size(95, 40),
-                BackColor = Color.FromArgb(88, 56, 255),
+                BackColor = Color.FromArgb(45, 55, 72),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font("Segoe UI", 10, FontStyle.Bold)
@@ -504,6 +516,12 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             if (txtNewPassword.Text != txtConfirmPassword.Text)
             {
                 MessageBox.Show("Mật khẩu mới không khớp!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (txtNewPassword.Text.Length < 8)
+            {
+                MessageBox.Show("Mật khẩu admin phải có ít nhất 8 ký tự!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
