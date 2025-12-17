@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using System.Runtime.InteropServices;
+using WinFormsApp1.Localization;
 
 namespace WinFormsApp1
 {
@@ -33,6 +34,9 @@ namespace WinFormsApp1
             Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            // Initialize language/localization system
+            LanguageHelper.Initialize();
 
 			// To customize application configuration such as set high DPI settings or default font,
 			// see https://aka.ms/applicationconfiguration.
