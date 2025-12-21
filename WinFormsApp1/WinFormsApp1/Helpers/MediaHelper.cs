@@ -7,6 +7,7 @@ namespace WinFormsApp1.Helpers
 	public static class MediaHelper
 	{
 		private const long MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
+		private const long MAX_PDF_SIZE = 50 * 1024 * 1024; // 50MB
 
 		// ============================================================
 		// GET PROJECT ROOT (3 cấp lên từ bin/Debug/net8.0-windows)
@@ -28,6 +29,7 @@ namespace WinFormsApp1.Helpers
 			string library = Path.Combine(root, "Library");
 			string image = Path.Combine(library, "Image");
 			string video = Path.Combine(library, "Video");
+			string pdf = Path.Combine(library, "Pdf");
 
 			// Tự động tạo các thư mục nếu thiếu
 			if (!Directory.Exists(library))
@@ -38,6 +40,9 @@ namespace WinFormsApp1.Helpers
 
 			if (!Directory.Exists(video))
 				Directory.CreateDirectory(video);
+
+			if (!Directory.Exists(pdf))
+				Directory.CreateDirectory(pdf);
 		}
 
 		// ============================================================
@@ -111,6 +116,57 @@ namespace WinFormsApp1.Helpers
 			catch (Exception ex)
 			{
 				MessageBox.Show($"Lỗi copy hình ảnh: {ex.Message}", "Lỗi",
+					MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return null;
+			}
+		}
+
+		// ============================================================
+		// COPY PDF
+		// ============================================================
+		public static string? CopyPdfToLibrary(string sourcePath)
+		{
+			try
+			{
+				var fileInfo = new FileInfo(sourcePath);
+
+				// Kiểm tra kích thước
+				if (fileInfo.Length > MAX_PDF_SIZE)
+				{
+					MessageBox.Show(
+						$"File PDF quá lớn! Tối đa 50MB, file: {fileInfo.Length / (1024 * 1024)}MB",
+						"Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+					return null;
+				}
+
+				// Kiểm tra extension
+				if (!fileInfo.Extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+				{
+					MessageBox.Show("Chỉ chấp nhận file PDF!", "Lỗi",
+						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return null;
+				}
+
+				// Đảm bảo đủ thư mục
+				EnsureLibraryStructure();
+
+				string root = GetProjectRoot();
+				string pdfDir = Path.Combine(root, "Library", "Pdf");
+
+				// Tạo file name
+				string fileName = $"{Guid.NewGuid()}.pdf";
+				string destPath = Path.Combine(pdfDir, fileName);
+
+				// Copy
+				File.Copy(sourcePath, destPath, true);
+
+				// Trả về path lưu DB (relative)
+				return Path.Combine("Library", "Pdf", fileName);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Lỗi copy PDF: {ex.Message}", "Lỗi",
 					MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return null;
 			}
