@@ -31,6 +31,10 @@
 			txtBody = new TextBox();
 			label1 = new Label();
 			panel1 = new Panel();
+			btnBrowsePdf = new Button();
+			txtPdfPath = new TextBox();
+			lblPdfPath = new Label();
+			btnPreviewPdf = new Button();
 			SuspendLayout();
 			// 
 			// cboContentType
@@ -98,13 +102,64 @@
 			panel1.Dock = DockStyle.Left;
 			panel1.Location = new Point(0, 0);
 			panel1.Name = "panel1";
-			panel1.Size = new Size(10, 400);
+			panel1.Size = new Size(10, 500);
 			panel1.TabIndex = 6;
+			// 
+			// btnBrowsePdf
+			// 
+			btnBrowsePdf.BackColor = Color.FromArgb(52, 144, 220);
+			btnBrowsePdf.FlatAppearance.BorderSize = 0;
+			btnBrowsePdf.FlatStyle = FlatStyle.Flat;
+			btnBrowsePdf.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+			btnBrowsePdf.ForeColor = Color.White;
+			btnBrowsePdf.Location = new Point(54, 450);
+			btnBrowsePdf.Name = "btnBrowsePdf";
+			btnBrowsePdf.Size = new Size(150, 40);
+			btnBrowsePdf.TabIndex = 7;
+			btnBrowsePdf.Text = "📄 Chọn PDF";
+			btnBrowsePdf.UseVisualStyleBackColor = false;
+			// 
+			// txtPdfPath
+			// 
+			txtPdfPath.Font = new Font("Segoe UI", 10F);
+			txtPdfPath.Location = new Point(220, 455);
+			txtPdfPath.Name = "txtPdfPath";
+			txtPdfPath.ReadOnly = true;
+			txtPdfPath.Size = new Size(1011, 34);
+			txtPdfPath.TabIndex = 8;
+			// 
+			// lblPdfPath
+			// 
+			lblPdfPath.AutoSize = true;
+			lblPdfPath.Font = new Font("Segoe UI", 12F);
+			lblPdfPath.Location = new Point(54, 390);
+			lblPdfPath.Name = "lblPdfPath";
+			lblPdfPath.Size = new Size(312, 32);
+			lblPdfPath.TabIndex = 9;
+			lblPdfPath.Text = "Tài liệu PDF (Không bắt buộc):";
+			// 
+			// btnPreviewPdf
+			// 
+			btnPreviewPdf.BackColor = Color.FromArgb(40, 167, 69);
+			btnPreviewPdf.FlatAppearance.BorderSize = 0;
+			btnPreviewPdf.FlatStyle = FlatStyle.Flat;
+			btnPreviewPdf.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+			btnPreviewPdf.ForeColor = Color.White;
+			btnPreviewPdf.Location = new Point(1247, 450);
+			btnPreviewPdf.Name = "btnPreviewPdf";
+			btnPreviewPdf.Size = new Size(150, 40);
+			btnPreviewPdf.TabIndex = 10;
+			btnPreviewPdf.Text = "👁️ Xem trước";
+			btnPreviewPdf.UseVisualStyleBackColor = false;
 			// 
 			// ContentTheoryControl
 			// 
 			AutoScaleMode = AutoScaleMode.None;
 			BackColor = Color.White;
+			Controls.Add(btnPreviewPdf);
+			Controls.Add(lblPdfPath);
+			Controls.Add(txtPdfPath);
+			Controls.Add(btnBrowsePdf);
 			Controls.Add(panel1);
 			Controls.Add(label1);
 			Controls.Add(txtBody);
@@ -113,7 +168,7 @@
 			Controls.Add(lblTitle);
 			Controls.Add(cboContentType);
 			Name = "ContentTheoryControl";
-			Size = new Size(1450, 400);
+			Size = new Size(1450, 500);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -127,5 +182,9 @@
         private System.Windows.Forms.TextBox txtBody;
 		private Label label1;
 		private Panel panel1;
+		private Button btnBrowsePdf;
+		private TextBox txtPdfPath;
+		private Label lblPdfPath;
+		private Button btnPreviewPdf;
 	}
 }
