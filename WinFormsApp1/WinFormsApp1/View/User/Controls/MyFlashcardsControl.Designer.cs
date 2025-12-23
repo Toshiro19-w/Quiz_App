@@ -17,12 +17,16 @@
 
         private void InitializeComponent()
         {
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             pnlHeader = new Panel();
             lblTitle = new Label();
             pnlActions = new Panel();
+            btnMyCourse = new Button();
             btnCreateFlashcard = new Button();
             btnBack = new Button();
             pnlFilters = new Panel();
+            cbbSearch = new Guna.UI2.WinForms.Guna2ComboBox();
             lblShowLabel = new Label();
             cmbPageSize = new ComboBox();
             lblEntriesLabel = new Label();
@@ -65,7 +69,7 @@
             pnlHeader.Margin = new Padding(4, 5, 4, 5);
             pnlHeader.Name = "pnlHeader";
             pnlHeader.Padding = new Padding(43, 33, 43, 33);
-            pnlHeader.Size = new Size(1714, 167);
+            pnlHeader.Size = new Size(1746, 100);
             pnlHeader.TabIndex = 0;
             pnlHeader.Paint += pnlHeader_Paint;
             // 
@@ -73,7 +77,7 @@
             // 
             lblTitle.AutoSize = true;
             lblTitle.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            lblTitle.Location = new Point(43, 50);
+            lblTitle.Location = new Point(43, 23);
             lblTitle.Margin = new Padding(4, 0, 4, 0);
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new Size(400, 54);
@@ -82,14 +86,32 @@
             // 
             // pnlActions
             // 
+            pnlActions.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pnlActions.Controls.Add(btnMyCourse);
             pnlActions.Controls.Add(btnCreateFlashcard);
             pnlActions.Controls.Add(btnBack);
-            pnlActions.Dock = DockStyle.Right;
-            pnlActions.Location = new Point(1214, 33);
+            pnlActions.Location = new Point(1254, 5);
             pnlActions.Margin = new Padding(4, 5, 4, 5);
             pnlActions.Name = "pnlActions";
-            pnlActions.Size = new Size(457, 101);
+            pnlActions.Size = new Size(445, 85);
             pnlActions.TabIndex = 1;
+            // 
+            // btnMyCourse
+            // 
+            btnMyCourse.BackColor = Color.FromArgb(40, 167, 69);
+            btnMyCourse.Cursor = Cursors.Hand;
+            btnMyCourse.FlatAppearance.BorderSize = 0;
+            btnMyCourse.FlatStyle = FlatStyle.Flat;
+            btnMyCourse.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnMyCourse.ForeColor = Color.White;
+            btnMyCourse.Location = new Point(238, 10);
+            btnMyCourse.Margin = new Padding(4, 5, 4, 5);
+            btnMyCourse.Name = "btnMyCourse";
+            btnMyCourse.Size = new Size(200, 67);
+            btnMyCourse.TabIndex = 2;
+            btnMyCourse.Text = "Khóa học của tôi";
+            btnMyCourse.UseVisualStyleBackColor = false;
+            btnMyCourse.Click += btnMyCourse_Click;
             // 
             // btnCreateFlashcard
             // 
@@ -99,7 +121,7 @@
             btnCreateFlashcard.FlatStyle = FlatStyle.Flat;
             btnCreateFlashcard.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnCreateFlashcard.ForeColor = Color.White;
-            btnCreateFlashcard.Location = new Point(14, 17);
+            btnCreateFlashcard.Location = new Point(14, 9);
             btnCreateFlashcard.Margin = new Padding(4, 5, 4, 5);
             btnCreateFlashcard.Name = "btnCreateFlashcard";
             btnCreateFlashcard.Size = new Size(214, 67);
@@ -123,29 +145,51 @@
             btnBack.TabIndex = 1;
             btnBack.Text = "⬅️ Quay lại";
             btnBack.UseVisualStyleBackColor = false;
+            btnBack.Visible = false;
             btnBack.Click += BtnBack_Click;
             // 
             // pnlFilters
             // 
             pnlFilters.BackColor = Color.White;
+            pnlFilters.Controls.Add(cbbSearch);
             pnlFilters.Controls.Add(lblShowLabel);
             pnlFilters.Controls.Add(cmbPageSize);
             pnlFilters.Controls.Add(lblEntriesLabel);
             pnlFilters.Controls.Add(lblSearchLabel);
             pnlFilters.Controls.Add(txtSearch);
             pnlFilters.Dock = DockStyle.Top;
-            pnlFilters.Location = new Point(0, 167);
+            pnlFilters.Location = new Point(0, 100);
             pnlFilters.Margin = new Padding(4, 5, 4, 5);
             pnlFilters.Name = "pnlFilters";
             pnlFilters.Padding = new Padding(43, 25, 43, 25);
-            pnlFilters.Size = new Size(1714, 100);
+            pnlFilters.Size = new Size(1746, 80);
             pnlFilters.TabIndex = 1;
+            // 
+            // cbbSearch
+            // 
+            cbbSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cbbSearch.BackColor = Color.Transparent;
+            cbbSearch.CustomizableEdges = customizableEdges1;
+            cbbSearch.DrawMode = DrawMode.OwnerDrawFixed;
+            cbbSearch.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbbSearch.FocusedColor = Color.FromArgb(94, 148, 255);
+            cbbSearch.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            cbbSearch.Font = new Font("Segoe UI", 10F);
+            cbbSearch.ForeColor = Color.FromArgb(68, 88, 112);
+            cbbSearch.ItemHeight = 30;
+            cbbSearch.Items.AddRange(new object[] { "Tất cả", "Tiêu đề", "Số thẻ", "Hiển thị", "Ngôn ngữ", "Tạo lúc" });
+            cbbSearch.Location = new Point(1547, 25);
+            cbbSearch.Name = "cbbSearch";
+            cbbSearch.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            cbbSearch.Size = new Size(150, 36);
+            cbbSearch.TabIndex = 5;
+            cbbSearch.SelectedIndexChanged += CbbSearch_SelectedIndexChanged;
             // 
             // lblShowLabel
             // 
             lblShowLabel.AutoSize = true;
             lblShowLabel.Font = new Font("Segoe UI", 10F);
-            lblShowLabel.Location = new Point(43, 37);
+            lblShowLabel.Location = new Point(46, 30);
             lblShowLabel.Margin = new Padding(4, 0, 4, 0);
             lblShowLabel.Name = "lblShowLabel";
             lblShowLabel.Size = new Size(80, 28);
@@ -158,7 +202,7 @@
             cmbPageSize.Font = new Font("Segoe UI", 10F);
             cmbPageSize.FormattingEnabled = true;
             cmbPageSize.Items.AddRange(new object[] { "10", "25", "50", "100" });
-            cmbPageSize.Location = new Point(143, 30);
+            cmbPageSize.Location = new Point(146, 26);
             cmbPageSize.Margin = new Padding(4, 5, 4, 5);
             cmbPageSize.Name = "cmbPageSize";
             cmbPageSize.Size = new Size(98, 36);
@@ -169,7 +213,7 @@
             // 
             lblEntriesLabel.AutoSize = true;
             lblEntriesLabel.Font = new Font("Segoe UI", 10F);
-            lblEntriesLabel.Location = new Point(251, 37);
+            lblEntriesLabel.Location = new Point(254, 30);
             lblEntriesLabel.Margin = new Padding(4, 0, 4, 0);
             lblEntriesLabel.Name = "lblEntriesLabel";
             lblEntriesLabel.Size = new Size(72, 28);
@@ -178,9 +222,10 @@
             // 
             // lblSearchLabel
             // 
+            lblSearchLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblSearchLabel.AutoSize = true;
             lblSearchLabel.Font = new Font("Segoe UI", 10F);
-            lblSearchLabel.Location = new Point(1071, 37);
+            lblSearchLabel.Location = new Point(1066, 29);
             lblSearchLabel.Margin = new Padding(4, 0, 4, 0);
             lblSearchLabel.Name = "lblSearchLabel";
             lblSearchLabel.Size = new Size(95, 28);
@@ -189,12 +234,13 @@
             // 
             // txtSearch
             // 
+            txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             txtSearch.Font = new Font("Segoe UI", 10F);
-            txtSearch.Location = new Point(1193, 30);
+            txtSearch.Location = new Point(1169, 26);
             txtSearch.Margin = new Padding(4, 5, 4, 5);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "Nhập tìm kiếm...";
-            txtSearch.Size = new Size(477, 34);
+            txtSearch.Size = new Size(371, 34);
             txtSearch.TabIndex = 4;
             txtSearch.TextChanged += TxtSearch_TextChanged;
             // 
@@ -204,11 +250,11 @@
             pnlTable.Controls.Add(flowFlashcards);
             pnlTable.Controls.Add(pnlTableHeader);
             pnlTable.Dock = DockStyle.Fill;
-            pnlTable.Location = new Point(0, 267);
+            pnlTable.Location = new Point(0, 180);
             pnlTable.Margin = new Padding(4, 5, 4, 5);
             pnlTable.Name = "pnlTable";
             pnlTable.Padding = new Padding(43, 17, 43, 17);
-            pnlTable.Size = new Size(1714, 733);
+            pnlTable.Size = new Size(1746, 820);
             pnlTable.TabIndex = 2;
             // 
             // flowFlashcards
@@ -219,7 +265,7 @@
             flowFlashcards.Location = new Point(43, 99);
             flowFlashcards.Margin = new Padding(4, 5, 4, 5);
             flowFlashcards.Name = "flowFlashcards";
-            flowFlashcards.Size = new Size(1628, 617);
+            flowFlashcards.Size = new Size(1660, 704);
             flowFlashcards.TabIndex = 1;
             flowFlashcards.WrapContents = false;
             flowFlashcards.Paint += flowFlashcards_Paint;
@@ -239,7 +285,7 @@
             pnlTableHeader.Location = new Point(43, 17);
             pnlTableHeader.Margin = new Padding(4, 5, 4, 5);
             pnlTableHeader.Name = "pnlTableHeader";
-            pnlTableHeader.Size = new Size(1628, 82);
+            pnlTableHeader.Size = new Size(1660, 82);
             pnlTableHeader.TabIndex = 0;
             // 
             // lblHeaderId
@@ -290,7 +336,7 @@
             // 
             lblHeaderLanguage.AutoSize = true;
             lblHeaderLanguage.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblHeaderLanguage.Location = new Point(899, 27);
+            lblHeaderLanguage.Location = new Point(919, 27);
             lblHeaderLanguage.Margin = new Padding(4, 0, 4, 0);
             lblHeaderLanguage.Name = "lblHeaderLanguage";
             lblHeaderLanguage.Size = new Size(107, 28);
@@ -301,7 +347,7 @@
             // 
             lblHeaderDate.AutoSize = true;
             lblHeaderDate.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblHeaderDate.Location = new Point(1077, 27);
+            lblHeaderDate.Location = new Point(1135, 27);
             lblHeaderDate.Margin = new Padding(4, 0, 4, 0);
             lblHeaderDate.Name = "lblHeaderDate";
             lblHeaderDate.Size = new Size(81, 28);
@@ -312,7 +358,7 @@
             // 
             lblHeaderActions.AutoSize = true;
             lblHeaderActions.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblHeaderActions.Location = new Point(1434, 27);
+            lblHeaderActions.Location = new Point(1531, 27);
             lblHeaderActions.Margin = new Padding(4, 0, 4, 0);
             lblHeaderActions.Name = "lblHeaderActions";
             lblHeaderActions.Size = new Size(117, 28);
@@ -329,7 +375,7 @@
             pnlFooter.Margin = new Padding(4, 5, 4, 5);
             pnlFooter.Name = "pnlFooter";
             pnlFooter.Padding = new Padding(43, 25, 43, 25);
-            pnlFooter.Size = new Size(1714, 117);
+            pnlFooter.Size = new Size(1746, 117);
             pnlFooter.TabIndex = 3;
             // 
             // lblPageInfo
@@ -351,10 +397,10 @@
             pnlPagination.Controls.Add(btnNextPage);
             pnlPagination.Controls.Add(btnLastPage);
             pnlPagination.Dock = DockStyle.Right;
-            pnlPagination.Location = new Point(1214, 25);
+            pnlPagination.Location = new Point(1235, 25);
             pnlPagination.Margin = new Padding(4, 5, 4, 5);
             pnlPagination.Name = "pnlPagination";
-            pnlPagination.Size = new Size(457, 67);
+            pnlPagination.Size = new Size(468, 67);
             pnlPagination.TabIndex = 1;
             // 
             // btnFirstPage
@@ -432,7 +478,7 @@
             btnLastPage.Location = new Point(357, 8);
             btnLastPage.Margin = new Padding(4, 5, 4, 5);
             btnLastPage.Name = "btnLastPage";
-            btnLastPage.Size = new Size(86, 50);
+            btnLastPage.Size = new Size(107, 50);
             btnLastPage.TabIndex = 4;
             btnLastPage.Text = "Cuối cùng";
             btnLastPage.UseVisualStyleBackColor = false;
@@ -449,7 +495,7 @@
             Controls.Add(pnlHeader);
             Margin = new Padding(4, 5, 4, 5);
             Name = "MyFlashcardsControl";
-            Size = new Size(1714, 1117);
+            Size = new Size(1746, 1117);
             pnlHeader.ResumeLayout(false);
             pnlHeader.PerformLayout();
             pnlActions.ResumeLayout(false);
@@ -495,5 +541,7 @@
         private Label lblCurrentPage;
         private Button btnNextPage;
         private Button btnLastPage;
+        private Button btnMyCourse;
+        private Guna.UI2.WinForms.Guna2ComboBox cbbSearch;
     }
 }

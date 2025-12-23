@@ -337,5 +337,37 @@ namespace WinFormsApp1.View.User.Controls
             _currentPage = totalPages;
             ApplyFiltersAndLoadPage();
         }
+
+        private void btnMyCourse_Click(object sender, EventArgs e)
+        {
+            var form = this.FindForm();
+            if (form is MainContainer mainContainer)
+            {
+                var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
+                if (mainPanel != null)
+                {
+                    mainPanel.Controls.Clear();
+                    var myCourseControl = new MyCoursesControl();
+                    myCourseControl.Dock = DockStyle.Fill;
+                    mainPanel.Controls.Add(myCourseControl);
+                }
+            }
+        }
+
+        private void btnFlashcards_Click(object sender, EventArgs e)
+        {
+			var form = this.FindForm();
+			if (form is MainContainer mainContainer)
+			{
+				var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
+				if (mainPanel != null)
+				{
+					mainPanel.Controls.Clear();
+					var myFlashcardsControl = new MyFlashcardsControl();
+					myFlashcardsControl.Dock = DockStyle.Fill;
+					mainPanel.Controls.Add(myFlashcardsControl);
+				}
+			}
+		}
     }
 }
