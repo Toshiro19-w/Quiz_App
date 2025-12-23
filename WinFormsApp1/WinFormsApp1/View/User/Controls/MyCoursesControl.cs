@@ -19,11 +19,27 @@ namespace WinFormsApp1.View.User.Controls
         private int _pageSize = 10;
         private int _totalRecords = 0;
         private List<Course> _allCourses = new List<Course>();
+        private string _searchFilter = "Tất cả";
+		
 		public MyCoursesControl()
         {
             InitializeComponent();
-            cmbPageSize.SelectedIndex = 0; // Set default to 10
+            cmbPageSize.SelectedIndex = 0;
+            cbbSearch.SelectedIndex = 0;
             LoadCourses();
+            
+            flowCourses.Resize += (s, e) => RefreshRowWidths();
+        }
+        
+        private void RefreshRowWidths()
+        {
+            foreach (Control control in flowCourses.Controls)
+            {
+                if (control is CourseRowControl row)
+                {
+                    row.Width = flowCourses.ClientSize.Width - 2;
+                }
+            }
         }
 
         private async void LoadCourses()
@@ -39,6 +55,7 @@ namespace WinFormsApp1.View.User.Controls
 
                 using var context = new LearningPlatformContext();
                 _allCourses = await context.Courses
+                    .Include(c => c.Category)
                     .Where(c => c.OwnerId == userId.Value)
                     .OrderByDescending(c => c.CreatedAt)
                     .ToListAsync();
@@ -56,13 +73,47 @@ namespace WinFormsApp1.View.User.Controls
         {
             var filteredCourses = _allCourses.AsEnumerable();
 
-            // Apply search filter
+            // Apply search filter based on selected criteria
             string searchText = txtSearch.Text.Trim().ToLower();
             if (!string.IsNullOrEmpty(searchText))
             {
-                filteredCourses = filteredCourses.Where(c =>
-                    c.Title.ToLower().Contains(searchText) ||
-                    (c.Slug != null && c.Slug.ToLower().Contains(searchText)));
+                filteredCourses = _searchFilter switch
+                {
+                    "Tiêu đề" => filteredCourses.Where(c => 
+                        c.Title.ToLower().Contains(searchText)),
+                    
+                    "Danh mục" => filteredCourses.Where(c => 
+                        c.Category?.Name?.ToLower().Contains(searchText) == true),
+                    
+                    "Giá" => filteredCourses.Where(c => 
+                        c.Price.ToString().Contains(searchText)),
+                    
+                    "Tạo lúc" => filteredCourses.Where(c => 
+                        c.CreatedAt.ToString("dd/MM/yyyy").Contains(searchText) ||
+                        c.CreatedAt.ToString("dd-MM-yyyy").Contains(searchText) ||
+                        c.CreatedAt.ToString("yyyy").Contains(searchText)),
+                    
+                    "Trạng thái" => filteredCourses.Where(c =>
+                    {
+                        var status = GetModerationStatusText(c.ModerationStatus);
+                        return status.ToLower().Contains(searchText);
+                    }),
+                    
+                    "Xuất bản" => filteredCourses.Where(c =>
+                    {
+                        var publishStatus = c.IsPublished ? "đã xuất bản" : "nháp";
+                        return publishStatus.Contains(searchText);
+                    }),
+                    
+                    _ => filteredCourses.Where(c =>
+                        c.Title.ToLower().Contains(searchText) ||
+                        (c.Slug != null && c.Slug.ToLower().Contains(searchText)) ||
+                        (c.Category?.Name?.ToLower().Contains(searchText) == true) ||
+                        c.Price.ToString().Contains(searchText) ||
+                        c.CreatedAt.ToString("dd/MM/yyyy").Contains(searchText) ||
+                        GetModerationStatusText(c.ModerationStatus).ToLower().Contains(searchText) ||
+                        (c.IsPublished ? "đã xuất bản" : "nháp").Contains(searchText))
+                };
             }
 
             _totalRecords = filteredCourses.Count();
@@ -107,153 +158,21 @@ namespace WinFormsApp1.View.User.Controls
             }
         }
 
-        private Panel CreateCourseRow(Course course, int index)
+        private CourseRowControl CreateCourseRow(Course course, int index)
         {
-            var row = new Panel
+            var row = new CourseRowControl
             {
-                Width = flowCourses.Width - 25,
-                Height = 60,
-                BackColor = Color.White,
-                Margin = new Padding(0, 1, 0, 0),
-                BorderStyle = BorderStyle.FixedSingle
+                Width = flowCourses.ClientSize.Width - 2
             };
 
-            // ID Column
-            var lblId = new Label
-            {
-                Text = index.ToString(),
-                Location = new Point(20, 20),
-                Size = new Size(40, 20),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = ColorPalette.TextPrimary,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
+            row.SetData(course, index);
 
-            // Title Column
-            var pnlTitle = new Panel
-            {
-                Location = new Point(175, 10),
-                Size = new Size(380, 54),
-                BackColor = Color.Transparent
-            };
-
-            var lblTitle = new Label
-            {
-                Text = course.Title,
-                Location = new Point(0, 0),
-                Size = new Size(380, 42),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                ForeColor = ColorPalette.TextPrimary,
-                AutoEllipsis = true
-            };
-            
-            pnlTitle.Controls.AddRange(new Control[] { lblTitle });
-
-            // Moderation Status Column
-            var moderationStatus = GetModerationStatusDisplay(course.ModerationStatus);
-            var lblModeration = new Label
-            {
-                Text = moderationStatus.Text,
-                Location = new Point(560, 15),
-                Size = new Size(120, 24),
-                BackColor = moderationStatus.Color,
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 8, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-
-            // Status Column
-            var lblStatus = new Label
-            {
-                Text = course.IsPublished ? "Đã xuất bản" : "Nháp",
-                Location = new Point(690, 15),
-                Size = new Size(100, 24),
-                BackColor = course.IsPublished ? Color.FromArgb(40, 167, 69) : Color.FromArgb(108, 117, 125),
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 8, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-
-            // Price Column
-            var lblPrice = new Label
-            {
-                Text = $"{course.Price:N0} VNĐ",
-                Location = new Point(800, 15),
-                Size = new Size(120, 20),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = ColorPalette.TextPrimary,
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            // Created Date Column
-            var lblDate = new Label
-            {
-                Text = course.CreatedAt.ToString("dd/MM/yyyy"),
-                Location = new Point(930, 15),
-                Size = new Size(100, 20),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = ColorPalette.TextPrimary,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-
-            // Action Buttons
-            var btnSubmit = CreateActionButton("📤", Color.FromArgb(52, 144, 220), 1040, "Gửi duyệt");
-            btnSubmit.Click += (s, e) => SubmitForReview(course);
-            btnSubmit.Visible = (course.ModerationStatus != "Pending" && course.ModerationStatus != "Approved");
-
-            var btnView = CreateActionButton("👁️", ColorPalette.Primary, 1086, "Xem");
-            btnView.Click += (s, e) => ViewCourse(course);
-
-            var btnEdit = CreateActionButton("✏️", Color.FromArgb(255, 193, 7), 1132, "Sửa");
-            btnEdit.Click += (s, e) => EditCourse(course);
-
-            var btnDelete = CreateActionButton("🗑️", Color.FromArgb(220, 53, 69), 1178, "Xóa");
-            btnDelete.Click += (s, e) => DeleteCourse(course);
-
-            row.Controls.AddRange(new Control[] {
-                lblId, pnlTitle, lblModeration, lblStatus, lblPrice, lblDate,
-                btnSubmit, btnView, btnEdit, btnDelete
-            });
-
-            // Hover effect
-            row.MouseEnter += (s, e) => row.BackColor = ColorPalette.Background;
-            row.MouseLeave += (s, e) => row.BackColor = Color.White;
+            row.SubmitClicked += (s, c) => SubmitForReview(c);
+            row.ViewClicked += (s, c) => ViewCourse(c);
+            row.EditClicked += (s, c) => EditCourse(c);
+            row.DeleteClicked += (s, c) => DeleteCourse(c);
 
             return row;
-        }
-        
-        private (string Text, Color Color) GetModerationStatusDisplay(string status)
-        {
-            return status switch
-            {
-                "Pending" => ("Chờ duyệt", Color.FromArgb(255, 193, 7)),
-                "Approved" => ("Đã duyệt", Color.FromArgb(40, 167, 69)),
-                "Rejected" => ("Từ chối", Color.FromArgb(220, 53, 69)),
-                "NeedsRevision" => ("Cần sửa", Color.FromArgb(255, 152, 0)),
-                _ => ("Chưa gửi", Color.FromArgb(108, 117, 125))
-            };
-        }
-        
-        private Button CreateActionButton(string icon, Color color, int x, string tooltip)
-        {
-            var btn = new Button
-            {
-                Text = icon,
-                Location = new Point(x, 13),
-                Size = new Size(36, 34),
-                BackColor = color,
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10),
-                Cursor = Cursors.Hand,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            btn.FlatAppearance.BorderSize = 0;
-
-            var toolTip = new ToolTip();
-            toolTip.SetToolTip(btn, tooltip);
-
-            return btn;
         }
 
         private async void SubmitForReview(Course course)
@@ -262,7 +181,6 @@ namespace WinFormsApp1.View.User.Controls
             {
                 using var context = new LearningPlatformContext();
                 
-                // Load course with full details for auto-check
                 var fullCourse = await context.Courses
                     .Include(c => c.CourseChapters)
                         .ThenInclude(ch => ch.Lessons)
@@ -275,12 +193,10 @@ namespace WinFormsApp1.View.User.Controls
                     return;
                 }
                 
-                // Run auto-check
                 var autoCheckResults = Services.CourseModerationService.RunAutoChecks(fullCourse, context);
                 var canPublish = Services.CourseModerationService.CanPublish(autoCheckResults);
                 var autoScore = Services.CourseModerationService.CalculateAutoScore(autoCheckResults);
                 
-                // Show auto-check results
                 var errorCount = autoCheckResults.Count(r => r.Severity == "Error" && !r.Passed);
                 var warningCount = autoCheckResults.Count(r => r.Severity == "Warning" && !r.Passed);
                 
@@ -321,7 +237,6 @@ namespace WinFormsApp1.View.User.Controls
                     if (confirmResult != DialogResult.Yes) return;
                 }
                 
-                // Submit for review
                 if (Services.CourseModerationService.SubmitForReview(course.CourseId, context))
                 {
                     MessageBox.Show("Đã gửi khóa học để kiểm duyệt!\n\nAdmin sẽ xem xét và phản hồi trong thời gian sớm nhất.", 
@@ -345,7 +260,6 @@ namespace WinFormsApp1.View.User.Controls
             {
                 using var context = new LearningPlatformContext();
                 
-                // Load course with chapters and lessons
                 var courseWithDetails = await context.Courses
                     .Include(c => c.CourseChapters)
                         .ThenInclude(ch => ch.Lessons)
@@ -357,7 +271,6 @@ namespace WinFormsApp1.View.User.Controls
                     return;
                 }
 
-                // Get first lesson
                 var firstLesson = courseWithDetails.CourseChapters
                     .OrderBy(ch => ch.OrderIndex)
                     .SelectMany(ch => ch.Lessons.OrderBy(l => l.OrderIndex))
@@ -369,7 +282,6 @@ namespace WinFormsApp1.View.User.Controls
                     return;
                 }
 
-                // Navigate to LessonDetailControl
                 var form = this.FindForm();
                 if (form is MainContainer mainContainer)
                 {
@@ -382,7 +294,6 @@ namespace WinFormsApp1.View.User.Controls
                         lessonDetailControl.Dock = DockStyle.Fill;
                         mainPanel.Controls.Add(lessonDetailControl);
 
-                        // Load lesson
                         await lessonDetailControl.LoadLessonAsync(courseWithDetails.Slug, firstLesson.LessonId);
                     }
                 }
@@ -463,7 +374,6 @@ namespace WinFormsApp1.View.User.Controls
 
         private void BtnCreateCourse_Click(object sender, EventArgs e)
         {
-            // Open CourseBuilderForm as dialog to create a new course
             using var builder = new CourseBuilderForm();
             builder.StartPosition = FormStartPosition.CenterParent;
             var owner = this.FindForm();
@@ -478,14 +388,12 @@ namespace WinFormsApp1.View.User.Controls
 
             if (builder.DialogResult == DialogResult.OK)
             {
-                // Reload courses after successful creation
                 LoadCourses();
             }
         }
 
         private void BtnRevenue_Click(object sender, EventArgs e)
         {
-            // Navigate to RevenueControl
             var form = this.FindForm();
             if (form is MainContainer mainContainer)
             {
@@ -502,7 +410,6 @@ namespace WinFormsApp1.View.User.Controls
 
         private void BtnFlashcards_Click(object sender, EventArgs e)
         {
-            // Navigate to MyFlashcardsControl
             var form = this.FindForm();
             if (form is MainContainer mainContainer)
             {
@@ -532,6 +439,16 @@ namespace WinFormsApp1.View.User.Controls
         {
             _currentPage = 1;
             ApplyFiltersAndLoadPage();
+        }
+
+        private void CbbSearch_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbbSearch.SelectedItem != null)
+            {
+                _searchFilter = cbbSearch.SelectedItem.ToString();
+                _currentPage = 1;
+                ApplyFiltersAndLoadPage();
+            }
         }
 
         private void CmbPageSize_SelectedIndexChanged(object sender, EventArgs e)
@@ -584,6 +501,18 @@ namespace WinFormsApp1.View.User.Controls
         private void pnlHeader_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private string GetModerationStatusText(string status)
+        {
+            return status switch
+            {
+                "Pending" => "Chờ duyệt",
+                "Approved" => "Đã duyệt",
+                "Rejected" => "Từ chối",
+                "NeedsRevision" => "Cần sửa",
+                _ => "Chưa gửi"
+            };
         }
     }
 }

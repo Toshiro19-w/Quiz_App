@@ -18,6 +18,9 @@
         private void InitializeComponent()
         {
             pnlHeader = new Panel();
+            pnlActions = new Panel();
+            btnMyCourse = new Button();
+            btnFlashcards = new Button();
             lblTitle = new Label();
             btnBack = new Button();
             pnlOverview = new Panel();
@@ -61,6 +64,7 @@
             btnNextPage = new Button();
             btnLastPage = new Button();
             pnlHeader.SuspendLayout();
+            pnlActions.SuspendLayout();
             pnlOverview.SuspendLayout();
             cardPurchases.SuspendLayout();
             cardGrossRevenue.SuspendLayout();
@@ -76,6 +80,7 @@
             // pnlHeader
             // 
             pnlHeader.BackColor = Color.White;
+            pnlHeader.Controls.Add(pnlActions);
             pnlHeader.Controls.Add(lblTitle);
             pnlHeader.Controls.Add(btnBack);
             pnlHeader.Dock = DockStyle.Top;
@@ -83,19 +88,64 @@
             pnlHeader.Margin = new Padding(4, 5, 4, 5);
             pnlHeader.Name = "pnlHeader";
             pnlHeader.Padding = new Padding(43, 33, 43, 33);
-            pnlHeader.Size = new Size(2000, 133);
+            pnlHeader.Size = new Size(2000, 100);
             pnlHeader.TabIndex = 0;
+            // 
+            // pnlActions
+            // 
+            pnlActions.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pnlActions.Controls.Add(btnMyCourse);
+            pnlActions.Controls.Add(btnFlashcards);
+            pnlActions.Location = new Point(1294, 14);
+            pnlActions.Margin = new Padding(4, 5, 4, 5);
+            pnlActions.Name = "pnlActions";
+            pnlActions.Size = new Size(663, 76);
+            pnlActions.TabIndex = 2;
+            // 
+            // btnMyCourse
+            // 
+            btnMyCourse.BackColor = Color.FromArgb(40, 167, 69);
+            btnMyCourse.Cursor = Cursors.Hand;
+            btnMyCourse.FlatAppearance.BorderSize = 0;
+            btnMyCourse.FlatStyle = FlatStyle.Flat;
+            btnMyCourse.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnMyCourse.ForeColor = Color.White;
+            btnMyCourse.Location = new Point(229, 5);
+            btnMyCourse.Margin = new Padding(4, 5, 4, 5);
+            btnMyCourse.Name = "btnMyCourse";
+            btnMyCourse.Size = new Size(200, 67);
+            btnMyCourse.TabIndex = 1;
+            btnMyCourse.Text = "Khóa học của tôi";
+            btnMyCourse.UseVisualStyleBackColor = false;
+            btnMyCourse.Click += btnMyCourse_Click;
+            // 
+            // btnFlashcards
+            // 
+            btnFlashcards.BackColor = Color.FromArgb(23, 162, 184);
+            btnFlashcards.Cursor = Cursors.Hand;
+            btnFlashcards.FlatAppearance.BorderSize = 0;
+            btnFlashcards.FlatStyle = FlatStyle.Flat;
+            btnFlashcards.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnFlashcards.ForeColor = Color.White;
+            btnFlashcards.Location = new Point(443, 5);
+            btnFlashcards.Margin = new Padding(4, 5, 4, 5);
+            btnFlashcards.Name = "btnFlashcards";
+            btnFlashcards.Size = new Size(214, 67);
+            btnFlashcards.TabIndex = 2;
+            btnFlashcards.Text = "Flashcard của tôi";
+            btnFlashcards.UseVisualStyleBackColor = false;
+            btnFlashcards.Click += btnFlashcards_Click;
             // 
             // lblTitle
             // 
             lblTitle.AutoSize = true;
             lblTitle.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            lblTitle.Location = new Point(43, 42);
+            lblTitle.Location = new Point(43, 33);
             lblTitle.Margin = new Padding(4, 0, 4, 0);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(422, 48);
+            lblTitle.Size = new Size(362, 48);
             lblTitle.TabIndex = 0;
-            lblTitle.Text = "📊 Thống kê doanh thu";
+            lblTitle.Text = "Thống kê doanh thu";
             // 
             // btnBack
             // 
@@ -122,7 +172,7 @@
             pnlOverview.Controls.Add(cardInstructorRevenue);
             pnlOverview.Controls.Add(cardPlatformFee);
             pnlOverview.Dock = DockStyle.Top;
-            pnlOverview.Location = new Point(0, 133);
+            pnlOverview.Location = new Point(0, 100);
             pnlOverview.Margin = new Padding(4, 5, 4, 5);
             pnlOverview.Name = "pnlOverview";
             pnlOverview.Padding = new Padding(43, 33, 43, 33);
@@ -326,7 +376,7 @@
             pnlFilters.Controls.Add(lblSearchLabel);
             pnlFilters.Controls.Add(txtSearch);
             pnlFilters.Dock = DockStyle.Top;
-            pnlFilters.Location = new Point(0, 366);
+            pnlFilters.Location = new Point(0, 333);
             pnlFilters.Margin = new Padding(4, 5, 4, 5);
             pnlFilters.Name = "pnlFilters";
             pnlFilters.Padding = new Padding(43, 25, 43, 25);
@@ -396,11 +446,11 @@
             pnlTable.Controls.Add(flowRevenues);
             pnlTable.Controls.Add(pnlTableHeader);
             pnlTable.Dock = DockStyle.Fill;
-            pnlTable.Location = new Point(0, 483);
+            pnlTable.Location = new Point(0, 450);
             pnlTable.Margin = new Padding(4, 5, 4, 5);
             pnlTable.Name = "pnlTable";
             pnlTable.Padding = new Padding(43, 17, 43, 17);
-            pnlTable.Size = new Size(2000, 834);
+            pnlTable.Size = new Size(2000, 867);
             pnlTable.TabIndex = 3;
             // 
             // flowRevenues
@@ -411,7 +461,7 @@
             flowRevenues.Location = new Point(43, 116);
             flowRevenues.Margin = new Padding(4, 5, 4, 5);
             flowRevenues.Name = "flowRevenues";
-            flowRevenues.Size = new Size(1914, 701);
+            flowRevenues.Size = new Size(1914, 734);
             flowRevenues.TabIndex = 1;
             flowRevenues.WrapContents = false;
             // 
@@ -632,6 +682,7 @@
             Size = new Size(2000, 1450);
             pnlHeader.ResumeLayout(false);
             pnlHeader.PerformLayout();
+            pnlActions.ResumeLayout(false);
             pnlOverview.ResumeLayout(false);
             cardPurchases.ResumeLayout(false);
             cardGrossRevenue.ResumeLayout(false);
@@ -693,5 +744,8 @@
         private Label lblCurrentPage;
         private Button btnNextPage;
         private Button btnLastPage;
-    }
+		private Panel pnlActions;
+		private Button btnMyCourse;
+		private Button btnFlashcards;
+	}
 }

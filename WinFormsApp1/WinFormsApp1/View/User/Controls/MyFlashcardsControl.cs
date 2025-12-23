@@ -16,12 +16,16 @@ namespace WinFormsApp1.View.User.Controls
         private int _pageSize = 10;
         private int _totalRecords = 0;
         private List<FlashcardSet> _allFlashcardSets = new List<FlashcardSet>();
+        private string _searchFilter = "Tất cả";
 
         public MyFlashcardsControl()
         {
             InitializeComponent();
-            cmbPageSize.SelectedIndex = 0; // Set default to 10
+            cmbPageSize.SelectedIndex = 0;
+            cbbSearch.SelectedIndex = 0;
             LoadFlashcardSets();
+            
+            flowFlashcards.Resize += (s, e) => RefreshRowWidths();
         }
 
         private async void LoadFlashcardSets()
@@ -38,7 +42,7 @@ namespace WinFormsApp1.View.User.Controls
                 using var context = new LearningPlatformContext();
                 _allFlashcardSets = await context.FlashcardSets
                     .Include(fs => fs.Flashcards)
-                    .Where(fs => fs.OwnerId == userId.Value && 
+                    .Where(fs => fs.OwnerId == userId.Value &&
                                 !fs.IsDeleted &&
                                 (fs.Visibility == "Public" || fs.Visibility == "Private"))
                     .OrderByDescending(fs => fs.CreatedAt)
@@ -57,13 +61,43 @@ namespace WinFormsApp1.View.User.Controls
         {
             var filteredSets = _allFlashcardSets.AsEnumerable();
 
-            // Apply search filter
+            // Apply search filter based on selected criteria
             string searchText = txtSearch.Text.Trim().ToLower();
             if (!string.IsNullOrEmpty(searchText))
             {
-                filteredSets = filteredSets.Where(fs =>
-                    fs.Title.ToLower().Contains(searchText) ||
-                    (fs.Description != null && fs.Description.ToLower().Contains(searchText)));
+                filteredSets = _searchFilter switch
+                {
+                    "Tiêu đề" => filteredSets.Where(fs =>
+                        fs.Title.ToLower().Contains(searchText)),
+                    
+                    "Số thẻ" => filteredSets.Where(fs =>
+                        fs.Flashcards.Count.ToString().Contains(searchText)),
+                    
+                    "Hiển thị" => filteredSets.Where(fs =>
+                    {
+                        var visibility = fs.Visibility == "Public" ? "công khai" : "riêng tư";
+                        return visibility.Contains(searchText);
+                    }),
+                    
+                    "Ngôn ngữ" => filteredSets.Where(fs =>
+                    {
+                        var language = string.IsNullOrEmpty(fs.Language) ? "vi" : fs.Language;
+                        return language.ToLower().Contains(searchText);
+                    }),
+                    
+                    "Tạo lúc" => filteredSets.Where(fs =>
+                        fs.CreatedAt.ToString("dd/MM/yyyy").Contains(searchText) ||
+                        fs.CreatedAt.ToString("dd-MM-yyyy").Contains(searchText) ||
+                        fs.CreatedAt.ToString("yyyy").Contains(searchText)),
+                    
+                    _ => filteredSets.Where(fs =>
+                        fs.Title.ToLower().Contains(searchText) ||
+                        (fs.Description != null && fs.Description.ToLower().Contains(searchText)) ||
+                        fs.Flashcards.Count.ToString().Contains(searchText) ||
+                        (fs.Visibility == "Public" ? "công khai" : "riêng tư").Contains(searchText) ||
+                        (string.IsNullOrEmpty(fs.Language) ? "vi" : fs.Language).ToLower().Contains(searchText) ||
+                        fs.CreatedAt.ToString("dd/MM/yyyy").Contains(searchText))
+                };
             }
 
             _totalRecords = filteredSets.Count();
@@ -108,132 +142,21 @@ namespace WinFormsApp1.View.User.Controls
             }
         }
 
-        private Panel CreateFlashcardRow(FlashcardSet flashcardSet, int index)
+        private FlashcardRowControl CreateFlashcardRow(FlashcardSet flashcardSet, int index)
         {
-            var row = new Panel
+            var row = new FlashcardRowControl
             {
-                Width = flowFlashcards.Width - 25,
-                Height = 60,
-                BackColor = Color.White,
-                Margin = new Padding(0, 1, 0, 0),
-                BorderStyle = BorderStyle.FixedSingle
+                Width = flowFlashcards.ClientSize.Width - 2
             };
 
-            // ID Column
-            var lblId = new Label
-            {
-                Text = index.ToString(),
-                Location = new Point(20, 20),
-                Size = new Size(40, 20),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = ColorPalette.TextPrimary,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
+            row.SetData(flashcardSet, index);
 
-            // Title Column
-            var lblTitle = new Label
-            {
-                Text = flashcardSet.Title,
-                Location = new Point(175, 15),
-                Size = new Size(450, 30),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                ForeColor = ColorPalette.TextPrimary,
-                AutoEllipsis = true
-            };
-
-            // Card Count Badge
-            var lblCardCount = new Label
-            {
-                Text = $"{flashcardSet.Flashcards.Count} thẻ",
-                Location = new Point(629, 20),
-                Size = new Size(80, 24),
-                BackColor = Color.FromArgb(23, 162, 184), // Cyan
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 8, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-
-            // Visibility Badge
-            var lblVisibility = new Label
-            {
-                Text = flashcardSet.Visibility == "Public" ? "Công khai" : "Riêng tư",
-                Location = new Point(765, 20),
-                Size = new Size(100, 20),
-                BackColor = flashcardSet.Visibility == "Public" 
-                    ? Color.FromArgb(40, 167, 69)  // Green
-                    : Color.FromArgb(108, 117, 125), // Gray
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 8, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-
-            // Language
-            var lblLanguage = new Label
-            {
-                Text = string.IsNullOrEmpty(flashcardSet.Language) ? "vi" : flashcardSet.Language,
-                Location = new Point(899, 20),
-                Size = new Size(80, 20),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = ColorPalette.TextPrimary,
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            // Created Date
-            var lblDate = new Label
-            {
-                Text = flashcardSet.CreatedAt.ToString("dd/MM/yyyy"),
-                Location = new Point(1077, 20),
-                Size = new Size(155, 20),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = ColorPalette.TextPrimary,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-
-            // Action Buttons
-            var btnView = CreateActionButton("👁️", ColorPalette.Primary, 1434, "Xem");
-            btnView.Click += (s, e) => ViewFlashcardSet(flashcardSet);
-
-            var btnStudy = CreateActionButton("▶️", Color.FromArgb(52, 144, 220), 1484, "Học");
-            btnStudy.Click += (s, e) => StudyFlashcardSet(flashcardSet);
-
-            var btnEdit = CreateActionButton("✏️", Color.FromArgb(255, 193, 7), 1534, "Sửa");
-            btnEdit.Click += (s, e) => EditFlashcardSet(flashcardSet);
-
-            var btnDelete = CreateActionButton("🗑️", Color.FromArgb(220, 53, 69), 1584, "Xóa");
-            btnDelete.Click += (s, e) => DeleteFlashcardSet(flashcardSet);
-
-            row.Controls.AddRange(new Control[] {
-                lblId, lblTitle, lblCardCount, lblVisibility, lblLanguage, lblDate,
-                btnView, btnStudy, btnEdit, btnDelete
-            });
-
-            // Hover effect
-            row.MouseEnter += (s, e) => row.BackColor = ColorPalette.Background;
-            row.MouseLeave += (s, e) => row.BackColor = Color.White;
+            row.ViewClicked += (s, fs) => ViewFlashcardSet(fs);
+            row.StudyClicked += (s, fs) => StudyFlashcardSet(fs);
+            row.EditClicked += (s, fs) => EditFlashcardSet(fs);
+            row.DeleteClicked += (s, fs) => DeleteFlashcardSet(fs);
 
             return row;
-        }
-
-        private Button CreateActionButton(string icon, Color color, int x, string tooltip)
-        {
-            var btn = new Button
-            {
-                Text = icon,
-                Location = new Point(x, 13),
-                Size = new Size(36, 34),
-                BackColor = color,
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10),
-                Cursor = Cursors.Hand,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            btn.FlatAppearance.BorderSize = 0;
-
-            var toolTip = new ToolTip();
-            toolTip.SetToolTip(btn, tooltip);
-
-            return btn;
         }
 
         private void ViewFlashcardSet(FlashcardSet flashcardSet)
@@ -389,6 +312,16 @@ namespace WinFormsApp1.View.User.Controls
             ApplyFiltersAndLoadPage();
         }
 
+        private void CbbSearch_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbbSearch.SelectedItem != null)
+            {
+                _searchFilter = cbbSearch.SelectedItem.ToString();
+                _currentPage = 1;
+                ApplyFiltersAndLoadPage();
+            }
+        }
+
         private void CmbPageSize_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbPageSize.SelectedItem != null)
@@ -439,6 +372,33 @@ namespace WinFormsApp1.View.User.Controls
         private void pnlHeader_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void btnMyCourse_Click(object sender, EventArgs e)
+        {
+			var form = this.FindForm();
+			if (form is MainContainer mainContainer)
+			{
+				var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
+				if (mainPanel != null)
+				{
+					mainPanel.Controls.Clear();
+					var myCoursesControl = new MyCoursesControl();
+					myCoursesControl.Dock = DockStyle.Fill;
+					mainPanel.Controls.Add(myCoursesControl);
+				}
+			}
+		}
+
+        private void RefreshRowWidths()
+        {
+            foreach (Control control in flowFlashcards.Controls)
+            {
+                if (control is FlashcardRowControl row)
+                {
+                    row.Width = flowFlashcards.ClientSize.Width - 2;
+                }
+            }
         }
     }
 }
