@@ -77,7 +77,7 @@
 			button2.FlatStyle = FlatStyle.Flat;
 			button2.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
 			button2.ForeColor = Color.White;
-			button2.Location = new Point(105, 500);
+			button2.Location = new Point(102, 427);
 			button2.Margin = new Padding(4);
 			button2.Name = "button2";
 			button2.Size = new Size(438, 62);
@@ -94,7 +94,7 @@
 			button1.FlatStyle = FlatStyle.Flat;
 			button1.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
 			button1.ForeColor = Color.Teal;
-			button1.Location = new Point(356, 421);
+			button1.Location = new Point(353, 354);
 			button1.Margin = new Padding(4);
 			button1.Name = "button1";
 			button1.Size = new Size(188, 44);
@@ -111,7 +111,7 @@
 			btnRegister.FlatStyle = FlatStyle.Flat;
 			btnRegister.Font = new Font("Segoe UI", 10F);
 			btnRegister.ForeColor = Color.Teal;
-			btnRegister.Location = new Point(105, 581);
+			btnRegister.Location = new Point(102, 508);
 			btnRegister.Margin = new Padding(4);
 			btnRegister.Name = "btnRegister";
 			btnRegister.Size = new Size(438, 50);
@@ -125,7 +125,7 @@
 			chkRememberMe.AutoSize = true;
 			chkRememberMe.Font = new Font("Segoe UI", 9F);
 			chkRememberMe.ForeColor = Color.FromArgb(64, 64, 64);
-			chkRememberMe.Location = new Point(106, 430);
+			chkRememberMe.Location = new Point(103, 360);
 			chkRememberMe.Margin = new Padding(4);
 			chkRememberMe.Name = "chkRememberMe";
 			chkRememberMe.Size = new Size(191, 29);
@@ -138,7 +138,7 @@
 			lblPasswordError.AutoSize = true;
 			lblPasswordError.Font = new Font("Segoe UI", 9F);
 			lblPasswordError.ForeColor = Color.Red;
-			lblPasswordError.Location = new Point(106, 390);
+			lblPasswordError.Location = new Point(103, 312);
 			lblPasswordError.Margin = new Padding(4, 0, 4, 0);
 			lblPasswordError.Name = "lblPasswordError";
 			lblPasswordError.Size = new Size(0, 25);
@@ -149,7 +149,7 @@
 			lblEmailError.AutoSize = true;
 			lblEmailError.Font = new Font("Segoe UI", 9F);
 			lblEmailError.ForeColor = Color.Red;
-			lblEmailError.Location = new Point(106, 264);
+			lblEmailError.Location = new Point(103, 195);
 			lblEmailError.Margin = new Padding(4, 0, 4, 0);
 			lblEmailError.Name = "lblEmailError";
 			lblEmailError.Size = new Size(0, 25);
@@ -159,7 +159,7 @@
 			// 
 			textBox2.BorderStyle = BorderStyle.FixedSingle;
 			textBox2.Font = new Font("Segoe UI", 11F);
-			textBox2.Location = new Point(106, 343);
+			textBox2.Location = new Point(103, 270);
 			textBox2.Margin = new Padding(4);
 			textBox2.Name = "textBox2";
 			textBox2.Size = new Size(437, 37);
@@ -171,7 +171,7 @@
 			// 
 			textTK.BorderStyle = BorderStyle.FixedSingle;
 			textTK.Font = new Font("Segoe UI", 11F);
-			textTK.Location = new Point(106, 217);
+			textTK.Location = new Point(103, 153);
 			textTK.Margin = new Padding(4);
 			textTK.Name = "textTK";
 			textTK.Size = new Size(437, 37);
@@ -183,7 +183,7 @@
 			LableMK.AutoSize = true;
 			LableMK.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			LableMK.ForeColor = Color.FromArgb(64, 64, 64);
-			LableMK.Location = new Point(106, 305);
+			LableMK.Location = new Point(103, 235);
 			LableMK.Margin = new Padding(4, 0, 4, 0);
 			LableMK.Name = "LableMK";
 			LableMK.Size = new Size(102, 28);
@@ -195,7 +195,7 @@
 			LableTK.AutoSize = true;
 			LableTK.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			LableTK.ForeColor = Color.FromArgb(64, 64, 64);
-			LableTK.Location = new Point(106, 180);
+			LableTK.Location = new Point(103, 119);
 			LableTK.Margin = new Padding(4, 0, 4, 0);
 			LableTK.Name = "LableTK";
 			LableTK.Size = new Size(64, 28);
@@ -208,7 +208,7 @@
 			lblTitle.BackColor = Color.White;
 			lblTitle.Font = new Font("Segoe UI", 26F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblTitle.ForeColor = Color.DarkSlateGray;
-			lblTitle.Location = new Point(113, 149);
+			lblTitle.Location = new Point(123, 112);
 			lblTitle.Margin = new Padding(4, 0, 4, 0);
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(313, 70);
@@ -221,7 +221,7 @@
 			lblSubtitle.BackColor = Color.White;
 			lblSubtitle.Font = new Font("Segoe UI", 10F);
 			lblSubtitle.ForeColor = Color.Gray;
-			lblSubtitle.Location = new Point(95, 556);
+			lblSubtitle.Location = new Point(95, 513);
 			lblSubtitle.Margin = new Padding(4, 0, 4, 0);
 			lblSubtitle.Name = "lblSubtitle";
 			lblSubtitle.Size = new Size(366, 28);
@@ -235,7 +235,7 @@
 			pictureBox1.Image = Properties.Resources.logo;
 			pictureBox1.Location = new Point(0, 0);
 			pictureBox1.Name = "pictureBox1";
-			pictureBox1.Size = new Size(551, 774);
+			pictureBox1.Size = new Size(551, 666);
 			pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
 			pictureBox1.TabIndex = 1;
 			pictureBox1.TabStop = false;
@@ -245,7 +245,7 @@
 			AutoScaleDimensions = new SizeF(10F, 25F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.FromArgb(0, 192, 192);
-			ClientSize = new Size(1178, 774);
+			ClientSize = new Size(1178, 666);
 			Controls.Add(lblTitle);
 			Controls.Add(lblSubtitle);
 			Controls.Add(pictureBox1);

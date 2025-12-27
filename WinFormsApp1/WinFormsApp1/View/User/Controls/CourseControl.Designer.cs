@@ -28,14 +28,27 @@ namespace WinFormsApp1.View.User.Controls
 		/// </summary>
 		private void InitializeComponent()
 		{
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
 			filterPanel = new Panel();
-			chkPaid = new CheckBox();
-			chkFree = new CheckBox();
+			btnClear = new Guna.UI2.WinForms.Guna2Button();
+			btnApply = new Guna.UI2.WinForms.Guna2Button();
+			txtFilterToPrice = new Guna.UI2.WinForms.Guna2TextBox();
+			txtFilterFromPrice = new Guna.UI2.WinForms.Guna2TextBox();
+			cbbFilterRate = new Guna.UI2.WinForms.Guna2ComboBox();
+			cbbFilterCategory = new Guna.UI2.WinForms.Guna2ComboBox();
+			label1 = new Label();
 			lblPriceHeader = new Label();
-			chkRating1To2 = new CheckBox();
-			chkRating2To3 = new CheckBox();
-			chkRating3To4 = new CheckBox();
-			chkRating4Plus = new CheckBox();
 			lblRatingHeader = new Label();
 			lblFilterHeader = new Label();
 			mainContentPanel = new Panel();
@@ -53,129 +66,171 @@ namespace WinFormsApp1.View.User.Controls
 			// filterPanel
 			// 
 			filterPanel.BackColor = Color.White;
-			filterPanel.Controls.Add(chkPaid);
-			filterPanel.Controls.Add(chkFree);
+			filterPanel.Controls.Add(btnClear);
+			filterPanel.Controls.Add(btnApply);
+			filterPanel.Controls.Add(txtFilterToPrice);
+			filterPanel.Controls.Add(txtFilterFromPrice);
+			filterPanel.Controls.Add(cbbFilterRate);
+			filterPanel.Controls.Add(cbbFilterCategory);
+			filterPanel.Controls.Add(label1);
 			filterPanel.Controls.Add(lblPriceHeader);
-			filterPanel.Controls.Add(chkRating1To2);
-			filterPanel.Controls.Add(chkRating2To3);
-			filterPanel.Controls.Add(chkRating3To4);
-			filterPanel.Controls.Add(chkRating4Plus);
 			filterPanel.Controls.Add(lblRatingHeader);
 			filterPanel.Controls.Add(lblFilterHeader);
 			filterPanel.Dock = DockStyle.Left;
-			filterPanel.Location = new Point(29, 133);
+			filterPanel.Location = new Point(29, 33);
 			filterPanel.Margin = new Padding(4, 5, 4, 5);
 			filterPanel.Name = "filterPanel";
 			filterPanel.Padding = new Padding(29, 33, 29, 33);
-			filterPanel.Size = new Size(400, 1001);
+			filterPanel.Size = new Size(400, 855);
 			filterPanel.TabIndex = 0;
 			// 
-			// chkPaid
+			// btnClear
 			// 
-			chkPaid.AutoSize = true;
-			chkPaid.Cursor = Cursors.Hand;
-			chkPaid.Font = new Font("Segoe UI", 10F);
-			chkPaid.ForeColor = Color.FromArgb(100, 100, 100);
-			chkPaid.Location = new Point(29, 550);
-			chkPaid.Margin = new Padding(4, 5, 4, 5);
-			chkPaid.Name = "chkPaid";
-			chkPaid.Size = new Size(128, 32);
-			chkPaid.TabIndex = 8;
-			chkPaid.Text = "💵 Trả phí";
-			chkPaid.UseVisualStyleBackColor = true;
-			chkPaid.CheckedChanged += FilterChanged;
+			btnClear.BorderRadius = 8;
+			btnClear.CustomizableEdges = customizableEdges1;
+			btnClear.DisabledState.BorderColor = Color.DarkGray;
+			btnClear.DisabledState.CustomBorderColor = Color.DarkGray;
+			btnClear.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+			btnClear.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+			btnClear.FillColor = Color.FromArgb(108, 117, 125);
+			btnClear.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+			btnClear.ForeColor = Color.White;
+			btnClear.Location = new Point(204, 565);
+			btnClear.Name = "btnClear";
+			btnClear.ShadowDecoration.CustomizableEdges = customizableEdges2;
+			btnClear.Size = new Size(154, 45);
+			btnClear.TabIndex = 15;
+			btnClear.Text = "🔄 Làm mới";
+			btnClear.Click += BtnClear_Click;
 			// 
-			// chkFree
+			// btnApply
 			// 
-			chkFree.AutoSize = true;
-			chkFree.Cursor = Cursors.Hand;
-			chkFree.Font = new Font("Segoe UI", 10F);
-			chkFree.ForeColor = Color.FromArgb(100, 100, 100);
-			chkFree.Location = new Point(29, 492);
-			chkFree.Margin = new Padding(4, 5, 4, 5);
-			chkFree.Name = "chkFree";
-			chkFree.Size = new Size(147, 32);
-			chkFree.TabIndex = 7;
-			chkFree.Text = "💚 Miễn phí";
-			chkFree.UseVisualStyleBackColor = true;
-			chkFree.CheckedChanged += FilterChanged;
+			btnApply.BorderRadius = 8;
+			btnApply.CustomizableEdges = customizableEdges3;
+			btnApply.DisabledState.BorderColor = Color.DarkGray;
+			btnApply.DisabledState.CustomBorderColor = Color.DarkGray;
+			btnApply.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+			btnApply.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+			btnApply.FillColor = Color.FromArgb(13, 110, 253);
+			btnApply.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+			btnApply.ForeColor = Color.White;
+			btnApply.Location = new Point(29, 565);
+			btnApply.Name = "btnApply";
+			btnApply.ShadowDecoration.CustomizableEdges = customizableEdges4;
+			btnApply.Size = new Size(154, 45);
+			btnApply.TabIndex = 14;
+			btnApply.Text = "✓ Áp dụng";
+			btnApply.Click += BtnApply_Click;
+			// 
+			// txtFilterToPrice
+			// 
+			txtFilterToPrice.BorderRadius = 8;
+			txtFilterToPrice.CustomizableEdges = customizableEdges5;
+			txtFilterToPrice.DefaultText = "";
+			txtFilterToPrice.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+			txtFilterToPrice.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+			txtFilterToPrice.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+			txtFilterToPrice.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+			txtFilterToPrice.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+			txtFilterToPrice.Font = new Font("Segoe UI", 10F);
+			txtFilterToPrice.ForeColor = Color.Black;
+			txtFilterToPrice.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
+			txtFilterToPrice.Location = new Point(29, 483);
+			txtFilterToPrice.Margin = new Padding(4, 5, 4, 5);
+			txtFilterToPrice.Name = "txtFilterToPrice";
+			txtFilterToPrice.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
+			txtFilterToPrice.PlaceholderText = "Đến giá";
+			txtFilterToPrice.SelectedText = "";
+			txtFilterToPrice.ShadowDecoration.CustomizableEdges = customizableEdges6;
+			txtFilterToPrice.Size = new Size(329, 45);
+			txtFilterToPrice.TabIndex = 13;
+			// 
+			// txtFilterFromPrice
+			// 
+			txtFilterFromPrice.BorderRadius = 8;
+			txtFilterFromPrice.CustomizableEdges = customizableEdges7;
+			txtFilterFromPrice.DefaultText = "";
+			txtFilterFromPrice.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+			txtFilterFromPrice.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+			txtFilterFromPrice.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+			txtFilterFromPrice.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+			txtFilterFromPrice.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+			txtFilterFromPrice.Font = new Font("Segoe UI", 10F);
+			txtFilterFromPrice.ForeColor = Color.Black;
+			txtFilterFromPrice.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
+			txtFilterFromPrice.Location = new Point(29, 426);
+			txtFilterFromPrice.Margin = new Padding(4, 5, 4, 5);
+			txtFilterFromPrice.Name = "txtFilterFromPrice";
+			txtFilterFromPrice.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
+			txtFilterFromPrice.PlaceholderText = "Từ giá";
+			txtFilterFromPrice.SelectedText = "";
+			txtFilterFromPrice.ShadowDecoration.CustomizableEdges = customizableEdges8;
+			txtFilterFromPrice.Size = new Size(329, 45);
+			txtFilterFromPrice.TabIndex = 12;
+			// 
+			// cbbFilterRate
+			// 
+			cbbFilterRate.BackColor = Color.Transparent;
+			cbbFilterRate.BorderRadius = 8;
+			cbbFilterRate.CustomizableEdges = customizableEdges9;
+			cbbFilterRate.DrawMode = DrawMode.OwnerDrawFixed;
+			cbbFilterRate.DropDownStyle = ComboBoxStyle.DropDownList;
+			cbbFilterRate.FocusedColor = Color.FromArgb(94, 148, 255);
+			cbbFilterRate.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+			cbbFilterRate.Font = new Font("Segoe UI", 10F);
+			cbbFilterRate.ForeColor = Color.FromArgb(68, 88, 112);
+			cbbFilterRate.ItemHeight = 30;
+			cbbFilterRate.Location = new Point(22, 294);
+			cbbFilterRate.Name = "cbbFilterRate";
+			cbbFilterRate.ShadowDecoration.CustomizableEdges = customizableEdges10;
+			cbbFilterRate.Size = new Size(343, 36);
+			cbbFilterRate.TabIndex = 11;
+			// 
+			// cbbFilterCategory
+			// 
+			cbbFilterCategory.BackColor = Color.Transparent;
+			cbbFilterCategory.BorderRadius = 8;
+			cbbFilterCategory.CustomizableEdges = customizableEdges11;
+			cbbFilterCategory.DrawMode = DrawMode.OwnerDrawFixed;
+			cbbFilterCategory.DropDownStyle = ComboBoxStyle.DropDownList;
+			cbbFilterCategory.FocusedColor = Color.FromArgb(94, 148, 255);
+			cbbFilterCategory.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+			cbbFilterCategory.Font = new Font("Segoe UI", 10F);
+			cbbFilterCategory.ForeColor = Color.FromArgb(68, 88, 112);
+			cbbFilterCategory.ItemHeight = 30;
+			cbbFilterCategory.Location = new Point(22, 172);
+			cbbFilterCategory.Name = "cbbFilterCategory";
+			cbbFilterCategory.ShadowDecoration.CustomizableEdges = customizableEdges12;
+			cbbFilterCategory.Size = new Size(343, 36);
+			cbbFilterCategory.TabIndex = 10;
+			// 
+			// label1
+			// 
+			label1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			label1.ForeColor = Color.FromArgb(52, 58, 64);
+			label1.Location = new Point(22, 127);
+			label1.Margin = new Padding(4, 0, 4, 0);
+			label1.Name = "label1";
+			label1.Size = new Size(343, 42);
+			label1.TabIndex = 9;
+			label1.Text = "Danh mục";
 			// 
 			// lblPriceHeader
 			// 
-			lblPriceHeader.Cursor = Cursors.Hand;
 			lblPriceHeader.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-			lblPriceHeader.Location = new Point(29, 433);
+			lblPriceHeader.ForeColor = Color.FromArgb(52, 58, 64);
+			lblPriceHeader.Location = new Point(22, 368);
 			lblPriceHeader.Margin = new Padding(4, 0, 4, 0);
 			lblPriceHeader.Name = "lblPriceHeader";
 			lblPriceHeader.Size = new Size(343, 42);
 			lblPriceHeader.TabIndex = 6;
 			lblPriceHeader.Text = "Giá";
 			// 
-			// chkRating1To2
-			// 
-			chkRating1To2.AutoSize = true;
-			chkRating1To2.Cursor = Cursors.Hand;
-			chkRating1To2.Font = new Font("Segoe UI", 10F);
-			chkRating1To2.ForeColor = Color.FromArgb(100, 100, 100);
-			chkRating1To2.Location = new Point(29, 350);
-			chkRating1To2.Margin = new Padding(4, 5, 4, 5);
-			chkRating1To2.Name = "chkRating1To2";
-			chkRating1To2.Size = new Size(130, 32);
-			chkRating1To2.TabIndex = 5;
-			chkRating1To2.Text = "1.0 - 1.9 ⭐";
-			chkRating1To2.UseVisualStyleBackColor = true;
-			chkRating1To2.CheckedChanged += FilterChanged;
-			// 
-			// chkRating2To3
-			// 
-			chkRating2To3.AutoSize = true;
-			chkRating2To3.Cursor = Cursors.Hand;
-			chkRating2To3.Font = new Font("Segoe UI", 10F);
-			chkRating2To3.ForeColor = Color.FromArgb(100, 100, 100);
-			chkRating2To3.Location = new Point(29, 292);
-			chkRating2To3.Margin = new Padding(4, 5, 4, 5);
-			chkRating2To3.Name = "chkRating2To3";
-			chkRating2To3.Size = new Size(147, 32);
-			chkRating2To3.TabIndex = 4;
-			chkRating2To3.Text = "2.0 - 2.9 ⭐⭐";
-			chkRating2To3.UseVisualStyleBackColor = true;
-			chkRating2To3.CheckedChanged += FilterChanged;
-			// 
-			// chkRating3To4
-			// 
-			chkRating3To4.AutoSize = true;
-			chkRating3To4.Cursor = Cursors.Hand;
-			chkRating3To4.Font = new Font("Segoe UI", 10F);
-			chkRating3To4.ForeColor = Color.FromArgb(100, 100, 100);
-			chkRating3To4.Location = new Point(29, 233);
-			chkRating3To4.Margin = new Padding(4, 5, 4, 5);
-			chkRating3To4.Name = "chkRating3To4";
-			chkRating3To4.Size = new Size(164, 32);
-			chkRating3To4.TabIndex = 3;
-			chkRating3To4.Text = "3.0 - 3.9 ⭐⭐⭐";
-			chkRating3To4.UseVisualStyleBackColor = true;
-			chkRating3To4.CheckedChanged += FilterChanged;
-			// 
-			// chkRating4Plus
-			// 
-			chkRating4Plus.AutoSize = true;
-			chkRating4Plus.Cursor = Cursors.Hand;
-			chkRating4Plus.Font = new Font("Segoe UI", 10F);
-			chkRating4Plus.ForeColor = Color.FromArgb(100, 100, 100);
-			chkRating4Plus.Location = new Point(29, 175);
-			chkRating4Plus.Margin = new Padding(4, 5, 4, 5);
-			chkRating4Plus.Name = "chkRating4Plus";
-			chkRating4Plus.Size = new Size(199, 32);
-			chkRating4Plus.TabIndex = 2;
-			chkRating4Plus.Text = "4.0 trở lên ⭐⭐⭐⭐";
-			chkRating4Plus.UseVisualStyleBackColor = true;
-			chkRating4Plus.CheckedChanged += FilterChanged;
-			// 
 			// lblRatingHeader
 			// 
-			lblRatingHeader.Cursor = Cursors.Hand;
 			lblRatingHeader.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-			lblRatingHeader.Location = new Point(29, 117);
+			lblRatingHeader.ForeColor = Color.FromArgb(52, 58, 64);
+			lblRatingHeader.Location = new Point(22, 249);
 			lblRatingHeader.Margin = new Padding(4, 0, 4, 0);
 			lblRatingHeader.Name = "lblRatingHeader";
 			lblRatingHeader.Size = new Size(343, 42);
@@ -185,12 +240,14 @@ namespace WinFormsApp1.View.User.Controls
 			// lblFilterHeader
 			// 
 			lblFilterHeader.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-			lblFilterHeader.Location = new Point(29, 33);
+			lblFilterHeader.ForeColor = Color.FromArgb(33, 37, 41);
+			lblFilterHeader.Location = new Point(24, 33);
 			lblFilterHeader.Margin = new Padding(4, 0, 4, 0);
 			lblFilterHeader.Name = "lblFilterHeader";
 			lblFilterHeader.Size = new Size(343, 50);
 			lblFilterHeader.TabIndex = 0;
 			lblFilterHeader.Text = "Bộ lọc";
+			lblFilterHeader.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// mainContentPanel
 			// 
@@ -198,11 +255,11 @@ namespace WinFormsApp1.View.User.Controls
 			mainContentPanel.Controls.Add(coursesPanel);
 			mainContentPanel.Controls.Add(headerPanel);
 			mainContentPanel.Dock = DockStyle.Fill;
-			mainContentPanel.Location = new Point(429, 133);
+			mainContentPanel.Location = new Point(429, 33);
 			mainContentPanel.Margin = new Padding(4, 5, 4, 5);
 			mainContentPanel.Name = "mainContentPanel";
 			mainContentPanel.Padding = new Padding(29, 0, 0, 0);
-			mainContentPanel.Size = new Size(1256, 1001);
+			mainContentPanel.Size = new Size(1256, 855);
 			mainContentPanel.TabIndex = 1;
 			// 
 			// coursesPanel
@@ -214,7 +271,7 @@ namespace WinFormsApp1.View.User.Controls
 			coursesPanel.Margin = new Padding(4, 5, 4, 5);
 			coursesPanel.Name = "coursesPanel";
 			coursesPanel.Padding = new Padding(0, 17, 0, 0);
-			coursesPanel.Size = new Size(1227, 901);
+			coursesPanel.Size = new Size(1227, 755);
 			coursesPanel.TabIndex = 1;
 			// 
 			// headerPanel
@@ -288,10 +345,9 @@ namespace WinFormsApp1.View.User.Controls
 			Controls.Add(filterPanel);
 			Margin = new Padding(4, 5, 4, 5);
 			Name = "CourseControl";
-			Padding = new Padding(29, 133, 29, 33);
-			Size = new Size(1714, 1167);
+			Padding = new Padding(29, 33, 29, 33);
+			Size = new Size(1714, 921);
 			filterPanel.ResumeLayout(false);
-			filterPanel.PerformLayout();
 			mainContentPanel.ResumeLayout(false);
 			headerPanel.ResumeLayout(false);
 			headerPanel.PerformLayout();
@@ -304,13 +360,7 @@ namespace WinFormsApp1.View.User.Controls
 		private System.Windows.Forms.Panel filterPanel;
         private System.Windows.Forms.Label lblFilterHeader;
         private System.Windows.Forms.Label lblRatingHeader;
-        private System.Windows.Forms.CheckBox chkRating4Plus;
-        private System.Windows.Forms.CheckBox chkRating3To4;
-        private System.Windows.Forms.CheckBox chkRating2To3;
-        private System.Windows.Forms.CheckBox chkRating1To2;
         private System.Windows.Forms.Label lblPriceHeader;
-        private System.Windows.Forms.CheckBox chkFree;
-        private System.Windows.Forms.CheckBox chkPaid;
         private System.Windows.Forms.Panel mainContentPanel;
         private System.Windows.Forms.Panel headerPanel;
         private System.Windows.Forms.Label lblHeader;
@@ -318,5 +368,12 @@ namespace WinFormsApp1.View.User.Controls
         private System.Windows.Forms.Label lblSortLabel;
         private System.Windows.Forms.ComboBox cmbSort;
         private System.Windows.Forms.FlowLayoutPanel coursesPanel;
-    }
+		private Guna.UI2.WinForms.Guna2ComboBox cbbFilterRate;
+		private Guna.UI2.WinForms.Guna2ComboBox cbbFilterCategory;
+		private Label label1;
+		private Guna.UI2.WinForms.Guna2TextBox txtFilterToPrice;
+		private Guna.UI2.WinForms.Guna2TextBox txtFilterFromPrice;
+		private Guna.UI2.WinForms.Guna2Button btnClear;
+		private Guna.UI2.WinForms.Guna2Button btnApply;
+	}
 }

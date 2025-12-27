@@ -89,7 +89,7 @@ namespace WinFormsApp1.View
 			btnConfirmReset.FlatStyle = FlatStyle.Flat;
 			btnConfirmReset.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
 			btnConfirmReset.ForeColor = Color.White;
-			btnConfirmReset.Location = new Point(62, 369);
+			btnConfirmReset.Location = new Point(63, 315);
 			btnConfirmReset.Name = "btnConfirmReset";
 			btnConfirmReset.Size = new Size(400, 45);
 			btnConfirmReset.TabIndex = 6;
@@ -112,6 +112,7 @@ namespace WinFormsApp1.View
 			btnResetPassword.TabIndex = 6;
 			btnResetPassword.Text = "Đặt lại mật khẩu";
 			btnResetPassword.UseVisualStyleBackColor = false;
+			btnResetPassword.Visible = false;
 			btnResetPassword.Click += btnResetPassword_Click;
 			// 
 			// lblConfirmPasswordError

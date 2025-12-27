@@ -17,8 +17,8 @@
 
 		private void InitializeComponent()
 		{
-			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
 			pnlHeader = new Panel();
 			lblTitle = new Label();
 			pnlActions = new Panel();
@@ -170,7 +170,7 @@
 			// 
 			cbbSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			cbbSearch.BackColor = Color.Transparent;
-			cbbSearch.CustomizableEdges = customizableEdges5;
+			cbbSearch.CustomizableEdges = customizableEdges1;
 			cbbSearch.DrawMode = DrawMode.OwnerDrawFixed;
 			cbbSearch.DropDownStyle = ComboBoxStyle.DropDownList;
 			cbbSearch.FocusedColor = Color.FromArgb(94, 148, 255);
@@ -181,7 +181,7 @@
 			cbbSearch.Items.AddRange(new object[] { "Tất cả", "Tiêu đề", "Danh mục", "Giá", "Tạo lúc", "Trạng thái", "Xuất bản" });
 			cbbSearch.Location = new Point(1687, 28);
 			cbbSearch.Name = "cbbSearch";
-			cbbSearch.ShadowDecoration.CustomizableEdges = customizableEdges6;
+			cbbSearch.ShadowDecoration.CustomizableEdges = customizableEdges2;
 			cbbSearch.Size = new Size(150, 36);
 			cbbSearch.TabIndex = 5;
 			cbbSearch.SelectedIndexChanged += CbbSearch_SelectedIndexChanged;
