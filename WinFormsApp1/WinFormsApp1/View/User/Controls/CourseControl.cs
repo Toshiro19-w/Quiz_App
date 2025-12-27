@@ -21,7 +21,97 @@ namespace WinFormsApp1.View.User.Controls
         {
             InitializeComponent();
             cmbSort.SelectedIndex = 0;
+            InitializeFilters();
             LoadCourses();
+        }
+
+        private async void InitializeFilters()
+        {
+            // Load categories into combo box
+            await LoadCategoriesAsync();
+            
+            // Setup rating filter
+            cbbFilterRate.Items.Clear();
+            cbbFilterRate.Items.Add("Tất cả");
+            cbbFilterRate.Items.Add("5 sao");
+            cbbFilterRate.Items.Add("4 sao trở lên");
+            cbbFilterRate.Items.Add("3 sao trở lên");
+            cbbFilterRate.Items.Add("2 sao trở lên");
+            cbbFilterRate.Items.Add("1 sao trở lên");
+            cbbFilterRate.SelectedIndex = 0;
+            
+            // Only allow numbers in price textboxes
+            txtFilterFromPrice.KeyPress += PriceTextBox_KeyPress;
+            txtFilterToPrice.KeyPress += PriceTextBox_KeyPress;
+            
+            // Validate price range
+            txtFilterFromPrice.Leave += ValidatePriceRange;
+            txtFilterToPrice.Leave += ValidatePriceRange;
+        }
+
+        private void PriceTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Only allow digits, backspace, and decimal point
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
+            {
+                e.Handled = true;
+                return;
+            }
+
+            // Only allow one decimal point
+            var textBox = sender as Guna.UI2.WinForms.Guna2TextBox;
+            if (e.KeyChar == '.' && textBox.Text.IndexOf('.') > -1)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void ValidatePriceRange(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtFilterFromPrice.Text) || 
+                string.IsNullOrWhiteSpace(txtFilterToPrice.Text))
+                return;
+
+            if (decimal.TryParse(txtFilterFromPrice.Text, out decimal fromPrice) &&
+                decimal.TryParse(txtFilterToPrice.Text, out decimal toPrice))
+            {
+                if (fromPrice > toPrice)
+                {
+                    ToastHelper.ShowError(this.FindForm(), "'Từ giá' không được lớn hơn 'Đến giá'", 2000);
+                    
+                    // Swap values
+                    var temp = txtFilterFromPrice.Text;
+                    txtFilterFromPrice.Text = txtFilterToPrice.Text;
+                    txtFilterToPrice.Text = temp;
+                }
+            }
+        }
+
+        private async System.Threading.Tasks.Task LoadCategoriesAsync()
+        {
+            try
+            {
+                using var context = new LearningPlatformContext();
+                var categories = await context.CourseCategories
+                    .OrderBy(c => c.DisplayOrder)
+                    .ThenBy(c => c.Name)
+                    .ToListAsync();
+
+                cbbFilterCategory.Items.Clear();
+                cbbFilterCategory.Items.Add("Tất cả");
+                
+                foreach (var category in categories)
+                {
+                    cbbFilterCategory.Items.Add(category.Name);
+                    cbbFilterCategory.Tag = categories; // Store categories for later use
+                }
+                
+                cbbFilterCategory.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                ToastHelper.ShowError(this.FindForm(), $"Lỗi tải danh mục: {ex.Message}");
+            }
         }
 
         public async System.Threading.Tasks.Task FilterByCategory(string categorySlug)
@@ -41,13 +131,50 @@ namespace WinFormsApp1.View.User.Controls
             await ApplyFiltersAndLoad();
         }
 
-        private async void FilterChanged(object sender, EventArgs e)
+        private async void SortChanged(object sender, EventArgs e)
         {
             await ApplyFiltersAndLoad();
         }
 
-        private async void SortChanged(object sender, EventArgs e)
+        private async void BtnApply_Click(object sender, EventArgs e)
         {
+            // Validate price range before applying
+            if (!string.IsNullOrWhiteSpace(txtFilterFromPrice.Text) && 
+                !string.IsNullOrWhiteSpace(txtFilterToPrice.Text))
+            {
+                if (decimal.TryParse(txtFilterFromPrice.Text, out decimal fromPrice) &&
+                    decimal.TryParse(txtFilterToPrice.Text, out decimal toPrice))
+                {
+                    if (fromPrice > toPrice)
+                    {
+                        ToastHelper.ShowError(this.FindForm(), "'Từ giá' không được lớn hơn 'Đến giá'", 2000);
+                        return;
+                    }
+                    
+                    if (fromPrice < 0 || toPrice < 0)
+                    {
+                        ToastHelper.ShowError(this.FindForm(), "Giá không được âm", 2000);
+                        return;
+                    }
+                }
+            }
+
+            await ApplyFiltersAndLoad();
+        }
+
+        private async void BtnClear_Click(object sender, EventArgs e)
+        {
+            // Reset all filters to default
+            cbbFilterCategory.SelectedIndex = 0;
+            cbbFilterRate.SelectedIndex = 0;
+            txtFilterFromPrice.Clear();
+            txtFilterToPrice.Clear();
+            
+            // Clear external filters
+            _categoryFilterSlug = null;
+            _searchQuery = null;
+            
+            // Reload courses
             await ApplyFiltersAndLoad();
         }
 
@@ -73,78 +200,57 @@ namespace WinFormsApp1.View.User.Controls
                 query = query.Where(c => c.Category != null && c.Category.Slug == _categoryFilterSlug);
             }
 
-            // Apply rating filters
-            bool hasRatingFilter = false;
-            var ratingQuery = context.Courses.Where(c => false).AsQueryable();
-
-            if (chkRating4Plus.Checked)
+            // Apply category filter from combo box
+            if (cbbFilterCategory.SelectedIndex > 0 && cbbFilterCategory.Tag is System.Collections.Generic.List<CourseCategory> categories)
             {
-                if (!hasRatingFilter)
+                var selectedCategoryName = cbbFilterCategory.SelectedItem.ToString();
+                var selectedCategory = categories.FirstOrDefault(c => c.Name == selectedCategoryName);
+                if (selectedCategory != null)
                 {
-                    ratingQuery = query.Where(c => c.AverageRating >= 4.0m && c.AverageRating <= 5.0m);
-                    hasRatingFilter = true;
+                    query = query.Where(c => c.CategoryId == selectedCategory.CategoryId);
+                }
+            }
+
+            // Apply rating filter
+            if (cbbFilterRate.SelectedIndex > 0)
+            {
+                decimal minRating = cbbFilterRate.SelectedIndex switch
+                {
+                    1 => 5.0m,    // 5 sao
+                    2 => 4.0m,    // 4 sao trở lên
+                    3 => 3.0m,    // 3 sao trở lên
+                    4 => 2.0m,    // 2 sao trở lên
+                    5 => 1.0m,    // 1 sao trở lên
+                    _ => 0.0m
+                };
+
+                if (cbbFilterRate.SelectedIndex == 1)
+                {
+                    // Exactly 5 stars
+                    query = query.Where(c => c.AverageRating == 5.0m);
                 }
                 else
                 {
-                    ratingQuery = ratingQuery.Union(query.Where(c => c.AverageRating >= 4.0m && c.AverageRating <= 5.0m));
+                    // Greater than or equal to
+                    query = query.Where(c => c.AverageRating >= minRating);
                 }
             }
 
-            if (chkRating3To4.Checked)
+            // Apply price range filter
+            if (!string.IsNullOrWhiteSpace(txtFilterFromPrice.Text) && decimal.TryParse(txtFilterFromPrice.Text, out decimal fromPrice))
             {
-                if (!hasRatingFilter)
+                if (fromPrice >= 0)
                 {
-                    ratingQuery = query.Where(c => c.AverageRating >= 3.0m && c.AverageRating < 4.0m);
-                    hasRatingFilter = true;
-                }
-                else
-                {
-                    ratingQuery = ratingQuery.Union(query.Where(c => c.AverageRating >= 3.0m && c.AverageRating < 4.0m));
+                    query = query.Where(c => c.Price >= fromPrice);
                 }
             }
 
-            if (chkRating2To3.Checked)
+            if (!string.IsNullOrWhiteSpace(txtFilterToPrice.Text) && decimal.TryParse(txtFilterToPrice.Text, out decimal toPrice))
             {
-                if (!hasRatingFilter)
+                if (toPrice >= 0)
                 {
-                    ratingQuery = query.Where(c => c.AverageRating >= 2.0m && c.AverageRating < 3.0m);
-                    hasRatingFilter = true;
+                    query = query.Where(c => c.Price <= toPrice);
                 }
-                else
-                {
-                    ratingQuery = ratingQuery.Union(query.Where(c => c.AverageRating >= 2.0m && c.AverageRating < 3.0m));
-                }
-            }
-
-            if (chkRating1To2.Checked)
-            {
-                if (!hasRatingFilter)
-                {
-                    ratingQuery = query.Where(c => c.AverageRating >= 1.0m && c.AverageRating < 2.0m);
-                    hasRatingFilter = true;
-                }
-                else
-                {
-                    ratingQuery = ratingQuery.Union(query.Where(c => c.AverageRating >= 1.0m && c.AverageRating < 2.0m));
-                }
-            }
-
-            if (hasRatingFilter)
-            {
-                query = ratingQuery;
-            }
-
-            // Apply price filter
-            bool freeChecked = chkFree.Checked;
-            bool paidChecked = chkPaid.Checked;
-
-            if (freeChecked && !paidChecked)
-            {
-                query = query.Where(c => c.Price == 0);
-            }
-            else if (paidChecked && !freeChecked)
-            {
-                query = query.Where(c => c.Price > 0);
             }
 
             // Apply sorting
@@ -160,7 +266,7 @@ namespace WinFormsApp1.View.User.Controls
 
             try
             {
-                var courses = await query.Take(20).ToListAsync();
+                var courses = await query.Take(50).ToListAsync();
 
                 // Update course count
                 lblCourseCount.Text = $"{courses.Count} khóa học";
@@ -170,13 +276,29 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this.FindForm(), $"Lỗi: {ex.Message}");
+                ToastHelper.ShowError(this.FindForm(), $"Lỗi: {ex.Message}");
             }
         }
 
         private void DisplayCourses(System.Collections.Generic.List<Course> courses)
         {
             coursesPanel.Controls.Clear();
+
+            if (courses.Count == 0)
+            {
+                var noResultLabel = new Label
+                {
+                    Text = "Không tìm thấy khóa học phù hợp\nThử điều chỉnh bộ lọc của bạn",
+                    Font = new Font("Segoe UI", 14F),
+                    ForeColor = Color.FromArgb(108, 117, 125),
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    AutoSize = false,
+                    Size = new Size(800, 200),
+                    Margin = new Padding(50)
+                };
+                coursesPanel.Controls.Add(noResultLabel);
+                return;
+            }
 
             foreach (var course in courses)
             {
@@ -204,7 +326,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             else
             {
-                ToastHelper.Show(this.FindForm(), "Không thể điều hướng đến trang chi tiết");
+                ToastHelper.ShowError(this.FindForm(), "Không thể điều hướng đến trang chi tiết");
             }
         }
 
@@ -216,7 +338,7 @@ namespace WinFormsApp1.View.User.Controls
 
             if (!userId.HasValue)
             {
-                ToastHelper.Show(this.FindForm(), "Vui lòng đăng nhập để thêm vào giỏ hàng!");
+                ToastHelper.ShowError(this.FindForm(), "Vui lòng đăng nhập để thêm vào giỏ hàng!");
                 return;
             }
 
@@ -252,16 +374,16 @@ namespace WinFormsApp1.View.User.Controls
                     context.CartItems.Add(cartItem);
                     await context.SaveChangesAsync();
                     
-                    ToastHelper.Show(this.FindForm(), "Đã thêm khóa học vào giỏ hàng!");
+                    ToastHelper.ShowSuccess(this.FindForm(), "Đã thêm khóa học vào giỏ hàng!");
                 }
                 else
                 {
-                    ToastHelper.Show(this.FindForm(), "Khóa học đã có trong giỏ hàng!");
+                    ToastHelper.ShowError(this.FindForm(), "Khóa học đã có trong giỏ hàng!");
                 }
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this.FindForm(), $"Lỗi: {ex.Message}");
+                ToastHelper.ShowError(this.FindForm(), $"Lỗi: {ex.Message}");
             }
         }
     }

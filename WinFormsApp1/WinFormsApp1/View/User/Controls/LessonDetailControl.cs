@@ -4,6 +4,7 @@ using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
 using LibVLCSharp.Shared;
 using LibVLCSharp.WinForms;
+using PdfiumViewer;
 
 namespace WinFormsApp1.View.User.Controls
 {
@@ -1019,25 +1020,41 @@ namespace WinFormsApp1.View.User.Controls
         {
             pnlTheory.Visible = true;
 
-            var html = $@"
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset='utf-8'>
-                    <style>
-                        body {{ font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; line-height: 1.6; }}
-                        h1, h2, h3 {{ color: #3490dc; }}
-                        code {{ background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }}
-                        pre {{ background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }}
-                    </style>
-                </head>
-                <body>
-                    <h2>{content.Title}</h2>
-                    {content.Body}
-                </body>
-                </html>";
+            // Kiểm tra xem có đường dẫn PDF không
+            if (!string.IsNullOrEmpty(content.VideoUrl) && content.VideoUrl.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+            {
+                // Load PDF file
+                try
+                {
+                    string projectRoot = MediaHelper.GetProjectRoot();
+                    string relativePath = content.VideoUrl.Replace("/", "\\").TrimStart('\\');
+                    string fullPath = Path.Combine(projectRoot, relativePath);
 
-            webBrowser.DocumentText = html;
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        var document = PdfiumViewer.PdfDocument.Load(fullPath);
+                        pdfViewer.Document = document;
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            $"Không tìm thấy file PDF!\n\n" +
+                            $"Hệ thống đang tìm tại:\n{fullPath}\n\n" +
+                            "Vui lòng kiểm tra lại thư mục Library/Theory.",
+                            "Lỗi File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi load PDF: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else if (!string.IsNullOrEmpty(content.Body))
+            {
+                // Nếu không có PDF, hiển thị nội dung HTML trong message box hoặc tạo PDF tạm
+                MessageBox.Show("Nội dung lý thuyết phải là file PDF. Vui lòng cập nhật đường dẫn PDF trong VideoUrl.", 
+                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
 
             // Mark as viewed
             await MarkContentViewedAsync(content.ContentId);
@@ -1467,7 +1484,7 @@ namespace WinFormsApp1.View.User.Controls
 
                 var lblLock = new Label
                 {
-             
+                    Text = "🔒",
                     Font = new Font("Segoe UI", 72),
                     Location = new Point(500, 50),
                     AutoSize = true
@@ -2043,7 +2060,7 @@ namespace WinFormsApp1.View.User.Controls
                 Text = contentIcon.Label,
                 Location = new Point(55, 50),
                 Size = new Size(150, 20),
-                Font = new Font("Segoe UI", 8),
+                Font = new Font("Segoe UI", 8, FontStyle.Regular),
                 ForeColor = ColorPalette.TextSecondary
             };
 

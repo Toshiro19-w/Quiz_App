@@ -201,7 +201,7 @@
 			Controls.Add(lblId);
 			Margin = new Padding(0, 1, 0, 0);
 			Name = "CourseRowControl";
-			Size = new Size(1814, 90);
+			Size = new Size(1794, 90);
 			Load += CourseRowControl_Load;
 			MouseEnter += CourseRowControl_MouseEnter;
 			MouseLeave += CourseRowControl_MouseLeave;

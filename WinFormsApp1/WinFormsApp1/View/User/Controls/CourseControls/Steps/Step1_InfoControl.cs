@@ -93,7 +93,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				return;
 			}
 
-			if (price <= 2000)
+			if (price < 2000)
 			{
 				lblPriceLabel.ForeColor = Color.Red;
 				lblPriceLabel.Text = "Giá (VNĐ) - Phải lớn hơn 2000";

@@ -27,8 +27,6 @@
 			cboContentType = new ComboBox();
 			lblTitle = new Label();
 			txtTitle = new TextBox();
-			lblBody = new Label();
-			txtBody = new TextBox();
 			label1 = new Label();
 			panel1 = new Panel();
 			btnBrowsePdf = new Button();
@@ -66,26 +64,6 @@
 			txtTitle.Size = new Size(1344, 39);
 			txtTitle.TabIndex = 2;
 			// 
-			// lblBody
-			// 
-			lblBody.AutoSize = true;
-			lblBody.Font = new Font("Segoe UI", 12F);
-			lblBody.Location = new Point(54, 213);
-			lblBody.Name = "lblBody";
-			lblBody.Size = new Size(120, 32);
-			lblBody.TabIndex = 3;
-			lblBody.Text = "Nội dung:";
-			// 
-			// txtBody
-			// 
-			txtBody.Font = new Font("Segoe UI", 12F);
-			txtBody.Location = new Point(54, 255);
-			txtBody.Multiline = true;
-			txtBody.Name = "txtBody";
-			txtBody.ScrollBars = ScrollBars.Vertical;
-			txtBody.Size = new Size(1347, 116);
-			txtBody.TabIndex = 4;
-			// 
 			// label1
 			// 
 			label1.AutoSize = true;
@@ -102,7 +80,7 @@
 			panel1.Dock = DockStyle.Left;
 			panel1.Location = new Point(0, 0);
 			panel1.Name = "panel1";
-			panel1.Size = new Size(10, 500);
+			panel1.Size = new Size(10, 376);
 			panel1.TabIndex = 6;
 			// 
 			// btnBrowsePdf
@@ -112,7 +90,7 @@
 			btnBrowsePdf.FlatStyle = FlatStyle.Flat;
 			btnBrowsePdf.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnBrowsePdf.ForeColor = Color.White;
-			btnBrowsePdf.Location = new Point(54, 450);
+			btnBrowsePdf.Location = new Point(55, 283);
 			btnBrowsePdf.Name = "btnBrowsePdf";
 			btnBrowsePdf.Size = new Size(150, 40);
 			btnBrowsePdf.TabIndex = 7;
@@ -122,7 +100,7 @@
 			// txtPdfPath
 			// 
 			txtPdfPath.Font = new Font("Segoe UI", 10F);
-			txtPdfPath.Location = new Point(220, 455);
+			txtPdfPath.Location = new Point(221, 288);
 			txtPdfPath.Name = "txtPdfPath";
 			txtPdfPath.ReadOnly = true;
 			txtPdfPath.Size = new Size(1011, 34);
@@ -132,11 +110,11 @@
 			// 
 			lblPdfPath.AutoSize = true;
 			lblPdfPath.Font = new Font("Segoe UI", 12F);
-			lblPdfPath.Location = new Point(54, 390);
+			lblPdfPath.Location = new Point(54, 227);
 			lblPdfPath.Name = "lblPdfPath";
-			lblPdfPath.Size = new Size(312, 32);
+			lblPdfPath.Size = new Size(142, 32);
 			lblPdfPath.TabIndex = 9;
-			lblPdfPath.Text = "Tài liệu PDF (Không bắt buộc):";
+			lblPdfPath.Text = "Tài liệu PDF:";
 			// 
 			// btnPreviewPdf
 			// 
@@ -145,7 +123,7 @@
 			btnPreviewPdf.FlatStyle = FlatStyle.Flat;
 			btnPreviewPdf.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnPreviewPdf.ForeColor = Color.White;
-			btnPreviewPdf.Location = new Point(1247, 450);
+			btnPreviewPdf.Location = new Point(1248, 283);
 			btnPreviewPdf.Name = "btnPreviewPdf";
 			btnPreviewPdf.Size = new Size(150, 40);
 			btnPreviewPdf.TabIndex = 10;
@@ -162,13 +140,11 @@
 			Controls.Add(btnBrowsePdf);
 			Controls.Add(panel1);
 			Controls.Add(label1);
-			Controls.Add(txtBody);
-			Controls.Add(lblBody);
 			Controls.Add(txtTitle);
 			Controls.Add(lblTitle);
 			Controls.Add(cboContentType);
 			Name = "ContentTheoryControl";
-			Size = new Size(1450, 500);
+			Size = new Size(1450, 376);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -178,8 +154,6 @@
 		private System.Windows.Forms.ComboBox cboContentType;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.TextBox txtTitle;
-        private System.Windows.Forms.Label lblBody;
-        private System.Windows.Forms.TextBox txtBody;
 		private Label label1;
 		private Panel panel1;
 		private Button btnBrowsePdf;

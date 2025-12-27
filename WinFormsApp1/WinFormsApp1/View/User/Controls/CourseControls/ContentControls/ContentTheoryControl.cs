@@ -118,8 +118,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			// local UI change only for Theory control
 			if (vietnameseType == "Video")
 			{
-				lblBody.Visible = false;
-				txtBody.Visible = false;
+				//lblBody.Visible = false;
+				//txtBody.Visible = false;
 				lblPdfPath.Visible = false;
 				btnBrowsePdf.Visible = false;
 				txtPdfPath.Visible = false;
@@ -127,8 +127,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			}
 			else
 			{
-				lblBody.Visible = true;
-				txtBody.Visible = true;
+				//lblBody.Visible = true;
+				//txtBody.Visible = true;
 				lblPdfPath.Visible = true;
 				btnBrowsePdf.Visible = true;
 				txtPdfPath.Visible = true;
@@ -155,7 +155,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             }
             
             txtTitle.Text = vm.Title ?? string.Empty;
-            txtBody.Text = vm.Body ?? string.Empty;
+            //txtBody.Text = vm.Body ?? string.Empty;
             txtPdfPath.Text = vm.VideoUrl ?? string.Empty;
             _oldPdfPath = vm.VideoUrl;
             
@@ -187,7 +187,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             {
                 ContentType = ContentTypeHelper.ToEnglish(vietnameseType), // Lưu bằng tiếng Anh
                 Title = txtTitle.Text.Trim(),
-                Body = txtBody.Text,
+                //Body = txtBody.Text,
                 VideoUrl = txtPdfPath.Text.Trim() // Tạm thời lưu PDF path vào VideoUrl
             };
         }
