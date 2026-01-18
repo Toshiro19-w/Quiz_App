@@ -248,6 +248,7 @@ namespace WinFormsApp1.View.User.Controls
                 
                 // Lấy flashcard sets mà user đã tạo (chỉ Public và Private, KHÔNG lấy Course)
                 var flashcardSets = await context.FlashcardSets
+                    .Include(fs => fs.Flashcards)
                     .Where(fs => fs.OwnerId == user.UserId && 
                                 (fs.Visibility == "Public" || fs.Visibility == "Private") &&
                                 fs.Visibility != "Course")
