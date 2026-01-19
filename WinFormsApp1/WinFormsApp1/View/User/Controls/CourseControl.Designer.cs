@@ -95,7 +95,7 @@ namespace WinFormsApp1.View.User.Controls
 			btnClear.FillColor = Color.FromArgb(108, 117, 125);
 			btnClear.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnClear.ForeColor = Color.White;
-			btnClear.Location = new Point(204, 565);
+			btnClear.Location = new Point(206, 538);
 			btnClear.Name = "btnClear";
 			btnClear.ShadowDecoration.CustomizableEdges = customizableEdges2;
 			btnClear.Size = new Size(154, 45);
@@ -114,7 +114,7 @@ namespace WinFormsApp1.View.User.Controls
 			btnApply.FillColor = Color.FromArgb(13, 110, 253);
 			btnApply.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnApply.ForeColor = Color.White;
-			btnApply.Location = new Point(29, 565);
+			btnApply.Location = new Point(31, 538);
 			btnApply.Name = "btnApply";
 			btnApply.ShadowDecoration.CustomizableEdges = customizableEdges4;
 			btnApply.Size = new Size(154, 45);
@@ -135,7 +135,7 @@ namespace WinFormsApp1.View.User.Controls
 			txtFilterToPrice.Font = new Font("Segoe UI", 10F);
 			txtFilterToPrice.ForeColor = Color.Black;
 			txtFilterToPrice.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-			txtFilterToPrice.Location = new Point(29, 483);
+			txtFilterToPrice.Location = new Point(31, 456);
 			txtFilterToPrice.Margin = new Padding(4, 5, 4, 5);
 			txtFilterToPrice.Name = "txtFilterToPrice";
 			txtFilterToPrice.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
@@ -158,7 +158,7 @@ namespace WinFormsApp1.View.User.Controls
 			txtFilterFromPrice.Font = new Font("Segoe UI", 10F);
 			txtFilterFromPrice.ForeColor = Color.Black;
 			txtFilterFromPrice.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-			txtFilterFromPrice.Location = new Point(29, 426);
+			txtFilterFromPrice.Location = new Point(31, 399);
 			txtFilterFromPrice.Margin = new Padding(4, 5, 4, 5);
 			txtFilterFromPrice.Name = "txtFilterFromPrice";
 			txtFilterFromPrice.PlaceholderForeColor = Color.FromArgb(125, 137, 149);
@@ -180,7 +180,7 @@ namespace WinFormsApp1.View.User.Controls
 			cbbFilterRate.Font = new Font("Segoe UI", 10F);
 			cbbFilterRate.ForeColor = Color.FromArgb(68, 88, 112);
 			cbbFilterRate.ItemHeight = 30;
-			cbbFilterRate.Location = new Point(22, 294);
+			cbbFilterRate.Location = new Point(25, 267);
 			cbbFilterRate.Name = "cbbFilterRate";
 			cbbFilterRate.ShadowDecoration.CustomizableEdges = customizableEdges10;
 			cbbFilterRate.Size = new Size(343, 36);
@@ -198,7 +198,7 @@ namespace WinFormsApp1.View.User.Controls
 			cbbFilterCategory.Font = new Font("Segoe UI", 10F);
 			cbbFilterCategory.ForeColor = Color.FromArgb(68, 88, 112);
 			cbbFilterCategory.ItemHeight = 30;
-			cbbFilterCategory.Location = new Point(22, 172);
+			cbbFilterCategory.Location = new Point(24, 145);
 			cbbFilterCategory.Name = "cbbFilterCategory";
 			cbbFilterCategory.ShadowDecoration.CustomizableEdges = customizableEdges12;
 			cbbFilterCategory.Size = new Size(343, 36);
@@ -208,7 +208,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			label1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
 			label1.ForeColor = Color.FromArgb(52, 58, 64);
-			label1.Location = new Point(22, 127);
+			label1.Location = new Point(24, 100);
 			label1.Margin = new Padding(4, 0, 4, 0);
 			label1.Name = "label1";
 			label1.Size = new Size(343, 42);
@@ -219,7 +219,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			lblPriceHeader.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
 			lblPriceHeader.ForeColor = Color.FromArgb(52, 58, 64);
-			lblPriceHeader.Location = new Point(22, 368);
+			lblPriceHeader.Location = new Point(24, 341);
 			lblPriceHeader.Margin = new Padding(4, 0, 4, 0);
 			lblPriceHeader.Name = "lblPriceHeader";
 			lblPriceHeader.Size = new Size(343, 42);
@@ -230,7 +230,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			lblRatingHeader.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
 			lblRatingHeader.ForeColor = Color.FromArgb(52, 58, 64);
-			lblRatingHeader.Location = new Point(22, 249);
+			lblRatingHeader.Location = new Point(24, 222);
 			lblRatingHeader.Margin = new Padding(4, 0, 4, 0);
 			lblRatingHeader.Name = "lblRatingHeader";
 			lblRatingHeader.Size = new Size(343, 42);
