@@ -29,6 +29,7 @@ namespace WinFormsApp1.View.User.Controls
 		private void InitializeComponent()
 		{
 			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CourseControl));
 			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
 			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
 			Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
@@ -53,6 +54,7 @@ namespace WinFormsApp1.View.User.Controls
 			lblFilterHeader = new Label();
 			mainContentPanel = new Panel();
 			coursesPanel = new FlowLayoutPanel();
+			paginationControl1 = new PaginationControl();
 			headerPanel = new Panel();
 			cmbSort = new ComboBox();
 			lblSortLabel = new Label();
@@ -95,12 +97,13 @@ namespace WinFormsApp1.View.User.Controls
 			btnClear.FillColor = Color.FromArgb(108, 117, 125);
 			btnClear.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnClear.ForeColor = Color.White;
+			btnClear.Image = (Image)resources.GetObject("btnClear.Image");
 			btnClear.Location = new Point(206, 538);
 			btnClear.Name = "btnClear";
 			btnClear.ShadowDecoration.CustomizableEdges = customizableEdges2;
 			btnClear.Size = new Size(154, 45);
 			btnClear.TabIndex = 15;
-			btnClear.Text = "🔄 Làm mới";
+			btnClear.Text = "Làm mới";
 			btnClear.Click += BtnClear_Click;
 			// 
 			// btnApply
@@ -114,12 +117,13 @@ namespace WinFormsApp1.View.User.Controls
 			btnApply.FillColor = Color.FromArgb(13, 110, 253);
 			btnApply.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnApply.ForeColor = Color.White;
+			btnApply.Image = Properties.Resources.filter;
 			btnApply.Location = new Point(31, 538);
 			btnApply.Name = "btnApply";
 			btnApply.ShadowDecoration.CustomizableEdges = customizableEdges4;
 			btnApply.Size = new Size(154, 45);
 			btnApply.TabIndex = 14;
-			btnApply.Text = "✓ Áp dụng";
+			btnApply.Text = "Áp dụng";
 			btnApply.Click += BtnApply_Click;
 			// 
 			// txtFilterToPrice
@@ -253,6 +257,7 @@ namespace WinFormsApp1.View.User.Controls
 			// 
 			mainContentPanel.BackColor = Color.FromArgb(248, 249, 250);
 			mainContentPanel.Controls.Add(coursesPanel);
+			mainContentPanel.Controls.Add(paginationControl1);
 			mainContentPanel.Controls.Add(headerPanel);
 			mainContentPanel.Dock = DockStyle.Fill;
 			mainContentPanel.Location = new Point(429, 33);
@@ -271,8 +276,18 @@ namespace WinFormsApp1.View.User.Controls
 			coursesPanel.Margin = new Padding(4, 5, 4, 5);
 			coursesPanel.Name = "coursesPanel";
 			coursesPanel.Padding = new Padding(0, 17, 0, 0);
-			coursesPanel.Size = new Size(1227, 755);
+			coursesPanel.Size = new Size(1227, 705);
 			coursesPanel.TabIndex = 1;
+			// 
+			// paginationControl1
+			// 
+			paginationControl1.BackColor = Color.FromArgb(248, 249, 250);
+			paginationControl1.Dock = DockStyle.Bottom;
+			paginationControl1.Location = new Point(29, 805);
+			paginationControl1.Margin = new Padding(4);
+			paginationControl1.Name = "paginationControl1";
+			paginationControl1.Size = new Size(1227, 50);
+			paginationControl1.TabIndex = 2;
 			// 
 			// headerPanel
 			// 
@@ -368,6 +383,7 @@ namespace WinFormsApp1.View.User.Controls
         private System.Windows.Forms.Label lblSortLabel;
         private System.Windows.Forms.ComboBox cmbSort;
         private System.Windows.Forms.FlowLayoutPanel coursesPanel;
+        private PaginationControl paginationControl1;
 		private Guna.UI2.WinForms.Guna2ComboBox cbbFilterRate;
 		private Guna.UI2.WinForms.Guna2ComboBox cbbFilterCategory;
 		private Label label1;

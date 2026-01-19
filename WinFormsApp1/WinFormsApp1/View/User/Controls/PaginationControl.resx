@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -117,16 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="btnClear.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwa
-        AAAA5ElEQVQ4T83SLUvEURDF4cWXYrCISZOgQQSLazUI2sSyXWT9GpvMBrNY3A+wZcGoYDOrmDRZTGLy
-        9ZG7jIv/2Q02/cFw4ZyZ4XLPrdX+LZjCetQsVnGP8dxbATPo4E2V6zgX80wfLOERV2hgOuoQH7Ggked6
-        YAw3OMPED30e73H9LhaqkwG2o3FuiDeStQFwgMus/xoc4TTrGWxiLevFaOEu6xncYj/rxVjGJ7ay9w02
-        Iol69nrgJGJcGeKViB/Qzl6fEl95B7zGsiZ2cYyXiHgyz1XAKHZwjic84wJ75a/k/r/nC7NMFg0mK6jO
-        AAAAAElFTkSuQmCC
-</value>
-  </data>
 </root>

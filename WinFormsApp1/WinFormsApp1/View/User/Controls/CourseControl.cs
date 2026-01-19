@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using static WinFormsApp1.Helpers.ColorPalette;
 using WinFormsApp1.View.User.Controls.CourseControls;
 using WinFormsApp1.View.User;
+using System.Collections.Generic;
 
 namespace WinFormsApp1.View.User.Controls
 {
@@ -16,13 +17,24 @@ namespace WinFormsApp1.View.User.Controls
     {
         private string? _categoryFilterSlug = null;
         private string? _searchQuery = null;
+        private List<Course> _allFilteredCourses = new List<Course>();
 
         public CourseControl()
         {
             InitializeComponent();
             cmbSort.SelectedIndex = 0;
+            
+            // Initialize pagination control
+            paginationControl1.Initialize(12);
+            paginationControl1.PageChanged += PaginationControl_PageChanged;
+            
             InitializeFilters();
             LoadCourses();
+        }
+
+        private void PaginationControl_PageChanged(object sender, int newPage)
+        {
+            DisplayCurrentPage();
         }
 
         private async void InitializeFilters()
@@ -77,7 +89,7 @@ namespace WinFormsApp1.View.User.Controls
             {
                 if (fromPrice > toPrice)
                 {
-                    ToastHelper.ShowError(this.FindForm(), "'Từ giá' không được lớn hơn 'Đến giá'", 2000);
+                    MessageBox.Show("'Từ giá' không được lớn hơn 'Đến giá'", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     
                     // Swap values
                     var temp = txtFilterFromPrice.Text;
@@ -110,7 +122,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                ToastHelper.ShowError(this.FindForm(), $"Lỗi tải danh mục: {ex.Message}");
+                MessageBox.Show($"Lỗi tải danh mục: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -147,13 +159,13 @@ namespace WinFormsApp1.View.User.Controls
                 {
                     if (fromPrice > toPrice)
                     {
-                        ToastHelper.ShowError(this.FindForm(), "'Từ giá' không được lớn hơn 'Đến giá'", 2000);
+                        MessageBox.Show("'Từ giá' không được lớn hơn 'Đến giá'", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
                     
                     if (fromPrice < 0 || toPrice < 0)
                     {
-                        ToastHelper.ShowError(this.FindForm(), "Giá không được âm", 2000);
+                        MessageBox.Show("Giá không được âm", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
                 }
@@ -266,25 +278,29 @@ namespace WinFormsApp1.View.User.Controls
 
             try
             {
-                var courses = await query.Take(50).ToListAsync();
+                // Load all filtered courses
+                _allFilteredCourses = await query.ToListAsync();
 
-                // Update course count
-                lblCourseCount.Text = $"{courses.Count} khóa học";
+                // Update course count with total
+                lblCourseCount.Text = $"{_allFilteredCourses.Count} khóa học";
 
-                // Display courses
-                DisplayCourses(courses);
+                // Update pagination
+                paginationControl1.UpdatePagination(_allFilteredCourses.Count);
+
+                // Display first page
+                DisplayCurrentPage();
             }
             catch (Exception ex)
             {
-                ToastHelper.ShowError(this.FindForm(), $"Lỗi: {ex.Message}");
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void DisplayCourses(System.Collections.Generic.List<Course> courses)
+        private void DisplayCurrentPage()
         {
             coursesPanel.Controls.Clear();
 
-            if (courses.Count == 0)
+            if (_allFilteredCourses.Count == 0)
             {
                 var noResultLabel = new Label
                 {
@@ -300,7 +316,10 @@ namespace WinFormsApp1.View.User.Controls
                 return;
             }
 
-            foreach (var course in courses)
+            // Get courses for current page using pagination control
+            var pagedCourses = paginationControl1.GetPageData(_allFilteredCourses.ToArray());
+
+            foreach (var course in pagedCourses)
             {
                 // Use the reusable CourseCardControl so design matches everywhere
                 var control = new CourseCardControl();
@@ -326,7 +345,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             else
             {
-                ToastHelper.ShowError(this.FindForm(), "Không thể điều hướng đến trang chi tiết");
+                MessageBox.Show("Không thể điều hướng đến trang chi tiết", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -338,7 +357,7 @@ namespace WinFormsApp1.View.User.Controls
 
             if (!userId.HasValue)
             {
-                ToastHelper.ShowError(this.FindForm(), "Vui lòng đăng nhập để thêm vào giỏ hàng!");
+                MessageBox.Show("Vui lòng đăng nhập để thêm vào giỏ hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -374,16 +393,16 @@ namespace WinFormsApp1.View.User.Controls
                     context.CartItems.Add(cartItem);
                     await context.SaveChangesAsync();
                     
-                    ToastHelper.ShowSuccess(this.FindForm(), "Đã thêm khóa học vào giỏ hàng!");
+                    MessageBox.Show("Đã thêm khóa học vào giỏ hàng!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    ToastHelper.ShowError(this.FindForm(), "Khóa học đã có trong giỏ hàng!");
+                    MessageBox.Show("Khóa học đã có trong giỏ hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                ToastHelper.ShowError(this.FindForm(), $"Lỗi: {ex.Message}");
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
