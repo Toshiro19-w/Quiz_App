@@ -52,8 +52,8 @@ namespace WinFormsApp1.Service
                 return result;
             }
 
-            // 2. Kiểm tra trạng thái
-            if (discount.Status != "Active" || !discount.IsActive)
+            // 2. Kiểm tra trạng thái - use Status instead of IsActive
+            if (discount.Status != "Active")
             {
                 result.Message = "Mã giảm giá đã ngừng hoạt động";
                 return result;
@@ -183,7 +183,6 @@ namespace WinFormsApp1.Service
 
             return await context.Discounts
                 .Where(d => d.Status == "Active" 
-                    && d.IsActive
                     && d.StartDate <= now 
                     && d.EndDate >= now
                     && (!d.UsageLimit.HasValue || d.UsageCount < d.UsageLimit.Value))
@@ -251,7 +250,6 @@ namespace WinFormsApp1.Service
             existing.StartDate = discount.StartDate;
             existing.EndDate = discount.EndDate;
             existing.Status = discount.Status;
-            existing.IsActive = discount.IsActive;
             existing.ApplyToAllCourses = discount.ApplyToAllCourses;
             existing.UpdatedAt = DateTime.UtcNow;
 
@@ -275,7 +273,6 @@ namespace WinFormsApp1.Service
             {
                 // Đánh dấu inactive thay vì xóa
                 discount.Status = "Inactive";
-                discount.IsActive = false;
                 discount.UpdatedAt = DateTime.UtcNow;
             }
             else

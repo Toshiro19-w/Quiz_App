@@ -812,8 +812,15 @@ public partial class LearningPlatformContext : DbContext
             entity.Property(e => e.DiscountValue).HasColumnType("decimal(12, 2)");
             entity.Property(e => e.MinOrderAmount).HasColumnType("decimal(12, 2)");
             entity.Property(e => e.MaxDiscountAmount).HasColumnType("decimal(12, 2)");
-            entity.Property(e => e.UsageCount).HasDefaultValue(0);
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            
+            // Map entity properties to database column names
+            entity.Property(e => e.UsageLimit).HasColumnName("MaxUsageCount");
+            entity.Property(e => e.UsageCount).HasColumnName("UsedCount").HasDefaultValue(0);
+            entity.Property(e => e.UsageLimitPerUser).HasColumnName("MaxUsagePerUser");
+            
+            // IsActive is computed from Status, so ignore it in database mapping
+            entity.Ignore(e => e.IsActive);
+            
             entity.Property(e => e.ApplyToAllCourses).HasDefaultValue(true);
             entity.Property(e => e.Status)
                 .HasMaxLength(20)

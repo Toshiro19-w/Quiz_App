@@ -67,7 +67,7 @@ namespace WinFormsApp1.View.User.Forms
                             cartItem.Location = new Point(0, yPos);
                             cartItem.OnRemoveClick += (s, courseId) => RemoveCartItem(item.CartItemId);
                             panelCartItems.Controls.Add(cartItem);
-                            yPos += 135;
+                            yPos += 195; // Increased spacing for card separation
 
                             total += item.Course.Price;
                             _courseIds.Add(item.Course.CourseId);
@@ -140,9 +140,9 @@ namespace WinFormsApp1.View.User.Forms
                             
                             // Reset discount when cart changes
                             _appliedDiscount = null;
-                            txtDiscountCode.Text = "";
-                            lblDiscountMessage.Text = "";
-                            lblDiscountMessage.Visible = false;
+                            lblSelectedVoucher.Text = "";
+                            lblSelectedVoucher.Visible = false;
+                            btnRemoveVoucher.Visible = false;
                             
                             LoadCartItems();
                         }
@@ -263,66 +263,67 @@ namespace WinFormsApp1.View.User.Forms
         {
         }
 
-        private async void btnApplyDiscount_Click(object sender, EventArgs e)
+        private async void btnSelectVoucher_Click(object sender, EventArgs e)
         {
             try
             {
                 var user = AuthHelper.CurrentUser;
                 if (user == null)
                 {
-                    ShowDiscountMessage("Vui lòng đăng nhập để áp dụng mã giảm giá", false);
+                    MessageBox.Show("Vui lòng đăng nhập để sử dụng voucher", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                string code = txtDiscountCode.Text.Trim();
-                if (string.IsNullOrEmpty(code))
+                // Open voucher selector
+                var voucherForm = new frmVoucherSelector(_originalTotal, user.UserId);
+                if (voucherForm.ShowDialog() == DialogResult.OK)
                 {
-                    ShowDiscountMessage("Vui lòng nhập mã giảm giá", false);
-                    return;
+                    var selectedVoucher = voucherForm.SelectedVoucher;
+                    if (selectedVoucher != null)
+                    {
+                        // Validate and apply voucher
+                        var result = await DiscountService.ValidateDiscountAsync(
+                            selectedVoucher.Code, 
+                            user.UserId, 
+                            _originalTotal, 
+                            _courseIds
+                        );
+
+                        if (result.IsValid && result.Discount != null)
+                        {
+                            _appliedDiscount = result.Discount;
+                            _discountAmount = result.DiscountAmount;
+                            _finalAmount = result.FinalAmount;
+
+                            // Update UI
+                            lblSelectedVoucher.Text = $"✓ {selectedVoucher.Code}: -{_discountAmount:N0} VND";
+                            lblSelectedVoucher.Visible = true;
+                            btnRemoveVoucher.Visible = true;
+                            lblDiscountMessage.Visible = false;
+
+                            // Update summary
+                            UpdateSummary(_courseIds.Count, _originalTotal, _discountAmount, _finalAmount);
+
+                            MessageBox.Show(result.Message, "Thành công",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show(result.Message, "Không thể áp dụng",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
                 }
-
-                // Disable button during validation
-                btnApplyDiscount.Enabled = false;
-                btnApplyDiscount.Text = "Đang kiểm tra...";
-
-                // Validate discount
-                var result = await DiscountService.ValidateDiscountAsync(code, user.UserId, _originalTotal, _courseIds);
-
-                if (result.IsValid && result.Discount != null)
-                {
-                    _appliedDiscount = result.Discount;
-                    _discountAmount = result.DiscountAmount;
-                    _finalAmount = result.FinalAmount;
-
-                    ShowDiscountMessage($"✓ Áp dụng thành công! Giảm {_discountAmount:N0} VND", true);
-                    
-                    // Update summary with discount
-                    UpdateSummary(_courseIds.Count, _originalTotal, _discountAmount, _finalAmount);
-                    
-                    // Change button to remove discount
-                    btnApplyDiscount.Text = "Xóa mã";
-                    btnApplyDiscount.BackColor = Color.FromArgb(220, 53, 69);
-                    btnApplyDiscount.Click -= btnApplyDiscount_Click;
-                    btnApplyDiscount.Click += btnRemoveDiscount_Click;
-                    txtDiscountCode.Enabled = false;
-                }
-                else
-                {
-                    ShowDiscountMessage($"✗ {result.Message}", false);
-                    btnApplyDiscount.Text = "Áp dụng";
-                }
-
-                btnApplyDiscount.Enabled = true;
             }
             catch (Exception ex)
             {
-                ShowDiscountMessage($"Lỗi: {ex.Message}", false);
-                btnApplyDiscount.Enabled = true;
-                btnApplyDiscount.Text = "Áp dụng";
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void btnRemoveDiscount_Click(object? sender, EventArgs e)
+        private void btnRemoveVoucher_Click(object sender, EventArgs e)
         {
             // Reset discount
             _appliedDiscount = null;
@@ -330,25 +331,13 @@ namespace WinFormsApp1.View.User.Forms
             _finalAmount = _originalTotal;
 
             // Update UI
-            ShowDiscountMessage("", false);
+            lblSelectedVoucher.Text = "";
+            lblSelectedVoucher.Visible = false;
+            btnRemoveVoucher.Visible = false;
             lblDiscountMessage.Visible = false;
+
+            // Update summary
             UpdateSummary(_courseIds.Count, _originalTotal, 0, _originalTotal);
-
-            // Reset button
-            btnApplyDiscount.Text = "Áp dụng";
-            btnApplyDiscount.BackColor = Color.FromArgb(40, 167, 69);
-            btnApplyDiscount.Click -= btnRemoveDiscount_Click;
-            btnApplyDiscount.Click += btnApplyDiscount_Click;
-            txtDiscountCode.Enabled = true;
-            txtDiscountCode.Text = "";
-            txtDiscountCode.Focus();
-        }
-
-        private void ShowDiscountMessage(string message, bool isSuccess)
-        {
-            lblDiscountMessage.Text = message;
-            lblDiscountMessage.ForeColor = isSuccess ? Color.FromArgb(40, 167, 69) : Color.FromArgb(220, 53, 69);
-            lblDiscountMessage.Visible = !string.IsNullOrEmpty(message);
         }
 
         private void txtDiscountCode_KeyPress(object sender, KeyPressEventArgs e)
@@ -356,7 +345,7 @@ namespace WinFormsApp1.View.User.Forms
             // Apply discount on Enter key
             if (e.KeyChar == (char)Keys.Enter)
             {
-                btnApplyDiscount_Click(sender, e);
+                btnSelectVoucher_Click(sender, e);
                 e.Handled = true;
             }
         }

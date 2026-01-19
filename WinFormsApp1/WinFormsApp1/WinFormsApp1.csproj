@@ -32,6 +32,14 @@
     </Content>
   </ItemGroup>
 
+  <!-- Copy Library/Image folder to output directory -->
+  <ItemGroup>
+    <None Include="Library\Image\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Library\Image\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Guna.Charts.WinForms" Version="1.1.0" />
     <PackageReference Include="Guna.UI2.WinForms" Version="2.0.4.7" />
@@ -82,7 +90,6 @@
   <ItemGroup>
     <Folder Include="View\User\Controls\MyCourses\" />
     <Folder Include="View\User\ShowLesson\" />
-    <Folder Include="Library\Image\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -30,9 +30,10 @@ namespace WinFormsApp1.View.User.Forms
 			btnThanhToanMoMo = new Button();
 			panelDiscount = new Panel();
 			lblDiscountTitle = new Label();
-			txtDiscountCode = new TextBox();
-			btnApplyDiscount = new Button();
+			btnSelectVoucher = new Button();
+			lblSelectedVoucher = new Label();
 			lblDiscountMessage = new Label();
+			btnRemoveVoucher = new Button();
 			panelThongBao = new Panel();
 			lblThongBao = new Label();
 			panelTongKet = new Panel();
@@ -201,9 +202,10 @@ namespace WinFormsApp1.View.User.Forms
 			// panelDiscount
 			// 
 			panelDiscount.Controls.Add(lblDiscountTitle);
-			panelDiscount.Controls.Add(txtDiscountCode);
-			panelDiscount.Controls.Add(btnApplyDiscount);
+			panelDiscount.Controls.Add(btnSelectVoucher);
+			panelDiscount.Controls.Add(lblSelectedVoucher);
 			panelDiscount.Controls.Add(lblDiscountMessage);
+			panelDiscount.Controls.Add(btnRemoveVoucher);
 			panelDiscount.Dock = DockStyle.Top;
 			panelDiscount.Location = new Point(29, 598);
 			panelDiscount.Margin = new Padding(4, 5, 4, 5);
@@ -225,35 +227,33 @@ namespace WinFormsApp1.View.User.Forms
 			lblDiscountTitle.Text = "     Mã giảm giá";
 			lblDiscountTitle.TextAlign = ContentAlignment.MiddleCenter;
 			// 
-			// txtDiscountCode
+			// btnSelectVoucher
 			// 
-			txtDiscountCode.BorderStyle = BorderStyle.FixedSingle;
-			txtDiscountCode.CharacterCasing = CharacterCasing.Upper;
-			txtDiscountCode.Font = new Font("Segoe UI", 11F);
-			txtDiscountCode.Location = new Point(0, 50);
-			txtDiscountCode.Margin = new Padding(4, 5, 4, 5);
-			txtDiscountCode.Name = "txtDiscountCode";
-			txtDiscountCode.PlaceholderText = "Nhập mã giảm giá...";
-			txtDiscountCode.Size = new Size(320, 37);
-			txtDiscountCode.TabIndex = 1;
-			txtDiscountCode.KeyPress += txtDiscountCode_KeyPress;
+			btnSelectVoucher.BackColor = Color.White;
+			btnSelectVoucher.Cursor = Cursors.Hand;
+			btnSelectVoucher.FlatAppearance.BorderColor = Color.FromArgb(0, 102, 255);
+			btnSelectVoucher.FlatStyle = FlatStyle.Flat;
+			btnSelectVoucher.Font = new Font("Segoe UI", 10F);
+			btnSelectVoucher.ForeColor = Color.FromArgb(0, 102, 255);
+			btnSelectVoucher.Location = new Point(0, 50);
+			btnSelectVoucher.Margin = new Padding(4, 5, 4, 5);
+			btnSelectVoucher.Name = "btnSelectVoucher";
+			btnSelectVoucher.Size = new Size(450, 40);
+			btnSelectVoucher.TabIndex = 1;
+			btnSelectVoucher.Text = "🎫 Chọn hoặc nhập mã giảm giá";
+			btnSelectVoucher.UseVisualStyleBackColor = false;
+			btnSelectVoucher.Click += btnSelectVoucher_Click;
 			// 
-			// btnApplyDiscount
+			// lblSelectedVoucher
 			// 
-			btnApplyDiscount.BackColor = Color.FromArgb(40, 167, 69);
-			btnApplyDiscount.Cursor = Cursors.Hand;
-			btnApplyDiscount.FlatAppearance.BorderSize = 0;
-			btnApplyDiscount.FlatStyle = FlatStyle.Flat;
-			btnApplyDiscount.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-			btnApplyDiscount.ForeColor = Color.White;
-			btnApplyDiscount.Location = new Point(330, 50);
-			btnApplyDiscount.Margin = new Padding(4, 5, 4, 5);
-			btnApplyDiscount.Name = "btnApplyDiscount";
-			btnApplyDiscount.Size = new Size(120, 36);
-			btnApplyDiscount.TabIndex = 2;
-			btnApplyDiscount.Text = "Áp dụng";
-			btnApplyDiscount.UseVisualStyleBackColor = false;
-			btnApplyDiscount.Click += btnApplyDiscount_Click;
+			lblSelectedVoucher.Font = new Font("Segoe UI", 9F);
+			lblSelectedVoucher.ForeColor = Color.FromArgb(40, 167, 69);
+			lblSelectedVoucher.Location = new Point(0, 100);
+			lblSelectedVoucher.Margin = new Padding(4, 0, 4, 0);
+			lblSelectedVoucher.Name = "lblSelectedVoucher";
+			lblSelectedVoucher.Size = new Size(380, 25);
+			lblSelectedVoucher.TabIndex = 2;
+			lblSelectedVoucher.Visible = false;
 			// 
 			// lblDiscountMessage
 			// 
@@ -263,8 +263,25 @@ namespace WinFormsApp1.View.User.Forms
 			lblDiscountMessage.Margin = new Padding(4, 0, 4, 0);
 			lblDiscountMessage.Name = "lblDiscountMessage";
 			lblDiscountMessage.Size = new Size(450, 40);
-			lblDiscountMessage.TabIndex = 3;
+			lblDiscountMessage.TabIndex = 4;
 			lblDiscountMessage.Visible = false;
+			// 
+			// btnRemoveVoucher
+			// 
+			btnRemoveVoucher.BackColor = Color.Transparent;
+			btnRemoveVoucher.Cursor = Cursors.Hand;
+			btnRemoveVoucher.FlatAppearance.BorderSize = 0;
+			btnRemoveVoucher.FlatStyle = FlatStyle.Flat;
+			btnRemoveVoucher.Font = new Font("Segoe UI", 9F);
+			btnRemoveVoucher.ForeColor = Color.FromArgb(220, 53, 69);
+			btnRemoveVoucher.Location = new Point(380, 95);
+			btnRemoveVoucher.Name = "btnRemoveVoucher";
+			btnRemoveVoucher.Size = new Size(70, 30);
+			btnRemoveVoucher.TabIndex = 3;
+			btnRemoveVoucher.Text = "Xóa";
+			btnRemoveVoucher.UseVisualStyleBackColor = false;
+			btnRemoveVoucher.Visible = false;
+			btnRemoveVoucher.Click += btnRemoveVoucher_Click;
 			// 
 			// panelThongBao
 			// 
@@ -498,8 +515,9 @@ namespace WinFormsApp1.View.User.Forms
         private System.Windows.Forms.Label lblThongBao;
         private System.Windows.Forms.Panel panelDiscount;
         private System.Windows.Forms.Label lblDiscountTitle;
-        private System.Windows.Forms.TextBox txtDiscountCode;
-        private System.Windows.Forms.Button btnApplyDiscount;
+        private System.Windows.Forms.Button btnSelectVoucher;
+        private System.Windows.Forms.Label lblSelectedVoucher;
+        private System.Windows.Forms.Button btnRemoveVoucher;
         private System.Windows.Forms.Label lblDiscountMessage;
         private System.Windows.Forms.Panel panelThanhToan;
         private System.Windows.Forms.Label lblChonPhuongThuc;
