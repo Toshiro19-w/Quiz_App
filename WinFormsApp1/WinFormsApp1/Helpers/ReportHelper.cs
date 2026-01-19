@@ -249,5 +249,56 @@ namespace WinFormsApp1.Helpers
             reportViewer.LocalReport.DataSources.Add(dataSource);
             reportViewer.RefreshReport();
         }
+
+        public static byte[] GenerateCertificatePDF(CertificateReportViewModel certificateData)
+        {
+            var reportViewer = new ReportViewer();
+            var reportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "CertificateReport.rdlc");
+            
+            if (!File.Exists(reportPath))
+            {
+                throw new FileNotFoundException($"Không tìm thấy file báo cáo: {reportPath}");
+            }
+            
+            reportViewer.LocalReport.ReportPath = reportPath;
+            reportViewer.LocalReport.EnableExternalImages = true;
+            
+            var dataSource = new ReportDataSource("CertificateDataSet", new List<CertificateReportViewModel> { certificateData });
+            reportViewer.LocalReport.DataSources.Clear();
+            reportViewer.LocalReport.DataSources.Add(dataSource);
+            
+            Warning[] warnings;
+            string[] streamids;
+            string mimeType;
+            string encoding;
+            string extension;
+            
+            byte[] bytes = reportViewer.LocalReport.Render(
+                "PDF", null, out mimeType, out encoding, out extension,
+                out streamids, out warnings);
+            
+            return bytes;
+        }
+
+        public static string SaveCertificatePDF(CertificateReportViewModel certificateData, string fileName = null)
+        {
+            var bytes = GenerateCertificatePDF(certificateData);
+            
+            var certificatesFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Certificates");
+            if (!Directory.Exists(certificatesFolder))
+            {
+                Directory.CreateDirectory(certificatesFolder);
+            }
+            
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = $"Certificate_{certificateData.CertId}_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+            }
+            
+            var filePath = Path.Combine(certificatesFolder, fileName);
+            File.WriteAllBytes(filePath, bytes);
+            
+            return filePath;
+        }
     }
 }
