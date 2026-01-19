@@ -71,11 +71,6 @@ public partial class Discount
     public int? UsageLimitPerUser { get; set; }
 
     /// <summary>
-    /// Mã giảm giá có đang hoạt động không
-    /// </summary>
-    public bool IsActive { get; set; } = true;
-
-    /// <summary>
     /// Áp dụng cho tất cả khóa học hay chỉ một số khóa học nhất định
     /// </summary>
     public bool ApplyToAllCourses { get; set; } = true;
@@ -84,6 +79,11 @@ public partial class Discount
     /// Trạng thái: Active, Inactive, Expired
     /// </summary>
     public string Status { get; set; } = "Active";
+
+    /// <summary>
+    /// Mã giảm giá có đang hoạt động không (computed from Status)
+    /// </summary>
+    public bool IsActive => Status == "Active";
 
     /// <summary>
     /// Người tạo mã giảm giá

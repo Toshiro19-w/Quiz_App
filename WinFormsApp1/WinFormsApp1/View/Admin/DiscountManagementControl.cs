@@ -654,7 +654,7 @@ namespace WinFormsApp1.View.Admin
                     StartDate = dtpStart.Value,
                     EndDate = dtpEnd.Value,
                     Status = cboStatus.SelectedIndex == 0 ? "Active" : "Inactive",
-                    IsActive = cboStatus.SelectedIndex == 0,
+                    //IsActive = cboStatus.SelectedIndex == 0,
                     ApplyToAllCourses = chkAllCourses.Checked,
                     CreatedBy = AuthHelper.CurrentUser?.UserId ?? 1
                 };

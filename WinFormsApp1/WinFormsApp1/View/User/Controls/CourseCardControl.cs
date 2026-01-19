@@ -68,13 +68,10 @@ namespace WinFormsApp1.View.User.Controls
             {
                 try
                 {
-                    var path = course.CoverUrl.Replace('/', Path.DirectorySeparatorChar);
-                    if (!Path.IsPathRooted(path))
-                        path = Path.Combine(Application.StartupPath, path.TrimStart('\\', '/'));
-
-                    if (System.IO.File.Exists(path))
+                    var fullPath = ImageHelper.GetFullPath(course.CoverUrl);
+                    if (!string.IsNullOrEmpty(fullPath) && System.IO.File.Exists(fullPath))
                     {
-                        picCover.Image = Image.FromFile(path);
+                        picCover.Image = ImageHelper.LoadImage(fullPath);
                     }
                 }
                 catch { /* ignore image load errors */ }

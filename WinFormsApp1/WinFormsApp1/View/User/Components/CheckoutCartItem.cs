@@ -1,104 +1,167 @@
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using System.IO;
 using WinFormsApp1.Models.Entities;
+using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.User.Components
 {
-    public class CheckoutCartItem : Panel
+    public partial class CheckoutCartItem : UserControl
     {
-        private Course course;
+        private Course _course;
         public event EventHandler<int>? OnRemoveClick;
 
         public CheckoutCartItem(Course course)
         {
-            this.course = course;
+            _course = course;
             InitializeComponent();
+            LoadCourseData();
         }
 
-        private void InitializeComponent()
+        private async void LoadCourseData()
         {
-            this.Size = new Size(880, 120);
-            this.BackColor = Color.White;
-            this.BorderStyle = BorderStyle.FixedSingle;
-            this.Margin = new Padding(0, 0, 0, 15);
+            lblTitle.Text = _course.Title;
+            lblInstructor.Text = $"👤 {_course.Owner?.FullName ?? "N/A"}";
+            lblDate.Text = $"Thêm vào giỏ: {DateTime.Now:dd/MM/yyyy HH:mm}";
+            lblPrice.Text = $"{_course.Price:N0} VND";
 
-            // Course image placeholder
-            var imgPanel = new Panel
-            {
-                Location = new Point(20, 20),
-                Size = new Size(80, 80),
-                BackColor = Color.FromArgb(240, 240, 240)
-            };
-            var imgLabel = new Label
-            {
-                Text = "📚",
-                Font = new Font("Segoe UI", 32),
-                Location = new Point(15, 15),
-                AutoSize = true
-            };
-            imgPanel.Controls.Add(imgLabel);
-            this.Controls.Add(imgPanel);
+            // Load course image
+            await LoadCourseImageAsync();
+        }
 
-            // Course title
-            var lblTitle = new Label
+        private async Task LoadCourseImageAsync()
+        {
+            try
             {
-                Text = course.Title,
-                Location = new Point(120, 25),
-                Size = new Size(450, 30),
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                ForeColor = Color.FromArgb(33, 33, 33)
-            };
-            this.Controls.Add(lblTitle);
+                Debug.WriteLine($"[CheckoutCartItem] CoverUrl: {_course.CoverUrl ?? "NULL"}");
+                
+                if (!string.IsNullOrEmpty(_course.CoverUrl))
+                {
+                    // Check if it's a local relative path first
+                    if (ImageHelper.ImageExists(_course.CoverUrl))
+                    {
+                        Debug.WriteLine($"[CheckoutCartItem] Loading local image: {_course.CoverUrl}");
+                        
+                        var fullPath = ImageHelper.GetFullPath(_course.CoverUrl);
+                        if (System.IO.File.Exists(fullPath))
+                        {
+                            using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                            {
+                                var image = Image.FromStream(stream);
+                                picCourseImage.Image = new Bitmap(image);
+                                image.Dispose();
+                            }
+                            
+                            picCourseImage.Visible = true;
+                            lblImageIcon.Visible = false;
+                            Debug.WriteLine("[CheckoutCartItem] Local image loaded successfully");
+                            return;
+                        }
+                    }
+                    
+                    // If not local path, try as URL
+                    if (_course.CoverUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || 
+                        _course.CoverUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Debug.WriteLine($"[CheckoutCartItem] Loading image from URL: {_course.CoverUrl}");
+                        
+                        using (var httpClient = new HttpClient())
+                        {
+                            httpClient.Timeout = TimeSpan.FromSeconds(10);
+                            var imageBytes = await httpClient.GetByteArrayAsync(_course.CoverUrl);
+                            
+                            Debug.WriteLine($"[CheckoutCartItem] Image loaded, size: {imageBytes.Length} bytes");
+                            
+                            using (var ms = new MemoryStream(imageBytes))
+                            {
+                                var image = Image.FromStream(ms);
+                                picCourseImage.Image = new Bitmap(image);
+                                image.Dispose();
+                            }
+                            
+                            picCourseImage.Visible = true;
+                            lblImageIcon.Visible = false;
+                            Debug.WriteLine("[CheckoutCartItem] URL image loaded successfully");
+                            return;
+                        }
+                    }
+                    
+                    // If it's an absolute local path
+                    if (System.IO.File.Exists(_course.CoverUrl))
+                    {
+                        Debug.WriteLine($"[CheckoutCartItem] Loading from absolute path: {_course.CoverUrl}");
+                        using (var stream = new FileStream(_course.CoverUrl, FileMode.Open, FileAccess.Read))
+                        {
+                            var image = Image.FromStream(stream);
+                            picCourseImage.Image = new Bitmap(image);
+                            image.Dispose();
+                        }
+                        
+                        picCourseImage.Visible = true;
+                        lblImageIcon.Visible = false;
+                        Debug.WriteLine("[CheckoutCartItem] Absolute path image loaded successfully");
+                        return;
+                    }
+                }
+                
+                // No valid image found, show icon
+                Debug.WriteLine("[CheckoutCartItem] No valid image, showing icon");
+                picCourseImage.Visible = false;
+                lblImageIcon.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[CheckoutCartItem] Error loading image: {ex.Message}");
+                // If image loading fails, show icon
+                picCourseImage.Visible = false;
+                lblImageIcon.Visible = true;
+            }
+        }
 
-            // Instructor
-            var lblInstructor = new Label
-            {
-                Text = $"👤 {course.Owner?.FullName ?? "N/A"}",
-                Location = new Point(120, 60),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 9),
-                ForeColor = Color.Gray
-            };
-            this.Controls.Add(lblInstructor);
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            OnRemoveClick?.Invoke(this, _course.CourseId);
+        }
 
-            // Added date
-            var lblDate = new Label
-            {
-                Text = $"Thêm vào giỏ: {DateTime.Now:dd/MM/yyyy HH:mm}",
-                Location = new Point(120, 85),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 8),
-                ForeColor = Color.LightGray
-            };
-            this.Controls.Add(lblDate);
+        private void btnRemove_MouseEnter(object sender, EventArgs e)
+        {
+            btnRemove.BackColor = System.Drawing.Color.FromArgb(220, 53, 69);
+            btnRemove.ForeColor = System.Drawing.Color.White;
+        }
 
-            // Price
-            var lblPrice = new Label
-            {
-                Text = $"{course.Price:N0} VND",
-                Location = new Point(650, 35),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                ForeColor = Color.FromArgb(0, 102, 255)
-            };
-            this.Controls.Add(lblPrice);
+        private void btnRemove_MouseLeave(object sender, EventArgs e)
+        {
+            btnRemove.BackColor = System.Drawing.Color.White;
+            btnRemove.ForeColor = System.Drawing.Color.FromArgb(220, 53, 69);
+        }
 
-            // Remove button
-            var btnRemove = new Button
+        private void CheckoutCartItem_Paint(object sender, PaintEventArgs e)
+        {
+            // Draw rounded rectangle border
+            using (GraphicsPath path = new GraphicsPath())
             {
-                Text = "🗑 Xóa",
-                Location = new Point(800, 15),
-                Size = new Size(60, 30),
-                BackColor = Color.White,
-                ForeColor = Color.FromArgb(220, 53, 69),
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 9),
-                Cursor = Cursors.Hand
-            };
-            btnRemove.FlatAppearance.BorderColor = Color.FromArgb(220, 53, 69);
-            btnRemove.Click += (s, e) => OnRemoveClick?.Invoke(this, course.CourseId);
-            this.Controls.Add(btnRemove);
+                int radius = 10;
+                Rectangle rect = new Rectangle(0, 0, this.Width - 1, this.Height - 1);
+                
+                path.AddArc(rect.X, rect.Y, radius, radius, 180, 90);
+                path.AddArc(rect.X + rect.Width - radius, rect.Y, radius, radius, 270, 90);
+                path.AddArc(rect.X + rect.Width - radius, rect.Y + rect.Height - radius, radius, radius, 0, 90);
+                path.AddArc(rect.X, rect.Y + rect.Height - radius, radius, radius, 90, 90);
+                path.CloseAllFigures();
+
+                this.Region = new Region(path);
+
+                using (Pen pen = new Pen(Color.FromArgb(230, 230, 230), 2))
+                {
+                    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    e.Graphics.DrawPath(pen, path);
+                }
+            }
         }
     }
 }

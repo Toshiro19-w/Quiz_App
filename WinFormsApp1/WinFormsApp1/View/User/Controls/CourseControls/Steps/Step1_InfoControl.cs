@@ -15,6 +15,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		private int? _pendingCategoryId = null;
 		private int? _currentCourseId = null;
 		private CourseBuilderController _controller = new CourseBuilderController();
+		private string _coverImageRelativePath = null;
 
 		public Step1_InfoControl()
 		{
@@ -125,11 +126,64 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 
 		private void BtnUploadCover_Click(object? sender, EventArgs e)
 		{
-			using var dlg = new OpenFileDialog();
-			dlg.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif";
-			if (dlg.ShowDialog() == DialogResult.OK)
+			try
 			{
-				picCover.ImageLocation = dlg.FileName;
+				System.Diagnostics.Debug.WriteLine("[Step1_InfoControl] Upload Cover clicked");
+				
+				using var dlg = new OpenFileDialog();
+				dlg.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
+				dlg.Title = "Chọn ảnh bìa khóa học";
+				
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					System.Diagnostics.Debug.WriteLine($"[Step1_InfoControl] Selected file: {dlg.FileName}");
+					
+					// Generate custom file name based on course slug or title
+					var customFileName = !string.IsNullOrWhiteSpace(txtSlug.Text) 
+						? txtSlug.Text 
+						: SlugHelper.GenerateSlug(txtTitle.Text);
+
+					System.Diagnostics.Debug.WriteLine($"[Step1_InfoControl] Custom file name: {customFileName}");
+
+					// Save and optimize image to Library/Image
+					_coverImageRelativePath = ImageHelper.SaveAndOptimizeImage(
+						dlg.FileName, 
+						maxWidth: 1920, 
+						maxHeight: 1080, 
+						customFileName: customFileName
+					);
+
+					System.Diagnostics.Debug.WriteLine($"[Step1_InfoControl] Saved relative path: {_coverImageRelativePath}");
+
+					// Display image in PictureBox
+					var fullPath = ImageHelper.GetFullPath(_coverImageRelativePath);
+					System.Diagnostics.Debug.WriteLine($"[Step1_InfoControl] Full path: {fullPath}");
+					
+					picCover.ImageLocation = fullPath;
+
+					MessageBox.Show(
+						$"Ảnh đã được lưu tại:\n{_coverImageRelativePath}\n\nFull path:\n{fullPath}", 
+						"Thành công", 
+						MessageBoxButtons.OK, 
+						MessageBoxIcon.Information
+					);
+				}
+				else
+				{
+					System.Diagnostics.Debug.WriteLine("[Step1_InfoControl] Dialog cancelled");
+				}
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"[Step1_InfoControl] ERROR: {ex.Message}");
+				System.Diagnostics.Debug.WriteLine($"[Step1_InfoControl] Stack trace: {ex.StackTrace}");
+				
+				MessageBox.Show(
+					$"Lỗi khi upload ảnh: {ex.Message}\n\nStack trace:\n{ex.StackTrace}", 
+					"Lỗi", 
+					MessageBoxButtons.OK, 
+					MessageBoxIcon.Error
+				);
 			}
 		}
 
@@ -147,7 +201,24 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			txtSummary.Text = vm.Summary ?? string.Empty;
 			// Format price without trailing .00
 			txtPrice.Text = vm.Price.HasValue ? vm.Price.Value.ToString("F0") : string.Empty;
-			if (!string.IsNullOrEmpty(vm.CoverUrl)) picCover.ImageLocation = vm.CoverUrl;
+			
+			// Load cover image from relative path
+			if (!string.IsNullOrEmpty(vm.CoverUrl))
+			{
+				_coverImageRelativePath = vm.CoverUrl;
+				
+				// Check if it's already a full path or relative path
+				if (ImageHelper.ImageExists(vm.CoverUrl))
+				{
+					var fullPath = ImageHelper.GetFullPath(vm.CoverUrl);
+					picCover.ImageLocation = fullPath;
+				}
+				else if (System.IO.File.Exists(vm.CoverUrl))
+				{
+					// If it's a full path that exists
+					picCover.ImageLocation = vm.CoverUrl;
+				}
+			}
 
 			if (vm.CategoryId.HasValue)
 			{
@@ -171,7 +242,10 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			vm.Slug = txtSlug.Text.Trim();
 			vm.Summary = txtSummary.Text;
 			vm.Price = decimal.TryParse(txtPrice.Text, out var p) ? p : 0;
-			vm.CoverUrl = picCover.ImageLocation;
+			
+			// Save relative path to ViewModel
+			vm.CoverUrl = _coverImageRelativePath ?? picCover.ImageLocation;
+			
 			if (cmbCategory.SelectedValue is int id) vm.CategoryId = id;
 		}
 
