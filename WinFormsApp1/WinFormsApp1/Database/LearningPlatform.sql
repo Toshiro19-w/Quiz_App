@@ -848,3 +848,7 @@ GO
 PRINT 'Database schema created successfully!';
 PRINT 'Default password for all users: 123456';
 GO
+
+update LessonContents
+set VideoUrl ='Library\Pdf\ac7c0d13-ae14-4977-9454-f128749cc7aa.pdf'
+where ContentType = 'Theory'
