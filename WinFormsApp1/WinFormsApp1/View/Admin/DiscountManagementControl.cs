@@ -19,6 +19,7 @@ namespace WinFormsApp1.View.Admin
         private List<DiscountViewModel> _filteredDiscounts = new();
         private ComboBox _cboStatus;
         private ComboBox _cboType;
+        private System.Windows.Forms.Timer _statusUpdateTimer;
 
         public DiscountManagementControl() : base()
         {
@@ -35,8 +36,38 @@ namespace WinFormsApp1.View.Admin
             SetupCustomFilters();
             SetupSearchFunctionality();
             WireCrudEvents();
+            SetupStatusUpdateTimer();
 
             await LoadDataAsync();
+        }
+
+        /// <summary>
+        /// Thiết lập Timer để cập nhật trạng thái theo thời gian thực
+        /// </summary>
+        private void SetupStatusUpdateTimer()
+        {
+            _statusUpdateTimer = new System.Windows.Forms.Timer();
+            _statusUpdateTimer.Interval = 30000; // Cập nhật mỗi 30 giây
+            _statusUpdateTimer.Tick += StatusUpdateTimer_Tick;
+            _statusUpdateTimer.Start();
+        }
+
+        private void StatusUpdateTimer_Tick(object sender, EventArgs e)
+        {
+            // Refresh DataGridView để cập nhật trạng thái
+            if (dataGridView != null && _filteredDiscounts.Count > 0)
+            {
+                try
+                {
+                    // Chỉ refresh hiển thị, không load lại từ database
+                    dataGridView.Invalidate();
+                    dataGridView.Refresh();
+                }
+                catch
+                {
+                    // Ignore errors during refresh
+                }
+            }
         }
 
         private void SetupDataGridColumns()
@@ -48,27 +79,28 @@ namespace WinFormsApp1.View.Admin
             {
                 new DataGridViewTextBoxColumn { Name = "DiscountId", HeaderText = "ID", Width = 50, DataPropertyName = "DiscountId" },
                 new DataGridViewTextBoxColumn { Name = "Code", HeaderText = "Mã", Width = 100, DataPropertyName = "Code" },
-                new DataGridViewTextBoxColumn { Name = "Name", HeaderText = "Tên", Width = 180, DataPropertyName = "Name" },
+                new DataGridViewTextBoxColumn { Name = "Name", HeaderText = "Tên", Width = 150, DataPropertyName = "Name" },
                 new DataGridViewTextBoxColumn { Name = "DisplayValue", HeaderText = "Giảm", Width = 80, DataPropertyName = "DisplayValue" },
                 new DataGridViewTextBoxColumn { Name = "TypeDisplay", HeaderText = "Loại", Width = 100, DataPropertyName = "TypeDisplay" },
                 new DataGridViewTextBoxColumn { Name = "MinOrderAmount", HeaderText = "Đơn tối thiểu", Width = 100, DataPropertyName = "MinOrderAmount" },
                 new DataGridViewTextBoxColumn { Name = "RemainingUsage", HeaderText = "Còn lại", Width = 90, DataPropertyName = "RemainingUsage" },
                 new DataGridViewTextBoxColumn { Name = "StartDate", HeaderText = "Bắt đầu", Width = 90, DataPropertyName = "StartDate" },
                 new DataGridViewTextBoxColumn { Name = "EndDate", HeaderText = "Kết thúc", Width = 90, DataPropertyName = "EndDate" },
-                new DataGridViewTextBoxColumn { Name = "StatusDisplay", HeaderText = "Trạng thái", Width = 90, DataPropertyName = "StatusDisplay" }
+                new DataGridViewTextBoxColumn { Name = "StatusDisplay", HeaderText = "Trạng thái", Width = 100, DataPropertyName = "StatusDisplay" },
+                new DataGridViewTextBoxColumn { Name = "TimeRemaining", HeaderText = "Thời gian", Width = 80, DataPropertyName = "TimeRemaining" }
             });
         }
 
         private void SetupCustomFilters()
         {
-            // Status filter
+            // Status filter - cập nhật thêm các trạng thái mới
             _cboStatus = new ComboBox
             {
                 Name = "cboStatus",
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Width = 120
             };
-            _cboStatus.Items.AddRange(new object[] { "Tất cả", "Hoạt động", "Tạm dừng", "Hết hạn" });
+            _cboStatus.Items.AddRange(new object[] { "Tất cả", "Hoạt động", "Tạm dừng", "Hết hạn", "Hết lượt", "Chưa bắt đầu" });
             _cboStatus.SelectedIndex = 0;
             _cboStatus.SelectedIndexChanged += (s, e) => FilterData();
             AddCustomFilter("Trạng thái:", _cboStatus);
@@ -145,7 +177,7 @@ namespace WinFormsApp1.View.Admin
         {
             var query = _discounts.AsEnumerable();
 
-            // Filter by status
+            // Filter by real-time status
             if (_cboStatus?.SelectedIndex > 0)
             {
                 var status = _cboStatus.SelectedIndex switch
@@ -153,10 +185,12 @@ namespace WinFormsApp1.View.Admin
                     1 => "Active",
                     2 => "Inactive",
                     3 => "Expired",
+                    4 => "Exhausted",
+                    5 => "Pending",
                     _ => null
                 };
                 if (status != null)
-                    query = query.Where(d => d.Status == status);
+                    query = query.Where(d => d.RealTimeStatus == status);
             }
 
             // Filter by type
@@ -212,20 +246,53 @@ namespace WinFormsApp1.View.Admin
                 }
             }
 
-            // Color status
+            // Color status based on real-time status
             if (dataGridView.Columns[e.ColumnIndex].Name == "StatusDisplay")
             {
-                switch (discount.Status)
+                // Cập nhật giá trị hiển thị từ RealTimeStatus
+                e.Value = discount.StatusDisplay;
+                e.FormattingApplied = true;
+                
+                switch (discount.RealTimeStatus)
                 {
                     case "Active":
-                        e.CellStyle.ForeColor = Color.FromArgb(16, 185, 129);
+                        e.CellStyle.ForeColor = Color.FromArgb(16, 185, 129); // Xanh lá
+                        e.CellStyle.Font = new Font(dataGridView.Font, FontStyle.Bold);
                         break;
                     case "Inactive":
-                        e.CellStyle.ForeColor = Color.FromArgb(245, 158, 11);
+                        e.CellStyle.ForeColor = Color.FromArgb(107, 114, 128); // Xám
                         break;
                     case "Expired":
-                        e.CellStyle.ForeColor = Color.FromArgb(220, 38, 38);
+                        e.CellStyle.ForeColor = Color.FromArgb(220, 38, 38); // Đỏ
                         break;
+                    case "Exhausted":
+                        e.CellStyle.ForeColor = Color.FromArgb(245, 158, 11); // Cam
+                        break;
+                    case "Pending":
+                        e.CellStyle.ForeColor = Color.FromArgb(59, 130, 246); // Xanh dương
+                        break;
+                }
+            }
+
+            // Color TimeRemaining column
+            if (dataGridView.Columns[e.ColumnIndex].Name == "TimeRemaining")
+            {
+                e.Value = discount.TimeRemaining;
+                e.FormattingApplied = true;
+                
+                if (discount.RealTimeStatus == "Active")
+                {
+                    var remaining = discount.EndDate - DateTime.Now;
+                    if (remaining.TotalDays <= 1)
+                        e.CellStyle.ForeColor = Color.FromArgb(220, 38, 38); // Đỏ - sắp hết hạn
+                    else if (remaining.TotalDays <= 7)
+                        e.CellStyle.ForeColor = Color.FromArgb(245, 158, 11); // Cam - còn ít
+                    else
+                        e.CellStyle.ForeColor = Color.FromArgb(16, 185, 129); // Xanh - còn nhiều
+                }
+                else
+                {
+                    e.CellStyle.ForeColor = Color.Gray;
                 }
             }
         }
