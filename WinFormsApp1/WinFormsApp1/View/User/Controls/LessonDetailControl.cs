@@ -2,9 +2,16 @@
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
+using WinFormsApp1.ViewModels;
 using LibVLCSharp.Shared;
 using LibVLCSharp.WinForms;
 using PdfiumViewer;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace WinFormsApp1.View.User.Controls
 {
@@ -575,6 +582,12 @@ namespace WinFormsApp1.View.User.Controls
             // Cập nhật UI
             progressBar.Value = progress;
             lblProgress.Text = $"Tiến độ: {progress}% ({completedContents}/{totalContents} hoàn thành)";
+
+            // Hiển thị button chứng chỉ khi hoàn thành 100%
+            if (btnCertificate != null)
+            {
+                btnCertificate.Visible = (progress >= 100);
+            }
         }
 
         private async Task LoadContentAsync(int contentIndex)
@@ -1779,17 +1792,17 @@ namespace WinFormsApp1.View.User.Controls
 
                 await context.SaveChangesAsync();
 
-                // Mark complete content
-                var content = _currentContents[_currentContentIndex];
-                await MarkContentCompleteAsync(content.ContentId, totalScore);
-
-                // Show result (CHỈ 1 LẦN)
+                // BƯỚC 1: Hiển thị kết quả test TRƯỚC
                 var percentage = maxScore > 0 ? (totalScore / maxScore) * 100 : 0;
                 MessageBox.Show(
                     $"Hoàn thành bài kiểm tra!\n\n" +
                     $"Điểm: {totalScore}/{maxScore} ({percentage:F1}%)\n" +
                     $"Thời gian: {timeSpent / 60} phút {timeSpent % 60} giây",
                     "Kết quả", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // BƯỚC 2: SAU ĐÓ mới đánh dấu hoàn thành và kiểm tra khóa học
+                var content = _currentContents[_currentContentIndex];
+                await MarkContentCompleteAsync(content.ContentId, totalScore);
             }
             catch (Exception ex)
             {
@@ -1877,10 +1890,144 @@ namespace WinFormsApp1.View.User.Controls
 
                 await context.SaveChangesAsync();
                 await UpdateProgressAsync();
+
+                // Kiểm tra xem đã hoàn thành khóa học chưa
+                await CheckAndHandleCourseCompletionAsync(userId.Value, context);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error marking content complete: {ex.Message}");
+            }
+        }
+
+        private async Task CheckAndHandleCourseCompletionAsync(int userId, LearningPlatformContext context)
+        {
+            try
+            {
+                // Đếm tổng số nội dung của khóa học
+                var totalContents = await context.LessonContents
+                    .Include(lc => lc.Lesson)
+                        .ThenInclude(l => l.Chapter)
+                    .Where(lc => lc.Lesson.Chapter.CourseId == _currentCourse.CourseId)
+                    .CountAsync();
+
+                // Đếm số nội dung đã hoàn thành
+                var completedContents = await context.CourseProgresses
+                    .Where(cp => cp.UserId == userId &&
+                                 cp.CourseId == _currentCourse.CourseId &&
+                                 cp.IsCompleted)
+                    .CountAsync();
+
+                // Kiểm tra xem đã hoàn thành 100% chưa
+                if (completedContents >= totalContents && totalContents > 0)
+                {
+                    // Kiểm tra xem đã có certificate chưa
+                    var existingCertificate = await context.Certificates
+                        .FirstOrDefaultAsync(c => c.UserId == userId && c.CourseId == _currentCourse.CourseId);
+
+                    if (existingCertificate == null)
+                    {
+                        // Hiển thị thông báo chúc mừng
+                        var result = MessageBox.Show(
+                            "🎉 Chúc mừng bạn đã hoàn thành khóa học!\n\n" +
+                            "Chứng chỉ của bạn sẽ được gửi về email đã đăng ký.",
+                            "Chúc mừng!",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+
+                        if (result == DialogResult.OK)
+                        {
+                            // Tạo và lưu certificate vào database
+                            await CreateAndSendCertificateAsync(userId, context);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking course completion: {ex.Message}");
+            }
+        }
+
+        private async Task CreateAndSendCertificateAsync(int userId, LearningPlatformContext context)
+        {
+            try
+            {
+                // Load user và instructor info
+                var user = await context.Users.FindAsync(userId);
+                var instructor = await context.Users.FindAsync(_currentCourse.OwnerId);
+
+                if (user == null || instructor == null)
+                {
+                    MessageBox.Show("Không thể tải thông tin người dùng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Tạo verify code và serial
+                var verifyCode = Guid.NewGuid().ToString("N").Substring(0, 12).ToUpper();
+                var serial = $"CERT-{_currentCourse.CourseId:D5}-{userId:D5}-{DateTime.Now:yyyyMMdd}";
+
+                // Lưu certificate vào database
+                var certificate = new Certificate
+                {
+                    UserId = userId,
+                    CourseId = _currentCourse.CourseId,
+                    IssuedAt = DateTime.Now,
+                    VerifyCode = verifyCode,
+                    Serial = serial
+                };
+
+                context.Certificates.Add(certificate);
+                await context.SaveChangesAsync();
+
+                // Tạo view model cho report
+                var certificateData = new CertificateReportViewModel
+                {
+                    CertId = certificate.CertId,
+                    StudentName = user.FullName,
+                    CourseTitle = _currentCourse.Title,
+                    InstructorName = instructor.FullName,
+                    IssuedDate = certificate.IssuedAt,
+                    VerifyCode = verifyCode,
+                    Serial = serial
+                };
+
+                // Generate và lưu PDF
+                var pdfPath = ReportHelper.SaveCertificatePDF(certificateData);
+
+                // Gửi email với attachment
+                var emailService = new Services.EmailService();
+                bool emailSent = await emailService.SendCertificateEmailAsync(
+                    user.Email,
+                    user.FullName,
+                    _currentCourse.Title,
+                    pdfPath);
+
+                if (emailSent)
+                {
+                    MessageBox.Show(
+                        $"✅ Chứng chỉ đã được gửi thành công đến email: {user.Email}\n\n",
+                        "Thành công",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(
+                        $"⚠️ Không thể gửi email, nhưng chứng chỉ đã được lưu tại:\n{pdfPath}\n\n" +
+                        "Vui lòng kiểm tra cài đặt email.",
+                        "Cảnh báo",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Lỗi khi tạo và gửi chứng chỉ:\n\n{ex.Message}",
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
@@ -2145,6 +2292,89 @@ namespace WinFormsApp1.View.User.Controls
         private void pnlHeader_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private async void btnCertificate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var currentUser = AuthHelper.CurrentUser;
+                if (currentUser == null)
+                {
+                    MessageBox.Show("Vui lòng đăng nhập để nhận chứng chỉ!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                using var context = new LearningPlatformContext();
+                
+                // Kiểm tra xem đã có chứng chỉ chưa
+                var existingCertificate = await context.Certificates
+                    .Include(c => c.User)
+                    .Include(c => c.Course)
+                        .ThenInclude(co => co.Owner)
+                    .FirstOrDefaultAsync(c => c.UserId == currentUser.UserId && c.CourseId == _currentCourse.CourseId);
+
+                Certificate certificate;
+
+                if (existingCertificate != null)
+                {
+                    certificate = existingCertificate;
+                    MessageBox.Show($"Bạn đã nhận chứng chỉ cho khóa học này!\n\nMã xác thực: {existingCertificate.VerifyCode}", 
+                        "Chứng chỉ đã tồn tại", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    // Tạo chứng chỉ mới
+                    certificate = new Certificate
+                    {
+                        UserId = currentUser.UserId,
+                        CourseId = _currentCourse.CourseId,
+                        IssuedAt = DateTime.UtcNow,
+                        VerifyCode = GenerateVerificationCode(),
+                        Serial = $"CERT-{_currentCourse.CourseId}-{currentUser.UserId}-{DateTime.Now:yyyyMMdd}"
+                    };
+
+                    context.Certificates.Add(certificate);
+                    await context.SaveChangesAsync();
+
+                    // Load lại với relationships
+                    certificate = await context.Certificates
+                        .Include(c => c.User)
+                        .Include(c => c.Course)
+                            .ThenInclude(co => co.Owner)
+                        .FirstOrDefaultAsync(c => c.CertId == certificate.CertId);
+
+                    MessageBox.Show($"🎉 Chúc mừng! Bạn đã hoàn thành khóa học!\n\n" +
+                                   $"Chứng chỉ của bạn đã được cấp.\n" +
+                                   $"Mã xác thực: {certificate.VerifyCode}", 
+                                   "Chúc mừng!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+                // Tạo ViewModel cho report
+                var reportData = new ViewModels.CertificateReportViewModel
+                {
+                    CertId = certificate.CertId,
+                    StudentName = certificate.User.FullName,
+                    CourseTitle = certificate.Course.Title,
+                    InstructorName = certificate.Course.Owner?.FullName ?? "Giảng viên",
+                    IssuedDate = certificate.IssuedAt,
+                    VerifyCode = certificate.VerifyCode,
+                    Serial = certificate.Serial
+                };
+
+                // Mở form hiển thị report
+                var reportForm = new View.Dialogs.CertificateReportForm(reportData);
+                reportForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Có lỗi xảy ra khi cấp chứng chỉ: {ex.Message}\n\nChi tiết: {ex.StackTrace}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private string GenerateVerificationCode()
+        {
+            return Guid.NewGuid().ToString("N").Substring(0, 12).ToUpper();
         }
     }
 }
