@@ -6,9 +6,15 @@ namespace WinFormsApp1.View.Admin
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                _statusUpdateTimer?.Stop();
+                _statusUpdateTimer?.Dispose();
+                
+                if (components != null)
+                {
+                    components.Dispose();
+                }
             }
             base.Dispose(disposing);
         }

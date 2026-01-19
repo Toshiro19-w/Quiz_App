@@ -35,13 +35,45 @@ namespace WinFormsApp1.ViewModels
             : $"{DiscountValue:N0}đ";
 
         /// <summary>
-        /// Hiển thị trạng thái tiếng Việt
+        /// Tính toán trạng thái thực tế dựa trên thời gian hiện tại
         /// </summary>
-        public string StatusDisplay => Status switch
+        public string RealTimeStatus
+        {
+            get
+            {
+                var now = DateTime.Now;
+                
+                // Nếu đã bị tắt thủ công (Inactive) thì giữ nguyên
+                if (Status == "Inactive" || !IsActive)
+                    return "Inactive";
+                
+                // Kiểm tra đã hết hạn chưa
+                if (now > EndDate)
+                    return "Expired";
+                
+                // Kiểm tra đã hết lượt sử dụng chưa
+                if (UsageLimit.HasValue && UsageCount >= UsageLimit.Value)
+                    return "Exhausted";
+                
+                // Kiểm tra chưa đến ngày bắt đầu
+                if (now < StartDate)
+                    return "Pending";
+                
+                // Đang hoạt động
+                return "Active";
+            }
+        }
+
+        /// <summary>
+        /// Hiển thị trạng thái tiếng Việt (dựa trên thời gian thực)
+        /// </summary>
+        public string StatusDisplay => RealTimeStatus switch
         {
             "Active" => "Hoạt động",
             "Inactive" => "Tạm dừng",
             "Expired" => "Hết hạn",
+            "Exhausted" => "Hết lượt",
+            "Pending" => "Chưa bắt đầu",
             _ => Status
         };
 
@@ -51,9 +83,9 @@ namespace WinFormsApp1.ViewModels
         public string TypeDisplay => DiscountType == "Percentage" ? "Phần trăm" : "Số tiền cố định";
 
         /// <summary>
-        /// Còn hiệu lực không
+        /// Còn hiệu lực không (dựa trên thời gian thực)
         /// </summary>
-        public bool IsCurrentlyActive => Status == "Active" && IsActive && DateTime.UtcNow >= StartDate && DateTime.UtcNow <= EndDate;
+        public bool IsCurrentlyActive => RealTimeStatus == "Active";
 
         /// <summary>
         /// Còn lượt sử dụng không
@@ -66,6 +98,31 @@ namespace WinFormsApp1.ViewModels
         public string RemainingUsage => UsageLimit.HasValue 
             ? $"{UsageLimit.Value - UsageCount}/{UsageLimit.Value}" 
             : "Không giới hạn";
+        
+        /// <summary>
+        /// Thời gian còn lại (nếu đang hoạt động)
+        /// </summary>
+        public string TimeRemaining
+        {
+            get
+            {
+                if (RealTimeStatus != "Active" && RealTimeStatus != "Pending")
+                    return "-";
+                
+                var now = DateTime.Now;
+                var targetDate = RealTimeStatus == "Pending" ? StartDate : EndDate;
+                var remaining = targetDate - now;
+                
+                if (remaining.TotalDays >= 1)
+                    return $"{(int)remaining.TotalDays} ngày";
+                if (remaining.TotalHours >= 1)
+                    return $"{(int)remaining.TotalHours} giờ";
+                if (remaining.TotalMinutes >= 1)
+                    return $"{(int)remaining.TotalMinutes} phút";
+                
+                return "< 1 phút";
+            }
+        }
     }
 
     /// <summary>
