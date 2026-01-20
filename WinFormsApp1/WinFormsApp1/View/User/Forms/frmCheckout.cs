@@ -100,7 +100,7 @@ namespace WinFormsApp1.View.User.Forms
 
             var iconLabel = new Label
             {
-                Text = "🛒",
+                Text = "",
                 Font = new Font("Segoe UI", 72),
                 Location = new Point(150, 20),
                 AutoSize = true
