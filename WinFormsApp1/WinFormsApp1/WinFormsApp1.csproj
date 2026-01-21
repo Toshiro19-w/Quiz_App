@@ -15,8 +15,14 @@
 
   <ItemGroup>
     <Compile Remove="Controller\**" />
+    <Compile Remove="View\User\Controls\MyCourses\**" />
+    <Compile Remove="View\User\ShowLesson\**" />
     <EmbeddedResource Remove="Controller\**" />
+    <EmbeddedResource Remove="View\User\Controls\MyCourses\**" />
+    <EmbeddedResource Remove="View\User\ShowLesson\**" />
     <None Remove="Controller\**" />
+    <None Remove="View\User\Controls\MyCourses\**" />
+    <None Remove="View\User\ShowLesson\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -94,11 +100,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="View\User\Controls\MyCourses\" />
-    <Folder Include="View\User\ShowLesson\" />
   </ItemGroup>
 
   <ItemGroup>

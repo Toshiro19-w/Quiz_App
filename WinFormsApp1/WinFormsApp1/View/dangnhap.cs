@@ -21,11 +21,11 @@ namespace WinFormsApp1
 
         private void SetupRealTimeValidation()
         {
-            textTK.TextChanged += ValidateEmail;
+            textTK.TextChanged += ValidateUsername;
             textBox2.TextChanged += ValidatePassword;
         }
 
-        private void ValidateEmail(object sender, EventArgs e)
+        private void ValidateUsername(object sender, EventArgs e)
         {
             var textBox = sender as TextBox;
             if (string.IsNullOrEmpty(textBox.Text))
@@ -35,9 +35,9 @@ namespace WinFormsApp1
                 return;
             }
             
-            bool isValid = ValidationHelper.IsValidEmail(textBox.Text);
+            bool isValid = textBox.Text.Length >= 3;
             textBox.BackColor = isValid ? Color.FromArgb(240, 253, 244) : Color.FromArgb(254, 242, 242);
-            lblEmailError.Text = isValid ? "" : "Email không hợp lệ";
+            lblEmailError.Text = isValid ? "" : "Tên đăng nhập phải có ít nhất 3 ký tự";
         }
 
         private void ValidatePassword(object sender, EventArgs e)
@@ -61,7 +61,7 @@ namespace WinFormsApp1
             if (session != null)
             {
                 // Tự động điền thông tin đăng nhập
-                textTK.Text = session.Email;
+                textTK.Text = session.Username;
                 chkRememberMe.Checked = session.RememberMe;
                 ToastHelper.Show(this, $"Chào mừng trở lại, {session.FullName}!");
             }
@@ -101,10 +101,10 @@ namespace WinFormsApp1
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
-            string email = textTK.Text.Trim();
+            string username = textTK.Text.Trim();
             string password = textBox2.Text.Trim();
 
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 ToastHelper.Show(this, "Vui lòng nhập đầy đủ thông tin!");
                 return;
@@ -115,7 +115,7 @@ namespace WinFormsApp1
 
             try
             {
-                bool success = await Task.Run(() => AuthHelper.Login(email, password));
+                bool success = await Task.Run(() => AuthHelper.Login(username, password));
 
                 if (success)
                 {
@@ -152,7 +152,7 @@ namespace WinFormsApp1
                 {
                     textBox2.Clear();
                     textBox2.Focus();
-                    ToastHelper.Show(this, "Email hoặc mật khẩu không chính xác!");
+                    ToastHelper.Show(this, "Tên đăng nhập hoặc mật khẩu không chính xác!");
                 }
             }
             catch (Exception ex)

@@ -15,7 +15,7 @@ namespace WinFormsApp1.Helpers
         public class SessionData
         {
             public int UserId { get; set; }
-            public string Email { get; set; }
+            public string Username { get; set; }
             public string FullName { get; set; }
             public DateTime LoginTime { get; set; }
             public bool RememberMe { get; set; }
@@ -28,7 +28,7 @@ namespace WinFormsApp1.Helpers
                 var sessionData = new SessionData
                 {
                     UserId = user.UserId,
-                    Email = user.Email,
+                    Username = user.Username,
                     FullName = user.FullName,
                     LoginTime = DateTime.Now,
                     RememberMe = rememberMe
