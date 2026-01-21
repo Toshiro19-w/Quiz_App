@@ -114,11 +114,11 @@
 			btnSubmit.FlatStyle = FlatStyle.Flat;
 			btnSubmit.Font = new Font("Segoe UI", 10F);
 			btnSubmit.ForeColor = Color.White;
+			btnSubmit.Image = Properties.Resources.upload;
 			btnSubmit.Location = new Point(1538, 29);
 			btnSubmit.Name = "btnSubmit";
 			btnSubmit.Size = new Size(50, 40);
 			btnSubmit.TabIndex = 7;
-			btnSubmit.Text = "📤";
 			btnSubmit.UseVisualStyleBackColor = false;
 			btnSubmit.Click += BtnSubmit_Click;
 			// 
@@ -130,11 +130,11 @@
 			btnView.FlatStyle = FlatStyle.Flat;
 			btnView.Font = new Font("Segoe UI", 10F);
 			btnView.ForeColor = Color.White;
+			btnView.Image = Properties.Resources.view;
 			btnView.Location = new Point(1594, 29);
 			btnView.Name = "btnView";
 			btnView.Size = new Size(50, 40);
 			btnView.TabIndex = 8;
-			btnView.Text = "👁️";
 			btnView.UseVisualStyleBackColor = false;
 			btnView.Click += BtnView_Click;
 			// 
@@ -146,11 +146,11 @@
 			btnEdit.FlatStyle = FlatStyle.Flat;
 			btnEdit.Font = new Font("Segoe UI", 10F);
 			btnEdit.ForeColor = Color.White;
+			btnEdit.Image = Properties.Resources.edit;
 			btnEdit.Location = new Point(1650, 29);
 			btnEdit.Name = "btnEdit";
 			btnEdit.Size = new Size(50, 40);
 			btnEdit.TabIndex = 9;
-			btnEdit.Text = "✏️";
 			btnEdit.UseVisualStyleBackColor = false;
 			btnEdit.Click += BtnEdit_Click;
 			// 
@@ -162,11 +162,11 @@
 			btnDelete.FlatStyle = FlatStyle.Flat;
 			btnDelete.Font = new Font("Segoe UI", 10F);
 			btnDelete.ForeColor = Color.White;
+			btnDelete.Image = Properties.Resources.delete_white;
 			btnDelete.Location = new Point(1706, 29);
 			btnDelete.Name = "btnDelete";
 			btnDelete.Size = new Size(50, 40);
 			btnDelete.TabIndex = 10;
-			btnDelete.Text = "🗑️";
 			btnDelete.UseVisualStyleBackColor = false;
 			btnDelete.Click += BtnDelete_Click;
 			// 

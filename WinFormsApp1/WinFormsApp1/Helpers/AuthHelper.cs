@@ -11,11 +11,11 @@ namespace WinFormsApp1.Helpers
 
         public static User? CurrentUser => _currentUser;
 
-        public static bool Login(string email, string password)
+        public static bool Login(string username, string password)
         {
             using var context = new LearningPlatformContext();
             var user = context.Users
-                .Where(u => u.Email == email && u.Status == 1)
+                .Where(u => u.Username == username && u.Status == 1)
                 .FirstOrDefault();
 
             if (user != null && PasswordHelper.VerifyPassword(password, user.PasswordHash))
