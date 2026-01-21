@@ -34,7 +34,7 @@
 			txtFront.Location = new Point(37, 84);
 			txtFront.Multiline = true;
 			txtFront.Name = "txtFront";
-			txtFront.Size = new Size(635, 28);
+			txtFront.Size = new Size(635, 36);
 			txtFront.TabIndex = 5;
 			// 
 			// txtBack
@@ -43,27 +43,27 @@
 			txtBack.Location = new Point(744, 84);
 			txtBack.Multiline = true;
 			txtBack.Name = "txtBack";
-			txtBack.Size = new Size(612, 28);
+			txtBack.Size = new Size(612, 36);
 			txtBack.TabIndex = 3;
 			// 
 			// txtHint
 			// 
 			txtHint.Font = new Font("Microsoft Sans Serif", 12F);
-			txtHint.Location = new Point(37, 156);
+			txtHint.Location = new Point(37, 169);
 			txtHint.Multiline = true;
 			txtHint.Name = "txtHint";
-			txtHint.Size = new Size(1319, 28);
+			txtHint.Size = new Size(1319, 35);
 			txtHint.TabIndex = 1;
 			// 
 			// btnDelete
 			// 
 			btnDelete.FlatAppearance.BorderSize = 0;
 			btnDelete.FlatStyle = FlatStyle.Flat;
-			btnDelete.Location = new Point(1324, 12);
+			btnDelete.Image = Properties.Resources.delete;
+			btnDelete.Location = new Point(1317, 20);
 			btnDelete.Name = "btnDelete";
-			btnDelete.Size = new Size(32, 28);
+			btnDelete.Size = new Size(39, 40);
 			btnDelete.TabIndex = 0;
-			btnDelete.Text = "🗑";
 			// 
 			// lblFront
 			// 
@@ -86,7 +86,7 @@
 			// lblHint
 			// 
 			lblHint.Font = new Font("Microsoft Sans Serif", 12F);
-			lblHint.Location = new Point(37, 123);
+			lblHint.Location = new Point(37, 136);
 			lblHint.Name = "lblHint";
 			lblHint.Size = new Size(187, 30);
 			lblHint.TabIndex = 2;
@@ -104,7 +104,7 @@
 			Controls.Add(lblFront);
 			Controls.Add(lblIndex);
 			Name = "FlashcardItemControl";
-			Size = new Size(1450, 206);
+			Size = new Size(1383, 214);
 			ResumeLayout(false);
 			PerformLayout();
 		}

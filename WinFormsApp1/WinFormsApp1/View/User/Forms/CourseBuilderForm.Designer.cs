@@ -44,7 +44,7 @@ namespace WinFormsApp1.View.User.Forms
 			pnlMain.Location = new Point(0, 0);
 			pnlMain.Name = "pnlMain";
 			pnlMain.Padding = new Padding(24);
-			pnlMain.Size = new Size(1602, 979);
+			pnlMain.Size = new Size(1879, 979);
 			pnlMain.TabIndex = 0;
 			// 
 			// pnlContent
@@ -55,7 +55,7 @@ namespace WinFormsApp1.View.User.Forms
 			pnlContent.Location = new Point(24, 102);
 			pnlContent.Name = "pnlContent";
 			pnlContent.ShadowDecoration.CustomizableEdges = customizableEdges2;
-			pnlContent.Size = new Size(1554, 853);
+			pnlContent.Size = new Size(1831, 853);
 			pnlContent.TabIndex = 0;
 			// 
 			// pnlStepper
@@ -71,7 +71,7 @@ namespace WinFormsApp1.View.User.Forms
 			pnlStepper.Dock = DockStyle.Top;
 			pnlStepper.Location = new Point(24, 24);
 			pnlStepper.Name = "pnlStepper";
-			pnlStepper.Size = new Size(1554, 78);
+			pnlStepper.Size = new Size(1831, 78);
 			pnlStepper.TabIndex = 1;
 			// 
 			// sep34
@@ -168,7 +168,7 @@ namespace WinFormsApp1.View.User.Forms
 			// 
 			// CourseBuilderForm
 			// 
-			ClientSize = new Size(1602, 979);
+			ClientSize = new Size(1879, 979);
 			Controls.Add(pnlMain);
 			transition.SetDecoration(this, Guna.UI2.AnimatorNS.DecorationType.None);
 			Name = "CourseBuilderForm";

@@ -19,33 +19,14 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
         private int? _contentId;
         private int? _refId;
 
-        // inline error labels
-        private Label lblTitleError;
-        private Label lblTimeError;
-        private Label lblMaxAttemptsError;
-
         public ContentTestControl()
         {
             this.Width = 835; this.Height = 680; this.Margin = new Padding(0, 0, 0, 10);
             this.BorderStyle = BorderStyle.FixedSingle;
             InitializeComponent();
 
-            // create inline error labels
-            lblTitleError = new Label { ForeColor = Color.Red, AutoSize = true, Visible = false };
-            lblTimeError = new Label { ForeColor = Color.Red, AutoSize = true, Visible = false };
-            lblMaxAttemptsError = new Label { ForeColor = Color.Red, AutoSize = true, Visible = false };
-
-            // position error labels relative to existing controls (safe defaults)
-            // Title error below txtTitle
-            lblTitleError.Location = new Point(txtTitle.Left, txtTitle.Bottom + 2);
-            // Time error to the right of numTime
-            lblTimeError.Location = new Point(numTime.Right + 8, numTime.Top);
-            // Max attempts error to the right of numMaxAttempts
-            lblMaxAttemptsError.Location = new Point(numMaxAttempts.Right + 8, numMaxAttempts.Top);
-
-            this.Controls.Add(lblTitleError);
-            this.Controls.Add(lblTimeError);
-            this.Controls.Add(lblMaxAttemptsError);
+            // Error labels đã được tạo trong Designer
+            // Chỉ cần setup event handlers
 
             // Add delete button (big red)
             btnDeleteContent.Click += (s, e) => DeleteRequested?.Invoke(this);
@@ -88,8 +69,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 
             // hide inline errors when user edits fields
             txtTitle.TextChanged += (s, e) => lblTitleError.Visible = false;
-            numTime.ValueChanged += (s, e) => lblTimeError.Visible = false;
-            numMaxAttempts.ValueChanged += (s, e) => lblMaxAttemptsError.Visible = false;
+
 
             AddQuestion();
         }
@@ -187,29 +167,30 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 
             // clear previous inline errors
             lblTitleError.Visible = false;
-            lblTimeError.Visible = false;
-            lblMaxAttemptsError.Visible = false;
+
 
             // Validation
             if (string.IsNullOrWhiteSpace(txtTitle.Text))
             {
-                lblTitleError.Text = "Tiêu đề bài kiểm tra không được để trống.";
+                lblTitleError.Text = "* Không được bỏ trống";
                 lblTitleError.Visible = true;
-                throw new InvalidOperationException(lblTitleError.Text);
+                throw new InvalidOperationException("Tiêu đề bài kiểm tra không được để trống.");
             }
 
             if (numTime.Value <= 0)
             {
-                lblTimeError.Text = "Thời gian phải lớn hơn 0 phút.";
-                lblTimeError.Visible = true;
-                throw new InvalidOperationException(lblTimeError.Text);
+
+
+                throw new InvalidOperationException("Thời gian phải lớn hơn 0 phút.");
             }
 
-            if (numMaxAttempts.Value <= 0)
+            // THAY ĐỔI: Không validate numMaxAttempts >= 1 nữa, cho phép 0 (không giới hạn)
+            // Chỉ validate không âm
+            if (numMaxAttempts.Value < 0)
             {
-                lblMaxAttemptsError.Text = "Số lần làm bài phải lớn hơn 0.";
-                lblMaxAttemptsError.Visible = true;
-                throw new InvalidOperationException(lblMaxAttemptsError.Text);
+
+
+                throw new InvalidOperationException("Số lần làm bài không được âm.");
             }
             
             var vm = new LessonContentBuilderViewModel
@@ -222,11 +203,11 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
                 TestTitle = txtTitle.Text.Trim(),
                 TestDesc = txtInfoDesc.Text.Trim(),
                 TimeLimitMinutes = (int)numTime.Value,
-                MaxAttempts = (int)numMaxAttempts.Value,
+                MaxAttempts = (int)numMaxAttempts.Value, // Có thể = 0 (không giới hạn)
                 Questions = new List<TestQuestionBuilderViewModel>()
             };
 
-            Debug.WriteLine($"[ContentTestControl] Title: '{vm.Title}', TestTitle: '{vm.TestTitle}', RefId: {vm.RefId}");
+            Debug.WriteLine($"[ContentTestControl] Title: '{vm.Title}', TestTitle: '{vm.TestTitle}', RefId: {vm.RefId}, MaxAttempts: {vm.MaxAttempts}");
 
             for (int i = 0; i < _questions.Count; i++)
             {

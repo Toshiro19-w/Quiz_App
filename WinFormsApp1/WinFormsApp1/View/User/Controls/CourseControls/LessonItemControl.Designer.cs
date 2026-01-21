@@ -16,21 +16,23 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			// 
 			// txtTitle
 			// 
+			txtTitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			txtTitle.BackColor = Color.WhiteSmoke;
 			txtTitle.BorderStyle = BorderStyle.None;
 			txtTitle.Font = new Font("Segoe UI", 12F);
 			txtTitle.Location = new Point(65, 1);
 			txtTitle.Name = "txtTitle";
-			txtTitle.Size = new Size(500, 32);
+			txtTitle.Size = new Size(613, 32);
 			txtTitle.TabIndex = 0;
 			// 
 			// btnDelete
 			// 
+			btnDelete.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			btnDelete.BackColor = Color.FromArgb(242, 75, 75);
 			btnDelete.FlatAppearance.BorderSize = 0;
 			btnDelete.FlatStyle = FlatStyle.Flat;
 			btnDelete.ForeColor = Color.White;
-			btnDelete.Location = new Point(1253, 0);
+			btnDelete.Location = new Point(1366, 0);
 			btnDelete.Name = "btnDelete";
 			btnDelete.Size = new Size(122, 35);
 			btnDelete.TabIndex = 1;
@@ -45,7 +47,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			Controls.Add(txtTitle);
 			Margin = new Padding(0, 0, 0, 6);
 			Name = "LessonItemControl";
-			Size = new Size(1378, 36);
+			Size = new Size(1500, 36);
 			ResumeLayout(false);
 			PerformLayout();
 		}

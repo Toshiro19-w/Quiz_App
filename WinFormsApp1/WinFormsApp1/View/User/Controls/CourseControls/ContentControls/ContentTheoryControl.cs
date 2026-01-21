@@ -28,7 +28,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
                 Location = new Point(this.Width - 90, 5),
                 BackColor = Color.FromArgb(220, 53, 69),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Visible = false 
             };
             btnDelete.FlatAppearance.BorderSize = 0;
             btnDelete.Click += (s, e) => DeleteRequested?.Invoke(this);

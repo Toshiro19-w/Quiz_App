@@ -13,32 +13,20 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		private CourseBuilderViewModel? _vm;
 		private int _currentChapterIndex = -1;
 		private int _currentLessonIndex = -1;
-		private int _previousComboIndex = -1;
+		private int _previousComboIndex = -1;			
+		
+		private LessonContentBuilderViewModel? _selectedContent;
+		private Control? _currentEditor;
 
 		public Step3_ContentControl()
 		{
 			InitializeComponent();
-			
-			// Enable double buffering for smoother scrolling - QUAN TRỌNG cho Step3
-			EnableDoubleBuffering(flpContents);
 
 			btnPrev.Click += (s, e) => OnPrevRequested?.Invoke(this, EventArgs.Empty);
 			btnNext.Click += (s, e) => OnNextRequested?.Invoke(this, EventArgs.Empty);
 
 			cmbLessonSelector.SelectedIndexChanged += (s, e) => ChangeSelectedLesson();
 			btnAddContent.Click += (s, e) => AddNewContent();
-		}
-		
-		/// <summary>
-		/// Enable double buffering for a control to reduce flicker
-		/// </summary>
-		private void EnableDoubleBuffering(Control control)
-		{
-			typeof(Control).InvokeMember("DoubleBuffered",
-				System.Reflection.BindingFlags.SetProperty |
-				System.Reflection.BindingFlags.Instance |
-				System.Reflection.BindingFlags.NonPublic,
-				null, control, new object[] { true });
 		}
 
 		public event EventHandler? OnPrevRequested;
@@ -51,10 +39,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		{
 			_vm = vm;
 			cmbLessonSelector.Items.Clear();
-			flpContents.Controls.Clear();
+			flpContentList.Controls.Clear();
+			pnlEditor.Controls.Clear();
 			_currentChapterIndex = -1;
 			_currentLessonIndex = -1;
 			_previousComboIndex = -1;
+			_selectedContent = null;
+			_currentEditor = null;
 
 			if (vm?.Chapters == null || vm.Chapters.Count == 0)
 			{
@@ -70,7 +61,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				
 				if (chapter.Lessons == null) continue;
 
-					for (int ls = 0; ls < chapter.Lessons.Count; ls++)
+				for (int ls = 0; ls < chapter.Lessons.Count; ls++)
 				{
 					var lesson = chapter.Lessons[ls];
 					cmbLessonSelector.Items.Add(new ComboItem
@@ -104,26 +95,22 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		}
 
 		// ============================================================
-		// CHUYỂN BÀI HỌC (LƯU TRƯỚC, LOAD SAU)
+		// CHUYỂN BÀI HỌC
 		// ============================================================
 		private void ChangeSelectedLesson()
 		{
-			// Only save if we have a valid current lesson
-			// Save old lesson BEFORE switching; if save fails, revert selection
 			int newComboIndex = cmbLessonSelector.SelectedIndex;
 
 			if (_currentChapterIndex >= 0 && _currentLessonIndex >= 0)
 			{
 				if (!SaveCurrentLesson())
 				{
-					// revert selection to previous valid index
 					if (_previousComboIndex >= 0 && _previousComboIndex < cmbLessonSelector.Items.Count)
 					{
 						cmbLessonSelector.SelectedIndex = _previousComboIndex;
 					}
 					else
 					{
-						// no previous, just set to -1
 						cmbLessonSelector.SelectedIndex = -1;
 					}
 					return;
@@ -143,65 +130,64 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 		}
 
 		// ============================================================
-		// LƯU TẤT CẢ CONTENTS CỦA BÀI HIỆN TẠI
+		// LƯU BÀI HỌC HIỆN TẠI
 		// ============================================================
 		private bool SaveCurrentLesson()
 		{
 			if (_vm == null) return true;
 			if (_currentChapterIndex < 0 || _currentLessonIndex < 0) return true;
 
+			// Save editor trước nếu có
+			if (!SaveCurrentEditor()) return false;
+
 			var chapter = _vm.Chapters[_currentChapterIndex];
 			var lesson = chapter.Lessons[_currentLessonIndex];
 
-			Debug.WriteLine($"[Step3] SaveCurrentLesson: Lesson '{lesson.Title}', Controls count: {flpContents.Controls.Count}");
+			Debug.WriteLine($"[Step3] SaveCurrentLesson: Lesson '{lesson.Title}'");
 
-			// Only clear and rebuild if we have UI controls to save from
-			if (flpContents.Controls.Count > 0)
+			// Contents đã được cập nhật trực tiếp trong lesson.Contents
+			// không cần rebuild lại list
+
+			return true;
+		}
+
+		// ============================================================
+		// LƯU EDITOR HIỆN TẠI
+		// ============================================================
+		private bool SaveCurrentEditor()
+		{
+			if (_currentEditor is IContentControl ic && _selectedContent != null)
 			{
-				var savedList = new System.Collections.Generic.List<LessonContentBuilderViewModel>();
-				int order = 0;
-				foreach (Control c in flpContents.Controls)
+				try
 				{
-					if (c is IContentControl ic)
-					{
-						LessonContentBuilderViewModel saved;
-						try
-						{
-							saved = ic.SaveToViewModel();
-						}
-						catch (InvalidOperationException ex)
-						{
-							// validation failed in child control; rely on child to show inline label
-							Debug.WriteLine($"[Step3] Validation failed: {ex.Message}");
-							return false;
-						}
-						
-						Debug.WriteLine($"[Step3] Saved content: Type={saved.ContentType}, Title='{saved.Title}', Questions={saved.Questions?.Count ?? 0}");
+					var saved = ic.SaveToViewModel();
+					
+					// Copy dữ liệu từ editor vào content hiện tại
+					_selectedContent.Title = saved.Title;
+					_selectedContent.Body = saved.Body;
+					_selectedContent.VideoUrl = saved.VideoUrl;
+					_selectedContent.FlashcardSetTitle = saved.FlashcardSetTitle;
+					_selectedContent.FlashcardSetDesc = saved.FlashcardSetDesc;
+					_selectedContent.Flashcards = saved.Flashcards;
+					_selectedContent.TestTitle = saved.TestTitle;
+					_selectedContent.TestDesc = saved.TestDesc;
+					_selectedContent.TimeLimitMinutes = saved.TimeLimitMinutes;
+					_selectedContent.MaxAttempts = saved.MaxAttempts;
+					_selectedContent.Questions = saved.Questions;
 
-						// If control.Tag holds original contentVm, preserve identifiers
-						if (c.Tag is LessonContentBuilderViewModel original)
-						{
-							saved.ContentId = original.ContentId;
-							saved.RefId = original.RefId;
-							// preserve original OrderIndex if present, otherwise set sequential
-							saved.OrderIndex = original.OrderIndex != 0 ? original.OrderIndex : ++order;
-						}
-						else
-						{
-							// new content created in UI
-							saved.OrderIndex = ++order;
-						}
-
-						savedList.Add(saved);
-					}
+					Debug.WriteLine($"[Step3] Saved editor: Type={saved.ContentType}, Title='{saved.Title}'");
+					
+					// Refresh display của item trong list
+					RefreshContentList();
+					
+					return true;
 				}
-
-				Debug.WriteLine($"[Step3] Total saved contents: {savedList.Count}");
-				// replace lesson contents with preserved list
-				lesson.Contents.Clear();
-				lesson.Contents.AddRange(savedList);
+				catch (InvalidOperationException ex)
+				{
+					Debug.WriteLine($"[Step3] Validation failed: {ex.Message}");
+					return false;
+				}
 			}
-
 			return true;
 		}
 
@@ -213,60 +199,165 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			if (_vm == null) return;
 			if (cmbLessonSelector.SelectedItem is not ComboItem item) return;
 
-			// Suspend layout for better performance
-			flpContents.SuspendLayout();
-			
-			// Use direct reference if available, fallback to index-based lookup
+			flpContentList.SuspendLayout();
+			flpContentList.Controls.Clear();
+
 			var lesson = item.Lesson ?? _vm.Chapters[item.ChapterIndex].Lessons[item.LessonIndex];
 
-			flpContents.Controls.Clear();
+			Debug.WriteLine($"[Step3] LoadLessonContents: Lesson '{lesson.Title}', Contents: {lesson.Contents.Count}");
 
-			if (lesson.Contents.Count == 0)
-			{
-				// Force reload from original ViewModel if current lesson has no contents
-				if (item.Lesson != null && item.Lesson.Contents.Count > 0)
-				{
-					lesson = item.Lesson;
-				}
-				else
-				{
-					flpContents.ResumeLayout(true);
-					return;
-				}
-			}
-
+			// Tạo item controls cho mỗi content
 			foreach (var contentVm in lesson.Contents)
 			{
-				Control ctl = CreateControlByType(contentVm.ContentType);
-				if (ctl is IContentControl ic)
+				var itemControl = new ContentItemControl(contentVm);
+				itemControl.ItemClicked += OnContentItemClicked;
+				itemControl.DeleteRequested += OnContentDeleteRequested;
+				flpContentList.Controls.Add(itemControl);
+			}
+
+			flpContentList.ResumeLayout(true);
+
+			// Clear editor
+			_selectedContent = null;
+			_currentEditor = null;
+			pnlEditor.Controls.Clear();
+			var lblRightTitle = (Label)splitContainer.Panel2.Controls.OfType<Panel>().First().Controls[0];
+			lblRightTitle.Text = $"Chỉnh sửa nội dung (0/{lesson.Contents.Count})";
+
+			// Tự động chọn content đầu tiên nếu có
+			if (lesson.Contents.Count > 0)
+			{
+				SelectContent(lesson.Contents[0]);
+			}
+		}
+
+		// ============================================================
+		// CHỌN CONTENT ĐỂ CHỈNH SỬA
+		// ============================================================
+		private void OnContentItemClicked(object? sender, LessonContentBuilderViewModel contentVm)
+		{
+			SelectContent(contentVm);
+		}
+
+		private void SelectContent(LessonContentBuilderViewModel contentVm)
+		{
+			// Lưu editor hiện tại trước
+			if (!SaveCurrentEditor())
+			{
+				return; // Không cho phép chuyển nếu validate fail
+			}
+
+			_selectedContent = contentVm;
+
+			// Update selected state cho các items
+			foreach (Control ctrl in flpContentList.Controls)
+			{
+				if (ctrl is ContentItemControl contentItem)
 				{
-					ic.LoadFromViewModel(contentVm);
-					// attach original VM to control so we can preserve IDs later
-					ctl.Tag = contentVm;
-					ic.DeleteRequested += (s) => OnContentDeleteRequested(ctl, contentVm);
+					contentItem.IsSelected = (contentItem.ContentViewModel == contentVm);
 				}
+			}
+
+			// Load editor tương ứng
+			LoadEditor(contentVm);
+
+			// Update title
+			if (cmbLessonSelector.SelectedItem is ComboItem comboItem)
+			{
+				var lesson = comboItem.Lesson ?? _vm.Chapters[comboItem.ChapterIndex].Lessons[comboItem.LessonIndex];
+				int index = lesson.Contents.IndexOf(contentVm) + 1;
+				var lblRightTitle = (Label)splitContainer.Panel2.Controls.OfType<Panel>().First().Controls[0];
+				lblRightTitle.Text = $"Chỉnh sửa nội dung ({index}/{lesson.Contents.Count})";
+			}
+		}
+
+		// ============================================================
+		// LOAD EDITOR CHO CONTENT
+		// ============================================================
+		private void LoadEditor(LessonContentBuilderViewModel contentVm)
+		{
+			pnlEditor.SuspendLayout();
+			pnlEditor.Controls.Clear();
+
+			_currentEditor = CreateEditorByType(contentVm.ContentType);
+			
+			if (_currentEditor is IContentControl ic)
+			{
+				ic.LoadFromViewModel(contentVm);
 				
-				if (ctl is ContentTheoryControl theoryCtl)
+				// Gắn event ContentTypeChanged
+				if (_currentEditor is ContentTheoryControl theoryCtl)
 				{
-					theoryCtl.ContentTypeChanged += (s, newType) => OnContentTypeChanged(ctl, newType, contentVm);
+					theoryCtl.ContentTypeChanged += OnEditorContentTypeChanged;
 				}
-				else if (ctl is ContentVideoControl videoCtl)
+				else if (_currentEditor is ContentVideoControl videoCtl)
 				{
-					videoCtl.ContentTypeChanged += (s, newType) => OnContentTypeChanged(ctl, newType, contentVm);
+					videoCtl.ContentTypeChanged += OnEditorContentTypeChanged;
 				}
-				else if (ctl is ContentFlashcardControl flashcardCtl)
+				else if (_currentEditor is ContentFlashcardControl flashcardCtl)
 				{
-					flashcardCtl.ContentTypeChanged += (s, newType) => OnContentTypeChanged(ctl, newType, contentVm);
+					flashcardCtl.ContentTypeChanged += OnEditorContentTypeChanged;
 				}
-				else if (ctl is ContentTestControl testCtl)
+				else if (_currentEditor is ContentTestControl testCtl)
 				{
-					testCtl.ContentTypeChanged += (s, newType) => OnContentTypeChanged(ctl, newType, contentVm);
+					testCtl.ContentTypeChanged += OnEditorContentTypeChanged;
 				}
 
-				flpContents.Controls.Add(ctl);
+				// Không gắn DeleteRequested ở đây vì đã có nút xóa ở ContentItemControl
 			}
+
+			// THAY ĐỔI: Không dùng Dock.Fill để cho phép scroll
+			// Đặt Location và Width thủ công, để Height tự nhiên
+			_currentEditor.Location = new System.Drawing.Point(0, 0);
+			_currentEditor.Width = pnlEditor.ClientSize.Width - pnlEditor.Padding.Horizontal;
+			// Không set Height, để control tự xác định chiều cao của nó
 			
-			flpContents.ResumeLayout(true);
+			// Đăng ký event để adjust width khi panel resize
+			pnlEditor.Resize += (s, e) => {
+				if (_currentEditor != null && pnlEditor.Controls.Contains(_currentEditor))
+				{
+					_currentEditor.Width = pnlEditor.ClientSize.Width - pnlEditor.Padding.Horizontal;
+				}
+			};
+			
+			pnlEditor.Controls.Add(_currentEditor);
+			pnlEditor.ResumeLayout(true);
+			
+			// Force scroll to top khi load editor mới
+			pnlEditor.AutoScrollPosition = new System.Drawing.Point(0, 0);
+		}
+
+		// ============================================================
+		// XỬ LÝ THAY ĐỔI LOẠI CONTENT
+		// ============================================================
+		private void OnEditorContentTypeChanged(object? sender, string newType)
+		{
+			if (_selectedContent == null) return;
+
+			// Lưu dữ liệu từ editor cũ
+			if (_currentEditor is IContentControl oldIc)
+			{
+				try
+				{
+					var savedData = oldIc.SaveToViewModel();
+					_selectedContent.Title = savedData.Title;
+					_selectedContent.Body = savedData.Body;
+					_selectedContent.VideoUrl = savedData.VideoUrl;
+				}
+				catch (InvalidOperationException)
+				{
+					// ignore validation errors when changing content type
+				}
+			}
+
+			// Cập nhật content type
+			_selectedContent.ContentType = newType;
+
+			// Load lại editor mới
+			LoadEditor(_selectedContent);
+
+			// Refresh display
+			RefreshContentList();
 		}
 
 		// ============================================================
@@ -281,37 +372,81 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				return;
 			}
 
+			// Lưu editor hiện tại trước
+			if (!SaveCurrentEditor())
+			{
+				return;
+			}
+
 			var lesson = item.Lesson ?? _vm.Chapters[item.ChapterIndex].Lessons[item.LessonIndex];
 
 			var newContent = new LessonContentBuilderViewModel
 			{
 				Title = "",
 				ContentType = "Theory",
-				Body = ""
+				Body = "",
+				OrderIndex = lesson.Contents.Count + 1
 			};
 
 			lesson.Contents.Add(newContent);
 
-			var ctl = new ContentTheoryControl();
-			ctl.LoadFromViewModel(newContent);
-			// attach VM so Save can preserve metadata if user later edits
-			ctl.Tag = newContent;
+			// Tạo item control
+			var itemControl = new ContentItemControl(newContent);
+			itemControl.ItemClicked += OnContentItemClicked;
+			itemControl.DeleteRequested += OnContentDeleteRequested;
+			
+			flpContentList.SuspendLayout();
+			flpContentList.Controls.Add(itemControl);
+			flpContentList.ResumeLayout(true);
 
-			// 🎯 FIX QUAN TRỌNG: GẮN EVENT CHUYỂN TYPE
-			ctl.ContentTypeChanged += (s, newType)
-				=> OnContentTypeChanged(ctl, newType, newContent);
-			ctl.DeleteRequested += (s) => OnContentDeleteRequested(ctl, newContent);
-
-			// Suspend layout before adding control
-			flpContents.SuspendLayout();
-			flpContents.Controls.Add(ctl);
-			flpContents.ResumeLayout(true);
+			// Tự động chọn content mới
+			SelectContent(newContent);
 		}
 
 		// ============================================================
-		// FACTORY TẠO CONTROL THEO TYPE
+		// XÓA CONTENT
 		// ============================================================
-		private Control CreateControlByType(string? type)
+		private void OnContentDeleteRequested(object? sender, LessonContentBuilderViewModel contentVm)
+		{
+			if (MessageBox.Show("Bạn có chắc muốn xóa nội dung này?", "Xác nhận", 
+				MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+			{
+				if (cmbLessonSelector.SelectedItem is not ComboItem item) return;
+
+				var lesson = item.Lesson ?? _vm.Chapters[item.ChapterIndex].Lessons[item.LessonIndex];
+				lesson.Contents.Remove(contentVm);
+
+				// Nếu đang chỉnh sửa content này thì clear editor
+				if (_selectedContent == contentVm)
+				{
+					_selectedContent = null;
+					_currentEditor = null;
+					pnlEditor.Controls.Clear();
+				}
+
+				// Refresh list
+				LoadLessonContents();
+			}
+		}
+
+		// ============================================================
+		// REFRESH DANH SÁCH CONTENT
+		// ============================================================
+		private void RefreshContentList()
+		{
+			foreach (Control ctrl in flpContentList.Controls)
+			{
+				if (ctrl is ContentItemControl contentItem)
+				{
+					contentItem.RefreshDisplay();
+				}
+			}
+		}
+
+		// ============================================================
+		// FACTORY TẠO EDITOR THEO TYPE
+		// ============================================================
+		private Control CreateEditorByType(string? type)
 		{
 			return type switch
 			{
@@ -320,106 +455,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				"Test" => new ContentTestControl(),
 				_ => new ContentTheoryControl()
 			};
-		}
-
-		// ============================================================
-		// XỬ LÝ THAY ĐỔI LOẠI CONTENT
-		// ============================================================
-		private void OnContentTypeChanged(Control oldControl, string newType, LessonContentBuilderViewModel contentVm)
-		{
-			// newType đã là tiếng Anh từ ContentTypeHelper			
-			
-			// Save current data from old control
-			if (oldControl is IContentControl oldIc)
-			{
-				try
-				{
-					var savedData = oldIc.SaveToViewModel();
-					contentVm.Title = savedData.Title;
-					contentVm.Body = savedData.Body;
-					contentVm.VideoUrl = savedData.VideoUrl;
-				}
-				catch (InvalidOperationException)
-				{
-					// ignore validation errors when changing content type
-				}
-			}
-
-			// Update content type (newType đã là tiếng Anh)
-			contentVm.ContentType = newType;
-
-			// Create new control
-			var newControl = CreateControlByType(newType);
-			if (newControl is IContentControl newIc)
-			{
-				newIc.LoadFromViewModel(contentVm);
-				// attach same VM so IDs preserved
-				newControl.Tag = contentVm;
-			}
-
-			// Add event handler for new control
-			if (newControl is IContentControl newContentCtl)
-			{
-				newContentCtl.DeleteRequested += (s) => OnContentDeleteRequested(newControl, contentVm);
-			}
-
-			if (newControl is ContentTheoryControl theoryCtl)
-			{
-				theoryCtl.ContentTypeChanged += (s, type) => OnContentTypeChanged(newControl, type, contentVm);
-			}
-			else if (newControl is ContentVideoControl videoCtl)
-			{
-				videoCtl.ContentTypeChanged += (s, type) => OnContentTypeChanged(newControl, type, contentVm);
-			}
-			else if (newControl is ContentFlashcardControl flashcardCtl)
-			{
-				flashcardCtl.ContentTypeChanged += (s, type) => OnContentTypeChanged(newControl, type, contentVm);
-			}
-			else if (newControl is ContentTestControl testCtl)
-			{
-				testCtl.ContentTypeChanged += (s, type) => OnContentTypeChanged(newControl, type, contentVm);
-			}
-
-			// Suspend layout before replacing control
-			flpContents.SuspendLayout();
-			
-			// Replace control in FlowLayoutPanel
-			var index = flpContents.Controls.IndexOf(oldControl);
-			flpContents.Controls.RemoveAt(index);
-			flpContents.Controls.Add(newControl);
-			flpContents.Controls.SetChildIndex(newControl, index);
-
-			flpContents.ResumeLayout(true);
-			
-			// Dispose old control
-			oldControl.Dispose();
-		}
-
-		// ============================================================
-		// XỬ LÝ XÓA CONTENT
-		// ============================================================
-		private void OnContentDeleteRequested(Control control, LessonContentBuilderViewModel contentVm)
-		{
-			if (MessageBox.Show("Bạn có chắc muốn xóa nội dung này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-			{
-				// Suspend layout before removing
-				flpContents.SuspendLayout();
-				
-				// Remove from UI
-				flpContents.Controls.Remove(control);
-				
-				flpContents.ResumeLayout(true);
-				
-				// Remove from ViewModel
-				if (cmbLessonSelector.SelectedItem is ComboItem item)
-				{
-					var lesson = item.Lesson ?? _vm.Chapters[item.ChapterIndex].Lessons[item.LessonIndex];
-					lesson.Contents.Remove(contentVm);
-				}
-				
-				// Dispose control
-				control.Dispose();
-			}
 		}
 
 		public void OnEnter() { }
@@ -433,7 +468,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			public string Text { get; set; } = "";
 			public int ChapterIndex { get; set; }
 			public int LessonIndex { get; set; }
-			public LessonBuilderViewModel? Lesson { get; set; }  // Direct reference
+			public LessonBuilderViewModel? Lesson { get; set; }
 
 			public override string ToString() => Text;
 		}
