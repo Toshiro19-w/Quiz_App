@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     
     <!-- DPI Settings -->
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
@@ -21,6 +22,8 @@
   <ItemGroup>
     <None Remove="appsettings.Development.json" />
     <None Remove="appsettings.json" />
+    <None Remove="Reports\CertificateReport.rdlc" />
+    <None Remove="Resources\logo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +31,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\CertificateReport.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -54,13 +63,13 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="ReportViewerCore.WinForms" Version="15.1.26" />
     <PackageReference Include="PdfiumViewer" Version="2.13.0" />
     <PackageReference Include="PdfiumViewer.Native.x86_64.v8-xfa" Version="2018.4.8.256" />
     <PackageReference Include="QRCoder" Version="1.7.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
-    <PackageReference Include="ReportViewerCore.WinForms" Version="15.1.26" />
     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="5.0.0" />
   </ItemGroup>
 
@@ -90,12 +99,6 @@
   <ItemGroup>
     <Folder Include="View\User\Controls\MyCourses\" />
     <Folder Include="View\User\ShowLesson\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Reports\*.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
