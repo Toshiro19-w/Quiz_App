@@ -68,6 +68,7 @@
 			// 
 			// lblHeader
 			// 
+			lblHeader.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			lblHeader.BackColor = Color.FromArgb(0, 172, 193);
 			lblHeader.Font = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Point, 0);
 			lblHeader.ForeColor = SystemColors.Window;
@@ -90,6 +91,7 @@
 			// 
 			// txtTitle
 			// 
+			txtTitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			txtTitle.CustomizableEdges = customizableEdges1;
 			txtTitle.DefaultText = "";
 			txtTitle.Font = new Font("Segoe UI", 12F);
@@ -105,6 +107,7 @@
 			// 
 			// lblSlugLabel
 			// 
+			lblSlugLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			lblSlugLabel.Font = new Font("Segoe UI", 12F);
 			lblSlugLabel.Location = new Point(39, 183);
 			lblSlugLabel.Name = "lblSlugLabel";
@@ -114,6 +117,7 @@
 			// 
 			// txtSlug
 			// 
+			txtSlug.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			txtSlug.CustomizableEdges = customizableEdges3;
 			txtSlug.DefaultText = "";
 			txtSlug.Font = new Font("Segoe UI", 12F);
@@ -137,6 +141,7 @@
 			// 
 			// txtSummary
 			// 
+			txtSummary.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			txtSummary.Font = new Font("Microsoft Sans Serif", 12F);
 			txtSummary.Location = new Point(39, 315);
 			txtSummary.Name = "txtSummary";

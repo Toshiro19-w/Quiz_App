@@ -198,9 +198,9 @@
 			LableTK.Location = new Point(103, 119);
 			LableTK.Margin = new Padding(4, 0, 4, 0);
 			LableTK.Name = "LableTK";
-			LableTK.Size = new Size(64, 28);
+			LableTK.Size = new Size(152, 28);
 			LableTK.TabIndex = 0;
-			LableTK.Text = "Email";
+			LableTK.Text = "Tên đăng nhập";
 			// 
 			// lblTitle
 			// 

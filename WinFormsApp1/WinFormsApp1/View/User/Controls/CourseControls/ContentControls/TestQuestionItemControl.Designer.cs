@@ -54,7 +54,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			cboQuestionType.Items.AddRange(new object[] { "Trắc nghiệm (1 đáp án)", "Trắc nghiệm (nhiều đáp án)", "Đúng/Sai" });
 			cboQuestionType.Location = new Point(172, 39);
 			cboQuestionType.Name = "cboQuestionType";
-			cboQuestionType.Size = new Size(266, 40);
+			cboQuestionType.Size = new Size(322, 40);
 			cboQuestionType.TabIndex = 2;
 			// 
 			// lblQuestion
@@ -69,12 +69,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			// 
 			// txtQuestion
 			// 
+			txtQuestion.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			txtQuestion.Font = new Font("Segoe UI", 12F);
 			txtQuestion.Location = new Point(172, 92);
 			txtQuestion.Multiline = true;
 			txtQuestion.Name = "txtQuestion";
 			txtQuestion.ScrollBars = ScrollBars.Vertical;
-			txtQuestion.Size = new Size(1214, 80);
+			txtQuestion.Size = new Size(1133, 80);
 			txtQuestion.TabIndex = 4;
 			// 
 			// lblPoint
@@ -110,12 +111,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			// 
 			// pnlAnswers
 			// 
+			pnlAnswers.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			pnlAnswers.AutoScroll = true;
 			pnlAnswers.BorderStyle = BorderStyle.FixedSingle;
 			pnlAnswers.Font = new Font("Segoe UI", 10F);
 			pnlAnswers.Location = new Point(24, 283);
 			pnlAnswers.Name = "pnlAnswers";
-			pnlAnswers.Size = new Size(1362, 193);
+			pnlAnswers.Size = new Size(1281, 193);
 			pnlAnswers.TabIndex = 8;
 			// 
 			// btnAddAnswer
@@ -134,11 +136,12 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			// 
 			// btnDelete
 			// 
+			btnDelete.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			btnDelete.BackColor = Color.FromArgb(244, 67, 54);
 			btnDelete.FlatAppearance.BorderSize = 0;
 			btnDelete.FlatStyle = FlatStyle.Flat;
 			btnDelete.ForeColor = Color.White;
-			btnDelete.Location = new Point(1306, 11);
+			btnDelete.Location = new Point(1225, 11);
 			btnDelete.Name = "btnDelete";
 			btnDelete.Size = new Size(80, 30);
 			btnDelete.TabIndex = 10;
@@ -162,7 +165,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			Controls.Add(lblQuestionType);
 			Controls.Add(lblQuestionNumber);
 			Name = "TestQuestionItemControl";
-			Size = new Size(1398, 549);
+			Size = new Size(1322, 549);
 			((System.ComponentModel.ISupportInitialize)numPoint).EndInit();
 			ResumeLayout(false);
 			PerformLayout();

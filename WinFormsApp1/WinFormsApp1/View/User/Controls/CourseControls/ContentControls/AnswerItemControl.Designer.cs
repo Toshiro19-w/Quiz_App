@@ -36,15 +36,15 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			// 
 			// btnDelete
 			// 
-			btnDelete.BackColor = Color.FromArgb(158, 158, 158);
+			btnDelete.BackColor = Color.White;
 			btnDelete.FlatAppearance.BorderSize = 0;
 			btnDelete.FlatStyle = FlatStyle.Flat;
 			btnDelete.ForeColor = Color.White;
+			btnDelete.Image = Properties.Resources.delete;
 			btnDelete.Location = new Point(588, 6);
 			btnDelete.Name = "btnDelete";
 			btnDelete.Size = new Size(43, 39);
 			btnDelete.TabIndex = 2;
-			btnDelete.Text = "🗑";
 			btnDelete.UseVisualStyleBackColor = false;
 			// 
 			// AnswerItemControl

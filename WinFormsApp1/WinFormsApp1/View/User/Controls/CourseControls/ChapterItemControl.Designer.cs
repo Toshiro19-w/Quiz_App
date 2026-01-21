@@ -43,7 +43,7 @@
 			btnAddLesson.FlatAppearance.BorderSize = 0;
 			btnAddLesson.FlatStyle = FlatStyle.Flat;
 			btnAddLesson.ForeColor = Color.White;
-			btnAddLesson.Location = new Point(1308, 4);
+			btnAddLesson.Location = new Point(1569, 4);
 			btnAddLesson.Name = "btnAddLesson";
 			btnAddLesson.Size = new Size(131, 35);
 			btnAddLesson.TabIndex = 1;
@@ -57,7 +57,7 @@
 			btnRemoveChapter.FlatAppearance.BorderSize = 0;
 			btnRemoveChapter.FlatStyle = FlatStyle.Flat;
 			btnRemoveChapter.ForeColor = Color.White;
-			btnRemoveChapter.Location = new Point(1148, 4);
+			btnRemoveChapter.Location = new Point(1409, 4);
 			btnRemoveChapter.Name = "btnRemoveChapter";
 			btnRemoveChapter.Size = new Size(134, 35);
 			btnRemoveChapter.TabIndex = 3;
@@ -66,12 +66,13 @@
 			// 
 			// flpLessons
 			// 
+			flpLessons.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			flpLessons.AutoScroll = true;
 			flpLessons.FlowDirection = FlowDirection.TopDown;
 			flpLessons.Location = new Point(46, 45);
 			flpLessons.Name = "flpLessons";
 			flpLessons.Padding = new Padding(4);
-			flpLessons.Size = new Size(1393, 161);
+			flpLessons.Size = new Size(1654, 161);
 			flpLessons.TabIndex = 0;
 			flpLessons.WrapContents = false;
 			// 
@@ -84,7 +85,7 @@
 			Controls.Add(lblTitle);
 			Name = "ChapterItemControl";
 			Padding = new Padding(8);
-			Size = new Size(1450, 217);
+			Size = new Size(1711, 217);
 			ResumeLayout(false);
 			PerformLayout();
 		}
