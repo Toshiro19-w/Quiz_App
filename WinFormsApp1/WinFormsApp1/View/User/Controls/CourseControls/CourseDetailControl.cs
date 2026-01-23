@@ -33,12 +33,12 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			btnViewCourse.Click += BtnViewCourse_Click;
 			btnStatistics.Click += BtnStatistics_Click;
 		}
+
 		public CourseDetailControl(int courseId)
 		{
 			InitializeComponent();
 			_controller = new CourseController();
 
-			// fire-and-forget load; callers should await LoadCourseAsync if they need to
 			_ = LoadCourseAsync(courseId);
 
 			btnAddToCart.Click += btnAddToCart_Click;
@@ -97,7 +97,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
 			rtbDescription.Text = _course.Summary ?? "Chưa có mô tả";
 
-
 			lblAvgRating.Text = _course.AverageRating.ToString("F1");
 			lblTotalRatingCount.Text = $"({_course.TotalReviews:N0} đánh giá)";
 
@@ -109,7 +108,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
 		private void UpdateActionButtons()
 		{
-			// default: buyer=false, owner=false
 			bool isOwner = false;
 			bool isBuyer = false;
 
@@ -120,22 +118,15 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 				isBuyer = _course.CoursePurchases != null && _course.CoursePurchases.Any(p => p.BuyerId == currentUser.UserId && string.Equals(p.Status, "Paid", StringComparison.OrdinalIgnoreCase));
 			}
 
-			// Owner: show manage buttons
 			btnEditCourse.Visible = isOwner;
 			btnViewCourse.Visible = isOwner;
-			//btnStatistics.Visible = isOwner;
-
-			// Buyer: show start learning
 			btnStartLearning.Visible = isBuyer;
-
-			// If owner, we typically don't show purchase buttons
 			btnAddToCart.Visible = !isOwner && !isBuyer;
 			btnBuyNow.Visible = !isOwner && !isBuyer;
 
-			// adjust BuyNow/AddToCart enabled state for guest
 			if (currentUser == null)
 			{
-				btnAddToCart.Enabled = true; // allow adding but will prompt to login when clicked
+				btnAddToCart.Enabled = true;
 				btnBuyNow.Enabled = true;
 			}
 		}
@@ -179,7 +170,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 		{
 			flowReviews.Controls.Clear();
 
-			// Kiểm tra nếu user đã mua khóa học
 			var currentUser = AuthHelper.CurrentUser;
 			if (currentUser != null)
 			{
@@ -228,9 +218,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			{
 				using var context = new LearningPlatformContext();
 
-				var cart = await context.ShoppingCarts
-					.FirstOrDefaultAsync(c => c.UserId == userId.Value);
-
+				var cart = await context.ShoppingCarts.FirstOrDefaultAsync(c => c.UserId == userId.Value);
 				if (cart == null)
 				{
 					cart = new ShoppingCart
@@ -242,9 +230,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 					await context.SaveChangesAsync();
 				}
 
-				var existingItem = await context.CartItems
-					.FirstOrDefaultAsync(ci => ci.CartId == cart.CartId && ci.CourseId == _course.CourseId);
-
+				var existingItem = await context.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.CartId && ci.CourseId == _course.CourseId);
 				if (existingItem == null)
 				{
 					var cartItem = new CartItem
@@ -290,7 +276,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			{
 				using var context = new LearningPlatformContext();
 
-				// Ensure shopping cart exists
 				var cart = await context.ShoppingCarts.FirstOrDefaultAsync(c => c.UserId == userId.Value);
 				if (cart == null)
 				{
@@ -303,7 +288,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 					await context.SaveChangesAsync();
 				}
 
-				// Add course to cart if not already present
 				var existingItem = await context.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.CartId && ci.CourseId == _course.CourseId);
 				if (existingItem == null)
 				{
@@ -317,7 +301,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 					await context.SaveChangesAsync();
 				}
 
-				// Open checkout form so user can proceed to payment
 				using var checkout = new WinFormsApp1.View.User.Forms.frmCheckout();
 				checkout.StartPosition = FormStartPosition.CenterParent;
 				var owner = this.FindForm();
@@ -331,7 +314,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 					result = checkout.ShowDialog();
 				}
 
-				// If checkout dialog reported success, reload course to update purchase state
 				if (result == DialogResult.OK)
 				{
 					try
@@ -340,7 +322,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 						UpdateActionButtons();
 						ToastHelper.Show(this.FindForm(), "Thanh toán thành công! Bạn có thể bắt đầu học ngay.");
 					}
-					catch { /* ignore reload errors */ }
+					catch { }
 				}
 			}
 			catch (Exception ex)
@@ -351,57 +333,97 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
 		private async void btnStartLearning_Click(object sender, EventArgs e)
 		{
-			// If user not logged in, prompt
-			var userId = AuthHelper.CurrentUser?.UserId;
-			if (!userId.HasValue)
-			{
-				MessageBox.Show("Vui lòng đăng nhập để bắt đầu học!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
-			}
+			await NavigateToLessonAsync();
+		}
 
-			if (_course == null)
-			{
-				MessageBox.Show("Thông tin khóa học chưa được tải.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
+		private async void BtnViewCourse_Click(object sender, EventArgs e)
+		{
+			await NavigateToLessonAsync();
+		}
 
-			// Find first lesson in course
-			var firstLesson = _course.CourseChapters
-				.OrderBy(ch => ch.OrderIndex)
-				.SelectMany(ch => ch.Lessons.OrderBy(l => l.OrderIndex))
-				.FirstOrDefault();
-
-			if (firstLesson == null)
+		private async System.Threading.Tasks.Task NavigateToLessonAsync()
+		{
+			try
 			{
-				MessageBox.Show("Khóa học chưa có bài học.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				return;
-			}
+				var userId = AuthHelper.CurrentUser?.UserId;
+				if (!userId.HasValue)
+				{
+					MessageBox.Show("Vui lòng đăng nhập để xem bài học!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
+				}
 
-			// Navigate to LessonDetailControl (same approach as in CourseControl / MyCoursesControl)
-			var form = this.FindForm();
-			if (form is MainContainer mainContainer)
-			{
+				if (_course == null)
+				{
+					MessageBox.Show("Thông tin khóa học chưa được tải.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+
+				// Find first lesson
+				var firstLesson = _course.CourseChapters
+					.OrderBy(ch => ch.OrderIndex)
+					.SelectMany(ch => ch.Lessons.OrderBy(l => l.OrderIndex))
+					.FirstOrDefault();
+
+				if (firstLesson == null)
+				{
+					MessageBox.Show("Khóa học chưa có bài học.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					return;
+				}
+
+				// Try to find MainContainer
+				var mainContainer = FindMainContainer();
+				if (mainContainer == null)
+				{
+					MessageBox.Show("Không thể điều hướng. Vui lòng thử lại từ trang chủ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+
 				var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
-				if (mainPanel != null)
+				if (mainPanel == null)
 				{
-					mainPanel.Controls.Clear();
-
-					var lessonDetail = new WinFormsApp1.View.User.Controls.LessonDetailControl();
-					lessonDetail.Dock = DockStyle.Fill;
-					mainPanel.Controls.Add(lessonDetail);
-
-					// load first lesson
-					_ = lessonDetail.LoadLessonAsync(_course.Slug, firstLesson.LessonId);
+					MessageBox.Show("Không tìm thấy panel chính để điều hướng.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
 				}
-				else
-				{
-					MessageBox.Show("Không thể tìm thấy vùng nội dung chính để điều hướng.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				}
+
+				mainPanel.Controls.Clear();
+
+				var lessonDetail = new WinFormsApp1.View.User.Controls.LessonDetailControl();
+				lessonDetail.Dock = DockStyle.Fill;
+				mainPanel.Controls.Add(lessonDetail);
+
+				await lessonDetail.LoadLessonAsync(_course.Slug, firstLesson.LessonId);
 			}
-			else
+			catch (Exception ex)
 			{
-				MessageBox.Show("Không thể điều hướng từ context hiện tại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show($"Lỗi khi điều hướng:\n{ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
+		}
+
+		private MainContainer FindMainContainer()
+		{
+			// Try to find MainContainer by traversing up the parent chain
+			Control current = this;
+			while (current != null)
+			{
+				if (current is MainContainer mc)
+					return mc;
+
+				// Try parent form
+				var form = current as Form ?? current.FindForm();
+				if (form is MainContainer mainContainer)
+					return mainContainer;
+
+				current = current.Parent;
+			}
+
+			// If not found, try to find any open MainContainer form
+			foreach (Form openForm in Application.OpenForms)
+			{
+				if (openForm is MainContainer mc)
+					return mc;
+			}
+
+			return null;
 		}
 
 		private Control FindControlRecursive(Control parent, string name)
@@ -417,16 +439,12 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
 		private void lnkExpandAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			// Try to expand any collapsible content panels inside pnlChapters.
-			// The chapter entries in this control may be simple panels; if they contain a FlowLayoutPanel
-			// (created by CreateExpandableLessonItem), make it visible.
 			try
 			{
 				foreach (Control chapterCtrl in pnlChapters.Controls)
 				{
-					// look for a FlowLayoutPanel or Panel representing the contents (children)
 					var contents = chapterCtrl.Controls.OfType<FlowLayoutPanel>().FirstOrDefault()
-					               ?? chapterCtrl.Controls.OfType<Panel>().FirstOrDefault(p => p.Height > 20 && p != chapterCtrl);
+								   ?? chapterCtrl.Controls.OfType<Panel>().FirstOrDefault(p => p.Height > 20 && p != chapterCtrl);
 
 					if (contents != null)
 					{
@@ -436,10 +454,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
 				ToastHelper.Show(this.FindForm(), "Đã mở rộng tất cả chương");
 			}
-			catch
-			{
-				// ignore errors — this is a best-effort UI behaviour
-			}
+			catch { }
 		}
 
 		private async void BtnEditCourse_Click(object sender, EventArgs e)
@@ -452,7 +467,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 					return;
 				}
 
-				// ensure course is loaded
 				if (_course == null)
 				{
 					_course = await _controller.GetCourseDetailAsync(_courseId);
@@ -463,7 +477,6 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 					}
 				}
 
-				// convert course entity to CourseBuilderViewModel using CourseBuilderController
 				var builderCtrl = new CourseBuilderController();
 				var vm = await builderCtrl.LoadCourseAsync(_courseId);
 
@@ -477,65 +490,11 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 				form.StartPosition = FormStartPosition.CenterParent;
 				form.ShowDialog();
 
-				// After editing, reload course details
 				await LoadCourseAsync(_courseId);
 			}
 			catch (Exception ex)
 			{
 				MessageBox.Show($"Lỗi khi mở trình chỉnh sửa: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-		}
-
-		private async void BtnViewCourse_Click(object sender, EventArgs e)
-		{
-			try
-			{
-				if (_course == null)
-				{
-					MessageBox.Show("Không thể tải thông tin khóa học", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-				}
-
-				// Find first lesson
-				var firstLesson = _course.CourseChapters
-					.OrderBy(ch => ch.OrderIndex)
-					.SelectMany(ch => ch.Lessons.OrderBy(l => l.OrderIndex))
-					.FirstOrDefault();
-
-				if (firstLesson == null)
-				{
-					MessageBox.Show("Khóa học chưa có bài học!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					return;
-				}
-
-				var form = this.FindForm();
-				if (form is MainContainer mainContainer)
-				{
-					var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
-					if (mainPanel != null)
-					{
-						mainPanel.Controls.Clear();
-
-						var lessonDetailControl = new WinFormsApp1.View.User.Controls.LessonDetailControl();
-						lessonDetailControl.Dock = DockStyle.Fill;
-						mainPanel.Controls.Add(lessonDetailControl);
-
-						// Load lesson
-						_ = lessonDetailControl.LoadLessonAsync(_course.Slug, firstLesson.LessonId);
-					}
-					else
-					{
-						MessageBox.Show("Không thể tìm thấy vùng nội dung chính để điều hướng.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
-				}
-				else
-				{
-					MessageBox.Show("Không thể điều hướng từ context hiện tại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				}
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"Lỗi khi mở khóa học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
@@ -628,6 +587,5 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 		{
 
 		}
-
 	}
 }
