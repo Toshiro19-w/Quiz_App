@@ -69,6 +69,36 @@ namespace WinFormsApp1.Helpers
         }
 
         /// <summary>
+        /// Thanh toán subscription bằng MoMo
+        /// </summary>
+        /// <param name="userId">ID người dùng</param>
+        /// <param name="durationMonths">Số tháng đăng ký (1, 6, hoặc 12)</param>
+        /// <param name="parentForm">Form cha</param>
+        public static async Task<bool> PaySubscriptionAsync(int userId, int durationMonths, Form parentForm = null)
+        {
+            try
+            {
+                var paymentForm = new MoMoSubscriptionPaymentForm(userId, durationMonths);
+
+                if (parentForm != null)
+                {
+                    var result = paymentForm.ShowDialog(parentForm);
+                    return result == DialogResult.OK && paymentForm.PaymentCompleted;
+                }
+                else
+                {
+                    var result = paymentForm.ShowDialog();
+                    return result == DialogResult.OK && paymentForm.PaymentCompleted;
+                }
+            }
+            catch (Exception ex)
+            {
+                ToastHelper.Show(null, $"Lỗi: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Hiển thị dialog xác nhận thanh toán
         /// </summary>
         public static bool ConfirmPayment(decimal amount, string itemName)

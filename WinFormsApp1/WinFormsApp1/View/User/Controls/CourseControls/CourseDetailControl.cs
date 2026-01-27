@@ -112,25 +112,28 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 		{
 			bool isOwner = false;
 			bool isBuyer = false;
+			bool hasActiveSubscription = false;
 
 			var currentUser = AuthHelper.CurrentUser;
 			if (currentUser != null)
 			{
 				isOwner = _course.OwnerId == currentUser.UserId;
 				isBuyer = _course.CoursePurchases != null && _course.CoursePurchases.Any(p => p.BuyerId == currentUser.UserId && string.Equals(p.Status, "Paid", StringComparison.OrdinalIgnoreCase));
+				hasActiveSubscription = AuthHelper.HasActiveSubscription();
 			}
 
 			btnEditCourse.Visible = isOwner;
 			btnViewCourse.Visible = isOwner;
 			//btnStatistics.Visible = isOwner;
 
-			// Buyer: show start learning
-			btnStartLearning.Visible = isBuyer;
+			// Nếu có subscription còn hiệu lực hoặc đã mua: hiện nút Bắt đầu học
+			btnStartLearning.Visible = isBuyer || hasActiveSubscription;
 
 			// If owner, we typically don't show purchase buttons
-			btnAddToCart.Visible = !isOwner && !isBuyer;
-			btnSubscribeMonthly.Visible = !isOwner && !isBuyer;
-			btnBuyNow.Visible = !isOwner && !isBuyer;
+			// Nếu đã có subscription hoặc đã mua thì không hiện nút mua
+			btnAddToCart.Visible = !isOwner && !isBuyer && !hasActiveSubscription;
+			btnSubscribeMonthly.Visible = !isOwner && !isBuyer && !hasActiveSubscription;
+			btnBuyNow.Visible = !isOwner && !isBuyer && !hasActiveSubscription;
 
 			// adjust BuyNow/AddToCart enabled state for guest
 			if (currentUser == null)
