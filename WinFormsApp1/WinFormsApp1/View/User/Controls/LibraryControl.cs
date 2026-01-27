@@ -6,20 +6,28 @@ using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
 using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.Controllers;
+using WinFormsApp1.View.User.Controls.FlashcardControls;
 
 namespace WinFormsApp1.View.User.Controls
 {
     public partial class LibraryControl : UserControl
     {
-        private bool showingCourses = true;
+		private bool showingCourses = true;
         private readonly FlashcardController _flashcardController;
 
-        public LibraryControl()
-        {
-            InitializeComponent();
-            _flashcardController = new FlashcardController();
-            LoadPurchasedCourses();
-        }
+		public LibraryControl(bool showFlashcards = false)
+		{
+			InitializeComponent();
+			_flashcardController = new FlashcardController();
+			if (showFlashcards)
+			{
+				ShowFlashcardsTab();
+			}
+			else
+			{
+				ShowCoursesTab();
+			}
+		}
 
         private void HeaderPanel_Paint(object sender, PaintEventArgs e)
         {
@@ -34,33 +42,41 @@ namespace WinFormsApp1.View.User.Controls
             }
         }
 
-        private void BtnAllCourses_Click(object sender, EventArgs e)
-        {
-            if (showingCourses) return;
+		private void BtnAllCourses_Click(object sender, EventArgs e)
+		{
+			if (showingCourses) return;
+			ShowCoursesTab();
+		}
 
-            showingCourses = true;
-            btnAllCourses.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-            btnAllCourses.ForeColor = Color.White;
-            btnFlashcards.Font = new Font("Segoe UI", 12);
-            btnFlashcards.ForeColor = Color.FromArgb(200, 200, 255);
-            tabUnderline.Location = new Point(0, 50);
+		private void BtnFlashcards_Click(object sender, EventArgs e)
+		{
+			if (!showingCourses) return;
+			ShowFlashcardsTab();
+		}
 
-            LoadPurchasedCourses();
-        }
+		private void ShowCoursesTab()
+		{
+			showingCourses = true;
+			btnAllCourses.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+			btnAllCourses.ForeColor = Color.White;
+			btnFlashcards.Font = new Font("Segoe UI", 12);
+			btnFlashcards.ForeColor = Color.FromArgb(200, 200, 255);
+			tabUnderline.Location = new Point(0, 50);
 
-        private void BtnFlashcards_Click(object sender, EventArgs e)
-        {
-            if (!showingCourses) return;
+			LoadPurchasedCourses();
+		}
 
-            showingCourses = false;
-            btnFlashcards.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-            btnFlashcards.ForeColor = Color.White;
-            btnAllCourses.Font = new Font("Segoe UI", 12);
-            btnAllCourses.ForeColor = Color.FromArgb(200, 200, 255);
-            tabUnderline.Location = new Point(200, 50);
+		private void ShowFlashcardsTab()
+		{
+			showingCourses = false;
+			btnFlashcards.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+			btnFlashcards.ForeColor = Color.White;
+			btnAllCourses.Font = new Font("Segoe UI", 12);
+			btnAllCourses.ForeColor = Color.FromArgb(200, 200, 255);
+			tabUnderline.Location = new Point(200, 50);
 
-            LoadFlashcards();
-        }
+			LoadFlashcards();
+		}
 
         private void LoadPurchasedCourses()
         {
@@ -324,11 +340,12 @@ namespace WinFormsApp1.View.User.Controls
                 using var context = new LearningPlatformContext();
                 
                 // Lấy flashcard sets mà user đã tạo (chỉ Public và Private, KHÔNG lấy Course)
-                var flashcardSets = await context.FlashcardSets
-                    .Include(fs => fs.Flashcards)
-                    .Where(fs => fs.OwnerId == user.UserId && 
-                                (fs.Visibility == "Public" || fs.Visibility == "Private") &&
-                                fs.Visibility != "Course")
+				var flashcardSets = await context.FlashcardSets
+					.Include(fs => fs.Flashcards)
+					.Where(fs => fs.OwnerId == user.UserId &&
+							!fs.IsDeleted &&
+							(fs.Visibility == "Public" || fs.Visibility == "Private") &&
+							fs.Visibility != "Course")
                     .OrderByDescending(fs => fs.CreatedAt)
                     .ToListAsync();
 
@@ -354,72 +371,24 @@ namespace WinFormsApp1.View.User.Controls
             }
         }
 
-        private Panel CreateFlashcardSetCard(Models.Entities.FlashcardSet set)
-        {
-            var card = new Panel
-            {
-                Size = new Size(350, 180),
-                BackColor = Color.White,
-                Margin = new Padding(15),
-                Cursor = Cursors.Hand
-            };
+		private FlashcardSetCardControl CreateFlashcardSetCard(Models.Entities.FlashcardSet set)
+		{
+				var card = new FlashcardSetCardControl
+				{
+					DetailButtonText = " Mở",
+					ShowStudyButton = false
+				};
+			card.Bind(set);
+			card.ViewRequested += OpenFlashcardSet;
+			return card;
+		}
 
-            var lblTitle = new Label
-            {
-                Text = set.Title,
-                Location = new Point(15, 15),
-                Size = new Size(320, 30),
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                ForeColor = ColorPalette.TextPrimary
-            };
-            card.Controls.Add(lblTitle);
-
-            var lblDescription = new Label
-            {
-                Text = set.Description ?? "Không có mô tả",
-                Location = new Point(15, 50),
-                Size = new Size(320, 40),
-                Font = new Font("Segoe UI", 9),
-                ForeColor = Color.Gray
-            };
-            card.Controls.Add(lblDescription);
-
-            var lblCount = new Label
-            {
-                Text = $"📝 {set.Flashcards?.Count ?? 0} thẻ",
-                Location = new Point(15, 100),
-                AutoSize = true,
-                Font = new Font("Segoe UI", 9),
-                ForeColor = Color.Gray
-            };
-            card.Controls.Add(lblCount);
-
-            var btnOpen = new Button
-            {
-                Text = "📚 Mở",
-                Location = new Point(200, 130),
-                Size = new Size(135, 35),
-                BackColor = Color.FromArgb(88, 56, 255),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnOpen.FlatAppearance.BorderSize = 0;
-            btnOpen.Click += (s, e) => OpenFlashcardSet(set.SetId);
-            card.Controls.Add(btnOpen);
-
-            card.MouseEnter += (s, e) => card.BackColor = ColorPalette.Background;
-            card.MouseLeave += (s, e) => card.BackColor = Color.White;
-
-            return card;
-        }
-
-        private void OpenFlashcardSet(int setId)
+		private void OpenFlashcardSet(int setId)
         {
             var form = this.FindForm();
             if (form is MainContainer mainContainer)
             {
-                var flashcardDetail = new FlashcardControls.FlashcardDetailControl(setId);
+				var flashcardDetail = new FlashcardControls.FlashcardDetailControl(setId, FlashcardDetailSource.Library);
                 var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
                 if (mainPanel != null)
                 {

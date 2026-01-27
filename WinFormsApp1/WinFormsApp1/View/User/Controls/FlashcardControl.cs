@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
@@ -57,181 +56,14 @@ namespace WinFormsApp1.View.User.Controls
             }
         }
 
-        private Panel CreateFlashcardCard(FlashcardSet flashcardSet)
-        {
-            // Card size: 3 cards per row
-            // Total width available: ~1700px, divided by 3 = ~567px per card
-            // With margins: 540px card width, height increased for better spacing
-            var card = new Panel
-            {
-                Size = new Size(540, 350),
-                BackColor = Color.FromArgb(124, 77, 255),
-                BorderStyle = BorderStyle.None,
-                Margin = new Padding(15),
-                Cursor = Cursors.Hand
-            };
-
-            card.Paint += (s, e) =>
-            {
-                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using (var path = GetRoundedRectPath(new Rectangle(0, 0, card.Width, card.Height), 12))
-                {
-                    card.Region = new Region(path);
-                }
-            };
-
-            // Icon placeholder - centered
-            var lblIcon = new Label
-            {
-                Text = "📚",
-                Font = new Font("Segoe UI", 56),
-                ForeColor = Color.White,
-                Location = new Point(235, 35),
-                Size = new Size(70, 70),
-                TextAlign = ContentAlignment.MiddleCenter,
-                BackColor = Color.Transparent
-            };
-            card.Controls.Add(lblIcon);
-
-            // Card count badge - top left
-            var lblCount = new Label
-            {
-                Text = $"📇 {flashcardSet.Flashcards.Count} thẻ",
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
-                ForeColor = Color.White,
-                BackColor = Color.FromArgb(100, 0, 0, 0),
-                Location = new Point(20, 25),
-                Size = new Size(110, 35),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            card.Controls.Add(lblCount);
-
-            // Title - centered, larger
-            var lblTitle = new Label
-            {
-                Text = flashcardSet.Title,
-                Font = new Font("Segoe UI", 15F, FontStyle.Bold),
-                ForeColor = Color.White,
-                Location = new Point(20, 135),
-                Size = new Size(500, 70),
-                TextAlign = ContentAlignment.TopCenter,
-                BackColor = Color.Transparent
-            };
-            card.Controls.Add(lblTitle);
-
-            // Description (if available)
-            if (!string.IsNullOrEmpty(flashcardSet.Description))
-            {
-                var lblDescription = new Label
-                {
-                    Text = flashcardSet.Description.Length > 70 
-                        ? flashcardSet.Description.Substring(0, 70) + "..." 
-                        : flashcardSet.Description,
-                    Font = new Font("Segoe UI", 10F),
-                    ForeColor = Color.FromArgb(230, 230, 255),
-                    Location = new Point(20, 210),
-                    Size = new Size(500, 45),
-                    TextAlign = ContentAlignment.TopCenter,
-                    BackColor = Color.Transparent
-                };
-                card.Controls.Add(lblDescription);
-            }
-
-            // Bottom section - Author
-            var lblAuthor = new Label
-            {
-                Text = $"👤 {flashcardSet.Owner?.FullName ?? "Unknown"}",
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.White,
-                Location = new Point(20, 270),
-                AutoSize = true,
-                BackColor = Color.Transparent
-            };
-            card.Controls.Add(lblAuthor);
-
-            // Language tag - top right
-            if (!string.IsNullOrEmpty(flashcardSet.Language))
-            {
-                var lblLanguage = new Label
-                {
-                    Text = flashcardSet.Language,
-                    Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-                    ForeColor = Color.White,
-                    BackColor = Color.FromArgb(150, 255, 255, 255),
-                    Location = new Point(450, 25),
-                    Size = new Size(70, 30),
-                    TextAlign = ContentAlignment.MiddleCenter
-                };
-                card.Controls.Add(lblLanguage);
-            }
-
-            // Buttons panel - bottom section with better spacing
-            var btnDetail = new Button
-            {
-                Text = "👁 Xem chi tiết",
-                Location = new Point(90, 300),
-                Size = new Size(165, 38),
-                BackColor = Color.White,
-                ForeColor = Color.FromArgb(124, 77, 255),
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand,
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold)
-            };
-            btnDetail.FlatAppearance.BorderSize = 0;
-            btnDetail.Click += (s, e) => ShowFlashcardDetail(flashcardSet.SetId);
-            card.Controls.Add(btnDetail);
-
-            var btnStudy = new Button
-            {
-                Text = "▶ Học ngay",
-                Location = new Point(285, 300),
-                Size = new Size(165, 38),
-                BackColor = Color.FromArgb(76, 175, 80),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand,
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold)
-            };
-            btnStudy.FlatAppearance.BorderSize = 0;
-            btnStudy.Click += (s, e) => StartStudying(flashcardSet.SetId);
-            card.Controls.Add(btnStudy);
-
-            // Click event for the whole card
-            card.Click += (s, e) => ShowFlashcardDetail(flashcardSet.SetId);
-            
-            // Make child controls also trigger the card click (except buttons)
-            foreach (Control ctrl in card.Controls)
-            {
-                if (!(ctrl is Button))
-                {
-                    ctrl.Click += (s, e) => ShowFlashcardDetail(flashcardSet.SetId);
-                }
-            }
-
-            // Hover effects
-            card.MouseEnter += (s, e) => card.BackColor = Color.FromArgb(140, 95, 255);
-            card.MouseLeave += (s, e) => card.BackColor = Color.FromArgb(124, 77, 255);
-
-            return card;
-        }
-
-        private GraphicsPath GetRoundedRectPath(Rectangle rect, int radius)
-        {
-            var path = new GraphicsPath();
-            int diameter = radius * 2;
-            var arc = new Rectangle(rect.Location, new Size(diameter, diameter));
-
-            path.AddArc(arc, 180, 90);
-            arc.X = rect.Right - diameter;
-            path.AddArc(arc, 270, 90);
-            arc.Y = rect.Bottom - diameter;
-            path.AddArc(arc, 0, 90);
-            arc.X = rect.Left;
-            path.AddArc(arc, 90, 90);
-
-            path.CloseFigure();
-            return path;
-        }
+		private FlashcardSetCardControl CreateFlashcardCard(FlashcardSet flashcardSet)
+		{
+			var card = new FlashcardSetCardControl();
+			card.Bind(flashcardSet);
+			card.ViewRequested += ShowFlashcardDetail;
+			card.StudyRequested += StartStudying;
+			return card;
+		}
 
         private void ShowFlashcardDetail(int setId)
         {
@@ -249,7 +81,7 @@ namespace WinFormsApp1.View.User.Controls
 
             mainPanel.Controls.Clear();
 
-            var detail = new FlashcardDetailControl(setId);
+			var detail = new FlashcardDetailControl(setId, FlashcardDetailSource.PublicLibrary);
             detail.Dock = DockStyle.Fill;
             mainPanel.Controls.Add(detail);
         }

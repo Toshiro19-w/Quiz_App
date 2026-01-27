@@ -175,7 +175,9 @@ namespace WinFormsApp1.View.User.Controls
 
             mainPanel.Controls.Clear();
 
-            var detail = new WinFormsApp1.View.User.Controls.FlashcardControls.FlashcardDetailControl(flashcardSet.SetId);
+			var detail = new WinFormsApp1.View.User.Controls.FlashcardControls.FlashcardDetailControl(
+				flashcardSet.SetId,
+				WinFormsApp1.View.User.Controls.FlashcardControls.FlashcardDetailSource.MyFlashcards);
             detail.Dock = DockStyle.Fill;
             mainPanel.Controls.Add(detail);
         }
