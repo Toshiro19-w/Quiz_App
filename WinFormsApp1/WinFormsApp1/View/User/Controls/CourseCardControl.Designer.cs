@@ -86,7 +86,7 @@
 			lblTitle.Size = new Size(310, 35);
 			lblTitle.TabIndex = 0;
 			lblTitle.Text = "Tiêu đề khóa học";
-			lblTitle.Click += lblTitle_Click;
+			//lblTitle.Click += lblTitle_Click;
 			// 
 			// lblInstructor
 			// 
