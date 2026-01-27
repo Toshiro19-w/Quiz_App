@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
 using WinFormsApp1.Service;
@@ -32,7 +33,7 @@ namespace WinFormsApp1.View.Admin
             dataGridView.CellFormatting += DataGridView_CellFormatting;
             
             SetupDataGridColumns();
-            SetupLayout("Quản lý mã giảm giá", dataGridView);
+            SetupLayout(Lang("DiscountManagement"), dataGridView);
             SetupCustomFilters();
             SetupSearchFunctionality();
             WireCrudEvents();
@@ -78,16 +79,16 @@ namespace WinFormsApp1.View.Admin
             dataGridView.Columns.AddRange(new DataGridViewColumn[]
             {
                 new DataGridViewTextBoxColumn { Name = "DiscountId", HeaderText = "ID", Width = 50, DataPropertyName = "DiscountId" },
-                new DataGridViewTextBoxColumn { Name = "Code", HeaderText = "Mã", Width = 100, DataPropertyName = "Code" },
-                new DataGridViewTextBoxColumn { Name = "Name", HeaderText = "Tên", Width = 150, DataPropertyName = "Name" },
-                new DataGridViewTextBoxColumn { Name = "DisplayValue", HeaderText = "Giảm", Width = 80, DataPropertyName = "DisplayValue" },
-                new DataGridViewTextBoxColumn { Name = "TypeDisplay", HeaderText = "Loại", Width = 100, DataPropertyName = "TypeDisplay" },
-                new DataGridViewTextBoxColumn { Name = "MinOrderAmount", HeaderText = "Đơn tối thiểu", Width = 100, DataPropertyName = "MinOrderAmount" },
-                new DataGridViewTextBoxColumn { Name = "RemainingUsage", HeaderText = "Còn lại", Width = 90, DataPropertyName = "RemainingUsage" },
-                new DataGridViewTextBoxColumn { Name = "StartDate", HeaderText = "Bắt đầu", Width = 90, DataPropertyName = "StartDate" },
-                new DataGridViewTextBoxColumn { Name = "EndDate", HeaderText = "Kết thúc", Width = 90, DataPropertyName = "EndDate" },
-                new DataGridViewTextBoxColumn { Name = "StatusDisplay", HeaderText = "Trạng thái", Width = 100, DataPropertyName = "StatusDisplay" },
-                new DataGridViewTextBoxColumn { Name = "TimeRemaining", HeaderText = "Thời gian", Width = 80, DataPropertyName = "TimeRemaining" }
+                new DataGridViewTextBoxColumn { Name = "Code", HeaderText = Lang("Code"), Width = 100, DataPropertyName = "Code" },
+                new DataGridViewTextBoxColumn { Name = "Name", HeaderText = Lang("Name"), Width = 150, DataPropertyName = "Name" },
+                new DataGridViewTextBoxColumn { Name = "DisplayValue", HeaderText = Lang("DiscountValue"), Width = 80, DataPropertyName = "DisplayValue" },
+                new DataGridViewTextBoxColumn { Name = "TypeDisplay", HeaderText = Lang("DiscountType"), Width = 100, DataPropertyName = "TypeDisplay" },
+                new DataGridViewTextBoxColumn { Name = "MinOrderAmount", HeaderText = Lang("MinOrderAmount"), Width = 100, DataPropertyName = "MinOrderAmount" },
+                new DataGridViewTextBoxColumn { Name = "RemainingUsage", HeaderText = Lang("RemainingUsage"), Width = 90, DataPropertyName = "RemainingUsage" },
+                new DataGridViewTextBoxColumn { Name = "StartDate", HeaderText = Lang("StartDate"), Width = 90, DataPropertyName = "StartDate" },
+                new DataGridViewTextBoxColumn { Name = "EndDate", HeaderText = Lang("EndDate"), Width = 90, DataPropertyName = "EndDate" },
+                new DataGridViewTextBoxColumn { Name = "StatusDisplay", HeaderText = Lang("Status"), Width = 100, DataPropertyName = "StatusDisplay" },
+                new DataGridViewTextBoxColumn { Name = "TimeRemaining", HeaderText = Lang("TimeRemaining"), Width = 80, DataPropertyName = "TimeRemaining" }
             });
         }
 
@@ -100,10 +101,10 @@ namespace WinFormsApp1.View.Admin
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Width = 120
             };
-            _cboStatus.Items.AddRange(new object[] { "Tất cả", "Hoạt động", "Tạm dừng", "Hết hạn", "Hết lượt", "Chưa bắt đầu" });
+            _cboStatus.Items.AddRange(new object[] { Lang("All"), Lang("StatusActive"), Lang("StatusInactive"), Lang("StatusExpired"), Lang("StatusExhausted"), Lang("StatusNotStarted") });
             _cboStatus.SelectedIndex = 0;
             _cboStatus.SelectedIndexChanged += (s, e) => FilterData();
-            AddCustomFilter("Trạng thái:", _cboStatus);
+            AddCustomFilter(Lang("FilterStatus"), _cboStatus);
 
             // Type filter
             _cboType = new ComboBox
@@ -112,17 +113,17 @@ namespace WinFormsApp1.View.Admin
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Width = 130
             };
-            _cboType.Items.AddRange(new object[] { "Tất cả", "Phần trăm", "Số tiền cố định" });
+            _cboType.Items.AddRange(new object[] { Lang("All"), Lang("TypePercentage"), Lang("TypeFixedAmount") });
             _cboType.SelectedIndex = 0;
             _cboType.SelectedIndexChanged += (s, e) => FilterData();
-            AddCustomFilter("Loại:", _cboType);
+            AddCustomFilter(Lang("FilterType"), _cboType);
         }
 
         private void SetupSearchFunctionality()
         {
             if (searchBox != null)
             {
-                TextBoxHelper.SetPlaceholder(searchBox, "Tìm theo mã, tên...", true);
+                TextBoxHelper.SetPlaceholder(searchBox, Lang("SearchCodeName"), true);
                 searchBox.TextChanged += (s, e) => FilterData();
             }
         }
@@ -310,7 +311,7 @@ namespace WinFormsApp1.View.Admin
             }
             else
             {
-                ToastHelper.Show(this.FindForm(), "Vui lòng chọn mã giảm giá cần sửa");
+                ToastHelper.Show(this.FindForm(), Lang("PleaseSelectDiscountToEdit"));
             }
         }
 
@@ -319,8 +320,8 @@ namespace WinFormsApp1.View.Admin
             if (dataGridView.CurrentRow?.DataBoundItem is DiscountViewModel discount)
             {
                 var result = MessageBox.Show(
-                    $"Bạn có chắc muốn xóa mã giảm giá '{discount.Code}'?",
-                    "Xác nhận xóa",
+                    $"{Lang("ConfirmDeleteDiscount")}\n\n'{discount.Code}'",
+                    Lang("Confirm"),
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
 
@@ -329,18 +330,18 @@ namespace WinFormsApp1.View.Admin
                     var success = await DiscountService.DeleteDiscountAsync(discount.DiscountId);
                     if (success)
                     {
-                        ToastHelper.Show(this.FindForm(), "Đã xóa mã giảm giá!");
+                        ToastHelper.Show(this.FindForm(), Lang("DiscountDeleteSuccess"));
                         await LoadDataAsync();
                     }
                     else
                     {
-                        ToastHelper.Show(this.FindForm(), "Không thể xóa mã giảm giá!");
+                        ToastHelper.Show(this.FindForm(), Lang("DiscountDeleteFailed"));
                     }
                 }
             }
             else
             {
-                ToastHelper.Show(this.FindForm(), "Vui lòng chọn mã giảm giá cần xóa");
+                ToastHelper.Show(this.FindForm(), Lang("PleaseSelectDiscountToDelete"));
             }
         }
 
@@ -378,6 +379,8 @@ namespace WinFormsApp1.View.Admin
         private DateTimePicker dtpEnd;
         private ComboBox cboStatus;
         private CheckBox chkAllCourses;
+        
+        private static string Lang(string key) => LanguageHelper.GetString(key);
 
         public DiscountEditForm(DiscountViewModel? existing = null)
         {
@@ -387,7 +390,7 @@ namespace WinFormsApp1.View.Admin
 
         private void InitializeForm()
         {
-            this.Text = _existing == null ? "Tạo mã giảm giá" : "Sửa mã giảm giá";
+            this.Text = _existing == null ? Lang("CreateDiscount") : Lang("EditDiscount");
             this.Size = new Size(500, 650);
             this.StartPosition = FormStartPosition.CenterParent;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -405,37 +408,37 @@ namespace WinFormsApp1.View.Admin
             int y = 20;
 
             // Code
-            AddLabel(panel, "Mã giảm giá *", y);
+            AddLabel(panel, $"{Lang("DiscountCode")} *", y);
             txtCode = AddTextBox(panel, y + 25);
             txtCode.CharacterCasing = CharacterCasing.Upper;
             txtCode.Enabled = _existing == null;
             y += 70;
 
             // Name
-            AddLabel(panel, "Tên *", y);
+            AddLabel(panel, $"{Lang("Name")} *", y);
             txtName = AddTextBox(panel, y + 25);
             y += 70;
 
             // Description
-            AddLabel(panel, "Mô tả", y);
+            AddLabel(panel, Lang("Description"), y);
             txtDescription = AddTextBox(panel, y + 25);
             y += 70;
 
             // Type and Value
-            AddLabel(panel, "Loại giảm giá", y);
+            AddLabel(panel, Lang("DiscountType"), y);
             cboType = new ComboBox
             {
                 Location = new Point(20, y + 25),
                 Size = new Size(200, 30),
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            cboType.Items.AddRange(new object[] { "Phần trăm (%)", "Số tiền cố định (VNĐ)" });
+            cboType.Items.AddRange(new object[] { Lang("PercentageType"), Lang("FixedAmountType") });
             cboType.SelectedIndex = 0;
             panel.Controls.Add(cboType);
 
             var lblValue = new Label
             {
-                Text = "Giá trị *",
+                Text = $"{Lang("Value")} *",
                 Location = new Point(230, y),
                 AutoSize = true
             };
@@ -452,39 +455,39 @@ namespace WinFormsApp1.View.Admin
             y += 70;
 
             // Min Order Amount
-            AddLabel(panel, "Đơn hàng tối thiểu (VNĐ)", y);
+            AddLabel(panel, $"{Lang("MinOrderAmount")} (VNĐ)", y);
             nudMinOrder = AddNumericUpDown(panel, y + 25);
             y += 70;
 
             // Max Discount (for percentage)
-            AddLabel(panel, "Giảm tối đa (VNĐ) - cho loại %", y);
+            AddLabel(panel, $"{Lang("MaxDiscountAmount")} (VNĐ)", y);
             nudMaxDiscount = AddNumericUpDown(panel, y + 25);
             y += 70;
 
             // Max Usage
-            AddLabel(panel, "Tổng lượt sử dụng (0 = không giới hạn)", y);
+            AddLabel(panel, $"{Lang("UsageLimit")} (0 = ∞)", y);
             nudMaxUsage = AddNumericUpDown(panel, y + 25, 0, 999999);
             y += 70;
 
             // Max Per User
-            AddLabel(panel, "Lượt/người (0 = không giới hạn)", y);
+            AddLabel(panel, $"{Lang("UsageLimitPerUser")} (0 = ∞)", y);
             nudMaxPerUser = AddNumericUpDown(panel, y + 25, 0, 100);
             y += 70;
 
             // Date Range
-            AddLabel(panel, "Ngày bắt đầu", y);
+            AddLabel(panel, Lang("StartDate"), y);
             dtpStart = new DateTimePicker
             {
                 Location = new Point(20, y + 25),
                 Size = new Size(200, 30),
                 Format = DateTimePickerFormat.Custom,
-                CustomFormat = "dd/MM/yyyy HH:mm"
+                CustomFormat = LanguageHelper.DateFormatPattern + " HH:mm"
             };
             panel.Controls.Add(dtpStart);
 
             var lblEnd = new Label
             {
-                Text = "Ngày kết thúc",
+                Text = Lang("EndDate"),
                 Location = new Point(230, y),
                 AutoSize = true
             };
@@ -495,28 +498,28 @@ namespace WinFormsApp1.View.Admin
                 Location = new Point(230, y + 25),
                 Size = new Size(200, 30),
                 Format = DateTimePickerFormat.Custom,
-                CustomFormat = "dd/MM/yyyy HH:mm",
+                CustomFormat = LanguageHelper.DateFormatPattern + " HH:mm",
                 Value = DateTime.Now.AddMonths(1)
             };
             panel.Controls.Add(dtpEnd);
             y += 70;
 
             // Status
-            AddLabel(panel, "Trạng thái", y);
+            AddLabel(panel, Lang("Status"), y);
             cboStatus = new ComboBox
             {
                 Location = new Point(20, y + 25),
                 Size = new Size(200, 30),
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            cboStatus.Items.AddRange(new object[] { "Hoạt động", "Tạm dừng" });
+            cboStatus.Items.AddRange(new object[] { Lang("StatusActive"), Lang("StatusInactive") });
             cboStatus.SelectedIndex = 0;
             panel.Controls.Add(cboStatus);
 
             // Apply to all
             chkAllCourses = new CheckBox
             {
-                Text = "Áp dụng cho tất cả khóa học",
+                Text = Lang("ApplyToAllCourses"),
                 Location = new Point(230, y + 25),
                 Size = new Size(200, 30),
                 Checked = true
@@ -527,7 +530,7 @@ namespace WinFormsApp1.View.Admin
             // Buttons
             var btnSave = new Button
             {
-                Text = "Lưu",
+                Text = Lang("Save"),
                 Location = new Point(120, y + 20),
                 Size = new Size(100, 40),
                 BackColor = Color.FromArgb(40, 167, 69),
@@ -540,7 +543,7 @@ namespace WinFormsApp1.View.Admin
 
             var btnCancel = new Button
             {
-                Text = "Hủy",
+                Text = Lang("Cancel"),
                 Location = new Point(230, y + 20),
                 Size = new Size(100, 40),
                 BackColor = Color.FromArgb(108, 117, 125),

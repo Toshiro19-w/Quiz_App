@@ -40,6 +40,11 @@ namespace WinFormsApp1.Localization
         public static string CurrentLanguageCode => _currentCulture.Name;
 
         /// <summary>
+        /// Current culture for formatting
+        /// </summary>
+        public static CultureInfo CurrentCulture => _currentCulture;
+
+        /// <summary>
         /// Current language display name
         /// </summary>
         public static string CurrentLanguageName => AvailableLanguages.ContainsKey(_currentCulture.Name) 
@@ -137,6 +142,113 @@ namespace WinFormsApp1.Localization
                 return format;
             }
         }
+
+        #region Format Helpers
+
+        /// <summary>
+        /// Format currency based on current language
+        /// </summary>
+        /// <param name="amount">Amount to format</param>
+        /// <returns>Formatted currency string</returns>
+        public static string FormatCurrency(decimal amount)
+        {
+            if (amount == 0)
+            {
+                return GetString("Free");
+            }
+
+            return IsVietnamese 
+                ? $"{amount:N0} VND" 
+                : $"${amount / 23000:N2}"; // Approximate conversion for display
+        }
+
+        /// <summary>
+        /// Format currency with original value (no conversion)
+        /// </summary>
+        /// <param name="amount">Amount in VND</param>
+        /// <returns>Formatted currency string</returns>
+        public static string FormatVND(decimal amount)
+        {
+            if (amount == 0)
+            {
+                return GetString("Free");
+            }
+
+            return IsVietnamese 
+                ? $"{amount:N0} VND" 
+                : $"{amount:N0} VND";
+        }
+
+        /// <summary>
+        /// Format date based on current language
+        /// </summary>
+        /// <param name="date">Date to format</param>
+        /// <returns>Formatted date string</returns>
+        public static string FormatDate(DateTime date)
+        {
+            return IsVietnamese 
+                ? date.ToString("dd/MM/yyyy") 
+                : date.ToString("MM/dd/yyyy");
+        }
+
+        /// <summary>
+        /// Format date and time based on current language
+        /// </summary>
+        /// <param name="dateTime">DateTime to format</param>
+        /// <returns>Formatted datetime string</returns>
+        public static string FormatDateTime(DateTime dateTime)
+        {
+            return IsVietnamese 
+                ? dateTime.ToString("dd/MM/yyyy HH:mm") 
+                : dateTime.ToString("MM/dd/yyyy hh:mm tt");
+        }
+
+        /// <summary>
+        /// Format date with full month name
+        /// </summary>
+        /// <param name="date">Date to format</param>
+        /// <returns>Formatted date string with month name</returns>
+        public static string FormatDateLong(DateTime date)
+        {
+            return date.ToString("D", _currentCulture);
+        }
+
+        /// <summary>
+        /// Format number based on current language
+        /// </summary>
+        /// <param name="number">Number to format</param>
+        /// <returns>Formatted number string</returns>
+        public static string FormatNumber(decimal number)
+        {
+            return number.ToString("N0", _currentCulture);
+        }
+
+        /// <summary>
+        /// Format percentage
+        /// </summary>
+        /// <param name="value">Value (0-100)</param>
+        /// <returns>Formatted percentage string</returns>
+        public static string FormatPercentage(double value)
+        {
+            return $"{value:N1}%";
+        }
+
+        /// <summary>
+        /// Get currency symbol based on current language
+        /// </summary>
+        public static string CurrencySymbol => IsVietnamese ? "VND" : "$";
+
+        /// <summary>
+        /// Get date format pattern based on current language
+        /// </summary>
+        public static string DateFormatPattern => IsVietnamese ? "dd/MM/yyyy" : "MM/dd/yyyy";
+
+        /// <summary>
+        /// Get datetime format pattern based on current language
+        /// </summary>
+        public static string DateTimeFormatPattern => IsVietnamese ? "dd/MM/yyyy HH:mm" : "MM/dd/yyyy hh:mm tt";
+
+        #endregion
 
         /// <summary>
         /// Apply localization to a form and all its controls

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Models.Entities;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 
 namespace WinFormsApp1.View.Admin
 {
@@ -40,17 +41,17 @@ namespace WinFormsApp1.View.Admin
             // Create a new modern DataGridView using helper method
             dataGridView = CreateModernDataGridView();
 
-            var formPanel = CreateInputForm("Thông tin người dùng",
-                ("Email", "txtEmail", "Nhập email...", true, false),
-                ("Họ tên", "txtFullName", "Nhập họ tên...", true, false),
-                ("Tên đăng nhập", "txtUsername", "Nhập tên đăng nhập...", true, false),
-                ("Mật khẩu", "txtPassword", "Nhập mật khẩu...", true, true)
+            var formPanel = CreateInputForm(Lang("UserInfo"),
+                (Lang("Email"), "txtEmail", $"{Lang("EnterEmail")}...", true, false),
+                (Lang("FullName"), "txtFullName", $"{Lang("EnterFullName")}...", true, false),
+                (Lang("Username"), "txtUsername", $"{Lang("EnterUsername")}...", true, false),
+                (Lang("Password"), "txtPassword", $"{Lang("EnterPassword")}...", true, true)
             );
             
             // Add Role ComboBox to form panel
             AddRoleComboToForm(formPanel);
             
-            SetupLayoutWithForm("Quản lý người dùng", dataGridView, formPanel);
+            SetupLayoutWithForm(Lang("UserManagement"), dataGridView, formPanel);
             
             // Add custom filters AFTER layout is setup
             SetupCustomFilters();
@@ -74,7 +75,7 @@ namespace WinFormsApp1.View.Admin
                 Name = "cboRoleFilter", // Changed name to avoid conflict with form's cboRole
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            roleCombo.Items.AddRange(new object[] { "Tất cả vai trò", "Admin", "User" });
+            roleCombo.Items.AddRange(new object[] { Lang("AllRoles"), "Admin", "User" });
             roleCombo.SelectedIndex = 0;
             roleCombo.SelectedIndexChanged += (s, e) => FilterUsersLocally();
 
@@ -84,14 +85,14 @@ namespace WinFormsApp1.View.Admin
                 Name = "cboStatusFilter",
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            statusCombo.Items.AddRange(new object[] { "Tất cả trạng thái", "Hoạt động", "Không hoạt động" });
+            statusCombo.Items.AddRange(new object[] { Lang("AllStatuses"), Lang("Active"), Lang("Inactive") });
             statusCombo.SelectedIndex = 0;
             statusCombo.SelectedIndexChanged += (s, e) => FilterUsersLocally();
 
             // Add filters using the new helper method
             AddCustomFilters(
-                ("Vai trò:", roleCombo),
-                ("Trạng thái:", statusCombo)
+                ($"{Lang("Role")}:", roleCombo),
+                ($"{Lang("Status")}:", statusCombo)
             );
         }
         
@@ -104,7 +105,7 @@ namespace WinFormsApp1.View.Admin
             
             var roleLabel = new Label
             {
-                Text = "Vai trò *",
+                Text = $"{Lang("Role")} *",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 Location = new Point(0, yPos),
                 Size = new Size(300, 20),
@@ -143,11 +144,11 @@ namespace WinFormsApp1.View.Admin
                 {
                     ID = u.UserId,
                     Email = u.Email,
-                    Họ_tên = u.FullName,
-                    Tên_đăng_nhập = u.Username,
-                    Vai_trò = u.RoleId == 1 ? "Admin" : "User",
-                    Trạng_thái = u.Status == 1 ? "Hoạt động" : "Không hoạt động",
-                    Ngày_tạo = u.CreatedAt.ToString("dd/MM/yyyy"),
+                    FullName = u.FullName,
+                    Username = u.Username,
+                    Role = u.RoleId == 1 ? "Admin" : "User",
+                    Status = u.Status == 1 ? Lang("Active") : Lang("Inactive"),
+                    CreatedAt = LanguageHelper.FormatDate(u.CreatedAt),
                     RoleId = u.RoleId
                 }).Cast<dynamic>().ToList();
                 
@@ -155,13 +156,13 @@ namespace WinFormsApp1.View.Admin
 
                 UpdateDataGridHeaders(dataGridView, new Dictionary<string, string>
                 {
-                    { "ID", "Mã" },
-                    { "Email", "Email" },
-                    { "Họ_tên", "Họ tên" },
-                    { "Tên_đăng_nhập", "Tên đăng nhập" },
-                    { "Vai_trò", "Vai trò" },
-                    { "Trạng_thái", "Trạng thái" },
-                    { "Ngày_tạo", "Ngày tạo" }
+                    { "ID", Lang("ID") },
+                    { "Email", Lang("Email") },
+                    { "FullName", Lang("FullName") },
+                    { "Username", Lang("Username") },
+                    { "Role", Lang("Role") },
+                    { "Status", Lang("Status") },
+                    { "CreatedAt", Lang("CreatedAt") }
                 });
                 
                 // Hide RoleId column
@@ -170,7 +171,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this.FindForm(), $"Lỗi tải dữ liệu: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), Lang("DataLoadError", ex.Message));
             }
         }
 
@@ -191,17 +192,17 @@ namespace WinFormsApp1.View.Admin
             var statusCombo = this.Controls.Find("cboStatusFilter", true).FirstOrDefault() as ComboBox;
 
             string roleFilter = roleCombo?.SelectedIndex > 0 ? roleCombo.Text : "";
-            string statusFilter = statusCombo?.SelectedIndex > 0 ? (statusCombo.SelectedIndex == 1 ? "Hoạt động" : "Không hoạt động") : "";
+            string statusFilter = statusCombo?.SelectedIndex > 0 ? (statusCombo.SelectedIndex == 1 ? Lang("Active") : Lang("Inactive")) : "";
             string searchText = searchBox?.Text?.Trim().ToLower() ?? "";
 
             _filteredUsers = _allUsers.Where(u => 
             {
-                bool matchRole = string.IsNullOrEmpty(roleFilter) || u.Vai_trò == roleFilter;
-                bool matchStatus = string.IsNullOrEmpty(statusFilter) || u.Trạng_thái == statusFilter;
+                bool matchRole = string.IsNullOrEmpty(roleFilter) || u.Role == roleFilter;
+                bool matchStatus = string.IsNullOrEmpty(statusFilter) || u.Status == statusFilter;
                 bool matchSearch = string.IsNullOrEmpty(searchText) || 
                                    ((string)u.Email).ToLower().Contains(searchText) || 
-                                   ((string)u.Họ_tên).ToLower().Contains(searchText) || 
-                                   ((string)u.Tên_đăng_nhập).ToLower().Contains(searchText);
+                                   ((string)u.FullName).ToLower().Contains(searchText) || 
+                                   ((string)u.Username).ToLower().Contains(searchText);
 
                 return matchRole && matchStatus && matchSearch;
             }).ToList();
@@ -262,15 +263,15 @@ namespace WinFormsApp1.View.Admin
                 editingUserId = Convert.ToInt32(selectedRow.Cells["ID"].Value);
                 
                 SetFormValue("txtEmail", selectedRow.Cells["Email"].Value?.ToString());
-                SetFormValue("txtFullName", selectedRow.Cells["Họ_tên"].Value?.ToString());
-                SetFormValue("txtUsername", selectedRow.Cells["Tên_đăng_nhập"].Value?.ToString());
+                SetFormValue("txtFullName", selectedRow.Cells["FullName"].Value?.ToString());
+                SetFormValue("txtUsername", selectedRow.Cells["Username"].Value?.ToString());
                 SetFormValue("txtPassword", ""); // Don't show existing password
                 
                 // Set role combo
                 var roleCombo = inputFormPanel?.Controls.Find("cboRole", true).FirstOrDefault() as ComboBox;
                 if (roleCombo != null)
                 {
-                    string role = selectedRow.Cells["Vai_trò"].Value?.ToString();
+                    string role = selectedRow.Cells["Role"].Value?.ToString();
                     roleCombo.SelectedIndex = role == "Admin" ? 1 : 0;
                 }
                 
@@ -279,7 +280,7 @@ namespace WinFormsApp1.View.Admin
             }
             else
             {
-                ToastHelper.Show(this.FindForm(), "Vui lòng chọn người dùng để sửa!");
+                ToastHelper.Show(this.FindForm(), Lang("PleaseSelectUserToEdit"));
             }
         }
 
@@ -299,7 +300,7 @@ namespace WinFormsApp1.View.Admin
                 
                 if (errorLabels.Any())
                 {
-                    ToastHelper.Show(this.FindForm(), "Vui lòng sửa các lỗi trước khi lưu!");
+                    ToastHelper.Show(this.FindForm(), Lang("FixErrorsBeforeSave"));
                     return;
                 }
                 
@@ -343,20 +344,20 @@ namespace WinFormsApp1.View.Admin
                 {
                     await LogAdminActionAsync(isEditing ? "UPDATE" : "CREATE", "User", 
                         isEditing ? editingUserId : (int?)null, 
-                        $"{(isEditing ? "Cập nhật" : "Tạo")} người dùng: {user.Email}");
+                        $"{(isEditing ? "Updated" : "Created")} user: {user.Email}");
                     
-                    ToastHelper.Show(this.FindForm(), "✅ Lưu thành công!");
+                    ToastHelper.Show(this.FindForm(), $"✅ {Lang("SaveSuccess")}");
                     await LoadUsersAsync();
                     HideInputForm();
                 }
                 else
                 {
-                    ToastHelper.Show(this.FindForm(), "❌ Lưu thất bại!");
+                    ToastHelper.Show(this.FindForm(), $"❌ {Lang("SaveFailed")}");
                 }
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this.FindForm(), $"Lỗi lưu dữ liệu: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), Lang("DataSaveError", ex.Message));
             }
         }
 
@@ -367,7 +368,7 @@ namespace WinFormsApp1.View.Admin
                 var selectedRow = dataGridView.SelectedRows[0];
                 int userId = Convert.ToInt32(selectedRow.Cells["ID"].Value);
                 
-                var result = MessageBox.Show("Bạn có chắc muốn xóa người dùng này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                var result = MessageBox.Show(Lang("ConfirmDeleteUser"), Lang("Confirm"), MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
                 {
@@ -376,24 +377,24 @@ namespace WinFormsApp1.View.Admin
                         var success = await _adminController.DeleteUserAsync(userId);
                         if (success)
                         {
-                            await LogAdminActionAsync("DELETE", "User", userId, $"Xóa người dùng ID: {userId}");
-                            ToastHelper.Show(this.FindForm(), "✅ Xóa thành công!");
+                            await LogAdminActionAsync("DELETE", "User", userId, $"Deleted user ID: {userId}");
+                            ToastHelper.Show(this.FindForm(), $"✅ {Lang("DeleteSuccess")}");
                             await LoadUsersAsync();
                         }
                         else
                         {
-                            ToastHelper.Show(this.FindForm(), "❌ Xóa thất bại!");
+                            ToastHelper.Show(this.FindForm(), $"❌ {Lang("DeleteFailed")}");
                         }
                     }
                     catch (Exception ex)
                     {
-                        ToastHelper.Show(this.FindForm(), $"Lỗi xóa dữ liệu: {ex.Message}");
+                        ToastHelper.Show(this.FindForm(), Lang("DataDeleteError", ex.Message));
                     }
                 }
             }
             else
             {
-                ToastHelper.Show(this.FindForm(), "Vui lòng chọn người dùng để xóa!");
+                ToastHelper.Show(this.FindForm(), Lang("PleaseSelectUserToDelete"));
             }
         }
     }
