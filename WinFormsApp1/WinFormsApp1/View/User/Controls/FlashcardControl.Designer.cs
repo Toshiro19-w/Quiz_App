@@ -22,90 +22,96 @@ namespace WinFormsApp1.View.User.Controls
             base.Dispose(disposing);
         }
 
-        #region Component Designer generated code
+		#region Component Designer generated code
 
-        private void InitializeComponent()
-        {
-            this.headerPanel = new System.Windows.Forms.Panel();
-            this.lblFlashcardCount = new System.Windows.Forms.Label();
-            this.lblSubtitle = new System.Windows.Forms.Label();
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.flowFlashcards = new System.Windows.Forms.FlowLayoutPanel();
-            this.headerPanel.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // headerPanel
-            // 
-            this.headerPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(242)))), ((int)(((byte)(245)))));
-            this.headerPanel.Controls.Add(this.lblFlashcardCount);
-            this.headerPanel.Controls.Add(this.lblSubtitle);
-            this.headerPanel.Controls.Add(this.lblTitle);
-            this.headerPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.headerPanel.Location = new System.Drawing.Point(0, 0);
-            this.headerPanel.Name = "headerPanel";
-            this.headerPanel.Size = new System.Drawing.Size(1750, 140);
-            this.headerPanel.TabIndex = 0;
-            // 
-            // lblFlashcardCount
-            // 
-            this.lblFlashcardCount.AutoSize = true;
-            this.lblFlashcardCount.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.lblFlashcardCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(88)))), ((int)(((byte)(56)))), ((int)(((byte)(255)))));
-            this.lblFlashcardCount.Location = new System.Drawing.Point(1330, 55);
-            this.lblFlashcardCount.Name = "lblFlashcardCount";
-            this.lblFlashcardCount.Size = new System.Drawing.Size(170, 28);
-            this.lblFlashcardCount.TabIndex = 2;
-            this.lblFlashcardCount.Text = "0 bộ flashcard";
-            // 
-            // lblSubtitle
-            // 
-            this.lblSubtitle.AutoSize = true;
-            this.lblSubtitle.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.lblSubtitle.ForeColor = System.Drawing.Color.Gray;
-            this.lblSubtitle.Location = new System.Drawing.Point(35, 95);
-            this.lblSubtitle.Name = "lblSubtitle";
-            this.lblSubtitle.Size = new System.Drawing.Size(521, 28);
-            this.lblSubtitle.TabIndex = 1;
-            this.lblSubtitle.Text = "Học từ vựng và kiến thức một cách hiệu quả với flashcard";
-            // 
-            // lblTitle
-            // 
-            this.lblTitle.AutoSize = true;
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 28F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(124)))), ((int)(((byte)(77)))), ((int)(((byte)(255)))));
-            this.lblTitle.Location = new System.Drawing.Point(30, 30);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(437, 62);
-            this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "Tất cả bộ Flashcard";
-            // 
-            // flowFlashcards
-            // 
-            this.flowFlashcards.AutoScroll = true;
-            this.flowFlashcards.BackColor = System.Drawing.Color.White;
-            this.flowFlashcards.Location = new System.Drawing.Point(20, 160);
-            this.flowFlashcards.Name = "flowFlashcards";
-            this.flowFlashcards.Padding = new System.Windows.Forms.Padding(10);
-            this.flowFlashcards.Size = new System.Drawing.Size(1710, 840);
-            this.flowFlashcards.TabIndex = 1;
-            // 
-            // FlashcardControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoScroll = true;
-            this.BackColor = System.Drawing.Color.White;
-            this.Controls.Add(this.flowFlashcards);
-            this.Controls.Add(this.headerPanel);
-            this.Name = "FlashcardControl";
-            this.Size = new System.Drawing.Size(1750, 1020);
-            this.Load += new System.EventHandler(this.FlashcardControl_Load);
-            this.Resize += new System.EventHandler(this.FlashcardControl_Resize);
-            this.headerPanel.ResumeLayout(false);
-            this.headerPanel.PerformLayout();
-            this.ResumeLayout(false);
-        }
+		private void InitializeComponent()
+		{
+			headerPanel = new Panel();
+			lblFlashcardCount = new Label();
+			lblSubtitle = new Label();
+			lblTitle = new Label();
+			flowFlashcards = new FlowLayoutPanel();
+			headerPanel.SuspendLayout();
+			SuspendLayout();
+			// 
+			// headerPanel
+			// 
+			headerPanel.BackColor = Color.FromArgb(240, 242, 245);
+			headerPanel.Controls.Add(lblFlashcardCount);
+			headerPanel.Controls.Add(lblSubtitle);
+			headerPanel.Controls.Add(lblTitle);
+			headerPanel.Dock = DockStyle.Top;
+			headerPanel.Location = new Point(0, 0);
+			headerPanel.Margin = new Padding(4);
+			headerPanel.Name = "headerPanel";
+			headerPanel.Size = new Size(2188, 175);
+			headerPanel.TabIndex = 0;
+			// 
+			// lblFlashcardCount
+			// 
+			lblFlashcardCount.AutoSize = true;
+			lblFlashcardCount.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			lblFlashcardCount.ForeColor = Color.FromArgb(88, 56, 255);
+			lblFlashcardCount.Location = new Point(1662, 69);
+			lblFlashcardCount.Margin = new Padding(4, 0, 4, 0);
+			lblFlashcardCount.Name = "lblFlashcardCount";
+			lblFlashcardCount.Size = new Size(176, 32);
+			lblFlashcardCount.TabIndex = 2;
+			lblFlashcardCount.Text = "0 bộ flashcard";
+			// 
+			// lblSubtitle
+			// 
+			lblSubtitle.AutoSize = true;
+			lblSubtitle.Font = new Font("Segoe UI", 12F);
+			lblSubtitle.ForeColor = Color.Gray;
+			lblSubtitle.Location = new Point(44, 119);
+			lblSubtitle.Margin = new Padding(4, 0, 4, 0);
+			lblSubtitle.Name = "lblSubtitle";
+			lblSubtitle.Size = new Size(630, 32);
+			lblSubtitle.TabIndex = 1;
+			lblSubtitle.Text = "Học từ vựng và kiến thức một cách hiệu quả với flashcard";
+			// 
+			// lblTitle
+			// 
+			lblTitle.AutoSize = true;
+			lblTitle.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
+			lblTitle.ForeColor = Color.FromArgb(124, 77, 255);
+			lblTitle.Location = new Point(38, 38);
+			lblTitle.Margin = new Padding(4, 0, 4, 0);
+			lblTitle.Name = "lblTitle";
+			lblTitle.Size = new Size(536, 74);
+			lblTitle.TabIndex = 0;
+			lblTitle.Text = "Tất cả bộ Flashcard";
+			// 
+			// flowFlashcards
+			// 
+			flowFlashcards.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+			flowFlashcards.AutoScroll = true;
+			flowFlashcards.BackColor = Color.White;
+			flowFlashcards.Location = new Point(26, 183);
+			flowFlashcards.Margin = new Padding(4);
+			flowFlashcards.Name = "flowFlashcards";
+			flowFlashcards.Padding = new Padding(12);
+			flowFlashcards.Size = new Size(2138, 797);
+			flowFlashcards.TabIndex = 1;
+			// 
+			// FlashcardControl
+			// 
+			AutoScaleDimensions = new SizeF(10F, 25F);
+			AutoScaleMode = AutoScaleMode.Font;
+			BackColor = Color.White;
+			Controls.Add(flowFlashcards);
+			Controls.Add(headerPanel);
+			Margin = new Padding(4);
+			Name = "FlashcardControl";
+			Size = new Size(2188, 1000);
+			Load += FlashcardControl_Load;
+			Resize += FlashcardControl_Resize;
+			headerPanel.ResumeLayout(false);
+			headerPanel.PerformLayout();
+			ResumeLayout(false);
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

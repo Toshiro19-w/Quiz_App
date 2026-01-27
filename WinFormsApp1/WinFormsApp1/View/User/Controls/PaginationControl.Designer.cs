@@ -126,7 +126,6 @@
 			panelCenter.Name = "panelCenter";
 			panelCenter.Size = new Size(660, 50);
 			panelCenter.TabIndex = 5;
-			panelCenter.Paint += panelCenter_Paint;
 			// 
 			// PaginationControl
 			// 

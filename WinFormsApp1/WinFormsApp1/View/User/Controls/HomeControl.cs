@@ -407,7 +407,7 @@ namespace WinFormsApp1.View.User.Controls
 
             mainPanel.Controls.Clear();
 
-            var detail = new FlashcardDetailControl(setId);
+			var detail = new FlashcardDetailControl(setId, FlashcardDetailSource.PublicLibrary);
             detail.Dock = DockStyle.Fill;
             mainPanel.Controls.Add(detail);
         }

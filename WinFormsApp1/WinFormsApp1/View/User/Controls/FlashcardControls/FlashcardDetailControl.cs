@@ -3,18 +3,21 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
+using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.View.User.Controls.FlashcardControls
 {
     public partial class FlashcardDetailControl : UserControl
     {
         private readonly int _setId;
+		private readonly FlashcardDetailSource _source;
         private Models.Entities.FlashcardSet _flashcardSet;
         private readonly FlashcardController _flashcardController;
 
-        public FlashcardDetailControl(int setId)
+		public FlashcardDetailControl(int setId, FlashcardDetailSource source = FlashcardDetailSource.PublicLibrary)
         {
             _setId = setId;
+			_source = source;
             _flashcardController = new FlashcardController();
             InitializeComponent();
         }
@@ -78,7 +81,17 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             {
                 lblLanguage.Text = $"Ngôn ngữ: {_flashcardSet.Language}";
             }
+
+			UpdateEditButtonVisibility();
         }
+
+		private void UpdateEditButtonVisibility()
+		{
+			var currentUserId = AuthHelper.CurrentUser?.UserId;
+			btnEdit.Visible = currentUserId.HasValue && _flashcardSet.OwnerId == currentUserId.Value;
+			btnViewDifferent.Location = btnEdit.Visible ? new Point(25, 150) : new Point(25, 95);
+			pnlActions.Height = btnEdit.Visible ? 210 : 160;
+		}
 
         private void LoadFlashcardsList()
         {
@@ -96,11 +109,11 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
 
             var flashcards = _flashcardSet.Flashcards.OrderBy(f => f.OrderIndex).ToList();
 
-            foreach (var flashcard in flashcards)
-            {
-                var card = CreateFlashcardItemCard(flashcard);
-                flowFlashcards.Controls.Add(card);
-            }
+			foreach (var flashcard in flashcards)
+			{
+				var card = new FlashcardItemDisplayControl(flashcard);
+				flowFlashcards.Controls.Add(card);
+			}
 
             if (!flashcards.Any())
             {
@@ -116,73 +129,6 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             }
         }
 
-        private Panel CreateFlashcardItemCard(Models.Entities.Flashcard flashcard)
-        {
-            var card = new Panel
-            {
-                Width = 1150,
-                Height = 130,
-                BorderStyle = BorderStyle.FixedSingle,
-                BackColor = Color.FromArgb(248, 249, 250),
-                Margin = new Padding(0, 8, 0, 8),
-                Cursor = Cursors.Hand
-            };
-
-            // Question icon
-            var lblIcon = new Label
-            {
-                Text = "❓",
-                Font = new Font("Segoe UI", 28),
-                Location = new Point(20, 40),
-                Size = new Size(60, 60),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            card.Controls.Add(lblIcon);
-
-            // Front text (question)
-            var lblFront = new Label
-            {
-                Text = flashcard.FrontText.Length > 100 
-                    ? flashcard.FrontText.Substring(0, 100) + "..." 
-                    : flashcard.FrontText,
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                Location = new Point(100, 20),
-                Size = new Size(850, 35),
-                ForeColor = Color.FromArgb(0, 102, 102)
-            };
-            card.Controls.Add(lblFront);
-
-            // Back text (answer) - preview
-            var lblBack = new Label
-            {
-                Text = flashcard.BackText.Length > 100 
-                    ? flashcard.BackText.Substring(0, 100) + "..." 
-                    : flashcard.BackText,
-                Font = new Font("Segoe UI", 10F),
-                Location = new Point(100, 60),
-                Size = new Size(850, 55),
-                ForeColor = Color.Gray
-            };
-            card.Controls.Add(lblBack);
-
-            // Status icon (completed/not completed)
-            var lblStatus = new Label
-            {
-                Text = "✓",
-                Font = new Font("Segoe UI", 24F, FontStyle.Bold),
-                ForeColor = Color.FromArgb(76, 175, 80),
-                Location = new Point(1000, 45),
-                Size = new Size(50, 50),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            card.Controls.Add(lblStatus);
-
-            // Hover effect
-            card.MouseEnter += (s, e) => card.BackColor = Color.FromArgb(230, 230, 230);
-            card.MouseLeave += (s, e) => card.BackColor = Color.FromArgb(248, 249, 250);
-
-            return card;
-        }
 
         private void btnStartLearning_Click(object sender, EventArgs e)
         {
@@ -216,10 +162,41 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
 
             mainPanel.Controls.Clear();
 
-            var flashcardControl = new FlashcardControl();
-            flashcardControl.Dock = DockStyle.Fill;
-            mainPanel.Controls.Add(flashcardControl);
+			Control targetControl = _source switch
+			{
+				FlashcardDetailSource.MyFlashcards => new MyFlashcardsControl(),
+				FlashcardDetailSource.Library => new LibraryControl(showFlashcards: true),
+				_ => new FlashcardControl()
+			};
+			targetControl.Dock = DockStyle.Fill;
+			mainPanel.Controls.Add(targetControl);
         }
+
+		private void btnEdit_Click(object sender, EventArgs e)
+		{
+			if (_flashcardSet == null)
+			{
+				return;
+			}
+
+			var form = this.FindForm();
+			if (form == null) return;
+
+			var mainPanel = FindControlRecursive(form, "mainContentPanel") as Panel;
+
+			if (mainPanel == null)
+			{
+				mainPanel = this.Parent as Panel;
+			}
+
+			if (mainPanel == null) return;
+
+			mainPanel.Controls.Clear();
+
+			var editControl = new EditFlashcardControl(_flashcardSet.SetId);
+			editControl.Dock = DockStyle.Fill;
+			mainPanel.Controls.Add(editControl);
+		}
 
         private Control FindControlRecursive(Control parent, string name)
         {
@@ -232,4 +209,11 @@ namespace WinFormsApp1.View.User.Controls.FlashcardControls
             return null;
         }
     }
+
+	public enum FlashcardDetailSource
+	{
+		PublicLibrary,
+		Library,
+		MyFlashcards
+	}
 }

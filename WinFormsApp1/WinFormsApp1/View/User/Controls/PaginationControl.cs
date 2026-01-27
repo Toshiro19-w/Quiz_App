@@ -20,6 +20,8 @@ namespace WinFormsApp1.View.User.Controls
 		{
 			InitializeComponent();
 			CenterPanel();
+			// Ngăn phím Tab nhảy vào ô nhập liệu nếu không cần thiết
+			txtCurrentPage.TabStop = false;
 			UpdateUI();
 		}
 
@@ -48,31 +50,29 @@ namespace WinFormsApp1.View.User.Controls
 
 		private void CenterPanel()
 		{
-			// Center the panel horizontally
 			panelCenter.Left = (this.Width - panelCenter.Width) / 2;
 		}
 
 		private void UpdateUI()
 		{
-			// Store current focus to restore after update
-			var focusedControl = this.ActiveControl;
-			
-			txtCurrentPage.Text = _currentPage.ToString();
+			// Chỉ cập nhật Text nếu giá trị thực sự thay đổi để tránh nháy focus
+			string pageText = _currentPage.ToString();
+			if (txtCurrentPage.Text != pageText)
+			{
+				txtCurrentPage.Text = pageText;
+			}
+
 			lblTotalPages.Text = $"/ {_totalPages}";
 
-			// Enable/disable buttons
 			btnPrevPage.Enabled = _currentPage > 1;
 			btnNextPage.Enabled = _currentPage < _totalPages;
 
-			// Style disabled buttons
 			StyleButton(btnPrevPage);
 			StyleButton(btnNextPage);
-			
-			// Restore focus if it wasn't on the textbox
-			if (focusedControl != null && focusedControl != txtCurrentPage)
-			{
-				focusedControl.Focus();
-			}
+
+			// Bỏ bôi xanh số trong TextBox
+			txtCurrentPage.SelectionStart = txtCurrentPage.Text.Length;
+			txtCurrentPage.SelectionLength = 0;
 		}
 
 		private void StyleButton(Button btn)
@@ -98,9 +98,9 @@ namespace WinFormsApp1.View.User.Controls
 				_currentPage--;
 				UpdateUI();
 				PageChanged?.Invoke(this, _currentPage);
-				
-				// Prevent textbox from getting focus
-				btnPrevPage.Focus();
+
+				// Ép focus vào nút sau khi kết thúc chu kỳ sự kiện
+				this.BeginInvoke(new Action(() => btnPrevPage.Focus()));
 			}
 		}
 
@@ -111,26 +111,26 @@ namespace WinFormsApp1.View.User.Controls
 				_currentPage++;
 				UpdateUI();
 				PageChanged?.Invoke(this, _currentPage);
-				
-				// Prevent textbox from getting focus
-				btnNextPage.Focus();
+
+				// Ép focus vào nút sau khi kết thúc chu kỳ sự kiện
+				this.BeginInvoke(new Action(() => btnNextPage.Focus()));
 			}
 		}
 
 		private void TxtCurrentPage_KeyPress(object sender, KeyPressEventArgs e)
 		{
-			// Only allow digits and control characters (backspace, etc.)
 			if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
 			{
 				e.Handled = true;
 				return;
 			}
 
-			// Handle Enter key
 			if (e.KeyChar == (char)Keys.Enter)
 			{
 				e.Handled = true;
 				JumpToPage();
+				// Sau khi Enter, chuyển focus ra khỏi TextBox để trông tự nhiên hơn
+				this.ActiveControl = null;
 			}
 		}
 
@@ -143,28 +143,24 @@ namespace WinFormsApp1.View.User.Controls
 		{
 			if (int.TryParse(txtCurrentPage.Text, out int newPage))
 			{
-				if (newPage >= 1 && newPage <= _totalPages && newPage != _currentPage)
+				if (newPage >= 1 && newPage <= _totalPages)
 				{
-					_currentPage = newPage;
-					UpdateUI();
-					PageChanged?.Invoke(this, _currentPage);
+					if (newPage != _currentPage)
+					{
+						_currentPage = newPage;
+						UpdateUI();
+						PageChanged?.Invoke(this, _currentPage);
+					}
 				}
 				else
 				{
-					// Reset to current page if invalid
 					txtCurrentPage.Text = _currentPage.ToString();
 				}
 			}
 			else
 			{
-				// Reset to current page if invalid input
 				txtCurrentPage.Text = _currentPage.ToString();
 			}
-		}
-
-		private void panelCenter_Paint(object sender, PaintEventArgs e)
-		{
-
 		}
 
 		public T[] GetPageData<T>(T[] allData)
