@@ -7,6 +7,7 @@ using Guna.Charts.WinForms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.ViewModels;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using static WinFormsApp1.Helpers.ResponsiveLayoutHelper;
 using static WinFormsApp1.Helpers.UIComponentHelper;
 
@@ -16,6 +17,12 @@ namespace WinFormsApp1.View.Admin
     {
         private readonly AdminController _adminController;
 
+        /// <summary>
+        /// Shorthand for LanguageHelper.GetString
+        /// </summary>
+        private static string Lang(string key) => LanguageHelper.GetString(key);
+        private static string Lang(string key, params object[] args) => LanguageHelper.GetString(key, args);
+
         public OverviewDashboard()
         {
             _adminController = new AdminController();
@@ -24,8 +31,9 @@ namespace WinFormsApp1.View.Admin
 
         private void OverviewDashboard_Load(object sender, EventArgs e)
         {
-            // ✅ Set Vietnamese format for DateTimePickers
-            VietnameseDatePickerHelper.SetVietnameseFormat(false, startDatePicker, endDatePicker);
+            // ✅ Set date format based on language
+            startDatePicker.CustomFormat = LanguageHelper.DateFormatPattern;
+            endDatePicker.CustomFormat = LanguageHelper.DateFormatPattern;
             
             // Default to "This Month"
             filterCombo.SelectedIndex = 2; 
@@ -198,7 +206,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi");
+                MessageBox.Show(Lang("DataLoadError", ex.Message), Lang("Error"));
             }
         }
 
@@ -208,10 +216,10 @@ namespace WinFormsApp1.View.Admin
             
             var cards = new[]
             {
-                new { Title = "Người dùng mới", Value = stats.TotalUsers.ToString(), Color = Color.FromArgb(56, 178, 172) },
-                new { Title = "Khóa học mới", Value = stats.TotalCourses.ToString(), Color = Color.FromArgb(34, 197, 94) },
-                new { Title = "Bài kiểm tra mới", Value = stats.TotalTests.ToString(), Color = Color.FromArgb(251, 191, 36) },
-                new { Title = "Doanh thu", Value = $"{stats.TotalRevenue:N0} VND", Color = Color.FromArgb(14, 165, 233) }
+                new { Title = Lang("NewUsers"), Value = stats.TotalUsers.ToString(), Color = Color.FromArgb(56, 178, 172) },
+                new { Title = Lang("NewCourses"), Value = stats.TotalCourses.ToString(), Color = Color.FromArgb(34, 197, 94) },
+                new { Title = Lang("NewTests"), Value = stats.TotalTests.ToString(), Color = Color.FromArgb(251, 191, 36) },
+                new { Title = Lang("Revenue"), Value = LanguageHelper.FormatVND(stats.TotalRevenue), Color = Color.FromArgb(14, 165, 233) }
             };
 
             int cardWidth = (Width - 85) / 4;
@@ -228,7 +236,7 @@ namespace WinFormsApp1.View.Admin
             chartPanel.Controls.Clear();
             
             var panel = CreateResponsiveChartPanel(
-                "📈 Xu hướng doanh thu",
+                $"📈 {Lang("RevenueTrend")}",
                 new Point(0, 0),
                 new Size(chartPanel.Width, 400),
                 AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
@@ -243,7 +251,7 @@ namespace WinFormsApp1.View.Admin
 
             var dataset = new GunaLineDataset
             {
-                Label = "Doanh thu",
+                Label = Lang("Revenue"),
                 BorderColor = Color.FromArgb(14, 165, 233),
                 PointRadius = 5,
                 PointStyle = PointStyle.Circle

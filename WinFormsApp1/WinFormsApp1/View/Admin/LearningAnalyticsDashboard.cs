@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Guna.Charts.WinForms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using static WinFormsApp1.Helpers.ResponsiveLayoutHelper;
 using static WinFormsApp1.Helpers.UIComponentHelper;
 using WinFormsApp1.ViewModels;
@@ -15,6 +16,12 @@ namespace WinFormsApp1.View.Admin
     public partial class LearningAnalyticsDashboard : UserControl
     {
         private AdminController _controller;
+
+        /// <summary>
+        /// Shorthand for LanguageHelper.GetString
+        /// </summary>
+        private static string Lang(string key) => LanguageHelper.GetString(key);
+        private static string Lang(string key, params object[] args) => LanguageHelper.GetString(key, args);
 
         public LearningAnalyticsDashboard()
         {
@@ -42,7 +49,7 @@ namespace WinFormsApp1.View.Admin
 
             // Load categories
             categoryCombo.Items.Clear();
-            categoryCombo.Items.Add("Tất cả");
+            categoryCombo.Items.Add(Lang("All"));
             try
             {
                 var categories = await _controller.GetCategoriesAsync();
@@ -104,7 +111,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi");
+                MessageBox.Show(Lang("DataLoadError", ex.Message), Lang("Error"));
             }
         }
 
@@ -114,9 +121,9 @@ namespace WinFormsApp1.View.Admin
             
             var cards = new[]
             {
-                new { Title = "Khóa học", Value = stats.TotalCourses.ToString(), Color = Color.FromArgb(34, 197, 94) },
-                new { Title = "Lớp học", Value = stats.TotalClasses.ToString(), Color = Color.FromArgb(168, 85, 247) },
-                new { Title = "Học viên tham gia", Value = stats.TotalEnrollments.ToString(), Color = Color.FromArgb(14, 165, 233) }
+                new { Title = Lang("Courses"), Value = stats.TotalCourses.ToString(), Color = Color.FromArgb(34, 197, 94) },
+                new { Title = Lang("Classes"), Value = stats.TotalClasses.ToString(), Color = Color.FromArgb(168, 85, 247) },
+                new { Title = Lang("StudentsEnrolled"), Value = stats.TotalEnrollments.ToString(), Color = Color.FromArgb(14, 165, 233) }
             };
 
             int cardWidth = (Width - 65) / 3;
@@ -132,13 +139,13 @@ namespace WinFormsApp1.View.Admin
         {
             chartsFlowPanel.Controls.Clear();
 
-            var topCoursesPanel = CreateResponsiveChartPanel("🏆 Top khóa học phổ biến", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
+            var topCoursesPanel = CreateResponsiveChartPanel($"🏆 {Lang("TopPopularCourses")}", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
             topCoursesPanel.Margin = new Padding(0, 0, 20, 0);
             var topCoursesChart = CreateTopCoursesChart(topCoursesPanel, stats.TopCourses);
             topCoursesPanel.Controls.Add(topCoursesChart);
             chartsFlowPanel.Controls.Add(topCoursesPanel);
 
-            var testsPanel = CreateResponsiveChartPanel("📝 Bài kiểm tra theo tháng", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
+            var testsPanel = CreateResponsiveChartPanel($"📝 {Lang("TestsByMonth")}", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
             var testsChart = CreateTestsChart(testsPanel, stats.TestsByMonth);
             testsPanel.Controls.Add(testsChart);
             chartsFlowPanel.Controls.Add(testsPanel);
@@ -153,7 +160,7 @@ namespace WinFormsApp1.View.Admin
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom
             };
 
-            var dataset = new GunaBarDataset { Label = "Học viên" };
+            var dataset = new GunaBarDataset { Label = Lang("Students") };
             var colors = new[] {
                 Color.FromArgb(34, 197, 94),
                 Color.FromArgb(14, 165, 233),
@@ -184,8 +191,13 @@ namespace WinFormsApp1.View.Admin
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom
             };
 
-            var dataset = new GunaLineDataset { Label = "Bài kiểm tra" };
-            string[] months = { "Tháng 01", "Tháng 02", "Tháng 03", "Tháng 04", "Tháng 05", "Tháng 06", "Tháng 07", "Tháng 08", "Tháng 09", "Tháng 10", "Tháng 11", "Tháng 12" };
+            var dataset = new GunaLineDataset { Label = Lang("Tests") };
+            string[] months = { 
+                $"{Lang("Month")} 01", $"{Lang("Month")} 02", $"{Lang("Month")} 03", 
+                $"{Lang("Month")} 04", $"{Lang("Month")} 05", $"{Lang("Month")} 06", 
+                $"{Lang("Month")} 07", $"{Lang("Month")} 08", $"{Lang("Month")} 09", 
+                $"{Lang("Month")} 10", $"{Lang("Month")} 11", $"{Lang("Month")} 12" 
+            };
             
             for (int i = 1; i <= 12; i++)
             {

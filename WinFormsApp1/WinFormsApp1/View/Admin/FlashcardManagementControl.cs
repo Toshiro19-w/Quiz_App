@@ -26,7 +26,7 @@ namespace WinFormsApp1.View.Admin
             
             dataGridView = CreateModernDataGridView();
             SetupDataGridColumns();
-            SetupLayout("Quản lý Flashcard", dataGridView);
+            SetupLayout(Lang("FlashcardManagement"), dataGridView);
             WireCrudEvents();
             
             // Add custom filters using new pattern
@@ -49,12 +49,12 @@ namespace WinFormsApp1.View.Admin
                 Name = "cboVisibility",
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            visibilityCombo.Items.AddRange(new object[] { "Tất cả", "Public", "Private", "Unlisted" });
+            visibilityCombo.Items.AddRange(new object[] { Lang("All"), Lang("VisibilityPublic"), Lang("VisibilityPrivate"), Lang("VisibilityUnlisted") });
             visibilityCombo.SelectedIndex = 0;
             visibilityCombo.SelectedIndexChanged += (s, e) => FilterFlashcardsLocally();
 
             // Add filter using the new helper method
-            AddCustomFilter("Trạng thái:", visibilityCombo);
+            AddCustomFilter(Lang("FilterVisibility"), visibilityCombo);
         }
 
         private void InitializeComponent()
@@ -87,7 +87,7 @@ namespace WinFormsApp1.View.Admin
                 new DataGridViewTextBoxColumn
                 {
                     Name = "Title",
-                    HeaderText = "Tiêu đề",
+                    HeaderText = Lang("Title"),
                     DataPropertyName = "Title",
                     Width = 250,
                     ReadOnly = true
@@ -95,14 +95,14 @@ namespace WinFormsApp1.View.Admin
                 new DataGridViewTextBoxColumn
                 {
                     Name = "OwnerName",
-                    HeaderText = "Người tạo",
+                    HeaderText = Lang("Creator"),
                     Width = 150,
                     ReadOnly = true
                 },
                 new DataGridViewTextBoxColumn
                 {
                     Name = "CardCount",
-                    HeaderText = "Số thẻ",
+                    HeaderText = Lang("CardCount"),
                     Width = 80,
                     ReadOnly = true,
                     DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter }
@@ -110,7 +110,7 @@ namespace WinFormsApp1.View.Admin
                 new DataGridViewTextBoxColumn
                 {
                     Name = "Visibility",
-                    HeaderText = "Trạng thái",
+                    HeaderText = Lang("Status"),
                     DataPropertyName = "Visibility",
                     Width = 100,
                     ReadOnly = true
@@ -118,7 +118,7 @@ namespace WinFormsApp1.View.Admin
                 new DataGridViewTextBoxColumn
                 {
                     Name = "Language",
-                    HeaderText = "Ngôn ngữ",
+                    HeaderText = Lang("Language"),
                     DataPropertyName = "Language",
                     Width = 100,
                     ReadOnly = true
@@ -126,7 +126,7 @@ namespace WinFormsApp1.View.Admin
                 new DataGridViewTextBoxColumn
                 {
                     Name = "CreatedAt",
-                    HeaderText = "Ngày tạo",
+                    HeaderText = Lang("CreatedAt"),
                     DataPropertyName = "CreatedAt",
                     Width = 130,
                     ReadOnly = true,
@@ -184,7 +184,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải flashcard sets: {ex.Message}", "Lỗi",
+                MessageBox.Show(Lang("FlashcardLoadError", ex.Message), Lang("Error"),
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -236,7 +236,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi hiển thị dữ liệu: {ex.Message}", "Lỗi",
+                MessageBox.Show(Lang("DisplayError", ex.Message), Lang("Error"),
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -251,7 +251,7 @@ namespace WinFormsApp1.View.Admin
         {
             if (dataGridView.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Vui lòng chọn một flashcard set để chỉnh sửa!", "Cảnh báo",
+                MessageBox.Show(Lang("PleaseSelectFlashcardToEdit"), Lang("Warning"),
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -268,7 +268,7 @@ namespace WinFormsApp1.View.Admin
         {
             if (dataGridView.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Vui lòng chọn một flashcard set để xóa!", "Cảnh báo",
+                MessageBox.Show(Lang("PleaseSelectFlashcardToDelete"), Lang("Warning"),
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -277,10 +277,10 @@ namespace WinFormsApp1.View.Admin
             if (selectedSet == null) return;
 
             var result = MessageBox.Show(
-                $"Bạn có chắc muốn xóa flashcard set:\n\n" +
+                $"{Lang("ConfirmDeleteFlashcard")}\n\n" +
                 $"'{selectedSet.Title}'\n\n" +
-                $"Có {selectedSet.Flashcards?.Count ?? 0} thẻ trong bộ này?",
-                "Xác nhận xóa",
+                $"{Lang("CardsInSet", selectedSet.Flashcards?.Count ?? 0)}",
+                Lang("Confirm"),
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
 
@@ -292,14 +292,14 @@ namespace WinFormsApp1.View.Admin
                     await LogAdminActionAsync("DELETE", "FlashcardSet", selectedSet.SetId,
                         $"Xóa flashcard set: {selectedSet.Title}");
                     
-                    MessageBox.Show("Xóa flashcard set thành công!", "Thành công",
+                    MessageBox.Show(Lang("FlashcardDeleteSuccess"), Lang("Success"),
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     
                     await LoadFlashcardSetsAsync();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi xóa flashcard set: {ex.Message}", "Lỗi",
+                    MessageBox.Show(Lang("FlashcardDeleteFailed") + $": {ex.Message}", Lang("Error"),
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -308,7 +308,7 @@ namespace WinFormsApp1.View.Admin
         protected override async void OnRefreshButtonClick(object sender, EventArgs e)
         {
             await LoadFlashcardSetsAsync();
-            MessageBox.Show("Đã làm mới dữ liệu!", "Thông báo",
+            MessageBox.Show(Lang("DataRefreshed"), Lang("Information"),
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -318,7 +318,7 @@ namespace WinFormsApp1.View.Admin
             // Tạo một form wrapper responsive để chứa CreateFlashcardControl
             var dialogForm = new Form
             {
-                Text = "Tạo Flashcard Set mới",
+                Text = Lang("CreateFlashcardSet"),
                 Size = new Size(1000, 750),
                 MinimumSize = new Size(800, 600),
                 StartPosition = FormStartPosition.CenterParent,
@@ -356,7 +356,7 @@ namespace WinFormsApp1.View.Admin
             // Tạo một form wrapper responsive để chứa EditFlashcardControl
             var dialogForm = new Form
             {
-                Text = "Chỉnh sửa Flashcard Set",
+                Text = Lang("EditFlashcardSet"),
                 Size = new Size(1000, 750),
                 MinimumSize = new Size(800, 600),
                 StartPosition = FormStartPosition.CenterParent,
@@ -393,7 +393,7 @@ namespace WinFormsApp1.View.Admin
         {
             var dialogForm = new Form
             {
-                Text = "Chi tiết Flashcard Set",
+                Text = Lang("FlashcardSetDetail"),
                 Size = new Size(1200, 750),
                 MinimumSize = new Size(900, 600),
                 StartPosition = FormStartPosition.CenterParent,

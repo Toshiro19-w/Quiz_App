@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 
 namespace WinFormsApp1.View.Admin
 {
@@ -24,6 +25,12 @@ namespace WinFormsApp1.View.Admin
         protected FlowLayoutPanel filterLeftPanel;
         protected FlowLayoutPanel filterCenterPanel;
         protected FlowLayoutPanel filterRightPanel;
+
+        /// <summary>
+        /// Shorthand for LanguageHelper.GetString
+        /// </summary>
+        protected static string Lang(string key) => LanguageHelper.GetString(key);
+        protected static string Lang(string key, params object[] args) => LanguageHelper.GetString(key, args);
 
         protected AdminBaseControl(AdminController controller = null)
         {
@@ -80,9 +87,10 @@ namespace WinFormsApp1.View.Admin
             // Modern row styling
             dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(59, 130, 246);
             dgv.DefaultCellStyle.SelectionForeColor = Color.White;
-            dgv.DefaultCellStyle.Padding = new Padding(8);
+            dgv.DefaultCellStyle.Padding = new Padding(5);
             dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dgv.RowTemplate.Height = 40;
+            dgv.RowTemplate.Height = 35;
+            dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
 
             return dgv;
@@ -123,7 +131,7 @@ namespace WinFormsApp1.View.Admin
 
             var addBtn = new Button
             {
-                Text = "Thêm mới",
+                Text = Lang("Add"),
                 Size = new Size(100, 35),
                 Location = new Point(20, 12),
                 BackColor = Color.FromArgb(40, 167, 69),
@@ -136,7 +144,7 @@ namespace WinFormsApp1.View.Admin
 
             var editBtn = new Button
             {
-                Text = "Sửa",
+                Text = Lang("Edit"),
                 Size = new Size(80, 35),
                 Location = new Point(130, 12),
                 BackColor = Color.FromArgb(52, 144, 220),
@@ -149,7 +157,7 @@ namespace WinFormsApp1.View.Admin
 
             var deleteBtn = new Button
             {
-                Text = "Xóa",
+                Text = Lang("Delete"),
                 Size = new Size(80, 35),
                 Location = new Point(220, 12),
                 BackColor = Color.FromArgb(220, 53, 69),
@@ -162,7 +170,7 @@ namespace WinFormsApp1.View.Admin
 
             var refreshBtn = new Button
             {
-                Text = "Làm mới",
+                Text = Lang("Refresh"),
                 Size = new Size(90, 35),
                 Location = new Point(310, 12),
                 BackColor = Color.FromArgb(108, 117, 125),
@@ -215,7 +223,7 @@ namespace WinFormsApp1.View.Admin
 
             var showLabel = new Label
             {
-                Text = "Hiển thị",
+                Text = Lang("Show"),
                 Font = new Font("Segoe UI", 9),
                 AutoSize = true,
                 Margin = new Padding(0, 8, 5, 0)
@@ -234,7 +242,7 @@ namespace WinFormsApp1.View.Admin
 
             var entriesLabel = new Label
             {
-                Text = "dữ liệu",
+                Text = Lang("Entries"),
                 Font = new Font("Segoe UI", 9),
                 AutoSize = true,
                 Margin = new Padding(0, 8, 0, 0)
@@ -271,11 +279,11 @@ namespace WinFormsApp1.View.Admin
                 BorderStyle = BorderStyle.FixedSingle,
                 Margin = new Padding(0, 4, 0, 0)
             };
-            TextBoxHelper.SetPlaceholder(searchBox, "Tìm kiếm...", true);
+            TextBoxHelper.SetPlaceholder(searchBox, $"{Lang("Search")}...", true);
 
             var searchLabel = new Label
             {
-                Text = "Tìm kiếm:",
+                Text = $"{Lang("Search")}:",
                 Font = new Font("Segoe UI", 9),
                 AutoSize = true,
                 Margin = new Padding(0, 8, 8, 0)
@@ -555,7 +563,7 @@ namespace WinFormsApp1.View.Admin
 
             var saveBtn = new Button
             {
-                Text = "Lưu",
+                Text = Lang("Save"),
                 Size = new Size(80, 35),
                 Location = new Point(20, 15),
                 BackColor = Color.FromArgb(40, 167, 69),
@@ -568,7 +576,7 @@ namespace WinFormsApp1.View.Admin
 
             var cancelBtn = new Button
             {
-                Text = "Hủy",
+                Text = Lang("Cancel"),
                 Size = new Size(80, 35),
                 Location = new Point(110, 15),
                 BackColor = Color.FromArgb(108, 117, 125),
@@ -685,13 +693,13 @@ namespace WinFormsApp1.View.Admin
             
             if (fieldName.ToLower().Contains("email") && !value.Contains("@"))
             {
-                ShowFieldError(fieldName, "Email không hợp lệ");
+                ShowFieldError(fieldName, Lang("InvalidEmail"));
                 return;
             }
             
             if (isPassword && value.Length < 6)
             {
-                ShowFieldError(fieldName, "Mật khẩu phải có ít nhất 6 ký tự");
+                ShowFieldError(fieldName, Lang("PasswordTooShort"));
                 return;
             }
         }
@@ -700,13 +708,13 @@ namespace WinFormsApp1.View.Admin
         {
             return fieldName.ToLower() switch
             {
-                var name when name.Contains("email") => "Email không được để trống",
-                var name when name.Contains("fullname") => "Họ tên không được để trống",
-                var name when name.Contains("username") => "Tên đăng nhập không được để trống",
-                var name when name.Contains("password") => "Mật khẩu không được để trống",
-                var name when name.Contains("name") => "Tên không được để trống",
-                var name when name.Contains("title") => "Tiêu đề không được để trống",
-                _ => "Trường này không được để trống"
+                var name when name.Contains("email") => Lang("EmailRequired"),
+                var name when name.Contains("fullname") => Lang("FullNameRequired"),
+                var name when name.Contains("username") => Lang("UsernameRequired"),
+                var name when name.Contains("password") => Lang("PasswordRequired"),
+                var name when name.Contains("name") => Lang("NameRequired"),
+                var name when name.Contains("title") => Lang("TitleRequired"),
+                _ => Lang("FieldRequired")
             };
         }
 

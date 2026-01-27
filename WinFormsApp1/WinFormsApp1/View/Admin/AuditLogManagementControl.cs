@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers.Admin;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.ViewModels;
 
 namespace WinFormsApp1.View.Admin
@@ -68,7 +69,7 @@ namespace WinFormsApp1.View.Admin
             SetupDataGridColumns();
             
             // Setup layout without form (read-only view)
-            SetupLayout("Lịch sử hoạt động hệ thống", dataGridView);
+            SetupLayout(Lang("AuditLogHistory"), dataGridView);
             
             // Hide CRUD buttons and customize for audit log
             SetupButtons();
@@ -119,12 +120,12 @@ namespace WinFormsApp1.View.Admin
             dataGridView.Columns.AddRange(new DataGridViewColumn[]
             {
                 new DataGridViewTextBoxColumn { Name = "AuditId", HeaderText = "ID", Width = 60, DataPropertyName = "AuditId" },
-                new DataGridViewTextBoxColumn { Name = "CreatedAt", HeaderText = "Thời gian", Width = 130, DataPropertyName = "CreatedAt" },
-                new DataGridViewTextBoxColumn { Name = "Username", HeaderText = "Người dùng", Width = 110, DataPropertyName = "Username" },
-                new DataGridViewTextBoxColumn { Name = "ActionDisplay", HeaderText = "Hành động", Width = 140, DataPropertyName = "ActionDisplay" },
-                new DataGridViewTextBoxColumn { Name = "EntityTypeDisplay", HeaderText = "Loại", Width = 100, DataPropertyName = "EntityTypeDisplay" },
+                new DataGridViewTextBoxColumn { Name = "CreatedAt", HeaderText = Lang("Time"), Width = 130, DataPropertyName = "CreatedAt" },
+                new DataGridViewTextBoxColumn { Name = "Username", HeaderText = Lang("User"), Width = 110, DataPropertyName = "Username" },
+                new DataGridViewTextBoxColumn { Name = "ActionDisplay", HeaderText = Lang("Action"), Width = 140, DataPropertyName = "ActionDisplay" },
+                new DataGridViewTextBoxColumn { Name = "EntityTypeDisplay", HeaderText = Lang("Type"), Width = 100, DataPropertyName = "EntityTypeDisplay" },
                 new DataGridViewTextBoxColumn { Name = "EntityId", HeaderText = "ID", Width = 60, DataPropertyName = "EntityId" },
-                new DataGridViewTextBoxColumn { Name = "After", HeaderText = "Chi tiết", Width = 250, DataPropertyName = "After", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill },
+                new DataGridViewTextBoxColumn { Name = "After", HeaderText = Lang("Details"), Width = 250, DataPropertyName = "After", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill },
                 new DataGridViewTextBoxColumn { Name = "IpAddress", HeaderText = "IP", Width = 100, DataPropertyName = "IpAddress" },
                 new DataGridViewButtonColumn { Name = "Detail", HeaderText = "", Width = 50, Text = "👁", UseColumnTextForButtonValue = true }
             });
@@ -145,7 +146,7 @@ namespace WinFormsApp1.View.Admin
             var btnRefresh = this.Controls.Find("btnRefresh", true).FirstOrDefault() as Button;
             if (btnRefresh != null)
             {
-                btnRefresh.Text = "🔄 Làm mới";
+                btnRefresh.Text = $"🔄 {Lang("Refresh")}";
                 btnRefresh.Width = 110;
                 btnRefresh.Location = new Point(20, 12);
             }
@@ -156,7 +157,7 @@ namespace WinFormsApp1.View.Admin
             {
                 var btnExport = new Button
                 {
-                    Text = "📤 Xuất file",
+                    Text = $"📤 {Lang("ExportFile")}",
                     Size = new Size(110, 35),
                     Location = new Point(140, 12),
                     BackColor = Color.FromArgb(40, 167, 69),
@@ -199,29 +200,29 @@ namespace WinFormsApp1.View.Admin
 
         private void SetupCustomFilters()
         {
-            // Start Date with Vietnamese format
+            // Start Date with format based on language
             _dtpStartDate = new DateTimePicker
             {
                 Name = "dtpStartDate",
                 Value = DateTime.Now.AddDays(-7),
                 Width = 115,
                 Format = DateTimePickerFormat.Custom,
-                CustomFormat = "dd/MM/yyyy"
+                CustomFormat = LanguageHelper.DateFormatPattern
             };
             _dtpStartDate.ValueChanged += (s, e) => _searchTimer.Start();
-            AddDateFilter("Từ ngày:", _dtpStartDate);
+            AddDateFilter($"{Lang("FromDate")}:", _dtpStartDate);
 
-            // End Date with Vietnamese format
+            // End Date with format based on language
             _dtpEndDate = new DateTimePicker
             {
                 Name = "dtpEndDate",
                 Value = DateTime.Now,
                 Width = 115,
                 Format = DateTimePickerFormat.Custom,
-                CustomFormat = "dd/MM/yyyy"
+                CustomFormat = LanguageHelper.DateFormatPattern
             };
             _dtpEndDate.ValueChanged += (s, e) => _searchTimer.Start();
-            AddDateFilter("Đến:", _dtpEndDate);
+            AddDateFilter($"{Lang("To")}:", _dtpEndDate);
 
             // Action filter ComboBox
             _cboAction = new ComboBox
@@ -230,10 +231,10 @@ namespace WinFormsApp1.View.Admin
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Width = 150
             };
-            _cboAction.Items.Add("Tất cả hành động");
+            _cboAction.Items.Add(Lang("AllActions"));
             _cboAction.SelectedIndex = 0;
             _cboAction.SelectedIndexChanged += (s, e) => _searchTimer.Start();
-            AddCustomFilter("Hành động:", _cboAction);
+            AddCustomFilter($"{Lang("Action")}:", _cboAction);
 
             // Entity Type filter ComboBox
             _cboEntityType = new ComboBox
@@ -242,17 +243,17 @@ namespace WinFormsApp1.View.Admin
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Width = 130
             };
-            _cboEntityType.Items.Add("Tất cả loại");
+            _cboEntityType.Items.Add(Lang("AllTypes"));
             _cboEntityType.SelectedIndex = 0;
             _cboEntityType.SelectedIndexChanged += (s, e) => _searchTimer.Start();
-            AddCustomFilter("Loại:", _cboEntityType);
+            AddCustomFilter($"{Lang("Type")}:", _cboEntityType);
         }
 
         private void SetupSearchBox()
         {
             if (searchBox != null)
             {
-                TextBoxHelper.SetPlaceholder(searchBox, "Tìm người dùng, hành động...", true);
+                TextBoxHelper.SetPlaceholder(searchBox, $"{Lang("SearchUserAction")}...", true);
                 searchBox.Width = 200;
                 searchBox.TextChanged += (s, e) => _searchTimer.Start();
             }
@@ -277,7 +278,7 @@ namespace WinFormsApp1.View.Admin
 
             _lblPageInfo = new Label
             {
-                Text = "Trang 1 / 1 (0 bản ghi)",
+                Text = $"{Lang("Page")} 1 / 1 (0 {Lang("Records")})",
                 AutoSize = true,
                 Font = new Font("Segoe UI", 9),
                 Margin = new Padding(0, 8, 20, 0)
@@ -285,7 +286,7 @@ namespace WinFormsApp1.View.Admin
 
             _btnPrevPage = new Button
             {
-                Text = "◀ Trước",
+                Text = $"◀ {Lang("Previous")}",
                 Size = new Size(75, 28),
                 BackColor = Color.FromArgb(108, 117, 125),
                 ForeColor = Color.White,
@@ -299,7 +300,7 @@ namespace WinFormsApp1.View.Admin
 
             _btnNextPage = new Button
             {
-                Text = "Sau ▶",
+                Text = $"{Lang("Next")} ▶",
                 Size = new Size(75, 28),
                 BackColor = Color.FromArgb(108, 117, 125),
                 ForeColor = Color.White,
@@ -333,7 +334,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this.FindForm(), $"Lỗi tải dữ liệu: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), Lang("DataLoadError", ex.Message));
             }
             finally
             {
@@ -349,7 +350,7 @@ namespace WinFormsApp1.View.Admin
                 var entityTypes = await _auditController.GetDistinctEntityTypesAsync();
 
                 _cboAction.Items.Clear();
-                _cboAction.Items.Add("Tất cả hành động");
+                _cboAction.Items.Add(Lang("AllActions"));
                 foreach (var action in actions)
                 {
                     _cboAction.Items.Add(new ComboBoxItem(action, AuditActions.GetDisplayName(action)));
@@ -357,7 +358,7 @@ namespace WinFormsApp1.View.Admin
                 _cboAction.SelectedIndex = 0;
 
                 _cboEntityType.Items.Clear();
-                _cboEntityType.Items.Add("Tất cả loại");
+                _cboEntityType.Items.Add(Lang("AllTypes"));
                 foreach (var entityType in entityTypes)
                 {
                     _cboEntityType.Items.Add(new ComboBoxItem(entityType, AuditEntityTypes.GetDisplayName(entityType)));
@@ -391,10 +392,10 @@ namespace WinFormsApp1.View.Admin
 
             var cards = new[]
             {
-                ("📊 Tổng Log", _statistics.TotalLogs.ToString("N0"), Color.FromArgb(59, 130, 246)),
-                ("📅 Hôm nay", _statistics.LogsToday.ToString("N0"), Color.FromArgb(16, 185, 129)),
-                ("📆 Tuần này", _statistics.LogsThisWeek.ToString("N0"), Color.FromArgb(245, 158, 11)),
-                ("📈 Tháng này", _statistics.LogsThisMonth.ToString("N0"), Color.FromArgb(139, 92, 246))
+                ($"📊 {Lang("TotalLogs")}", _statistics.TotalLogs.ToString("N0"), Color.FromArgb(59, 130, 246)),
+                ($"📅 {Lang("Today")}", _statistics.LogsToday.ToString("N0"), Color.FromArgb(16, 185, 129)),
+                ($"📆 {Lang("ThisWeek")}", _statistics.LogsThisWeek.ToString("N0"), Color.FromArgb(245, 158, 11)),
+                ($"📈 {Lang("ThisMonth")}", _statistics.LogsThisMonth.ToString("N0"), Color.FromArgb(139, 92, 246))
             };
 
             // Calculate initial card width
@@ -460,7 +461,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this.FindForm(), $"Lỗi tải log: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), Lang("LogLoadError", ex.Message));
             }
         }
 
@@ -474,7 +475,7 @@ namespace WinFormsApp1.View.Admin
         {
             if (_currentResult == null) return;
 
-            _lblPageInfo.Text = $"Trang {_currentResult.PageNumber} / {Math.Max(1, _currentResult.TotalPages)} ({_currentResult.TotalCount:N0} bản ghi)";
+            _lblPageInfo.Text = $"{Lang("Page")} {_currentResult.PageNumber} / {Math.Max(1, _currentResult.TotalPages)} ({_currentResult.TotalCount:N0} {Lang("Records")})";
             _btnPrevPage.Enabled = _currentResult.HasPreviousPage;
             _btnNextPage.Enabled = _currentResult.HasNextPage;
         }
@@ -515,7 +516,7 @@ namespace WinFormsApp1.View.Admin
                 using var saveDialog = new SaveFileDialog
                 {
                     Filter = "CSV Files|*.csv|JSON Files|*.json",
-                    Title = "Xuất lịch sử hoạt động",
+                    Title = Lang("ExportAuditLogs"),
                     FileName = $"AuditLogs_{DateTime.Now:yyyyMMdd_HHmmss}"
                 };
 
@@ -525,7 +526,7 @@ namespace WinFormsApp1.View.Admin
                     var data = await _auditController.ExportLogsAsync(_currentFilter, format);
                     
                     System.IO.File.WriteAllBytes(saveDialog.FileName, data);
-                    ToastHelper.Show(this.FindForm(), "✅ Xuất file thành công!");
+                    ToastHelper.Show(this.FindForm(), $"✅ {Lang("ExportSuccess")}");
 
                     // Log action
                     await AuditHelper.LogDataExportAsync("AuditLogs", _currentResult?.TotalCount ?? 0);
@@ -533,7 +534,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this.FindForm(), $"Lỗi xuất file: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), Lang("ExportError", ex.Message));
             }
         }
 
@@ -621,7 +622,7 @@ namespace WinFormsApp1.View.Admin
         {
             var detailForm = new Form
             {
-                Text = $"Chi tiết Log #{log.AuditId}",
+                Text = $"{Lang("LogDetail")} #{log.AuditId}",
                 Size = new Size(600, 500),
                 StartPosition = FormStartPosition.CenterParent,
                 BackColor = Color.White,
@@ -686,22 +687,22 @@ namespace WinFormsApp1.View.Admin
             }
 
             AddField("ID:", log.AuditId.ToString());
-            AddField("Thời gian:", log.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss"));
-            AddField("Người dùng:", $"{log.FullName} ({log.Username})");
-            AddField("Hành động:", log.ActionDisplay);
-            AddField("Loại đối tượng:", log.EntityTypeDisplay);
-            AddField("ID Đối tượng:", log.EntityId?.ToString() ?? "-");
-            AddField("Địa chỉ IP:", log.IpAddress);
+            AddField($"{Lang("Time")}:", LanguageHelper.FormatDateTime(log.CreatedAt));
+            AddField($"{Lang("User")}:", $"{log.FullName} ({log.Username})");
+            AddField($"{Lang("Action")}:", log.ActionDisplay);
+            AddField($"{Lang("EntityType")}:", log.EntityTypeDisplay);
+            AddField($"{Lang("EntityId")}:", log.EntityId?.ToString() ?? "-");
+            AddField($"{Lang("IPAddress")}:", log.IpAddress);
             
             if (!string.IsNullOrEmpty(log.Before))
-                AddField("Dữ liệu trước:", log.Before, true);
+                AddField($"{Lang("DataBefore")}:", log.Before, true);
             
             if (!string.IsNullOrEmpty(log.After))
-                AddField("Chi tiết / Dữ liệu sau:", log.After, true);
+                AddField($"{Lang("DataAfter")}:", log.After, true);
 
             var btnClose = new Button
             {
-                Text = "Đóng",
+                Text = Lang("Close"),
                 Size = new Size(100, 35),
                 Location = new Point(250, y + 10),
                 FlatStyle = FlatStyle.Flat,

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Guna.Charts.WinForms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using static WinFormsApp1.Helpers.ResponsiveLayoutHelper;
 using static WinFormsApp1.Helpers.UIComponentHelper;
 using WinFormsApp1.ViewModels;
@@ -15,6 +16,12 @@ namespace WinFormsApp1.View.Admin
     public partial class RevenueDashboard : UserControl
     {
         private readonly AdminController _adminController;
+
+        /// <summary>
+        /// Shorthand for LanguageHelper.GetString
+        /// </summary>
+        private static string Lang(string key) => LanguageHelper.GetString(key);
+        private static string Lang(string key, params object[] args) => LanguageHelper.GetString(key, args);
 
         public RevenueDashboard()
         {
@@ -26,10 +33,10 @@ namespace WinFormsApp1.View.Admin
         private void InitializeFilterControls()
         {
             // Initialize ComboBox items
-            statusCombo.Items.AddRange(new object[] { "Tất cả", "Đã thanh toán", "Chờ thanh toán", "Hoàn tiền" });
+            statusCombo.Items.AddRange(new object[] { Lang("All"), Lang("Paid"), Lang("Pending"), Lang("Refunded") });
             statusCombo.SelectedIndex = 0;
 
-            providerCombo.Items.AddRange(new object[] { "Tất cả", "VNPay", "Stripe", "Khác" });
+            providerCombo.Items.AddRange(new object[] { Lang("All"), "VNPay", "Stripe", Lang("Other") });
             providerCombo.SelectedIndex = 0;
 
             // Initialize DatePickers
@@ -98,7 +105,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi");
+                MessageBox.Show(Lang("DataLoadError", ex.Message), Lang("Error"));
             }
         }
 
@@ -108,10 +115,10 @@ namespace WinFormsApp1.View.Admin
 
             var cards = new[]
             {
-                new { Title = "Tổng doanh thu", Value = $"{stats.TotalRevenue:N0} VND", Color = Color.FromArgb(34, 197, 94) },
-                new { Title = "Doanh thu tháng này", Value = $"{stats.RevenueThisMonth:N0} VND", Color = Color.FromArgb(14, 165, 233) },
-                new { Title = "Đã thanh toán", Value = $"{stats.PaidAmount:N0} VND", Color = Color.FromArgb(56, 178, 172) },
-                new { Title = "Chờ thanh toán", Value = $"{stats.PendingAmount:N0} VND", Color = Color.FromArgb(251, 191, 36) }
+                new { Title = Lang("TotalRevenue"), Value = LanguageHelper.FormatVND(stats.TotalRevenue), Color = Color.FromArgb(34, 197, 94) },
+                new { Title = Lang("RevenueThisMonth"), Value = LanguageHelper.FormatVND(stats.RevenueThisMonth), Color = Color.FromArgb(14, 165, 233) },
+                new { Title = Lang("Paid"), Value = LanguageHelper.FormatVND(stats.PaidAmount), Color = Color.FromArgb(56, 178, 172) },
+                new { Title = Lang("Pending"), Value = LanguageHelper.FormatVND(stats.PendingAmount), Color = Color.FromArgb(251, 191, 36) }
             };
 
             int cardWidth = (Width - 85) / 4;
@@ -136,7 +143,7 @@ namespace WinFormsApp1.View.Admin
             {
                 var title = new Label
                 {
-                    Text = "📈 Xu hướng doanh thu",
+                    Text = $"📈 {Lang("RevenueTrend")}",
                     Font = new Font("Segoe UI", 12, FontStyle.Bold),
                     Location = new Point(10, 10),
                     AutoSize = true,
@@ -152,21 +159,21 @@ namespace WinFormsApp1.View.Admin
             // Other Charts
             chartsFlowPanel.Controls.Clear();
 
-            var statusPanel = CreateResponsiveChartPanel("💳 Trạng thái thanh toán", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
+            var statusPanel = CreateResponsiveChartPanel($"💳 {Lang("PaymentStatus")}", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
             statusPanel.Margin = new Padding(0, 0, 20, 0);
             var statusChart = CreateDoughnutChart(statusPanel, new[] { 
-                ("Hoàn thành", stats.PaidCount, Color.FromArgb(34, 197, 94)),
-                ("Chờ", stats.PendingCount, Color.FromArgb(251, 191, 36)),
-                ("Hoàn tiền", stats.RefundedCount, Color.FromArgb(239, 68, 68))
+                (Lang("Completed"), stats.PaidCount, Color.FromArgb(34, 197, 94)),
+                (Lang("Pending"), stats.PendingCount, Color.FromArgb(251, 191, 36)),
+                (Lang("Refunded"), stats.RefundedCount, Color.FromArgb(239, 68, 68))
             });
             statusPanel.Controls.Add(statusChart);
             chartsFlowPanel.Controls.Add(statusPanel);
 
-            var providerPanel = CreateResponsiveChartPanel("🏦 Nhà cung cấp thanh toán", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
+            var providerPanel = CreateResponsiveChartPanel($"🏦 {Lang("PaymentProvider")}", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
             var providerChart = CreateDoughnutChart(providerPanel, new[] {
                 ("VNPay", stats.VNPayCount, Color.FromArgb(14, 165, 233)),
                 ("Stripe", stats.StripeCount, Color.FromArgb(139, 92, 246)),
-                ("Khác", stats.OtherPaymentCount, Color.FromArgb(156, 163, 175))
+                (Lang("Other"), stats.OtherPaymentCount, Color.FromArgb(156, 163, 175))
             });
             providerPanel.Controls.Add(providerChart);
             chartsFlowPanel.Controls.Add(providerPanel);
@@ -183,7 +190,7 @@ namespace WinFormsApp1.View.Admin
 
             var dataset = new GunaBarDataset
             {
-                Label = "Doanh thu"
+                Label = Lang("Revenue")
             };
             dataset.FillColors.Add(Color.FromArgb(14, 165, 233));
 

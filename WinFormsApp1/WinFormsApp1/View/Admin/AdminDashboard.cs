@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.View.User;
 using WinFormsApp1.ViewModels;
 using static WinFormsApp1.Helpers.ColorPalette;
@@ -27,6 +28,12 @@ namespace WinFormsApp1.View.Admin
             { "Reports", true }
         };
 
+        /// <summary>
+        /// Shorthand for LanguageHelper.GetString
+        /// </summary>
+        private static string Lang(string key) => LanguageHelper.GetString(key);
+        private static string Lang(string key, params object[] args) => LanguageHelper.GetString(key, args);
+
         public AdminDashboard()
         {
             InitializeComponent();
@@ -37,7 +44,7 @@ namespace WinFormsApp1.View.Admin
 
         private void SetupLayout()
         {
-            Text = "Tổng quan hệ thống - Quiz Web Admin Panel";
+            Text = $"{Lang("AdminDashboard")} - YMEDU Admin Panel";
             Size = new Size(1898, 1024);
             MinimumSize = new Size(1200, 700);
             StartPosition = FormStartPosition.CenterScreen;
@@ -100,7 +107,7 @@ namespace WinFormsApp1.View.Admin
             // User info label (clickable)
             var userLabel = new Label
             {
-                Text = AuthHelper.CurrentUser != null ? $"{AuthHelper.CurrentUser.FullName}" : "Quản trị viên",
+                Text = AuthHelper.CurrentUser != null ? $"{AuthHelper.CurrentUser.FullName}" : Lang("Administrator"),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 ForeColor = Color.White,
                 AutoSize = true,
@@ -117,29 +124,29 @@ namespace WinFormsApp1.View.Admin
                 AutoSize = true
             };
 
-            // Notification bell button (thay vì profile icon)
-            var notificationBtn = new Button
+            // Language selector button
+            var languageBtn = new Button
             {
-                Text = "🔔",
-                Size = new Size(35, 35),
+                Text = $"{LanguageHelper.GetCurrentFlag()} {LanguageHelper.CurrentLanguageName} ▼",
+                Size = new Size(130, 30),
                 FlatStyle = FlatStyle.Flat,
-                BackColor = Color.Transparent,
+                BackColor = Color.FromArgb(74, 85, 104),
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 14),
+                Font = new Font("Segoe UI", 9),
                 Cursor = Cursors.Hand
             };
-            notificationBtn.FlatAppearance.BorderSize = 0;
-            notificationBtn.FlatAppearance.MouseOverBackColor = Color.FromArgb(74, 85, 104);
-            notificationBtn.Click += (s, e) => ShowNotifications();
+            languageBtn.FlatAppearance.BorderSize = 0;
+            languageBtn.FlatAppearance.MouseOverBackColor = Color.FromArgb(94, 105, 124);
+            languageBtn.Click += (s, e) => ShowLanguageMenu(languageBtn);
 
             // Add tooltip
             var tooltip = new ToolTip();
-            tooltip.SetToolTip(avatarButton, "Hồ sơ cá nhân");
-            tooltip.SetToolTip(userLabel, "Nhấn để xem hồ sơ cá nhân");
-            tooltip.SetToolTip(notificationBtn, "Thông báo");
+            tooltip.SetToolTip(avatarButton, Lang("Profile"));
+            tooltip.SetToolTip(userLabel, Lang("ClickToViewProfile"));
+            tooltip.SetToolTip(languageBtn, Lang("ChangeLanguage"));
 
             // Add controls to profile panel
-            profilePanel.Controls.AddRange(new Control[] { avatarButton, userLabel, roleLabel, notificationBtn });
+            profilePanel.Controls.AddRange(new Control[] { avatarButton, userLabel, roleLabel, languageBtn });
             
             // Position controls on resize
             profilePanel.Resize += (s, e) =>
@@ -148,7 +155,7 @@ namespace WinFormsApp1.View.Admin
                 avatarButton.Location = new Point(15, centerY - avatarButton.Height / 2);
                 userLabel.Location = new Point(65, centerY - 15);
                 roleLabel.Location = new Point(65, centerY + 5);
-                notificationBtn.Location = new Point(profilePanel.Width - 55, centerY - notificationBtn.Height / 2);
+                languageBtn.Location = new Point(profilePanel.Width - 150, centerY - languageBtn.Height / 2);
             };
 
             topPanel.Controls.AddRange(new Control[] { logoPanel, profilePanel });
@@ -313,40 +320,39 @@ namespace WinFormsApp1.View.Admin
             }
 
             // Dashboard Section
-            CreateSection("📊 Dashboard", "Dashboard", () => {
-                CreateButton("Tổng quan", "overview", "📋");
-                CreateButton("Người dùng", "users", "👥");
-                CreateButton("Học tập", "learning", "📖");
-                CreateButton("Doanh thu", "revenue", "💰");
+            CreateSection($"📊 {Lang("Dashboard")}", "Dashboard", () => {
+                CreateButton(Lang("Overview"), "overview", "📋");
+                CreateButton(Lang("Users"), "users", "👥");
+                CreateButton(Lang("Learning"), "learning", "📖");
+                CreateButton(Lang("Revenue"), "revenue", "💰");
             });
 
             yPos += 10;
 
             // Management Section
-            CreateSection("📋 Quản lý", "Management", () => {
-                CreateButton("Người dùng", "user-management", "👤");
-                CreateButton("Khóa học", "courses", "📚");
-                CreateButton("Kiểm duyệt", "course-moderation", "✅");
-                CreateButton("Danh mục", "categories", "📁");
-                CreateButton("Flashcard", "flashcards", "🗂️");
-                CreateButton("Lịch sử hoạt động", "audit-logs", "📜");
-                // Thêm item "Mã giảm giá" vào sidebar
-                CreateButton("Mã giảm giá", "discounts", "🏷️");
+            CreateSection($"📋 {Lang("Management")}", "Management", () => {
+                CreateButton(Lang("Users"), "user-management", "👤");
+                CreateButton(Lang("Courses"), "courses", "📚");
+                CreateButton(Lang("CourseModeration"), "course-moderation", "✅");
+                CreateButton(Lang("Categories"), "categories", "📁");
+                CreateButton(Lang("Flashcards"), "flashcards", "🗂️");
+                CreateButton(Lang("AuditLogs"), "audit-logs", "📜");
+                CreateButton(Lang("Discounts"), "discounts", "🏷️");
             });
 
             yPos += 10;
 
             // Reports Section
-            CreateSection("📊 Báo cáo", "Reports", () => {
-                CreateButton("Tổng hợp", "report-executive", "📈");
-                CreateButton("Báo cáo người dùng", "report-users", "📄");
-                CreateButton("Báo cáo khóa học", "report-courses", "📚");
-                CreateButton("Báo cáo doanh thu", "report-revenue", "💰");
+            CreateSection($"📊 {Lang("Reports")}", "Reports", () => {
+                CreateButton(Lang("ExecutiveReport"), "report-executive", "📈");
+                CreateButton(Lang("UserReport"), "report-users", "📄");
+                CreateButton(Lang("CourseReport"), "report-courses", "📚");
+                CreateButton(Lang("RevenueReport"), "report-revenue", "💰");
             });
             
             // Home Button only (Profile moved to header)
             yPos += 20;
-            CreateButton("Trang chủ", "home", "🏠");
+            CreateButton(Lang("Home"), "home", "🏠");
         }
 
         private void ToggleSidebar()
@@ -434,7 +440,7 @@ namespace WinFormsApp1.View.Admin
                     LoadDiscountManagementControl();
                     break;
                 default:
-                    ToastHelper.Show(this, $"Chức năng {button?.Text} đang được phát triển");
+                    ToastHelper.Show(this, Lang("FeatureInDevelopment", button?.Text ?? ""));
                     break;
             }
         }
@@ -450,7 +456,7 @@ namespace WinFormsApp1.View.Admin
         private void ShowNotifications()
         {
             // TODO: Implement notification dropdown or panel
-            ToastHelper.Show(this, "🔔 Không có thông báo mới");
+            ToastHelper.Show(this, $"🔔 {Lang("NoNewNotifications")}");
         }
 
         private void LoadDiscountManagementControl()
@@ -463,7 +469,7 @@ namespace WinFormsApp1.View.Admin
 
         private void GoToHomePage()
         {
-            var result = MessageBox.Show("Bạn có muốn chuyển về trang chủ?", "Xác nhận",
+            var result = MessageBox.Show(Lang("ConfirmGoToHome"), Lang("Confirm"),
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
@@ -487,10 +493,10 @@ namespace WinFormsApp1.View.Admin
         {
             var cards = new[]
             {
-                new { Title = "Tổng người dùng", Value = stats.TotalUsers.ToString(), Color = Color.FromArgb(56, 178, 172) },
-                new { Title = "Tổng khóa học", Value = stats.TotalCourses.ToString(), Color = Color.FromArgb(34, 197, 94) },
-                new { Title = "Tổng bài kiểm tra", Value = stats.TotalTests.ToString(), Color = Color.FromArgb(251, 191, 36) },
-                new { Title = "Tổng doanh thu", Value = $"${stats.TotalRevenue:N0}", Color = Color.FromArgb(14, 165, 233) }
+                new { Title = Lang("TotalUsers"), Value = stats.TotalUsers.ToString(), Color = Color.FromArgb(56, 178, 172) },
+                new { Title = Lang("TotalCourses"), Value = stats.TotalCourses.ToString(), Color = Color.FromArgb(34, 197, 94) },
+                new { Title = Lang("TotalTests"), Value = stats.TotalTests.ToString(), Color = Color.FromArgb(251, 191, 36) },
+                new { Title = Lang("TotalRevenue"), Value = LanguageHelper.FormatVND(stats.TotalRevenue), Color = Color.FromArgb(14, 165, 233) }
             };
 
             int xPos = 0;
@@ -600,7 +606,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this, $"Lỗi tạo báo cáo: {ex.Message}");
+                ToastHelper.Show(this, Lang("ReportError", ex.Message));
             }
         }
 
@@ -615,7 +621,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this, $"Lỗi tạo báo cáo: {ex.Message}");
+                ToastHelper.Show(this, Lang("ReportError", ex.Message));
             }
         }
 
@@ -630,7 +636,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this, $"Lỗi tạo báo cáo: {ex.Message}");
+                ToastHelper.Show(this, Lang("ReportError", ex.Message));
             }
         }
 
@@ -640,6 +646,44 @@ namespace WinFormsApp1.View.Admin
             var auditLogControl = new AuditLogManagementControl();
             auditLogControl.Dock = DockStyle.Fill;
             contentPanel.Controls.Add(auditLogControl);
+        }
+
+        private void ShowLanguageMenu(Button languageBtn)
+        {
+            var menu = new ContextMenuStrip();
+            menu.Font = new Font("Segoe UI", 10);
+
+            foreach (var lang in LanguageHelper.AvailableLanguages)
+            {
+                var item = new ToolStripMenuItem
+                {
+                    Text = $"{LanguageHelper.GetFlag(lang.Key)} {lang.Value}",
+                    Tag = lang.Key,
+                    Checked = lang.Key == LanguageHelper.CurrentLanguageCode
+                };
+                item.Click += (s, e) =>
+                {
+                    var selectedCode = (s as ToolStripMenuItem)?.Tag?.ToString();
+                    if (!string.IsNullOrEmpty(selectedCode) && selectedCode != LanguageHelper.CurrentLanguageCode)
+                    {
+                        LanguageHelper.SetLanguage(selectedCode);
+                        languageBtn.Text = $"{LanguageHelper.GetCurrentFlag()} {LanguageHelper.CurrentLanguageName} ▼";
+                        
+                        // Show message to restart for full effect
+                        MessageBox.Show(
+                            Lang("LanguageChangedRestart"),
+                            Lang("Information"),
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                            
+                        // Recreate sidebar menu to apply new language
+                        CreateSidebarMenu();
+                    }
+                };
+                menu.Items.Add(item);
+            }
+
+            menu.Show(languageBtn, new Point(0, languageBtn.Height));
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)

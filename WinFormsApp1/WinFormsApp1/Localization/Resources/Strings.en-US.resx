@@ -41,6 +41,449 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   
+  <!-- Admin Dashboard -->
+  <data name="Administrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <data name="ClickToViewProfile" xml:space="preserve">
+    <value>Click to view profile</value>
+  </data>
+  <data name="ChangeLanguage" xml:space="preserve">
+    <value>Change language</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Management" xml:space="preserve">
+    <value>Management</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="AuditLogs" xml:space="preserve">
+    <value>Audit Logs</value>
+  </data>
+  <data name="Discounts" xml:space="preserve">
+    <value>Discounts</value>
+  </data>
+  <data name="UserReport" xml:space="preserve">
+    <value>User Report</value>
+  </data>
+  <data name="CourseReport" xml:space="preserve">
+    <value>Course Report</value>
+  </data>
+  <data name="RevenueReport" xml:space="preserve">
+    <value>Revenue Report</value>
+  </data>
+  <data name="FeatureInDevelopment" xml:space="preserve">
+    <value>Feature {0} is under development</value>
+  </data>
+  <data name="NoNewNotifications" xml:space="preserve">
+    <value>No new notifications</value>
+  </data>
+  <data name="ConfirmGoToHome" xml:space="preserve">
+    <value>Do you want to go to home page?</value>
+  </data>
+  <data name="TotalUsers" xml:space="preserve">
+    <value>Total Users</value>
+  </data>
+  <data name="TotalCourses" xml:space="preserve">
+    <value>Total Courses</value>
+  </data>
+  <data name="TotalTests" xml:space="preserve">
+    <value>Total Tests</value>
+  </data>
+  <data name="TotalRevenue" xml:space="preserve">
+    <value>Total Revenue</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="Entries" xml:space="preserve">
+    <value>entries</value>
+  </data>
+  
+  <!-- Executive Report -->
+  <data name="TimePeriod" xml:space="preserve">
+    <value>Time Period</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="ThisWeek" xml:space="preserve">
+    <value>This Week</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>This Month</value>
+  </data>
+  <data name="Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="ExportReport" xml:space="preserve">
+    <value>Export Report</value>
+  </data>
+  <data name="NewUsers" xml:space="preserve">
+    <value>New Users</value>
+  </data>
+  <data name="CoursesSold" xml:space="preserve">
+    <value>Courses Sold</value>
+  </data>
+  <data name="RevenueTrend" xml:space="preserve">
+    <value>Revenue Trend</value>
+  </data>
+  <data name="UserGrowth" xml:space="preserve">
+    <value>User Growth (By Month)</value>
+  </data>
+  <data name="TopPopularCourses" xml:space="preserve">
+    <value>Top Popular Courses</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>students</value>
+  </data>
+  <data name="ExportFeatureInDevelopment" xml:space="preserve">
+    <value>Export report feature is under development. Please use screenshot or view detailed reports in sub-menu.</value>
+  </data>
+  
+  <!-- Filter Options -->
+  <data name="FilterStatus" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="FilterType" xml:space="preserve">
+    <value>Type:</value>
+  </data>
+  <data name="FilterVisibility" xml:space="preserve">
+    <value>Visibility:</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="StatusInactive" xml:space="preserve">
+    <value>Paused</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="StatusExhausted" xml:space="preserve">
+    <value>Exhausted</value>
+  </data>
+  <data name="StatusNotStarted" xml:space="preserve">
+    <value>Not Started</value>
+  </data>
+  <data name="TypePercentage" xml:space="preserve">
+    <value>Percentage</value>
+  </data>
+  <data name="TypeFixedAmount" xml:space="preserve">
+    <value>Fixed Amount</value>
+  </data>
+  <data name="VisibilityPublic" xml:space="preserve">
+    <value>Public</value>
+  </data>
+  <data name="VisibilityPrivate" xml:space="preserve">
+    <value>Private</value>
+  </data>
+  <data name="VisibilityUnlisted" xml:space="preserve">
+    <value>Unlisted</value>
+  </data>
+  
+  <!-- Validation -->
+  <data name="EmailRequired" xml:space="preserve">
+    <value>Email is required</value>
+  </data>
+  <data name="FullNameRequired" xml:space="preserve">
+    <value>Full name is required</value>
+  </data>
+  <data name="UsernameRequired" xml:space="preserve">
+    <value>Username is required</value>
+  </data>
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>Password is required</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Name is required</value>
+  </data>
+  <data name="TitleRequired" xml:space="preserve">
+    <value>Title is required</value>
+  </data>
+  <data name="ReportError" xml:space="preserve">
+    <value>Error generating report: {0}</value>
+  </data>
+  <data name="LanguageChangedRestart" xml:space="preserve">
+    <value>Language has been changed. Some changes will take effect after restarting the application.</value>
+  </data>
+  
+  <!-- User Management -->
+  <data name="UserManagement" xml:space="preserve">
+    <value>User Management</value>
+  </data>
+  <data name="UserInfo" xml:space="preserve">
+    <value>User Information</value>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="EnterEmail" xml:space="preserve">
+    <value>Enter email</value>
+  </data>
+  <data name="EnterFullName" xml:space="preserve">
+    <value>Enter full name</value>
+  </data>
+  <data name="EnterUsername" xml:space="preserve">
+    <value>Enter username</value>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Enter password</value>
+  </data>
+  <data name="AllRoles" xml:space="preserve">
+    <value>All Roles</value>
+  </data>
+  <data name="AllStatuses" xml:space="preserve">
+    <value>All Statuses</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>Created At</value>
+  </data>
+  <data name="PleaseSelectUserToEdit" xml:space="preserve">
+    <value>Please select a user to edit!</value>
+  </data>
+  <data name="PleaseSelectUserToDelete" xml:space="preserve">
+    <value>Please select a user to delete!</value>
+  </data>
+  <data name="ConfirmDeleteUser" xml:space="preserve">
+    <value>Are you sure you want to delete this user?</value>
+  </data>
+  <data name="FixErrorsBeforeSave" xml:space="preserve">
+    <value>Please fix errors before saving!</value>
+  </data>
+  <data name="SaveSuccess" xml:space="preserve">
+    <value>Saved successfully!</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>Save failed!</value>
+  </data>
+  <data name="DeleteSuccess" xml:space="preserve">
+    <value>Deleted successfully!</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Delete failed!</value>
+  </data>
+  <data name="DataSaveError" xml:space="preserve">
+    <value>Error saving data: {0}</value>
+  </data>
+  <data name="DataDeleteError" xml:space="preserve">
+    <value>Error deleting data: {0}</value>
+  </data>
+  
+  <!-- Category Management -->
+  <data name="CategoryManagement" xml:space="preserve">
+    <value>Category Management</value>
+  </data>
+  <data name="CategoryInfo" xml:space="preserve">
+    <value>Category Information</value>
+  </data>
+  <data name="CategoryName" xml:space="preserve">
+    <value>Category Name</value>
+  </data>
+  <data name="EnterCategoryName" xml:space="preserve">
+    <value>Enter category name</value>
+  </data>
+  <data name="EnterDescription" xml:space="preserve">
+    <value>Enter description</value>
+  </data>
+  <data name="PleaseSelectCategoryToEdit" xml:space="preserve">
+    <value>Please select a category to edit!</value>
+  </data>
+  <data name="PleaseSelectCategoryToDelete" xml:space="preserve">
+    <value>Please select a category to delete!</value>
+  </data>
+  <data name="ConfirmDeleteCategory" xml:space="preserve">
+    <value>Are you sure you want to delete this category?</value>
+  </data>
+  
+  <!-- Audit Log Management -->
+  <data name="AuditLogHistory" xml:space="preserve">
+    <value>System Activity History</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="ExportFile" xml:space="preserve">
+    <value>Export File</value>
+  </data>
+  <data name="FromDate" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="AllActions" xml:space="preserve">
+    <value>All Actions</value>
+  </data>
+  <data name="AllTypes" xml:space="preserve">
+    <value>All Types</value>
+  </data>
+  <data name="SearchUserAction" xml:space="preserve">
+    <value>Search user, action</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Records" xml:space="preserve">
+    <value>records</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="TotalLogs" xml:space="preserve">
+    <value>Total Logs</value>
+  </data>
+  <data name="LogLoadError" xml:space="preserve">
+    <value>Error loading logs: {0}</value>
+  </data>
+  <data name="ExportAuditLogs" xml:space="preserve">
+    <value>Export Activity History</value>
+  </data>
+  <data name="ExportSuccess" xml:space="preserve">
+    <value>File exported successfully!</value>
+  </data>
+  <data name="ExportError" xml:space="preserve">
+    <value>Error exporting file: {0}</value>
+  </data>
+  <data name="LogDetail" xml:space="preserve">
+    <value>Log Detail</value>
+  </data>
+  <data name="EntityType" xml:space="preserve">
+    <value>Entity Type</value>
+  </data>
+  <data name="EntityId" xml:space="preserve">
+    <value>Entity ID</value>
+  </data>
+  <data name="IPAddress" xml:space="preserve">
+    <value>IP Address</value>
+  </data>
+  <data name="DataBefore" xml:space="preserve">
+    <value>Data Before</value>
+  </data>
+  <data name="DataAfter" xml:space="preserve">
+    <value>Details / Data After</value>
+  </data>
+  <data name="NewCourses" xml:space="preserve">
+    <value>New Courses</value>
+  </data>
+  <data name="NewTests" xml:space="preserve">
+    <value>New Tests</value>
+  </data>
+  
+  <!-- User Analytics Dashboard -->
+  <data name="Teacher" xml:space="preserve">
+    <value>Teacher</value>
+  </data>
+  <data name="Student" xml:space="preserve">
+    <value>Student</value>
+  </data>
+  <data name="NewUserGrowthByMonth" xml:space="preserve">
+    <value>New User Growth by Month</value>
+  </data>
+  <data name="RecentActiveUsers" xml:space="preserve">
+    <value>Recent Active Users</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="NeverLoggedIn" xml:space="preserve">
+    <value>Never logged in</value>
+  </data>
+  
+  <!-- Learning Analytics Dashboard -->
+  <data name="Courses" xml:space="preserve">
+    <value>Courses</value>
+  </data>
+  <data name="Classes" xml:space="preserve">
+    <value>Classes</value>
+  </data>
+  <data name="StudentsEnrolled" xml:space="preserve">
+    <value>Students Enrolled</value>
+  </data>
+  <data name="Students" xml:space="preserve">
+    <value>Students</value>
+  </data>
+  <data name="TopPopularCourses" xml:space="preserve">
+    <value>Top Popular Courses</value>
+  </data>
+  <data name="TestsByMonth" xml:space="preserve">
+    <value>Tests by Month</value>
+  </data>
+  <data name="Tests" xml:space="preserve">
+    <value>Tests</value>
+  </data>
+  
+  <!-- Revenue Dashboard -->
+  <data name="TotalRevenue" xml:space="preserve">
+    <value>Total Revenue</value>
+  </data>
+  <data name="RevenueThisMonth" xml:space="preserve">
+    <value>Revenue This Month</value>
+  </data>
+  <data name="Paid" xml:space="preserve">
+    <value>Paid</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Refunded" xml:space="preserve">
+    <value>Refunded</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="PaymentStatus" xml:space="preserve">
+    <value>Payment Status</value>
+  </data>
+  <data name="PaymentProvider" xml:space="preserve">
+    <value>Payment Provider</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  
   <!-- Common -->
   <data name="AppName" xml:space="preserve">
     <value>YMEDU Learning Platform</value>
@@ -336,5 +779,447 @@
   </data>
   <data name="CartEmpty" xml:space="preserve">
     <value>Cart is empty</value>
+  </data>
+  
+  <!-- Admin -->
+  <data name="AdminDashboard" xml:space="preserve">
+    <value>Admin Dashboard</value>
+  </data>
+  <data name="CourseModeration" xml:space="preserve">
+    <value>Course Moderation</value>
+  </data>
+  <data name="UserManagement" xml:space="preserve">
+    <value>User Management</value>
+  </data>
+  <data name="CategoryManagement" xml:space="preserve">
+    <value>Category Management</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="ExecutiveReport" xml:space="preserve">
+    <value>Executive Report</value>
+  </data>
+  
+  <!-- Course Moderation -->
+  <data name="ViewDetails" xml:space="preserve">
+    <value>View Details</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="Reject" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="RequestRevision" xml:space="preserve">
+    <value>Request Revision</value>
+  </data>
+  <data name="BatchApprove" xml:space="preserve">
+    <value>Batch Approve</value>
+  </data>
+  <data name="PendingReview" xml:space="preserve">
+    <value>Pending Review</value>
+  </data>
+  <data name="Approved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="NeedsRevision" xml:space="preserve">
+    <value>Needs Revision</value>
+  </data>
+  <data name="ApprovedToday" xml:space="preserve">
+    <value>Approved Today</value>
+  </data>
+  <data name="RejectedToday" xml:space="preserve">
+    <value>Rejected Today</value>
+  </data>
+  <data name="CoursePreview" xml:space="preserve">
+    <value>Course Preview</value>
+  </data>
+  <data name="Instructor" xml:space="preserve">
+    <value>Instructor</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="AutoCheckScore" xml:space="preserve">
+    <value>Auto Check Score</value>
+  </data>
+  <data name="CheckDetails" xml:space="preserve">
+    <value>Check Details</value>
+  </data>
+  <data name="CourseStructure" xml:space="preserve">
+    <value>Course Structure</value>
+  </data>
+  <data name="NoCourseSelected" xml:space="preserve">
+    <value>No course selected</value>
+  </data>
+  <data name="Points" xml:space="preserve">
+    <value>points</value>
+  </data>
+  <data name="Chapters" xml:space="preserve">
+    <value>Chapters</value>
+  </data>
+  <data name="Lessons" xml:space="preserve">
+    <value>Lessons</value>
+  </data>
+  <data name="AutoScore" xml:space="preserve">
+    <value>Auto Score</value>
+  </data>
+  <data name="SubmitDate" xml:space="preserve">
+    <value>Submit Date</value>
+  </data>
+  <data name="SelectAtLeast2Courses" xml:space="preserve">
+    <value>Please select at least 2 courses for batch approval!</value>
+  </data>
+  <data name="HoldCtrlToSelect" xml:space="preserve">
+    <value>Tip: Hold Ctrl and click to select multiple courses.</value>
+  </data>
+  <data name="NoPendingCoursesSelected" xml:space="preserve">
+    <value>No courses with 'Pending Review' status selected!</value>
+  </data>
+  <data name="ConfirmBatchApprove" xml:space="preserve">
+    <value>Are you sure you want to approve {0} courses?</value>
+  </data>
+  <data name="BatchApproveSuccess" xml:space="preserve">
+    <value>Approved {0}/{1} courses!</value>
+  </data>
+  <data name="CourseAlreadyApproved" xml:space="preserve">
+    <value>This course has already been approved!</value>
+  </data>
+  <data name="CourseAlreadyRejected" xml:space="preserve">
+    <value>This course has already been rejected!</value>
+  </data>
+  <data name="CourseAlreadyNeedsRevision" xml:space="preserve">
+    <value>This course has already been requested for revision!</value>
+  </data>
+  <data name="WaitForInstructorUpdate" xml:space="preserve">
+    <value>Please wait for the instructor to update and resubmit.</value>
+  </data>
+  <data name="EnterRejectionReason" xml:space="preserve">
+    <value>Enter rejection reason:</value>
+  </data>
+  <data name="EnterRevisionRequest" xml:space="preserve">
+    <value>Enter detailed revision request:</value>
+  </data>
+  <data name="PleaseEnterReason" xml:space="preserve">
+    <value>Please enter a reason!</value>
+  </data>
+  <data name="ReasonTooShort" xml:space="preserve">
+    <value>Reason must be at least {0} characters!</value>
+  </data>
+  <data name="Characters" xml:space="preserve">
+    <value>characters</value>
+  </data>
+  <data name="MinimumCharacters" xml:space="preserve">
+    <value>minimum {0}</value>
+  </data>
+  <data name="ReasonHint" xml:space="preserve">
+    <value>Note: Reason should be clear and specific so the instructor can understand and improve.</value>
+  </data>
+  <data name="LowScoreWarning" xml:space="preserve">
+    <value>Warning: Auto score is only {0}/100 (low).</value>
+  </data>
+  <data name="CourseQualityWarning" xml:space="preserve">
+    <value>The course may not meet quality standards.</value>
+  </data>
+  <data name="ConfirmApproveWithLowScore" xml:space="preserve">
+    <value>Confirm approval with low score</value>
+  </data>
+  <data name="CriticalErrorsWarning" xml:space="preserve">
+    <value>Warning: The course has critical errors:</value>
+  </data>
+  <data name="ConfirmApproveWithErrors" xml:space="preserve">
+    <value>Confirm approval with errors</value>
+  </data>
+  <data name="ConfirmApprove" xml:space="preserve">
+    <value>Confirm Approval</value>
+  </data>
+  <data name="ConfirmReject" xml:space="preserve">
+    <value>Confirm Rejection</value>
+  </data>
+  <data name="ConfirmRequestRevision" xml:space="preserve">
+    <value>Confirm Revision Request</value>
+  </data>
+  <data name="CourseWillBePublic" xml:space="preserve">
+    <value>The course will be published after approval.</value>
+  </data>
+  <data name="CourseWillNotBePublic" xml:space="preserve">
+    <value>The course will not be published and the instructor will be notified.</value>
+  </data>
+  <data name="InstructorWillBeNotified" xml:space="preserve">
+    <value>The instructor will be notified and needs to update the course.</value>
+  </data>
+  <data name="ApproveSuccess" xml:space="preserve">
+    <value>Course approved successfully!</value>
+  </data>
+  <data name="RejectSuccess" xml:space="preserve">
+    <value>Course rejected successfully!</value>
+  </data>
+  <data name="RequestRevisionSuccess" xml:space="preserve">
+    <value>Revision request sent successfully!</value>
+  </data>
+  <data name="CannotApproveCourse" xml:space="preserve">
+    <value>Cannot approve the course!</value>
+  </data>
+  <data name="CannotRejectCourse" xml:space="preserve">
+    <value>Cannot reject the course!</value>
+  </data>
+  <data name="CannotRequestRevision" xml:space="preserve">
+    <value>Cannot send revision request!</value>
+  </data>
+  <data name="AutoDetectedIssues" xml:space="preserve">
+    <value>Auto-detected issues:</value>
+  </data>
+  <data name="ContinueWithRevisionRequest" xml:space="preserve">
+    <value>Do you want to continue with the entered revision request?</value>
+  </data>
+  <data name="IssueSuggestions" xml:space="preserve">
+    <value>Issue Suggestions</value>
+  </data>
+  <data name="PleaseSelectCourse" xml:space="preserve">
+    <value>Please select a course!</value>
+  </data>
+  <data name="CourseDetailModeration" xml:space="preserve">
+    <value>Course Details - Moderation</value>
+  </data>
+  <data name="CourseInfo" xml:space="preserve">
+    <value>Course Information</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="NoDescription" xml:space="preserve">
+    <value>No description</value>
+  </data>
+  <data name="AutoCheckResults" xml:space="preserve">
+    <value>Auto Check Results</value>
+  </data>
+  <data name="TotalScore" xml:space="preserve">
+    <value>Total Score</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="EnterReason" xml:space="preserve">
+    <value>Enter Reason</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="FilterByStatus" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="NotCategorized" xml:space="preserve">
+    <value>Not categorized</value>
+  </data>
+  <data name="NA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="DataLoadError" xml:space="preserve">
+    <value>Error loading data: {0}</value>
+  </data>
+  
+  <!-- Course Management -->
+  <data name="CourseManagement" xml:space="preserve">
+    <value>Course Management</value>
+  </data>
+  <data name="PleaseSelectCourseToEdit" xml:space="preserve">
+    <value>Please select a course to edit!</value>
+  </data>
+  <data name="PleaseSelectCourseToDelete" xml:space="preserve">
+    <value>Please select a course to delete!</value>
+  </data>
+  <data name="ConfirmDeleteCourse" xml:space="preserve">
+    <value>Are you sure you want to delete this course?</value>
+  </data>
+  <data name="CourseDeleteSuccess" xml:space="preserve">
+    <value>Course deleted successfully!</value>
+  </data>
+  <data name="CourseDeleteFailed" xml:space="preserve">
+    <value>Failed to delete course!</value>
+  </data>
+  <data name="CourseSaveSuccess" xml:space="preserve">
+    <value>Course saved successfully!</value>
+  </data>
+  <data name="CourseSaveFailed" xml:space="preserve">
+    <value>Failed to save course!</value>
+  </data>
+  
+  <!-- Flashcard Management -->
+  <data name="FlashcardManagement" xml:space="preserve">
+    <value>Flashcard Management</value>
+  </data>
+  <data name="FlashcardSet" xml:space="preserve">
+    <value>Flashcard Set</value>
+  </data>
+  <data name="CardCount" xml:space="preserve">
+    <value>Card Count</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Creator" xml:space="preserve">
+    <value>Creator</value>
+  </data>
+  <data name="Public" xml:space="preserve">
+    <value>Public</value>
+  </data>
+  <data name="Private" xml:space="preserve">
+    <value>Private</value>
+  </data>
+  <data name="Unlisted" xml:space="preserve">
+    <value>Unlisted</value>
+  </data>
+  <data name="CreateFlashcardSet" xml:space="preserve">
+    <value>Create Flashcard Set</value>
+  </data>
+  <data name="EditFlashcardSet" xml:space="preserve">
+    <value>Edit Flashcard Set</value>
+  </data>
+  <data name="FlashcardSetDetail" xml:space="preserve">
+    <value>Flashcard Set Detail</value>
+  </data>
+  <data name="PleaseSelectFlashcardToEdit" xml:space="preserve">
+    <value>Please select a flashcard set to edit!</value>
+  </data>
+  <data name="PleaseSelectFlashcardToDelete" xml:space="preserve">
+    <value>Please select a flashcard set to delete!</value>
+  </data>
+  <data name="ConfirmDeleteFlashcard" xml:space="preserve">
+    <value>Are you sure you want to delete this flashcard set?</value>
+  </data>
+  <data name="FlashcardDeleteSuccess" xml:space="preserve">
+    <value>Flashcard set deleted successfully!</value>
+  </data>
+  <data name="FlashcardDeleteFailed" xml:space="preserve">
+    <value>Failed to delete flashcard set!</value>
+  </data>
+  <data name="FlashcardLoadError" xml:space="preserve">
+    <value>Error loading flashcard sets: {0}</value>
+  </data>
+  <data name="DataRefreshed" xml:space="preserve">
+    <value>Data refreshed!</value>
+  </data>
+  <data name="CardsInSet" xml:space="preserve">
+    <value>There are {0} cards in this set</value>
+  </data>
+  <data name="DisplayError" xml:space="preserve">
+    <value>Error displaying data: {0}</value>
+  </data>
+  
+  <!-- Discount Management -->
+  <data name="DiscountManagement" xml:space="preserve">
+    <value>Discount Code Management</value>
+  </data>
+  <data name="DiscountCode" xml:space="preserve">
+    <value>Discount Code</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="DiscountValue" xml:space="preserve">
+    <value>Discount</value>
+  </data>
+  <data name="DiscountType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Percentage" xml:space="preserve">
+    <value>Percentage</value>
+  </data>
+  <data name="FixedAmount" xml:space="preserve">
+    <value>Fixed Amount</value>
+  </data>
+  <data name="MinOrderAmount" xml:space="preserve">
+    <value>Min Order</value>
+  </data>
+  <data name="MaxDiscountAmount" xml:space="preserve">
+    <value>Max Discount</value>
+  </data>
+  <data name="RemainingUsage" xml:space="preserve">
+    <value>Remaining</value>
+  </data>
+  <data name="UsageLimit" xml:space="preserve">
+    <value>Usage Limit</value>
+  </data>
+  <data name="UsageCount" xml:space="preserve">
+    <value>Used</value>
+  </data>
+  <data name="UsageLimitPerUser" xml:space="preserve">
+    <value>Limit Per User</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Start Date</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>End Date</value>
+  </data>
+  <data name="TimeRemaining" xml:space="preserve">
+    <value>Time Left</value>
+  </data>
+  <data name="Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="Exhausted" xml:space="preserve">
+    <value>Exhausted</value>
+  </data>
+  <data name="NotStarted" xml:space="preserve">
+    <value>Not Started</value>
+  </data>
+  <data name="Paused" xml:space="preserve">
+    <value>Paused</value>
+  </data>
+  <data name="ApplyToAllCourses" xml:space="preserve">
+    <value>Apply to All Courses</value>
+  </data>
+  <data name="CreateDiscount" xml:space="preserve">
+    <value>Create Discount Code</value>
+  </data>
+  <data name="EditDiscount" xml:space="preserve">
+    <value>Edit Discount Code</value>
+  </data>
+  <data name="PleaseSelectDiscountToEdit" xml:space="preserve">
+    <value>Please select a discount code to edit!</value>
+  </data>
+  <data name="PleaseSelectDiscountToDelete" xml:space="preserve">
+    <value>Please select a discount code to delete!</value>
+  </data>
+  <data name="ConfirmDeleteDiscount" xml:space="preserve">
+    <value>Are you sure you want to delete this discount code?</value>
+  </data>
+  <data name="DiscountDeleteSuccess" xml:space="preserve">
+    <value>Discount code deleted!</value>
+  </data>
+  <data name="DiscountDeleteFailed" xml:space="preserve">
+    <value>Cannot delete discount code!</value>
+  </data>
+  <data name="DiscountSaveSuccess" xml:space="preserve">
+    <value>Discount code saved successfully!</value>
+  </data>
+  <data name="DiscountSaveFailed" xml:space="preserve">
+    <value>Failed to save discount code!</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="PercentageType" xml:space="preserve">
+    <value>Percentage (%)</value>
+  </data>
+  <data name="FixedAmountType" xml:space="preserve">
+    <value>Fixed Amount (VND)</value>
+  </data>
+  <data name="SearchCodeName" xml:space="preserve">
+    <value>Search by code, name...</value>
   </data>
 </root>

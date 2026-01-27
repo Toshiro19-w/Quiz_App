@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Models.Entities;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using System.Collections.Generic;
 
 namespace WinFormsApp1.View.Admin
@@ -40,12 +41,12 @@ namespace WinFormsApp1.View.Admin
             // Create a new modern DataGridView using helper method
             dataGridView = CreateModernDataGridView();
 
-            var formPanel = CreateInputForm("Thông tin danh mục",
-                ("Tên danh mục", "txtName", "Nhập tên danh mục...", true, false),
-                ("Mô tả", "txtDescription", "Nhập mô tả...", false, false)
+            var formPanel = CreateInputForm(Lang("CategoryInfo"),
+                (Lang("CategoryName"), "txtName", $"{Lang("EnterCategoryName")}...", true, false),
+                (Lang("Description"), "txtDescription", $"{Lang("EnterDescription")}...", false, false)
             );
             
-            SetupLayoutWithForm("Quản lý danh mục", dataGridView, formPanel);
+            SetupLayoutWithForm(Lang("CategoryManagement"), dataGridView, formPanel);
             WireCrudEvents();
             WireFormEvents();
             SetupSearchFunctionality(dataGridView, "Tên", "Mô_tả");
@@ -80,24 +81,24 @@ namespace WinFormsApp1.View.Admin
                 _allCategories = categories.Select(c => new
                 {
                     ID = c.CategoryId,
-                    Tên = c.Name,
-                    Mô_tả = c.Description?.Length > 50 ? c.Description.Substring(0, 50) + "..." : c.Description,
-                    Ngày_tạo = c.CreatedAt.ToString("dd/MM/yyyy")
+                    Name = c.Name,
+                    Description = c.Description?.Length > 50 ? c.Description.Substring(0, 50) + "..." : c.Description,
+                    CreatedAt = LanguageHelper.FormatDate(c.CreatedAt)
                 }).Cast<dynamic>().ToList();
                 
                 FilterCategoriesLocally();
                 
                 UpdateDataGridHeaders(dataGridView, new Dictionary<string, string>
                 {
-                    { "ID", "Mã" },
-                    { "Tên", "Tên danh mục" },
-                    { "Mô_tả", "Mô tả" },
-                    { "Ngày_tạo", "Ngày tạo" }
+                    { "ID", Lang("ID") },
+                    { "Name", Lang("CategoryName") },
+                    { "Description", Lang("Description") },
+                    { "CreatedAt", Lang("CreatedAt") }
                 });
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this.FindForm(), $"Lỗi tải dữ liệu: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), Lang("DataLoadError", ex.Message));
             }
         }
 
@@ -118,8 +119,8 @@ namespace WinFormsApp1.View.Admin
             _filteredCategories = _allCategories.Where(c =>
             {
                 bool matchSearch = string.IsNullOrEmpty(searchText) || 
-                                   ((string)c.Tên).ToLower().Contains(searchText) || 
-                                   ((string)c.Mô_tả ?? "").ToLower().Contains(searchText);
+                                   ((string)c.Name).ToLower().Contains(searchText) || 
+                                   ((string)c.Description ?? "").ToLower().Contains(searchText);
 
                 return matchSearch;
             }).ToList();
@@ -170,15 +171,15 @@ namespace WinFormsApp1.View.Admin
                 var selectedRow = dataGridView.SelectedRows[0];
                 editingCategoryId = Convert.ToInt32(selectedRow.Cells["ID"].Value);
                 
-                SetFormValue("txtName", selectedRow.Cells["Tên"].Value?.ToString());
-                SetFormValue("txtDescription", selectedRow.Cells["Mô_tả"].Value?.ToString());
+                SetFormValue("txtName", selectedRow.Cells["Name"].Value?.ToString());
+                SetFormValue("txtDescription", selectedRow.Cells["Description"].Value?.ToString());
                 
                 ShowInputForm();
                 isEditing = true;
             }
             else
             {
-                ToastHelper.Show(this.FindForm(), "Vui lòng chọn danh mục để sửa!");
+                ToastHelper.Show(this.FindForm(), Lang("PleaseSelectCategoryToEdit"));
             }
         }
         
@@ -195,7 +196,7 @@ namespace WinFormsApp1.View.Admin
                 
                 if (errorLabels.Any())
                 {
-                    ToastHelper.Show(this.FindForm(), "Vui lòng sửa các lỗi trước khi lưu!");
+                    ToastHelper.Show(this.FindForm(), Lang("FixErrorsBeforeSave"));
                     return;
                 }
                 
@@ -224,20 +225,20 @@ namespace WinFormsApp1.View.Admin
                 {
                     await LogAdminActionAsync(isEditing ? "UPDATE" : "CREATE", "Category", 
                         isEditing ? editingCategoryId : (int?)null, 
-                        $"{(isEditing ? "Cập nhật" : "Tạo")} danh mục: {category.Name}");
+                        $"{(isEditing ? "Updated" : "Created")} category: {category.Name}");
                     
-                    ToastHelper.Show(this.FindForm(), "✅ Lưu thành công!");
+                    ToastHelper.Show(this.FindForm(), $"✅ {Lang("SaveSuccess")}");
                     await LoadCategoriesAsync();
                     HideInputForm();
                 }
                 else
                 {
-                    ToastHelper.Show(this.FindForm(), "❌ Lưu thất bại!");
+                    ToastHelper.Show(this.FindForm(), $"❌ {Lang("SaveFailed")}");
                 }
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this.FindForm(), $"Lỗi lưu dữ liệu: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), Lang("DataSaveError", ex.Message));
             }
         }
 
@@ -246,7 +247,7 @@ namespace WinFormsApp1.View.Admin
             if (dataGridView.SelectedRows.Count > 0)
             {
                 var categoryId = (int)dataGridView.SelectedRows[0].Cells["ID"].Value;
-                var result = MessageBox.Show("Bạn có chắc muốn xóa danh mục này?", "Xác nhận", MessageBoxButtons.YesNo);
+                var result = MessageBox.Show(Lang("ConfirmDeleteCategory"), Lang("Confirm"), MessageBoxButtons.YesNo);
 
                 if (result == DialogResult.Yes)
                 {
@@ -255,23 +256,23 @@ namespace WinFormsApp1.View.Admin
                         var success = await _adminController.DeleteCategoryAsync(categoryId);
                         if (success)
                         {
-                            ToastHelper.Show(this.FindForm(), "Xóa thành công!");
+                            ToastHelper.Show(this.FindForm(), $"✅ {Lang("DeleteSuccess")}");
                             await LoadCategoriesAsync();
                         }
                         else
                         {
-                            ToastHelper.Show(this.FindForm(), "Xóa thất bại!");
+                            ToastHelper.Show(this.FindForm(), $"❌ {Lang("DeleteFailed")}");
                         }
                     }
                     catch (Exception ex)
                     {
-                        ToastHelper.Show(this.FindForm(), $"Lỗi xóa dữ liệu: {ex.Message}");
+                        ToastHelper.Show(this.FindForm(), Lang("DataDeleteError", ex.Message));
                     }
                 }
             }
             else
             {
-                ToastHelper.Show(this.FindForm(), "Vui lòng chọn danh mục để xóa!");
+                ToastHelper.Show(this.FindForm(), Lang("PleaseSelectCategoryToDelete"));
             }
         }
     }

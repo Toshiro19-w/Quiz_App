@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Guna.Charts.WinForms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using static WinFormsApp1.Helpers.ResponsiveLayoutHelper;
 using static WinFormsApp1.Helpers.UIComponentHelper;
 using WinFormsApp1.ViewModels;
@@ -15,6 +16,12 @@ namespace WinFormsApp1.View.Admin
     public partial class UserAnalyticsDashboard : UserControl
     {
         private AdminController _controller;
+
+        /// <summary>
+        /// Shorthand for LanguageHelper.GetString
+        /// </summary>
+        private static string Lang(string key) => LanguageHelper.GetString(key);
+        private static string Lang(string key, params object[] args) => LanguageHelper.GetString(key, args);
 
         public UserAnalyticsDashboard()
         {
@@ -86,7 +93,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi");
+                MessageBox.Show(Lang("DataLoadError", ex.Message), Lang("Error"));
             }
         }
 
@@ -97,9 +104,9 @@ namespace WinFormsApp1.View.Admin
             var cards = new[]
             {
                 new { Title = "Admin", Value = stats.AdminCount.ToString(), Color = Color.FromArgb(239, 68, 68) },
-                new { Title = "Giáo viên", Value = stats.TeacherCount.ToString(), Color = Color.FromArgb(34, 197, 94) },
-                new { Title = "Học sinh", Value = stats.StudentCount.ToString(), Color = Color.FromArgb(14, 165, 233) },
-                new { Title = "Người dùng mới", Value = stats.NewUsersThisMonth.ToString(), Color = Color.FromArgb(251, 191, 36) }
+                new { Title = Lang("Teacher"), Value = stats.TeacherCount.ToString(), Color = Color.FromArgb(34, 197, 94) },
+                new { Title = Lang("Student"), Value = stats.StudentCount.ToString(), Color = Color.FromArgb(14, 165, 233) },
+                new { Title = Lang("NewUsers"), Value = stats.NewUsersThisMonth.ToString(), Color = Color.FromArgb(251, 191, 36) }
             };
 
             int cardWidth = (Width - 85) / 4;
@@ -115,13 +122,13 @@ namespace WinFormsApp1.View.Admin
         {
             chartsFlowPanel.Controls.Clear();
 
-            var growthPanel = CreateResponsiveChartPanel("📈 Tăng trưởng người dùng mới theo tháng", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
+            var growthPanel = CreateResponsiveChartPanel($"📈 {Lang("NewUserGrowthByMonth")}", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
             growthPanel.Margin = new Padding(0, 0, 20, 0);
             var growthChart = CreateLineChart(growthPanel, stats.NewUsersByMonth);
             growthPanel.Controls.Add(growthChart);
             chartsFlowPanel.Controls.Add(growthPanel);
 
-            var activePanel = CreateResponsiveChartPanel("👥 Người dùng hoạt động gần đây", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
+            var activePanel = CreateResponsiveChartPanel($"👥 {Lang("RecentActiveUsers")}", new Point(0, 0), new Size(540, 350), AnchorStyles.None);
             var activeList = CreateActiveUsersList(activePanel, stats.RecentActiveUsers);
             activePanel.Controls.Add(activeList);
             chartsFlowPanel.Controls.Add(activePanel);
@@ -136,8 +143,13 @@ namespace WinFormsApp1.View.Admin
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom
             };
 
-            var dataset = new GunaLineDataset { Label = "Người dùng mới" };
-            string[] months = { "Tháng 01", "Tháng 02", "Tháng 03", "Tháng 04", "Tháng 05", "Tháng 06", "Tháng 07", "Tháng 08", "Tháng 09", "Tháng 10", "Tháng 11", "Tháng 12" };
+            var dataset = new GunaLineDataset { Label = Lang("NewUsers") };
+            string[] months = { 
+                $"{Lang("Month")} 01", $"{Lang("Month")} 02", $"{Lang("Month")} 03", 
+                $"{Lang("Month")} 04", $"{Lang("Month")} 05", $"{Lang("Month")} 06", 
+                $"{Lang("Month")} 07", $"{Lang("Month")} 08", $"{Lang("Month")} 09", 
+                $"{Lang("Month")} 10", $"{Lang("Month")} 11", $"{Lang("Month")} 12" 
+            };
             
             for (int i = 1; i <= 12; i++)
             {
@@ -166,7 +178,7 @@ namespace WinFormsApp1.View.Admin
             {
                 var userLabel = new Label
                 {
-                    Text = $"{user.Username} - {user.LastLogin?.ToString("dd/MM/yyyy HH:mm") ?? "Chưa đăng nhập"}",
+                    Text = $"{user.Username} - {(user.LastLogin.HasValue ? LanguageHelper.FormatDateTime(user.LastLogin.Value) : Lang("NeverLoggedIn"))}",
                     Location = new Point(10, yPos),
                     AutoSize = true,
                     Font = new Font("Segoe UI", 9),

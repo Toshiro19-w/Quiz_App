@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
 using WinFormsApp1.Services;
@@ -17,11 +18,30 @@ namespace WinFormsApp1.View.Admin
     {
         private List<Course> _pendingCourses = new List<Course>();
         private Course _selectedCourse;
+        
+        // New UI components
+        private Panel _previewPanel;
+        private Panel _statsPanel;
+        private TreeView _courseTreeView;
+        private ProgressBar _scoreProgressBar;
+        private Label _lblPreviewTitle;
+        private Label _lblPreviewInstructor;
+        private Label _lblPreviewCategory;
+        private Label _lblPreviewPrice;
+        private Label _lblPreviewScore;
+        private Label _lblPreviewStatus;
+        private Panel _autoCheckPanel;
 
         public CourseModerationControl() : base()
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        /// Shorthand for LanguageHelper.GetString
+        /// </summary>
+        private static string Lang(string key) => LanguageHelper.GetString(key);
+        private static string Lang(string key, params object[] args) => LanguageHelper.GetString(key, args);
 
         private void InitializeComponent()
         {
@@ -29,9 +49,16 @@ namespace WinFormsApp1.View.Admin
             
             // Create main components
             dataGridView = CreateModernDataGridView();
+            dataGridView.MultiSelect = true; // Enable multi-select for batch actions
             
             // Setup layout FIRST
-            SetupLayout("Kiểm duyệt khóa học", dataGridView);
+            SetupLayout(Lang("CourseModeration"), dataGridView);
+            
+            // Create statistics panel
+            CreateStatsPanel();
+            
+            // Create preview panel
+            CreatePreviewPanel();
             
             // Wire events
             WireCrudEvents();
@@ -48,6 +75,417 @@ namespace WinFormsApp1.View.Admin
         }
 
         /// <summary>
+        /// Create statistics panel showing moderation stats
+        /// </summary>
+        private void CreateStatsPanel()
+        {
+            _statsPanel = new Panel
+            {
+                Height = 100,
+                Dock = DockStyle.Top,
+                BackColor = Color.White,
+                Padding = new Padding(0, 5, 20, 5)
+            };
+
+            var flowPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false
+            };
+
+            // Stats cards will be populated in UpdateStats()
+            flowPanel.Name = "statsFlowPanel";
+            _statsPanel.Controls.Add(flowPanel);
+            
+            // Insert after top panel
+            var topPanel = this.Controls.OfType<Panel>().FirstOrDefault(p => p.Dock == DockStyle.Top);
+            if (topPanel != null)
+            {
+                var index = this.Controls.GetChildIndex(topPanel);
+                this.Controls.Add(_statsPanel);
+                this.Controls.SetChildIndex(_statsPanel, index + 1);
+            }
+        }
+
+        /// <summary>
+        /// Create preview panel on the right side
+        /// </summary>
+        private void CreatePreviewPanel()
+        {
+            _previewPanel = new Panel
+            {
+                Width = 350,
+                Dock = DockStyle.Right,
+                BackColor = Color.White,
+                Padding = new Padding(15),
+                BorderStyle = BorderStyle.None
+            };
+
+            // Add left border
+            var borderPanel = new Panel
+            {
+                Width = 1,
+                Dock = DockStyle.Left,
+                BackColor = Color.FromArgb(229, 231, 235)
+            };
+            _previewPanel.Controls.Add(borderPanel);
+
+            var contentPanel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                AutoScroll = true,
+                Padding = new Padding(10)
+            };
+
+            int yPos = 10;
+
+            // Title
+            var lblTitle = new Label
+            {
+                Text = $"📋 {Lang("CoursePreview")}",
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Location = new Point(10, yPos),
+                AutoSize = true,
+                ForeColor = Color.FromArgb(45, 55, 72)
+            };
+            contentPanel.Controls.Add(lblTitle);
+            yPos += 40;
+
+            // Course Title
+            _lblPreviewTitle = new Label
+            {
+                Text = Lang("NoCourseSelected"),
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Location = new Point(10, yPos),
+                Size = new Size(310, 50),
+                ForeColor = Color.FromArgb(64, 64, 64)
+            };
+            contentPanel.Controls.Add(_lblPreviewTitle);
+            yPos += 55;
+
+            // Instructor
+            _lblPreviewInstructor = new Label
+            {
+                Text = $"👤 {Lang("Instructor")}: -",
+                Font = new Font("Segoe UI", 9),
+                Location = new Point(10, yPos),
+                AutoSize = true,
+                ForeColor = Color.FromArgb(100, 100, 100)
+            };
+            contentPanel.Controls.Add(_lblPreviewInstructor);
+            yPos += 25;
+
+            // Category
+            _lblPreviewCategory = new Label
+            {
+                Text = $"📁 {Lang("Category")}: -",
+                Font = new Font("Segoe UI", 9),
+                Location = new Point(10, yPos),
+                AutoSize = true,
+                ForeColor = Color.FromArgb(100, 100, 100)
+            };
+            contentPanel.Controls.Add(_lblPreviewCategory);
+            yPos += 25;
+
+            // Price
+            _lblPreviewPrice = new Label
+            {
+                Text = $"💰 {Lang("Price")}: -",
+                Font = new Font("Segoe UI", 9),
+                Location = new Point(10, yPos),
+                AutoSize = true,
+                ForeColor = Color.FromArgb(100, 100, 100)
+            };
+            contentPanel.Controls.Add(_lblPreviewPrice);
+            yPos += 25;
+
+            // Status
+            _lblPreviewStatus = new Label
+            {
+                Text = $"📊 {Lang("Status")}: -",
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Location = new Point(10, yPos),
+                AutoSize = true,
+                ForeColor = Color.FromArgb(100, 100, 100)
+            };
+            contentPanel.Controls.Add(_lblPreviewStatus);
+            yPos += 35;
+
+            // Score section
+            var lblScoreTitle = new Label
+            {
+                Text = $"⚡ {Lang("AutoCheckScore")}",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Location = new Point(10, yPos),
+                AutoSize = true,
+                ForeColor = Color.FromArgb(45, 55, 72)
+            };
+            contentPanel.Controls.Add(lblScoreTitle);
+            yPos += 25;
+
+            _scoreProgressBar = new ProgressBar
+            {
+                Location = new Point(10, yPos),
+                Size = new Size(310, 20),
+                Style = ProgressBarStyle.Continuous,
+                Maximum = 100,
+                Value = 0
+            };
+            contentPanel.Controls.Add(_scoreProgressBar);
+            yPos += 25;
+
+            _lblPreviewScore = new Label
+            {
+                Text = $"0/100 {Lang("Points")}",
+                Font = new Font("Segoe UI", 9),
+                Location = new Point(10, yPos),
+                AutoSize = true,
+                ForeColor = Color.FromArgb(100, 100, 100)
+            };
+            contentPanel.Controls.Add(_lblPreviewScore);
+            yPos += 35;
+
+            // Auto check results panel
+            var lblAutoCheck = new Label
+            {
+                Text = $"📝 {Lang("CheckDetails")}",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Location = new Point(10, yPos),
+                AutoSize = true,
+                ForeColor = Color.FromArgb(45, 55, 72)
+            };
+            contentPanel.Controls.Add(lblAutoCheck);
+            yPos += 25;
+
+            _autoCheckPanel = new Panel
+            {
+                Location = new Point(10, yPos),
+                Size = new Size(310, 150),
+                AutoScroll = true,
+                BackColor = Color.FromArgb(248, 249, 250),
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            contentPanel.Controls.Add(_autoCheckPanel);
+            yPos += 160;
+
+            // Course structure tree
+            var lblStructure = new Label
+            {
+                Text = $"📚 {Lang("CourseStructure")}",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Location = new Point(10, yPos),
+                AutoSize = true,
+                ForeColor = Color.FromArgb(45, 55, 72)
+            };
+            contentPanel.Controls.Add(lblStructure);
+            yPos += 25;
+
+            _courseTreeView = new TreeView
+            {
+                Location = new Point(10, yPos),
+                Size = new Size(310, 180),
+                Font = new Font("Segoe UI", 9),
+                BorderStyle = BorderStyle.FixedSingle,
+                ShowLines = true,
+                ShowPlusMinus = true,
+                ShowRootLines = true
+            };
+            contentPanel.Controls.Add(_courseTreeView);
+
+            _previewPanel.Controls.Add(contentPanel);
+            this.Controls.Add(_previewPanel);
+        }
+
+        /// <summary>
+        /// Update preview panel with selected course info
+        /// </summary>
+        private void UpdatePreviewPanel()
+        {
+            if (_selectedCourse == null)
+            {
+                _lblPreviewTitle.Text = Lang("NoCourseSelected");
+                _lblPreviewInstructor.Text = $"👤 {Lang("Instructor")}: -";
+                _lblPreviewCategory.Text = $"📁 {Lang("Category")}: -";
+                _lblPreviewPrice.Text = $"💰 {Lang("Price")}: -";
+                _lblPreviewStatus.Text = $"📊 {Lang("Status")}: -";
+                _lblPreviewScore.Text = $"0/100 {Lang("Points")}";
+                _scoreProgressBar.Value = 0;
+                _autoCheckPanel.Controls.Clear();
+                _courseTreeView.Nodes.Clear();
+                return;
+            }
+
+            // Basic info
+            _lblPreviewTitle.Text = _selectedCourse.Title;
+            _lblPreviewInstructor.Text = $"👤 {Lang("Instructor")}: {_selectedCourse.Owner?.FullName ?? Lang("NA")}";
+            _lblPreviewCategory.Text = $"📁 {Lang("Category")}: {_selectedCourse.Category?.Name ?? Lang("NotCategorized")}";
+            _lblPreviewPrice.Text = $"💰 {Lang("Price")}: {LanguageHelper.FormatVND(_selectedCourse.Price)}";
+
+            // Status with color
+            var statusText = GetStatusText(_selectedCourse.ModerationStatus);
+            _lblPreviewStatus.Text = $"📊 {Lang("Status")}: {statusText}";
+            _lblPreviewStatus.ForeColor = _selectedCourse.ModerationStatus switch
+            {
+                "Approved" => Color.FromArgb(40, 167, 69),
+                "Rejected" => Color.FromArgb(220, 53, 69),
+                "NeedsRevision" => Color.FromArgb(255, 193, 7),
+                _ => Color.FromArgb(52, 144, 220)
+            };
+
+            // Auto check results
+            var autoCheckResults = new List<CourseModerationService.AutoCheckResult>();
+            if (!string.IsNullOrEmpty(_selectedCourse.AutoCheckResults))
+            {
+                try
+                {
+                    autoCheckResults = JsonSerializer.Deserialize<List<CourseModerationService.AutoCheckResult>>(_selectedCourse.AutoCheckResults);
+                }
+                catch { }
+            }
+
+            var autoScore = CourseModerationService.CalculateAutoScore(autoCheckResults);
+            _scoreProgressBar.Value = autoScore;
+            _lblPreviewScore.Text = $"{autoScore}/100 {Lang("Points")}";
+            _lblPreviewScore.ForeColor = autoScore >= 80 ? Color.FromArgb(40, 167, 69) 
+                : autoScore >= 60 ? Color.FromArgb(255, 193, 7) 
+                : Color.FromArgb(220, 53, 69);
+
+            // Update auto check panel
+            _autoCheckPanel.Controls.Clear();
+            int yPos = 5;
+            foreach (var result in autoCheckResults)
+            {
+                var icon = result.Passed ? "✓" : "✗";
+                var color = result.Severity == "Error" ? Color.FromArgb(220, 53, 69) 
+                    : result.Severity == "Warning" ? Color.FromArgb(255, 193, 7) 
+                    : Color.FromArgb(40, 167, 69);
+
+                var lbl = new Label
+                {
+                    Text = $"{icon} {result.CheckName}",
+                    Location = new Point(5, yPos),
+                    AutoSize = true,
+                    Font = new Font("Segoe UI", 8),
+                    ForeColor = color
+                };
+                _autoCheckPanel.Controls.Add(lbl);
+                yPos += 18;
+            }
+
+            // Update course structure tree
+            _courseTreeView.Nodes.Clear();
+            var rootNode = new TreeNode($"📚 {_selectedCourse.Title}")
+            {
+                Tag = _selectedCourse
+            };
+
+            foreach (var chapter in _selectedCourse.CourseChapters.OrderBy(c => c.OrderIndex))
+            {
+                var chapterNode = new TreeNode($"📖 {chapter.Title} ({chapter.Lessons.Count} bài)")
+                {
+                    Tag = chapter
+                };
+
+                foreach (var lesson in chapter.Lessons.OrderBy(l => l.OrderIndex))
+                {
+                    var contentCount = lesson.LessonContents?.Count ?? 0;
+                    var lessonIcon = contentCount > 0 ? "✅" : "⚠️";
+                    var lessonNode = new TreeNode($"{lessonIcon} {lesson.Title}")
+                    {
+                        Tag = lesson
+                    };
+                    chapterNode.Nodes.Add(lessonNode);
+                }
+
+                rootNode.Nodes.Add(chapterNode);
+            }
+
+            _courseTreeView.Nodes.Add(rootNode);
+            rootNode.Expand();
+        }
+
+        /// <summary>
+        /// Update statistics panel
+        /// </summary>
+        private async Task UpdateStatsAsync()
+        {
+            try
+            {
+                using var context = new LearningPlatformContext();
+
+                var pendingCount = await context.Courses.CountAsync(c => c.IsPublished && c.ModerationStatus == "Pending");
+                var approvedToday = await context.Courses.CountAsync(c => 
+                    c.ModerationStatus == "Approved" && 
+                    c.ReviewedAt.HasValue && 
+                    c.ReviewedAt.Value.Date == DateTime.Today);
+                var rejectedToday = await context.Courses.CountAsync(c => 
+                    c.ModerationStatus == "Rejected" && 
+                    c.ReviewedAt.HasValue && 
+                    c.ReviewedAt.Value.Date == DateTime.Today);
+                var needsRevisionCount = await context.Courses.CountAsync(c => c.IsPublished && c.ModerationStatus == "NeedsRevision");
+
+                var flowPanel = _statsPanel.Controls.Find("statsFlowPanel", true).FirstOrDefault() as FlowLayoutPanel;
+                if (flowPanel == null) return;
+
+                flowPanel.Controls.Clear();
+
+                // Pending card
+                flowPanel.Controls.Add(CreateStatCard($"⏳ {Lang("PendingReview")}", pendingCount.ToString(), Color.FromArgb(52, 144, 220)));
+                
+                // Approved today card
+                flowPanel.Controls.Add(CreateStatCard($"✅ {Lang("ApprovedToday")}", approvedToday.ToString(), Color.FromArgb(40, 167, 69)));
+                
+                // Rejected today card
+                flowPanel.Controls.Add(CreateStatCard($"❌ {Lang("RejectedToday")}", rejectedToday.ToString(), Color.FromArgb(220, 53, 69)));
+                
+                // Needs revision card
+                flowPanel.Controls.Add(CreateStatCard($"🔧 {Lang("NeedsRevision")}", needsRevisionCount.ToString(), Color.FromArgb(255, 193, 7)));
+            }
+            catch { }
+        }
+
+        private Panel CreateStatCard(string title, string value, Color color)
+        {
+            var card = new Panel
+            {
+                Size = new Size(190, 70),
+                BackColor = Color.FromArgb(248, 249, 250),
+                Margin = new Padding(10, 10, 10, 10)
+            };
+
+            var lblTitle = new Label
+            {
+                Text = title,
+                Font = new Font("Segoe UI", 9),
+                ForeColor = Color.FromArgb(100, 100, 100),
+                Location = new Point(15, 10),
+                AutoSize = true
+            };
+
+            var lblValue = new Label
+            {
+                Text = value,
+                Font = new Font("Segoe UI", 20, FontStyle.Bold),
+                ForeColor = color,
+                Location = new Point(15, 32),
+                AutoSize = true
+            };
+
+            card.Controls.Add(lblTitle);
+            card.Controls.Add(lblValue);
+
+            // Border
+            card.Paint += (s, e) =>
+            {
+                using var pen = new Pen(color, 3);
+                e.Graphics.DrawLine(pen, 0, 0, 0, card.Height);
+            };
+
+            return card;
+        }
+
+        /// <summary>
         /// Setup custom filters for Course Moderation
         /// </summary>
         private void SetupCustomFilters()
@@ -58,12 +496,18 @@ namespace WinFormsApp1.View.Admin
                 Name = "cboModerationStatus",
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            statusCombo.Items.AddRange(new object[] { "Tất cả", "Chờ duyệt", "Đã duyệt", "Từ chối", "Cần sửa" });
-            statusCombo.SelectedIndex = 1; // Default: Chờ duyệt
+            statusCombo.Items.AddRange(new object[] { 
+                Lang("All"), 
+                Lang("PendingReview"), 
+                Lang("Approved"), 
+                Lang("Rejected"), 
+                Lang("NeedsRevision") 
+            });
+            statusCombo.SelectedIndex = 1; // Default: Pending
             statusCombo.SelectedIndexChanged += async (s, e) => await LoadPendingCoursesAsync();
 
             // Add filter using the new helper method
-            AddCustomFilter("Trạng thái:", statusCombo);
+            AddCustomFilter(Lang("FilterByStatus"), statusCombo);
             
             // Adjust search box width to avoid overlap
             if (searchBox != null)
@@ -94,7 +538,7 @@ namespace WinFormsApp1.View.Admin
             // 1. Xem chi tiết (Edit button)
             var btnViewDetail = new Button
             {
-                Text = "Xem chi tiết",
+                Text = Lang("ViewDetails"),
                 Size = new Size(110, 35),
                 Location = new Point(xPos, 12),
                 BackColor = Color.FromArgb(52, 144, 220),
@@ -111,8 +555,8 @@ namespace WinFormsApp1.View.Admin
             // 2. Phê duyệt
             var btnApprove = new Button
             {
-                Text = "Phê duyệt",
-                Size = new Size(100, 35),
+                Text = $"✓ {Lang("Approve")}",
+                Size = new Size(110, 35),
                 Location = new Point(xPos, 12),
                 BackColor = Color.FromArgb(40, 167, 69),
                 ForeColor = Color.White,
@@ -128,8 +572,8 @@ namespace WinFormsApp1.View.Admin
             // 3. Yêu cầu sửa
             var btnRequestRevision = new Button
             {
-                Text = "Yêu cầu sửa",
-                Size = new Size(110, 35),
+                Text = $"🔧 {Lang("RequestRevision")}",
+                Size = new Size(130, 35),
                 Location = new Point(xPos, 12),
                 BackColor = Color.FromArgb(255, 193, 7),
                 ForeColor = Color.White,
@@ -145,8 +589,8 @@ namespace WinFormsApp1.View.Admin
             // 4. Từ chối
             var btnReject = new Button
             {
-                Text = "Từ chối",
-                Size = new Size(80, 35),
+                Text = $"✗ {Lang("Reject")}",
+                Size = new Size(90, 35),
                 Location = new Point(xPos, 12),
                 BackColor = Color.FromArgb(220, 53, 69),
                 ForeColor = Color.White,
@@ -159,11 +603,28 @@ namespace WinFormsApp1.View.Admin
             buttonPanel.Controls.Add(btnReject);
             xPos += btnReject.Width + spacing;
 
-            // 5. Làm mới
+            // 5. Batch Approve
+            var btnBatchApprove = new Button
+            {
+                Text = $"✓ {Lang("BatchApprove")}",
+                Size = new Size(130, 35),
+                Location = new Point(xPos, 12),
+                BackColor = Color.FromArgb(23, 162, 184),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Name = "btnBatchApprove"
+            };
+            btnBatchApprove.FlatAppearance.BorderSize = 0;
+            btnBatchApprove.Click += BtnBatchApprove_Click;
+            buttonPanel.Controls.Add(btnBatchApprove);
+            xPos += btnBatchApprove.Width + spacing;
+
+            // 6. Làm mới
             var btnRefresh = new Button
             {
-                Text = "Làm mới",
-                Size = new Size(90, 35),
+                Text = $"🔄 {Lang("Refresh")}",
+                Size = new Size(100, 35),
                 Location = new Point(xPos, 12),
                 BackColor = Color.FromArgb(108, 117, 125),
                 ForeColor = Color.White,
@@ -176,6 +637,71 @@ namespace WinFormsApp1.View.Admin
             buttonPanel.Controls.Add(btnRefresh);
         }
 
+        /// <summary>
+        /// Batch approve multiple selected courses
+        /// </summary>
+        private async void BtnBatchApprove_Click(object sender, EventArgs e)
+        {
+            if (dataGridView.SelectedRows.Count < 2)
+            {
+                MessageBox.Show($"{Lang("SelectAtLeast2Courses")}\n\n{Lang("HoldCtrlToSelect")}", 
+                    Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var selectedCourses = new List<Course>();
+            foreach (DataGridViewRow row in dataGridView.SelectedRows)
+            {
+                var courseId = (int)row.Cells["CourseId"].Value;
+                var course = _pendingCourses.FirstOrDefault(c => c.CourseId == courseId);
+                if (course != null && course.ModerationStatus == "Pending")
+                {
+                    selectedCourses.Add(course);
+                }
+            }
+
+            if (!selectedCourses.Any())
+            {
+                MessageBox.Show(Lang("NoPendingCoursesSelected"), 
+                    Lang("Warning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Show confirmation with list
+            var courseList = string.Join("\n", selectedCourses.Select(c => $"• {c.Title} ({Lang("Instructor")}: {c.Owner?.FullName})"));
+            var result = MessageBox.Show(
+                $"{Lang("ConfirmBatchApprove", selectedCourses.Count)}\n\n{courseList}",
+                Lang("Confirm"),
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result != DialogResult.Yes) return;
+
+            try
+            {
+                var adminUserId = AuthHelper.CurrentUser?.UserId ?? 0;
+                using var context = new LearningPlatformContext();
+                int successCount = 0;
+
+                foreach (var course in selectedCourses)
+                {
+                    if (CourseModerationService.ApproveCourse(course.CourseId, adminUserId, context))
+                    {
+                        await LogAdminActionAsync("BatchApprove", "Course", course.CourseId, 
+                            $"Batch approved course: {course.Title}");
+                        successCount++;
+                    }
+                }
+
+                ToastHelper.Show(this.FindForm(), $"✅ {Lang("BatchApproveSuccess", successCount, selectedCourses.Count)}");
+                await LoadPendingCoursesAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{Lang("Error")}: {ex.Message}", Lang("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void SetupDataGridViewEvents()
         {
             dataGridView.SelectionChanged += (s, e) =>
@@ -185,7 +711,10 @@ namespace WinFormsApp1.View.Admin
                     var courseId = (int)dataGridView.SelectedRows[0].Cells["CourseId"].Value;
                     _selectedCourse = _pendingCourses.FirstOrDefault(c => c.CourseId == courseId);
                     
-                    // ✅ Update button states based on course status
+                    // Update preview panel
+                    UpdatePreviewPanel();
+                    
+                    // Update button states based on course status
                     UpdateButtonStates();
                 }
             };
@@ -261,9 +790,12 @@ namespace WinFormsApp1.View.Admin
         {
             try
             {
+                // Update stats panel
+                await UpdateStatsAsync();
+
                 // Tìm ComboBox với tên mới
                 var statusCombo = this.Controls.Find("cboModerationStatus", true).FirstOrDefault() as ComboBox;
-                var selectedStatus = statusCombo?.SelectedItem?.ToString() ?? "Chờ duyệt";
+                var selectedIndex = statusCombo?.SelectedIndex ?? 1;
 
                 using var context = new LearningPlatformContext();
 
@@ -273,18 +805,18 @@ namespace WinFormsApp1.View.Admin
                     .Include(c => c.CourseChapters)
                         .ThenInclude(ch => ch.Lessons)
                             .ThenInclude(l => l.LessonContents)
-                    // ✅ Chỉ load khóa học đã xuất bản (bỏ qua nháp)
+                    // Chỉ load khóa học đã xuất bản (bỏ qua nháp)
                     .Where(c => c.IsPublished == true)
                     .AsQueryable();
 
-                // Filter by status
-                query = selectedStatus switch
+                // Filter by status based on index
+                query = selectedIndex switch
                 {
-                    "Chờ duyệt" => query.Where(c => c.ModerationStatus == "Pending"),
-                    "Đã duyệt" => query.Where(c => c.ModerationStatus == "Approved"),
-                    "Từ chối" => query.Where(c => c.ModerationStatus == "Rejected"),
-                    "Cần sửa" => query.Where(c => c.ModerationStatus == "NeedsRevision"),
-                    _ => query
+                    1 => query.Where(c => c.ModerationStatus == "Pending"),      // Pending
+                    2 => query.Where(c => c.ModerationStatus == "Approved"),     // Approved
+                    3 => query.Where(c => c.ModerationStatus == "Rejected"),     // Rejected
+                    4 => query.Where(c => c.ModerationStatus == "NeedsRevision"),// NeedsRevision
+                    _ => query                                                    // All
                 };
 
                 _pendingCourses = await query
@@ -293,12 +825,13 @@ namespace WinFormsApp1.View.Admin
 
                 DisplayCourses();
                 
-                // ✅ Update button states after loading
+                // Update button states and preview panel after loading
                 UpdateButtonStates();
+                UpdatePreviewPanel();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Lang("DataLoadError", ex.Message), Lang("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -323,14 +856,16 @@ namespace WinFormsApp1.View.Admin
                 {
                     c.CourseId,
                     c.Title,
-                    GiảngViên = c.Owner.FullName,
-                    DanhMục = c.Category?.Name ?? "Chưa phân loại",
-                    SốChương = c.CourseChapters.Count,
-                    SốBàiHọc = lessonCount,
-                    Giá = c.Price,
-                    ĐiểmTựĐộng = autoScore,
-                    TrạngThái = GetStatusText(c.ModerationStatus),
-                    NgàyGửi = c.SubmittedForReviewAt?.ToString("dd/MM/yyyy HH:mm") ?? "N/A"
+                    Instructor = c.Owner.FullName,
+                    Category = c.Category?.Name ?? Lang("NotCategorized"),
+                    Chapters = c.CourseChapters.Count,
+                    Lessons = lessonCount,
+                    Price = LanguageHelper.FormatVND(c.Price),
+                    AutoScore = autoScore,
+                    Status = GetStatusText(c.ModerationStatus),
+                    SubmitDate = c.SubmittedForReviewAt.HasValue 
+                        ? LanguageHelper.FormatDateTime(c.SubmittedForReviewAt.Value) 
+                        : Lang("NA")
                 };
             }).ToList();
 
@@ -339,30 +874,24 @@ namespace WinFormsApp1.View.Admin
             // Update column headers
             UpdateDataGridHeaders(dataGridView, new Dictionary<string, string>
             {
-                { "CourseId", "ID" },
-                { "Title", "Tên khóa học" },
-                { "GiảngViên", "Giảng viên" },
-                { "DanhMục", "Danh mục" },
-                { "SốChương", "Số chương" },
-                { "SốBàiHọc", "Số bài học" },
-                { "Giá", "Giá" },
-                { "ĐiểmTựĐộng", "Điểm tự động" },
-                { "TrạngThái", "Trạng thái" },
-                { "NgàyGửi", "Ngày gửi" }
+                { "CourseId", Lang("ID") },
+                { "Title", Lang("CourseTitle") },
+                { "Instructor", Lang("Instructor") },
+                { "Category", Lang("Category") },
+                { "Chapters", Lang("Chapters") },
+                { "Lessons", Lang("Lessons") },
+                { "Price", Lang("Price") },
+                { "AutoScore", Lang("AutoScore") },
+                { "Status", Lang("Status") },
+                { "SubmitDate", Lang("SubmitDate") }
             });
 
-            // Format price column
-            if (dataGridView.Columns["Giá"] != null)
-            {
-                dataGridView.Columns["Giá"].DefaultCellStyle.Format = "N0";
-            }
-
             // Color code auto score
-            if (dataGridView.Columns["ĐiểmTựĐộng"] != null)
+            if (dataGridView.Columns["AutoScore"] != null)
             {
                 dataGridView.CellFormatting += (s, e) =>
                 {
-                    if (e.ColumnIndex == dataGridView.Columns["ĐiểmTựĐộng"].Index && e.Value != null)
+                    if (e.ColumnIndex == dataGridView.Columns["AutoScore"].Index && e.Value != null)
                     {
                         var score = (int)e.Value;
                         if (score >= 80)
@@ -380,10 +909,10 @@ namespace WinFormsApp1.View.Admin
         {
             return status switch
             {
-                "Pending" => "Chờ duyệt",
-                "Approved" => "Đã duyệt",
-                "Rejected" => "Từ chối",
-                "NeedsRevision" => "Cần sửa",
+                "Pending" => Lang("PendingReview"),
+                "Approved" => Lang("Approved"),
+                "Rejected" => Lang("Rejected"),
+                "NeedsRevision" => Lang("NeedsRevision"),
                 _ => status
             };
         }
@@ -417,14 +946,14 @@ namespace WinFormsApp1.View.Admin
         {
             if (_selectedCourse == null)
             {
-                MessageBox.Show("Vui lòng chọn khóa học!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Lang("PleaseSelectCourse"), Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             // ✅ Create responsive dialog form
             using var form = new Form
             {
-                Text = "Chi tiết khóa học - Kiểm duyệt",
+                Text = Lang("CourseDetailModeration"),
                 Size = new Size(1000, 750),
                 MinimumSize = new Size(800, 600),
                 StartPosition = FormStartPosition.CenterParent,
@@ -443,35 +972,35 @@ namespace WinFormsApp1.View.Admin
             int yPos = 20;
 
             // Course info
-            panel.Controls.Add(CreateLabel("Thông tin khóa học", new Point(20, yPos), new Font("Segoe UI", 14, FontStyle.Bold)));
+            panel.Controls.Add(CreateLabel(Lang("CourseInfo"), new Point(20, yPos), new Font("Segoe UI", 14, FontStyle.Bold)));
             yPos += 40;
 
-            panel.Controls.Add(CreateLabel($"Tên: {_selectedCourse.Title}", new Point(20, yPos)));
+            panel.Controls.Add(CreateLabel($"{Lang("CourseTitle")}: {_selectedCourse.Title}", new Point(20, yPos)));
             yPos += 30;
 
-            panel.Controls.Add(CreateLabel($"Giảng viên: {_selectedCourse.Owner.FullName}", new Point(20, yPos)));
+            panel.Controls.Add(CreateLabel($"{Lang("Instructor")}: {_selectedCourse.Owner.FullName}", new Point(20, yPos)));
             yPos += 30;
 
-            panel.Controls.Add(CreateLabel($"Danh mục: {_selectedCourse.Category?.Name ?? "Chưa phân loại"}", new Point(20, yPos)));
+            panel.Controls.Add(CreateLabel($"{Lang("Category")}: {_selectedCourse.Category?.Name ?? Lang("NotCategorized")}", new Point(20, yPos)));
             yPos += 30;
 
-            panel.Controls.Add(CreateLabel($"Giá: {_selectedCourse.Price:N0} VNĐ", new Point(20, yPos)));
+            panel.Controls.Add(CreateLabel($"{Lang("Price")}: {LanguageHelper.FormatVND(_selectedCourse.Price)}", new Point(20, yPos)));
             yPos += 30;
 
-            panel.Controls.Add(CreateLabel($"Số chương: {_selectedCourse.CourseChapters.Count}", new Point(20, yPos)));
+            panel.Controls.Add(CreateLabel($"{Lang("Chapters")}: {_selectedCourse.CourseChapters.Count}", new Point(20, yPos)));
             yPos += 30;
 
             var lessonCount = _selectedCourse.CourseChapters.Sum(ch => ch.Lessons.Count);
-            panel.Controls.Add(CreateLabel($"Số bài học: {lessonCount}", new Point(20, yPos)));
+            panel.Controls.Add(CreateLabel($"{Lang("Lessons")}: {lessonCount}", new Point(20, yPos)));
             yPos += 40;
 
             // Description
-            panel.Controls.Add(CreateLabel("Mô tả:", new Point(20, yPos), new Font("Segoe UI", 11, FontStyle.Bold)));
+            panel.Controls.Add(CreateLabel($"{Lang("Description")}:", new Point(20, yPos), new Font("Segoe UI", 11, FontStyle.Bold)));
             yPos += 30;
 
             var txtDesc = new TextBox
             {
-                Text = _selectedCourse.Summary ?? "Chưa có mô tả",
+                Text = _selectedCourse.Summary ?? Lang("NoDescription"),
                 Location = new Point(20, yPos),
                 Size = new Size(panel.Width - 60, 80),
                 Multiline = true,
@@ -484,7 +1013,7 @@ namespace WinFormsApp1.View.Admin
             yPos += 100;
 
             // Auto check results
-            panel.Controls.Add(CreateLabel("Kết quả kiểm tra tự động", new Point(20, yPos), new Font("Segoe UI", 14, FontStyle.Bold)));
+            panel.Controls.Add(CreateLabel(Lang("AutoCheckResults"), new Point(20, yPos), new Font("Segoe UI", 14, FontStyle.Bold)));
             yPos += 40;
 
             var autoCheckResults = new List<CourseModerationService.AutoCheckResult>();
@@ -498,7 +1027,7 @@ namespace WinFormsApp1.View.Admin
             }
 
             var autoScore = CourseModerationService.CalculateAutoScore(autoCheckResults);
-            var scoreLabel = CreateLabel($"Điểm tổng: {autoScore}/100", new Point(20, yPos), new Font("Segoe UI", 12, FontStyle.Bold));
+            var scoreLabel = CreateLabel($"{Lang("TotalScore")}: {autoScore}/100", new Point(20, yPos), new Font("Segoe UI", 12, FontStyle.Bold));
             scoreLabel.ForeColor = autoScore >= 80 ? Color.Green : autoScore >= 60 ? Color.Orange : Color.Red;
             panel.Controls.Add(scoreLabel);
             yPos += 40;
@@ -527,7 +1056,7 @@ namespace WinFormsApp1.View.Admin
 
             var btnApprove = new Button
             {
-                Text = "Phê duyệt",
+                Text = Lang("Approve"),
                 Size = new Size(120, 40),
                 Location = new Point(20, 15),
                 BackColor = Color.FromArgb(40, 167, 69),
@@ -542,7 +1071,7 @@ namespace WinFormsApp1.View.Admin
 
             var btnRequestRevision = new Button
             {
-                Text = "Yêu cầu sửa",
+                Text = Lang("RequestRevision"),
                 Size = new Size(130, 40),
                 Location = new Point(150, 15),
                 BackColor = Color.FromArgb(255, 193, 7),
@@ -557,7 +1086,7 @@ namespace WinFormsApp1.View.Admin
 
             var btnReject = new Button
             {
-                Text = "Từ chối",
+                Text = Lang("Reject"),
                 Size = new Size(100, 40),
                 Location = new Point(290, 15),
                 BackColor = Color.FromArgb(220, 53, 69),
@@ -572,7 +1101,7 @@ namespace WinFormsApp1.View.Admin
 
             var btnClose = new Button
             {
-                Text = "Đóng",
+                Text = Lang("Close"),
                 Size = new Size(100, 40),
                 Location = new Point(form.Width - 140, 15),
                 BackColor = Color.FromArgb(108, 117, 125),
@@ -618,14 +1147,14 @@ namespace WinFormsApp1.View.Admin
         {
             if (_selectedCourse == null)
             {
-                MessageBox.Show("Vui lòng chọn khóa học!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Lang("PleaseSelectCourse"), Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             // ✅ Validation: Check if already approved
             if (_selectedCourse.ModerationStatus == "Approved")
             {
-                MessageBox.Show("Khóa học này đã được phê duyệt rồi!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(Lang("CourseAlreadyApproved"), Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -647,10 +1176,10 @@ namespace WinFormsApp1.View.Admin
             if (autoScore < 60)
             {
                 var confirmLowScore = MessageBox.Show(
-                    $"Cảnh báo: Điểm tự động chỉ {autoScore}/100 (thấp).\n\n" +
-                    $"Khóa học có thể chưa đạt chất lượng tốt.\n\n" +
-                    $"Bạn có chắc chắn muốn phê duyệt?",
-                    "Xác nhận phê duyệt với điểm thấp",
+                    $"{Lang("LowScoreWarning", autoScore)}\n\n" +
+                    $"{Lang("CourseQualityWarning")}\n\n" +
+                    $"{Lang("ConfirmApprove")}?",
+                    Lang("ConfirmApproveWithLowScore"),
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning);
 
@@ -665,9 +1194,9 @@ namespace WinFormsApp1.View.Admin
                     .Select(r => $"• {r.Message}"));
 
                 var confirmWithErrors = MessageBox.Show(
-                    $"Cảnh báo: Khóa học có lỗi nghiêm trọng:\n\n{errorList}\n\n" +
-                    $"Bạn vẫn muốn phê duyệt?",
-                    "Xác nhận phê duyệt với lỗi",
+                    $"{Lang("CriticalErrorsWarning")}\n\n{errorList}\n\n" +
+                    $"{Lang("ConfirmApprove")}?",
+                    Lang("ConfirmApproveWithErrors"),
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning);
 
@@ -676,12 +1205,12 @@ namespace WinFormsApp1.View.Admin
 
             // ✅ Final confirmation
             var result = MessageBox.Show(
-                $"Bạn có chắc chắn muốn phê duyệt khóa học:\n\n" +
+                $"{Lang("ConfirmApprove")}:\n\n" +
                 $"'{_selectedCourse.Title}'\n\n" +
-                $"Giảng viên: {_selectedCourse.Owner.FullName}\n" +
-                $"Điểm tự động: {autoScore}/100\n\n" +
-                $"Khóa học sẽ được công khai sau khi phê duyệt.",
-                "Xác nhận phê duyệt",
+                $"{Lang("Instructor")}: {_selectedCourse.Owner.FullName}\n" +
+                $"{Lang("AutoScore")}: {autoScore}/100\n\n" +
+                $"{Lang("CourseWillBePublic")}",
+                Lang("ConfirmApprove"),
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
@@ -697,17 +1226,17 @@ namespace WinFormsApp1.View.Admin
                         await LogAdminActionAsync("Approve", "Course", _selectedCourse.CourseId, 
                             $"Approved course: {_selectedCourse.Title} (Score: {autoScore}/100)");
                         
-                        ToastHelper.Show(this.FindForm(), "✅ Đã phê duyệt khóa học!");
+                        ToastHelper.Show(this.FindForm(), $"✅ {Lang("ApproveSuccess")}");
                         await LoadPendingCoursesAsync();
                     }
                     else
                     {
-                        MessageBox.Show("Không thể phê duyệt khóa học!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(Lang("CannotApproveCourse"), Lang("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"{Lang("Error")}: {ex.Message}", Lang("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -716,40 +1245,40 @@ namespace WinFormsApp1.View.Admin
         {
             if (_selectedCourse == null)
             {
-                MessageBox.Show("Vui lòng chọn khóa học!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Lang("PleaseSelectCourse"), Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             // ✅ Validation: Check if already rejected
             if (_selectedCourse.ModerationStatus == "Rejected")
             {
-                MessageBox.Show("Khóa học này đã bị từ chối rồi!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(Lang("CourseAlreadyRejected"), Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             // ✅ Validation: Require reason
-            var reason = ShowReasonDialog("Nhập lý do từ chối:");
+            var reason = ShowReasonDialog(Lang("EnterRejectionReason"));
             if (string.IsNullOrWhiteSpace(reason))
             {
-                MessageBox.Show("Vui lòng nhập lý do từ chối!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Lang("PleaseEnterReason"), Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             // ✅ Validation: Reason must be at least 20 characters
             if (reason.Length < 20)
             {
-                MessageBox.Show("Lý do từ chối phải có ít nhất 20 ký tự!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Lang("ReasonTooShort", 20), Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             // ✅ Final confirmation
             var result = MessageBox.Show(
-                $"Bạn có chắc chắn muốn từ chối khóa học:\n\n" +
+                $"{Lang("ConfirmReject")}:\n\n" +
                 $"'{_selectedCourse.Title}'\n\n" +
-                $"Giảng viên: {_selectedCourse.Owner.FullName}\n\n" +
-                $"Lý do: {reason}\n\n" +
-                $"Khóa học sẽ không được công khai và giảng viên sẽ nhận được thông báo.",
-                "Xác nhận từ chối",
+                $"{Lang("Instructor")}: {_selectedCourse.Owner.FullName}\n\n" +
+                $"{Lang("Reason")}: {reason}\n\n" +
+                $"{Lang("CourseWillNotBePublic")}",
+                Lang("ConfirmReject"),
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
 
@@ -765,17 +1294,17 @@ namespace WinFormsApp1.View.Admin
                     await LogAdminActionAsync("Reject", "Course", _selectedCourse.CourseId, 
                         $"Rejected course: {_selectedCourse.Title}. Reason: {reason}");
                     
-                    ToastHelper.Show(this.FindForm(), "✅ Đã từ chối khóa học!");
+                    ToastHelper.Show(this.FindForm(), $"✅ {Lang("RejectSuccess")}");
                     await LoadPendingCoursesAsync();
                 }
                 else
                 {
-                    MessageBox.Show("Không thể từ chối khóa học!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(Lang("CannotRejectCourse"), Lang("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"{Lang("Error")}: {ex.Message}", Lang("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -783,31 +1312,31 @@ namespace WinFormsApp1.View.Admin
         {
             if (_selectedCourse == null)
             {
-                MessageBox.Show("Vui lòng chọn khóa học!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Lang("PleaseSelectCourse"), Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             // ✅ Validation: Check if already in NeedsRevision status
             if (_selectedCourse.ModerationStatus == "NeedsRevision")
             {
-                MessageBox.Show("Khóa học này đã được yêu cầu sửa đổi rồi!\n\nVui lòng chờ giảng viên cập nhật và gửi lại.", 
-                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"{Lang("CourseAlreadyNeedsRevision")}\n\n{Lang("WaitForInstructorUpdate")}", 
+                    Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             // ✅ Validation: Require reason
-            var reason = ShowReasonDialog("Nhập yêu cầu sửa đổi chi tiết:");
+            var reason = ShowReasonDialog(Lang("EnterRevisionRequest"));
             if (string.IsNullOrWhiteSpace(reason))
             {
-                MessageBox.Show("Vui lòng nhập yêu cầu sửa đổi!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Lang("PleaseEnterReason"), Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             // ✅ Validation: Reason must be at least 30 characters (more detailed than reject)
             if (reason.Length < 30)
             {
-                MessageBox.Show("Yêu cầu sửa đổi phải có ít nhất 30 ký tự để giảng viên hiểu rõ!", 
-                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Lang("ReasonTooShort", 30), 
+                    Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -827,9 +1356,9 @@ namespace WinFormsApp1.View.Admin
             {
                 var issueList = string.Join("\n", issues.Select(r => $"• {r.Message}"));
                 var showIssues = MessageBox.Show(
-                    $"Các vấn đề được phát hiện tự động:\n\n{issueList}\n\n" +
-                    $"Bạn có muốn tiếp tục với yêu cầu sửa đổi đã nhập không?",
-                    "Gợi ý vấn đề",
+                    $"{Lang("AutoDetectedIssues")}\n\n{issueList}\n\n" +
+                    $"{Lang("ContinueWithRevisionRequest")}",
+                    Lang("IssueSuggestions"),
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Information);
 
@@ -838,12 +1367,12 @@ namespace WinFormsApp1.View.Admin
 
             // ✅ Final confirmation
             var result = MessageBox.Show(
-                $"Bạn có chắc chắn muốn yêu cầu sửa đổi:\n\n" +
+                $"{Lang("ConfirmRequestRevision")}:\n\n" +
                 $"'{_selectedCourse.Title}'\n\n" +
-                $"Giảng viên: {_selectedCourse.Owner.FullName}\n\n" +
-                $"Yêu cầu: {reason}\n\n" +
-                $"Giảng viên sẽ nhận được thông báo và cần cập nhật khóa học.",
-                "Xác nhận yêu cầu sửa đổi",
+                $"{Lang("Instructor")}: {_selectedCourse.Owner.FullName}\n\n" +
+                $"{Lang("Reason")}: {reason}\n\n" +
+                $"{Lang("InstructorWillBeNotified")}",
+                Lang("ConfirmRequestRevision"),
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
@@ -859,17 +1388,17 @@ namespace WinFormsApp1.View.Admin
                     await LogAdminActionAsync("RequestRevision", "Course", _selectedCourse.CourseId, 
                         $"Requested revision for course: {_selectedCourse.Title}. Reason: {reason}");
                     
-                    ToastHelper.Show(this.FindForm(), "✅ Đã gửi yêu cầu sửa đổi!");
+                    ToastHelper.Show(this.FindForm(), $"✅ {Lang("RequestRevisionSuccess")}");
                     await LoadPendingCoursesAsync();
                 }
                 else
                 {
-                    MessageBox.Show("Không thể gửi yêu cầu!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(Lang("CannotRequestRevision"), Lang("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"{Lang("Error")}: {ex.Message}", Lang("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -877,7 +1406,7 @@ namespace WinFormsApp1.View.Admin
         {
             using var form = new Form
             {
-                Text = "Nhập lý do",
+                Text = Lang("EnterReason"),
                 Size = new Size(600, 350),
                 StartPosition = FormStartPosition.CenterParent,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
@@ -895,7 +1424,7 @@ namespace WinFormsApp1.View.Admin
 
             var hintLabel = new Label
             {
-                Text = "Ghi chú: Lý do phải rõ ràng, cụ thể để giảng viên hiểu và cải thiện.",
+                Text = Lang("ReasonHint"),
                 Location = new Point(20, 45),
                 Size = new Size(540, 20),
                 Font = new Font("Segoe UI", 8),
@@ -915,7 +1444,7 @@ namespace WinFormsApp1.View.Admin
             // ✅ Character count label
             var charCountLabel = new Label
             {
-                Text = "0 ký tự (tối thiểu 20)",
+                Text = $"0 {Lang("Characters")} ({Lang("MinimumCharacters", 20)})",
                 Location = new Point(20, 205),
                 Size = new Size(540, 20),
                 Font = new Font("Segoe UI", 8),
@@ -927,7 +1456,7 @@ namespace WinFormsApp1.View.Admin
             textBox.TextChanged += (s, e) =>
             {
                 var length = textBox.Text.Length;
-                charCountLabel.Text = $"{length} ký tự (tối thiểu 20)";
+                charCountLabel.Text = $"{length} {Lang("Characters")} ({Lang("MinimumCharacters", 20)})";
                 charCountLabel.ForeColor = length >= 20 ? Color.Green : Color.Red;
             };
 
@@ -949,14 +1478,14 @@ namespace WinFormsApp1.View.Admin
             {
                 if (string.IsNullOrWhiteSpace(textBox.Text))
                 {
-                    MessageBox.Show("Vui lòng nhập lý do!", "Thông báo", 
+                    MessageBox.Show(Lang("PleaseEnterReason"), Lang("Information"), 
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 if (textBox.Text.Trim().Length < 20)
                 {
-                    MessageBox.Show("Lý do phải có ít nhất 20 ký tự!", "Thông báo", 
+                    MessageBox.Show(Lang("ReasonTooShort", 20), Lang("Information"), 
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -967,7 +1496,7 @@ namespace WinFormsApp1.View.Admin
 
             var btnCancel = new Button
             {
-                Text = "Hủy",
+                Text = Lang("Cancel"),
                 Size = new Size(100, 40),
                 Location = new Point(480, 240),
                 BackColor = Color.Gray,

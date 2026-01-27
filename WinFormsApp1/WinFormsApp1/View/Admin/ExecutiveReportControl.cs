@@ -8,6 +8,7 @@ using Guna.Charts.WinForms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.ViewModels;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using static WinFormsApp1.Helpers.ResponsiveLayoutHelper;
 using static WinFormsApp1.Helpers.UIComponentHelper;
 
@@ -25,6 +26,12 @@ namespace WinFormsApp1.View.Admin
         private DateTimePicker endDatePicker;
         private Button applyButton;
         private Button exportButton;
+
+        /// <summary>
+        /// Shorthand for LanguageHelper.GetString
+        /// </summary>
+        private static string Lang(string key) => LanguageHelper.GetString(key);
+        private static string Lang(string key, params object[] args) => LanguageHelper.GetString(key, args);
 
         public ExecutiveReportControl()
         {
@@ -48,7 +55,7 @@ namespace WinFormsApp1.View.Admin
 
             var filterLabel = new Label
             {
-                Text = "Thời gian:",
+                Text = $"{Lang("TimePeriod")}:",
                 AutoSize = true,
                 Location = new Point(20, 20),
                 Font = new Font("Segoe UI", 10)
@@ -61,16 +68,16 @@ namespace WinFormsApp1.View.Admin
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Font = new Font("Segoe UI", 10)
             };
-            filterCombo.Items.AddRange(new object[] { "Hôm nay", "Tuần này", "Tháng này", "Tùy chỉnh" });
+            filterCombo.Items.AddRange(new object[] { Lang("Today"), Lang("ThisWeek"), Lang("ThisMonth"), Lang("Custom") });
             filterCombo.SelectedIndex = 2; // Default to Month
             filterCombo.SelectedIndexChanged += FilterCombo_SelectedIndexChanged;
 
-            // ✅ DateTimePicker with Vietnamese format
+            // ✅ DateTimePicker with format based on language
             startDatePicker = new DateTimePicker
             {
                 Location = new Point(270, 18),
                 Format = DateTimePickerFormat.Custom,
-                CustomFormat = "dd/MM/yyyy",  // ✅ Vietnamese date format
+                CustomFormat = LanguageHelper.DateFormatPattern,
                 Width = 120,
                 Visible = false
             };
@@ -79,14 +86,14 @@ namespace WinFormsApp1.View.Admin
             {
                 Location = new Point(400, 18),
                 Format = DateTimePickerFormat.Custom,
-                CustomFormat = "dd/MM/yyyy",  // ✅ Vietnamese date format
+                CustomFormat = LanguageHelper.DateFormatPattern,
                 Width = 120,
                 Visible = false
             };
 
             applyButton = new Button
             {
-                Text = "Áp dụng",
+                Text = Lang("Apply"),
                 Location = new Point(530, 17),
                 Size = new Size(80, 30),
                 BackColor = Color.FromArgb(14, 165, 233),
@@ -99,7 +106,7 @@ namespace WinFormsApp1.View.Admin
 
             exportButton = new Button
             {
-                Text = "📥 Xuất Báo Cáo",
+                Text = $"📥 {Lang("ExportReport")}",
                 Size = new Size(150, 35),
                 BackColor = Color.FromArgb(34, 197, 94),
                 ForeColor = Color.White,
@@ -286,7 +293,7 @@ namespace WinFormsApp1.View.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Lang("DataLoadError", ex.Message), Lang("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -296,10 +303,10 @@ namespace WinFormsApp1.View.Admin
 
             var cards = new[]
             {
-                new { Title = "Doanh thu", Value = $"{stats.TotalRevenue:N0} VND", Color = Color.FromArgb(14, 165, 233), Icon = "💰" },
-                new { Title = "Người dùng mới", Value = userStats.NewUsersThisMonth.ToString(), Color = Color.FromArgb(34, 197, 94), Icon = "👥" },
-                new { Title = "Khóa học đã bán", Value = learningStats.TotalEnrollments.ToString(), Color = Color.FromArgb(168, 85, 247), Icon = "📚" },
-                new { Title = "Bài kiểm tra", Value = stats.TotalTestResults.ToString(), Color = Color.FromArgb(251, 191, 36), Icon = "📝" }
+                new { Title = Lang("Revenue"), Value = LanguageHelper.FormatVND(stats.TotalRevenue), Color = Color.FromArgb(14, 165, 233), Icon = "💰" },
+                new { Title = Lang("NewUsers"), Value = userStats.NewUsersThisMonth.ToString(), Color = Color.FromArgb(34, 197, 94), Icon = "👥" },
+                new { Title = Lang("CoursesSold"), Value = learningStats.TotalEnrollments.ToString(), Color = Color.FromArgb(168, 85, 247), Icon = "📚" },
+                new { Title = Lang("Tests"), Value = stats.TotalTestResults.ToString(), Color = Color.FromArgb(251, 191, 36), Icon = "📝" }
             };
 
             int cardWidth = (statsFlowPanel.Width - 60) / 4;
@@ -316,33 +323,40 @@ namespace WinFormsApp1.View.Admin
             chartsFlowPanel.Controls.Clear();
 
             // 1. Revenue Trend Chart (Large, Full Width)
-            var revenuePanel = CreateResponsiveChartPanel("📈 Xu hướng doanh thu", new Point(0, 0), new Size(chartsFlowPanel.Width - 20, 400), AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
+            var revenuePanel = CreateResponsiveChartPanel($"📈 {Lang("RevenueTrend")}", new Point(0, 0), new Size(chartsFlowPanel.Width - 20, 400), AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
             revenuePanel.Margin = new Padding(0, 0, 0, 20);
-            var revenueChart = CreateLineChart(revenuePanel, revenueTrend, "Doanh thu", Color.FromArgb(14, 165, 233));
+            var revenueChart = CreateLineChart(revenuePanel, revenueTrend, Lang("Revenue"), Color.FromArgb(14, 165, 233));
             revenuePanel.Controls.Add(revenueChart);
             chartsFlowPanel.Controls.Add(revenuePanel);
 
             // 2. User Growth (Half Width)
-            var userPanel = CreateResponsiveChartPanel("👥 Tăng trưởng người dùng (Theo tháng)", new Point(0, 0), new Size((chartsFlowPanel.Width / 2) - 20, 350), AnchorStyles.None);
+            var userPanel = CreateResponsiveChartPanel($"👥 {Lang("UserGrowth")}", new Point(0, 0), new Size((chartsFlowPanel.Width / 2) - 20, 350), AnchorStyles.None);
             userPanel.Margin = new Padding(0, 0, 20, 20);
             // Convert Dictionary<int, int> to Dictionary<string, decimal> for the generic chart helper if needed, or custom
-            var userGrowthData = userStats.NewUsersByMonth.ToDictionary(k => $"Tháng {k.Key}", v => (decimal)v.Value);
-            var userChart = CreateBarChart(userPanel, userGrowthData, "Người dùng", Color.FromArgb(34, 197, 94));
+            var userGrowthData = userStats.NewUsersByMonth.ToDictionary(k => $"{Lang("Month")} {k.Key}", v => (decimal)v.Value);
+            var userChart = CreateBarChart(userPanel, userGrowthData, Lang("Users"), Color.FromArgb(34, 197, 94));
             userPanel.Controls.Add(userChart);
             chartsFlowPanel.Controls.Add(userPanel);
 
             // 3. Top Courses (Half Width)
-            var coursePanel = CreateResponsiveChartPanel("🏆 Top khóa học phổ biến", new Point(0, 0), new Size((chartsFlowPanel.Width / 2) - 20, 350), AnchorStyles.None);
+            var coursePanel = CreateResponsiveChartPanel($"🏆 {Lang("TopPopularCourses")}", new Point(0, 0), new Size((chartsFlowPanel.Width / 2) - 20, 350), AnchorStyles.None);
             coursePanel.Margin = new Padding(0, 0, 0, 20);
             
-            // Custom list for top courses
-            var courseListPanel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(10), AutoScroll = true };
-            int y = 10;
+            // Custom list for top courses - Padding top để không che title
+            var courseListPanel = new Panel 
+            { 
+                Location = new Point(10, 45),  // Đặt dưới title label
+                Size = new Size(coursePanel.Width - 20, coursePanel.Height - 55),
+                Padding = new Padding(0), 
+                AutoScroll = true,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom
+            };
+            int y = 5;
             foreach(var course in learningStats.TopCourses)
             {
-                var row = new Panel { Size = new Size(coursePanel.Width - 40, 40), Location = new Point(10, y), BackColor = Color.White };
+                var row = new Panel { Size = new Size(courseListPanel.Width - 20, 40), Location = new Point(0, y), BackColor = Color.White };
                 var lblName = new Label { Text = course.CourseTitle, AutoSize = true, Location = new Point(5, 10), Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.FromArgb(64, 64, 64) };
-                var lblCount = new Label { Text = $"{course.EnrollmentCount} học viên", AutoSize = true, Location = new Point(row.Width - 100, 10), Font = new Font("Segoe UI", 9), ForeColor = Color.FromArgb(14, 165, 233), Anchor = AnchorStyles.Top | AnchorStyles.Right };
+                var lblCount = new Label { Text = $"{course.EnrollmentCount} {Lang("Students")}", AutoSize = true, Location = new Point(row.Width - 100, 10), Font = new Font("Segoe UI", 9), ForeColor = Color.FromArgb(14, 165, 233), Anchor = AnchorStyles.Top | AnchorStyles.Right };
                 
                 row.Controls.Add(lblName);
                 row.Controls.Add(lblCount);
@@ -407,7 +421,7 @@ namespace WinFormsApp1.View.Admin
 
         private void ExportButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Tính năng xuất báo cáo chi tiết đang được phát triển. Vui lòng sử dụng chức năng chụp màn hình hoặc xem các báo cáo chi tiết trong menu con.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(Lang("ExportFeatureInDevelopment"), Lang("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
