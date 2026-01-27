@@ -14,6 +14,7 @@ namespace WinFormsApp1.View.User
         private CartDropdown? cartDropdown;
         private View.User.Components.CategoriesDropdown? categoriesDropdown;
         private UserProfile? currentUserProfile;
+        private Panel? subscriptionWarningBanner;
 
         public MainContainer()
         {
@@ -23,6 +24,139 @@ namespace WinFormsApp1.View.User
             SetupProfileDropdown();
             SetupCartDropdown();
             SetupCategoriesDropdown();
+            
+            // Kiểm tra subscription sắp hết hạn
+            CheckSubscriptionExpiry();
+        }
+
+        private void CheckSubscriptionExpiry()
+        {
+            // Kiểm tra sau khi UI đã load xong
+            this.Load += (s, e) =>
+            {
+                if (AuthHelper.CurrentUser == null) return;
+
+                var daysRemaining = AuthHelper.GetSubscriptionDaysRemaining();
+                
+                // Nếu subscription còn dưới 3 ngày
+                if (daysRemaining.HasValue && daysRemaining.Value <= 3 && daysRemaining.Value > 0)
+                {
+                    ShowSubscriptionExpiryWarning(daysRemaining.Value);
+                    ShowSubscriptionWarningBanner(daysRemaining.Value);
+                }
+            };
+        }
+
+        private void ShowSubscriptionWarningBanner(int daysRemaining)
+        {
+            // Tạo banner cảnh báo sticky
+            subscriptionWarningBanner = new Panel
+            {
+                Height = 50,
+                Dock = DockStyle.Top,
+                BackColor = daysRemaining == 1 ? Color.FromArgb(211, 47, 47) : // Đỏ cho 1 ngày
+                           daysRemaining == 2 ? Color.FromArgb(245, 124, 0) :   // Cam cho 2 ngày
+                                                Color.FromArgb(251, 192, 45),   // Vàng cho 3 ngày
+                Padding = new Padding(20, 0, 20, 0)
+            };
+
+            // Icon warning
+            var iconLabel = new Label
+            {
+                Text = "⚠️",
+                Font = new Font("Segoe UI", 18F),
+                ForeColor = Color.White,
+                AutoSize = true,
+                Location = new Point(20, 12)
+            };
+
+            // Message text
+            var messageLabel = new Label
+            {
+                Text = daysRemaining == 1 
+                    ? "Gói Premium của bạn sẽ hết hạn sau 1 ngày! Gia hạn ngay để không bị gián đoạn."
+                    : $"Gói Premium của bạn sẽ hết hạn sau {daysRemaining} ngày. Đừng quên gia hạn!",
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                ForeColor = Color.White,
+                AutoSize = true,
+                Location = new Point(60, 15)
+            };
+
+            // Button gia hạn
+            var renewButton = new Button
+            {
+                Text = "Gia hạn ngay",
+                Size = new Size(120, 35),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.White,
+                ForeColor = subscriptionWarningBanner.BackColor,
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                Location = new Point(subscriptionWarningBanner.Width - 150, 7)
+            };
+            renewButton.FlatAppearance.BorderSize = 0;
+            renewButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            renewButton.Click += async (s, e) => await HandleYmeduPlusClickAsync();
+
+            // Button đóng
+            var closeButton = new Button
+            {
+                Text = "✕",
+                Size = new Size(30, 30),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.Transparent,
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                Location = new Point(subscriptionWarningBanner.Width - 40, 10)
+            };
+            closeButton.FlatAppearance.BorderSize = 0;
+            closeButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            closeButton.Click += (s, e) =>
+            {
+                subscriptionWarningBanner.Visible = false;
+                mainContentPanel.Top = topMenuPanel.Bottom;
+                mainContentPanel.Height = this.ClientSize.Height - topMenuPanel.Height;
+            };
+
+            subscriptionWarningBanner.Controls.Add(iconLabel);
+            subscriptionWarningBanner.Controls.Add(messageLabel);
+            subscriptionWarningBanner.Controls.Add(renewButton);
+            subscriptionWarningBanner.Controls.Add(closeButton);
+
+            // Thêm banner vào form
+            this.Controls.Add(subscriptionWarningBanner);
+            subscriptionWarningBanner.BringToFront();
+
+            // Điều chỉnh vị trí của mainContentPanel
+            mainContentPanel.Top = topMenuPanel.Bottom + subscriptionWarningBanner.Height;
+            mainContentPanel.Height = this.ClientSize.Height - topMenuPanel.Height - subscriptionWarningBanner.Height;
+        }
+
+        private void ShowSubscriptionExpiryWarning(int daysRemaining)
+        {
+            string message = daysRemaining switch
+            {
+                1 => "⚠️ Gói Premium của bạn sẽ hết hạn sau 1 ngày!\n\n" +
+                     "Hãy gia hạn ngay để tiếp tục truy cập không giới hạn tất cả khóa học.",
+                2 => "⚠️ Gói Premium của bạn sẽ hết hạn sau 2 ngày!\n\n" +
+                     "Đừng quên gia hạn để tiếp tục học tập không bị gián đoạn.",
+                _ => $"⚠️ Gói Premium của bạn sẽ hết hạn sau {daysRemaining} ngày!\n\n" +
+                     "Gia hạn sớm để được giảm giá đặc biệt!"
+            };
+
+            var result = MessageBox.Show(
+                message,
+                "Nhắc nhở gia hạn Premium",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button1);
+
+            if (result == DialogResult.Yes)
+            {
+                // Mở form đăng ký subscription
+                _ = HandleYmeduPlusClickAsync();
+            }
         }
 
         private void SetupUI()
@@ -396,32 +530,11 @@ namespace WinFormsApp1.View.User
                     return;
                 }
 
-                // Kiểm tra xem user đã có subscription active chưa
-                using var context = new Models.EF.LearningPlatformContext();
-                var activeSubscription = await context.UserSubscriptions
-                    .Where(s => s.UserId == currentUser.UserId 
-                             && s.Status == "Active" 
-                             && s.ExpiresAt > DateTime.UtcNow)
-                    .OrderByDescending(s => s.ExpiresAt)
-                    .FirstOrDefaultAsync();
-
-                if (activeSubscription != null)
-                {
-                    // User đã có subscription active
-                    // TODO: Phát triển sau - hiển thị thông tin subscription
-                    MessageBox.Show(
-                        $"Bạn đang sử dụng Ymedu Plus!\nHạn sử dụng: {activeSubscription.ExpiresAt:dd/MM/yyyy}", 
-                        "Ymedu Plus", 
-                        MessageBoxButtons.OK, 
-                        MessageBoxIcon.Information);
-                }
-                else
-                {
-                    // User chưa có subscription -> mở form đăng ký
-                    using var subscriptionForm = new Forms.SubscriptionForm();
-                    subscriptionForm.StartPosition = FormStartPosition.CenterParent;
-                    subscriptionForm.ShowDialog(this);
-                }
+                // Luôn mở SubscriptionForm (cho phép đăng ký mới hoặc gia hạn)
+                // Form sẽ tự động detect xem là renewal hay subscription mới
+                using var subscriptionForm = new Forms.SubscriptionForm();
+                subscriptionForm.StartPosition = FormStartPosition.CenterParent;
+                subscriptionForm.ShowDialog(this);
             }
             catch (Exception ex)
             {

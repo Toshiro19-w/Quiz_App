@@ -73,27 +73,61 @@ namespace WinFormsApp1.View.User.Controls
                     var user = AuthHelper.CurrentUser;
                     if (user == null) return;
 
-                    // Get purchased courses
-                    var purchases = context.CoursePurchases
-                        .Include(cp => cp.Course)
-                        .ThenInclude(c => c.Owner)
-                        .Where(cp => cp.BuyerId == user.UserId && cp.Status == "Paid")
-                        .Select(cp => cp.Course)
-                        .ToList();
+                    // Kiểm tra subscription còn hiệu lực
+                    var hasActiveSubscription = AuthHelper.HasActiveSubscription();
 
-                    if (purchases.Count == 0)
+                    if (hasActiveSubscription)
                     {
-                        ShowEmptyState(
-                            "Chưa có khóa học nào",
-                            "Bạn chưa mua khóa học nào. Hãy bắt đầu học ngay hôm nay!"
-                        );
-                        return;
+                        // Nếu có subscription, hiển thị TẤT CẢ khóa học đã xuất bản
+                        var allCourses = context.Courses
+                            .Include(c => c.Owner)
+                            .Where(c => c.IsPublished)
+                            .OrderByDescending(c => c.CreatedAt)
+                            .ToList();
+
+                        if (allCourses.Count == 0)
+                        {
+                            ShowEmptyState(
+                                "Chưa có khóa học nào",
+                                "Hệ thống chưa có khóa học nào."
+                            );
+                            return;
+                        }
+
+                        // Hiển thị thông báo subscription
+                        var subscriptionBanner = CreateSubscriptionBanner();
+                        coursesPanel.Controls.Add(subscriptionBanner);
+
+                        foreach (var course in allCourses)
+                        {
+                            var courseCard = CreateCourseCard(course);
+                            coursesPanel.Controls.Add(courseCard);
+                        }
                     }
-
-                    foreach (var course in purchases)
+                    else
                     {
-                        var courseCard = CreateCourseCard(course);
-                        coursesPanel.Controls.Add(courseCard);
+                        // Nếu không có subscription, chỉ hiển thị khóa học đã mua
+                        var purchases = context.CoursePurchases
+                            .Include(cp => cp.Course)
+                            .ThenInclude(c => c.Owner)
+                            .Where(cp => cp.BuyerId == user.UserId && cp.Status == "Paid")
+                            .Select(cp => cp.Course)
+                            .ToList();
+
+                        if (purchases.Count == 0)
+                        {
+                            ShowEmptyState(
+                                "Chưa có khóa học nào",
+                                "Bạn chưa mua khóa học nào. Hãy bắt đầu học ngay hôm nay!"
+                            );
+                            return;
+                        }
+
+                        foreach (var course in purchases)
+                        {
+                            var courseCard = CreateCourseCard(course);
+                            coursesPanel.Controls.Add(courseCard);
+                        }
                     }
                 }
             }
@@ -102,6 +136,49 @@ namespace WinFormsApp1.View.User.Controls
                 MessageBox.Show($"Lỗi khi tải khóa học: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private Panel CreateSubscriptionBanner()
+        {
+            var banner = new Panel
+            {
+                Size = new Size(coursesPanel.Width - 30, 80),
+                BackColor = Color.FromArgb(232, 245, 233),
+                Margin = new Padding(15),
+                Padding = new Padding(20)
+            };
+
+            var iconLabel = new Label
+            {
+                Text = "⭐",
+                Font = new Font("Segoe UI", 24),
+                Location = new Point(10, 15),
+                AutoSize = true
+            };
+
+            var titleLabel = new Label
+            {
+                Text = "Bạn đang sử dụng gói Premium",
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                ForeColor = Color.FromArgb(46, 125, 50),
+                Location = new Point(60, 10),
+                AutoSize = true
+            };
+
+            var descLabel = new Label
+            {
+                Text = "Bạn có quyền truy cập không giới hạn vào tất cả các khóa học!",
+                Font = new Font("Segoe UI", 10),
+                ForeColor = Color.FromArgb(46, 125, 50),
+                Location = new Point(60, 35),
+                AutoSize = true
+            };
+
+            banner.Controls.Add(iconLabel);
+            banner.Controls.Add(titleLabel);
+            banner.Controls.Add(descLabel);
+
+            return banner;
         }
 
         private Panel CreateCourseCard(Models.Entities.Course course)

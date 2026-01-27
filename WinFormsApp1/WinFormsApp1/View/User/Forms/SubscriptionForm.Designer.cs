@@ -47,6 +47,9 @@
             pnlContent = new Panel();
             btnCancel = new Button();
             btnPayment = new Button();
+            btnYear1 = new Button();
+            btnMonth6 = new Button();
+            btnMonth1 = new Button();
             lblChoosePlan = new Label();
             pnlBenefits = new Panel();
             lblBenefitsTitle = new Label();
@@ -76,10 +79,10 @@
             btnClose.FlatStyle = FlatStyle.Flat;
             btnClose.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             btnClose.ForeColor = Color.White;
-            btnClose.Location = new Point(971, 40);
+            btnClose.Location = new Point(1140, 35);
             btnClose.Margin = new Padding(3, 4, 3, 4);
             btnClose.Name = "btnClose";
-            btnClose.Size = new Size(46, 53);
+            btnClose.Size = new Size(50, 50);
             btnClose.TabIndex = 1;
             btnClose.Text = "✕";
             btnClose.UseVisualStyleBackColor = false;
@@ -103,6 +106,9 @@
             pnlContent.BackColor = Color.White;
             pnlContent.Controls.Add(btnCancel);
             pnlContent.Controls.Add(btnPayment);
+            pnlContent.Controls.Add(btnYear1);
+            pnlContent.Controls.Add(btnMonth6);
+            pnlContent.Controls.Add(btnMonth1);
             pnlContent.Controls.Add(lblChoosePlan);
             pnlContent.Controls.Add(pnlBenefits);
             pnlContent.Location = new Point(0, 133);
@@ -119,7 +125,7 @@
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.Font = new Font("Segoe UI", 11F);
             btnCancel.ForeColor = Color.Gray;
-            btnCancel.Location = new Point(429, 670);
+            btnCancel.Location = new Point(429, 727);
             btnCancel.Margin = new Padding(3, 4, 3, 4);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(171, 60);
@@ -144,12 +150,51 @@
             btnPayment.Text = "💳 THANH TOÁN";
             btnPayment.UseVisualStyleBackColor = false;
             // 
+            // btnYear1
+            // 
+            btnYear1.BackColor = Color.White;
+            btnYear1.Cursor = Cursors.Hand;
+            btnYear1.FlatAppearance.BorderColor = Color.LightGray;
+            btnYear1.FlatAppearance.BorderSize = 2;
+            btnYear1.FlatStyle = FlatStyle.Flat;
+            btnYear1.Location = new Point(590, 360);
+            btnYear1.Name = "btnYear1";
+            btnYear1.Size = new Size(240, 160);
+            btnYear1.TabIndex = 6;
+            btnYear1.UseVisualStyleBackColor = false;
+            // 
+            // btnMonth6
+            // 
+            btnMonth6.BackColor = Color.White;
+            btnMonth6.Cursor = Cursors.Hand;
+            btnMonth6.FlatAppearance.BorderColor = Color.LightGray;
+            btnMonth6.FlatAppearance.BorderSize = 2;
+            btnMonth6.FlatStyle = FlatStyle.Flat;
+            btnMonth6.Location = new Point(330, 360);
+            btnMonth6.Name = "btnMonth6";
+            btnMonth6.Size = new Size(240, 160);
+            btnMonth6.TabIndex = 5;
+            btnMonth6.UseVisualStyleBackColor = false;
+            // 
+            // btnMonth1
+            // 
+            btnMonth1.BackColor = Color.White;
+            btnMonth1.Cursor = Cursors.Hand;
+            btnMonth1.FlatAppearance.BorderColor = Color.LightGray;
+            btnMonth1.FlatAppearance.BorderSize = 2;
+            btnMonth1.FlatStyle = FlatStyle.Flat;
+            btnMonth1.Location = new Point(70, 360);
+            btnMonth1.Name = "btnMonth1";
+            btnMonth1.Size = new Size(240, 160);
+            btnMonth1.TabIndex = 4;
+            btnMonth1.UseVisualStyleBackColor = false;
+            // 
             // lblChoosePlan
             // 
             lblChoosePlan.AutoSize = true;
             lblChoosePlan.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             lblChoosePlan.ForeColor = Color.FromArgb(50, 50, 50);
-            lblChoosePlan.Location = new Point(400, 320);
+            lblChoosePlan.Location = new Point(370, 228);
             lblChoosePlan.Name = "lblChoosePlan";
             lblChoosePlan.Size = new Size(278, 37);
             lblChoosePlan.TabIndex = 1;
@@ -160,10 +205,10 @@
             pnlBenefits.BackColor = Color.FromArgb(240, 248, 255);
             pnlBenefits.BorderStyle = BorderStyle.FixedSingle;
             pnlBenefits.Controls.Add(lblBenefitsTitle);
-            pnlBenefits.Location = new Point(57, 40);
+            pnlBenefits.Location = new Point(57, 8);
             pnlBenefits.Margin = new Padding(3, 4, 3, 4);
             pnlBenefits.Name = "pnlBenefits";
-            pnlBenefits.Size = new Size(914, 239);
+            pnlBenefits.Size = new Size(913, 216);
             pnlBenefits.TabIndex = 0;
             // 
             // lblBenefitsTitle
