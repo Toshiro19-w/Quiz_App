@@ -74,4 +74,6 @@ public partial class User
     public virtual UserProfile? UserProfile { get; set; }
 
     public virtual UserSetting? UserSetting { get; set; }
+
+    public virtual ICollection<UserSubscription> UserSubscriptions { get; set; } = new List<UserSubscription>();
 }

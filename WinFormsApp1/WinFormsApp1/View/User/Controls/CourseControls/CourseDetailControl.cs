@@ -19,37 +19,39 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 		private int _courseId;
 		private Course _course;
 
-		public CourseDetailControl()
-		{
-			InitializeComponent();
-			_controller = new CourseController();
+	public CourseDetailControl()
+	{
+		InitializeComponent();
+		_controller = new CourseController();
 
-			btnAddToCart.Click += btnAddToCart_Click;
-			btnBuyNow.Click += btnBuyNow_Click;
-			btnStartLearning.Click += btnStartLearning_Click;
-			lnkExpandAll.LinkClicked += lnkExpandAll_LinkClicked;
+		btnAddToCart.Click += btnAddToCart_Click;
+		btnBuyNow.Click += btnBuyNow_Click;
+		btnSubscribeMonthly.Click += btnSubscribeMonthly_Click;
+		btnStartLearning.Click += btnStartLearning_Click;
+		lnkExpandAll.LinkClicked += lnkExpandAll_LinkClicked;
 
-			btnEditCourse.Click += BtnEditCourse_Click;
-			btnViewCourse.Click += BtnViewCourse_Click;
-			btnStatistics.Click += BtnStatistics_Click;
-		}
-		public CourseDetailControl(int courseId)
-		{
-			InitializeComponent();
-			_controller = new CourseController();
+		btnEditCourse.Click += BtnEditCourse_Click;
+		btnViewCourse.Click += BtnViewCourse_Click;
+		btnStatistics.Click += BtnStatistics_Click;
+	}
+	public CourseDetailControl(int courseId)
+	{
+		InitializeComponent();
+		_controller = new CourseController();
 
-			// fire-and-forget load; callers should await LoadCourseAsync if they need to
-			_ = LoadCourseAsync(courseId);
+		// fire-and-forget load; callers should await LoadCourseAsync if they need to
+		_ = LoadCourseAsync(courseId);
 
-			btnAddToCart.Click += btnAddToCart_Click;
-			btnBuyNow.Click += btnBuyNow_Click;
-			btnStartLearning.Click += btnStartLearning_Click;
-			lnkExpandAll.LinkClicked += lnkExpandAll_LinkClicked;
+		btnAddToCart.Click += btnAddToCart_Click;
+		btnBuyNow.Click += btnBuyNow_Click;
+		btnSubscribeMonthly.Click += btnSubscribeMonthly_Click;
+		btnStartLearning.Click += btnStartLearning_Click;
+		lnkExpandAll.LinkClicked += lnkExpandAll_LinkClicked;
 
-			btnEditCourse.Click += BtnEditCourse_Click;
-			btnViewCourse.Click += BtnViewCourse_Click;
-			btnStatistics.Click += BtnStatistics_Click;
-		}
+		btnEditCourse.Click += BtnEditCourse_Click;
+		btnViewCourse.Click += BtnViewCourse_Click;
+		btnStatistics.Click += BtnStatistics_Click;
+	}
 
 		public async System.Threading.Tasks.Task LoadCourseAsync(int courseId)
 		{
@@ -125,19 +127,21 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			btnViewCourse.Visible = isOwner;
 			//btnStatistics.Visible = isOwner;
 
-			// Buyer: show start learning
-			btnStartLearning.Visible = isBuyer;
+		// Buyer: show start learning
+		btnStartLearning.Visible = isBuyer;
 
-			// If owner, we typically don't show purchase buttons
-			btnAddToCart.Visible = !isOwner && !isBuyer;
-			btnBuyNow.Visible = !isOwner && !isBuyer;
+		// If owner, we typically don't show purchase buttons
+		btnAddToCart.Visible = !isOwner && !isBuyer;
+		btnSubscribeMonthly.Visible = !isOwner && !isBuyer;
+		btnBuyNow.Visible = !isOwner && !isBuyer;
 
-			// adjust BuyNow/AddToCart enabled state for guest
-			if (currentUser == null)
-			{
-				btnAddToCart.Enabled = true; // allow adding but will prompt to login when clicked
-				btnBuyNow.Enabled = true;
-			}
+		// adjust BuyNow/AddToCart enabled state for guest
+		if (currentUser == null)
+		{
+			btnAddToCart.Enabled = true; // allow adding but will prompt to login when clicked
+			btnSubscribeMonthly.Enabled = true;
+			btnBuyNow.Enabled = true;
+		}
 		}
 
 		private async System.Threading.Tasks.Task LoadRatingDistribution()
@@ -342,14 +346,37 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 					}
 					catch { /* ignore reload errors */ }
 				}
-			}
-			catch (Exception ex)
+		}
+		catch (Exception ex)
+		{
+			MessageBox.Show($"Lỗi khi thêm vào giỏ hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		}
+	}
+
+	private void btnSubscribeMonthly_Click(object sender, EventArgs e)
+	{
+		try
+		{
+			using var subscriptionForm = new WinFormsApp1.View.User.Forms.SubscriptionForm();
+			subscriptionForm.StartPosition = FormStartPosition.CenterParent;
+			var owner = this.FindForm();
+			
+			if (owner != null)
 			{
-				MessageBox.Show($"Lỗi khi thêm vào giỏ hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				subscriptionForm.ShowDialog(owner);
+			}
+			else
+			{
+				subscriptionForm.ShowDialog();
 			}
 		}
+		catch (Exception ex)
+		{
+			MessageBox.Show($"Lỗi khi mở form đăng ký: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		}
+	}
 
-		private async void btnStartLearning_Click(object sender, EventArgs e)
+	private async void btnStartLearning_Click(object sender, EventArgs e)
 		{
 			// If user not logged in, prompt
 			var userId = AuthHelper.CurrentUser?.UserId;
