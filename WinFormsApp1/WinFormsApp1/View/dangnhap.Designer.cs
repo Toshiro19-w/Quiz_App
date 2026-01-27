@@ -130,7 +130,7 @@
 			chkRememberMe.Name = "chkRememberMe";
 			chkRememberMe.Size = new Size(191, 29);
 			chkRememberMe.TabIndex = 7;
-			chkRememberMe.Text = "Ghi nhớ đăng nhập";
+			chkRememberMe.Text = "Hiện mật khẩu";
 			chkRememberMe.UseVisualStyleBackColor = true;
 			// 
 			// lblPasswordError
