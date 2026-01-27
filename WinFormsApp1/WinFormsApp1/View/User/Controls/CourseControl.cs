@@ -326,7 +326,7 @@ namespace WinFormsApp1.View.User.Controls
                 control.Bind(course);
                 control.Margin = new Padding(10);
                 // Ensure fixed size so FlowLayoutPanel doesn't stretch it
-                control.Size = new Size(330, 380);
+                control.Size = new Size(330, 420);
                 coursesPanel.Controls.Add(control);
             }
         }

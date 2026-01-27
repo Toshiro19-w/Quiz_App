@@ -18,6 +18,7 @@
 		private void InitializeComponent()
 		{
 			pnlCard = new Panel();
+			pnlTagsOverlay = new FlowLayoutPanel();
 			picCover = new PictureBox();
 			pnlBody = new Panel();
 			lblTitle = new Label();
@@ -37,13 +38,23 @@
 			// 
 			pnlCard.BackColor = Color.White;
 			pnlCard.BorderStyle = BorderStyle.FixedSingle;
+			pnlCard.Controls.Add(pnlTagsOverlay);
 			pnlCard.Controls.Add(picCover);
 			pnlCard.Controls.Add(pnlBody);
 			pnlCard.Cursor = Cursors.Hand;
 			pnlCard.Location = new Point(0, 0);
 			pnlCard.Name = "pnlCard";
-			pnlCard.Size = new Size(330, 380);
+			pnlCard.Size = new Size(330, 413);
 			pnlCard.TabIndex = 0;
+			// 
+			// pnlTagsOverlay
+			// 
+			pnlTagsOverlay.BackColor = Color.Transparent;
+			pnlTagsOverlay.Location = new Point(6, 182);
+			pnlTagsOverlay.Name = "pnlTagsOverlay";
+			pnlTagsOverlay.Size = new Size(320, 30);
+			pnlTagsOverlay.TabIndex = 2;
+			pnlTagsOverlay.Visible = false;
 			// 
 			// picCover
 			// 
@@ -61,7 +72,7 @@
 			pnlBody.Controls.Add(lblRating);
 			pnlBody.Controls.Add(lblPrice);
 			pnlBody.Controls.Add(pnlActions);
-			pnlBody.Location = new Point(1, 182);
+			pnlBody.Location = new Point(-1, 213);
 			pnlBody.Name = "pnlBody";
 			pnlBody.Padding = new Padding(12);
 			pnlBody.Size = new Size(328, 196);
@@ -70,11 +81,12 @@
 			// lblTitle
 			// 
 			lblTitle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-			lblTitle.Location = new Point(10, 6);
+			lblTitle.Location = new Point(10, 2);
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(310, 35);
 			lblTitle.TabIndex = 0;
 			lblTitle.Text = "Tiêu đề khóa học";
+			lblTitle.Click += lblTitle_Click;
 			// 
 			// lblInstructor
 			// 
@@ -148,7 +160,7 @@
 			AutoScaleMode = AutoScaleMode.None;
 			Controls.Add(pnlCard);
 			Name = "CourseCardControl";
-			Size = new Size(330, 380);
+			Size = new Size(330, 413);
 			pnlCard.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)picCover).EndInit();
 			pnlBody.ResumeLayout(false);
@@ -161,6 +173,7 @@
 
 		private System.Windows.Forms.Panel pnlCard;
         private System.Windows.Forms.PictureBox picCover;
+        private System.Windows.Forms.FlowLayoutPanel pnlTagsOverlay;
         private System.Windows.Forms.Panel pnlBody;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblInstructor;

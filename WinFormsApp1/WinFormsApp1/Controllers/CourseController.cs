@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
 using WinFormsApp1.ViewModels;
+using WinFormsApp1.Service;
 
 namespace WinFormsApp1.Controllers
 {
@@ -111,5 +112,14 @@ namespace WinFormsApp1.Controllers
 			// can be implemented later. For now persist main Course fields.
 			await SaveCourseAsync(vm, courseId);
 		}
+
+        public async Task<List<RecommendedCourse>> GetRecommendedCoursesAsync(int? userId, int count = 6)
+        {
+            using (var context = new LearningPlatformContext())
+            {
+                var recommendationService = new CourseRecommendationService(context);
+                return await recommendationService.GetRecommendedCoursesAsync(userId, count);
+            }
+        }
 	}
 }

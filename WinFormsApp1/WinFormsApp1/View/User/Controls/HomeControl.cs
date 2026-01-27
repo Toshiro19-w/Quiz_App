@@ -1,29 +1,33 @@
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models.EF;
-using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.View.User.Controls.CourseControls;
 using WinFormsApp1.View.User.Controls.FlashcardControls;
-using System.IO;
 
 namespace WinFormsApp1.View.User.Controls
 {
     public partial class HomeControl : UserControl
     {
-        public HomeControl()
+		private readonly CourseController _context;
+		public HomeControl()
         {
             InitializeComponent();
-        }
+			_context = new CourseController();
+		}
 
         private void HomeControl_Load(object sender, EventArgs e)
         {
             SetupWelcomeBanner();
             LoadMotivationImage();
-            LoadData();
+            LoadRecommendedCourses(); 
+            LoadPopularCourses();
             LoadFlashcardSets();
         }
 
@@ -209,26 +213,33 @@ namespace WinFormsApp1.View.User.Controls
             };
         }
 
-        private async void LoadData()
+        private async void LoadPopularCourses()
         {
-            using var context = new LearningPlatformContext();
-
-            // Load 4 courses with best ratings (highest AverageRating)
-            var popular = await context.Courses
-                .Where(c => c.IsPublished)
-                .OrderByDescending(c => c.AverageRating)
-                .ThenByDescending(c => c.TotalReviews)
-                .Take(4)
-                .ToListAsync();
-
-            foreach (var course in popular)
+            try
             {
-                // Use the unified CourseCardControl for consistent layout
-                var card = new CourseCardControl();
-                card.Bind(course);
-                // Ensure margin matches flow layout expectations
-                card.Margin = new Padding(10);
-                flowPopular.Controls.Add(card);
+                using var context = new LearningPlatformContext();
+
+                var popular = await context.Courses
+                    .Include(c => c.Owner)
+                    .Include(c => c.Category)
+                    .Where(c => c.IsPublished)
+                    .OrderByDescending(c => c.AverageRating)
+                    .ThenByDescending(c => c.TotalReviews)
+                    .Take(10)
+                    .ToListAsync();
+
+                carouselPopular.ClearCards();
+
+                foreach (var course in popular)
+                {
+                    var card = new CourseCardControl();
+                    card.Bind(course);
+                    carouselPopular.AddCourseCard(card);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading popular courses: {ex.Message}");
             }
         }
 
@@ -443,5 +454,97 @@ namespace WinFormsApp1.View.User.Controls
             }
             return null;
         }
-    }
+
+		//gợi ý khóa học
+		private async void LoadRecommendedCourses()
+		{
+			try
+			{
+				carouselRecommended.ClearCards();
+
+				var userId = AuthHelper.CurrentUser?.UserId;
+				var recommendedCourses = await _context.GetRecommendedCoursesAsync(userId, 10);
+
+				if (recommendedCourses == null || !recommendedCourses.Any())
+				{
+					carouselRecommended.Visible = false;
+					lblRecommended.Visible = false;
+					lblRecommendedDesc.Visible = false;
+					btnViewAllRecommended.Visible = false;
+					return;
+				}
+
+				foreach (var recommended in recommendedCourses)
+				{
+					var card = CourseRecommendationHelper.CreateRecommendedCourseCard(recommended);
+
+					var btnView = card.Controls.OfType<Button>().FirstOrDefault(b => b.Text == "Xem chi tiết");
+					if (btnView != null)
+					{
+						btnView.Click += (s, e) => ShowCourseDetail((int)btnView.Tag);
+					}
+
+					var btnAddToCart = card.Controls.OfType<Button>().FirstOrDefault(b => b.Text == "🛒");
+					if (btnAddToCart != null)
+					{
+						btnAddToCart.Click += async (s, e) => await AddToCartAsync((int)btnAddToCart.Tag);
+					}
+
+					card.Click += (s, e) => ShowCourseDetail(recommended.Course.CourseId);
+
+					carouselRecommended.AddCourseCard(card);
+				}
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"Error loading recommended courses: {ex.Message}");
+				carouselRecommended.Visible = false;
+				lblRecommended.Visible = false;
+				lblRecommendedDesc.Visible = false;
+				btnViewAllRecommended.Visible = false;
+			}
+		}
+
+		private async System.Threading.Tasks.Task AddToCartAsync(int courseId)
+		{
+			var userId = AuthHelper.CurrentUser?.UserId;
+			if (!userId.HasValue)
+			{
+				ToastHelper.Show(this.FindForm(), "Vui lòng đăng nhập để thêm vào giỏ hàng!");
+				return;
+			}
+
+			try
+			{
+				using var context = new LearningPlatformContext();
+				var cart = await context.ShoppingCarts.FirstOrDefaultAsync(c => c.UserId == userId.Value);
+				if (cart == null)
+				{
+					cart = new Models.Entities.ShoppingCart { UserId = userId.Value, CreatedAt = DateTime.Now };
+					context.ShoppingCarts.Add(cart);
+					await context.SaveChangesAsync();
+				}
+
+				var existing = await context.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.CartId && ci.CourseId == courseId);
+				if (existing == null)
+				{
+					var item = new Models.Entities.CartItem { CartId = cart.CartId, CourseId = courseId, AddedAt = DateTime.Now };
+					context.CartItems.Add(item);
+					await context.SaveChangesAsync();
+					ToastHelper.Show(this.FindForm(), "Đã thêm khóa học vào giỏ hàng!");
+				}
+				else
+				{
+					ToastHelper.Show(this.FindForm(), "Khóa học đã có trong giỏ hàng!");
+				}
+			}
+			catch (Exception ex)
+			{
+				ToastHelper.Show(this.FindForm(), $"Lỗi: {ex.Message}");
+			}
+		}
+
+	}
 }
+
+

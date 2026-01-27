@@ -124,20 +124,21 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			btnViewCourse.Visible = isOwner;
 			//btnStatistics.Visible = isOwner;
 
-		// Buyer: show start learning
-		btnStartLearning.Visible = isBuyer;
+			// Buyer: show start learning
+			btnStartLearning.Visible = isBuyer;
 
-		// If owner, we typically don't show purchase buttons
-		btnAddToCart.Visible = !isOwner && !isBuyer;
-		btnSubscribeMonthly.Visible = !isOwner && !isBuyer;
-		btnBuyNow.Visible = !isOwner && !isBuyer;
+			// If owner, we typically don't show purchase buttons
+			btnAddToCart.Visible = !isOwner && !isBuyer;
+			btnSubscribeMonthly.Visible = !isOwner && !isBuyer;
+			btnBuyNow.Visible = !isOwner && !isBuyer;
 
-		// adjust BuyNow/AddToCart enabled state for guest
-		if (currentUser == null)
-		{
-			btnAddToCart.Enabled = true; // allow adding but will prompt to login when clicked
-			btnSubscribeMonthly.Enabled = true;
-			btnBuyNow.Enabled = true;
+			// adjust BuyNow/AddToCart enabled state for guest
+			if (currentUser == null)
+			{
+				btnAddToCart.Enabled = true; // allow adding but will prompt to login when clicked
+				btnSubscribeMonthly.Enabled = true;
+				btnBuyNow.Enabled = true;
+			}
 		}
 
 		private async System.Threading.Tasks.Task LoadRatingDistribution()

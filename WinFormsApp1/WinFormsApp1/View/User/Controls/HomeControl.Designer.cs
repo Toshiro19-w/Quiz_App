@@ -15,8 +15,12 @@ namespace WinFormsApp1.View.User.Controls
         private PictureBox pictureBoxMotivation;
         private Label lblMotivationTitle;
         private Label lblMotivationText;
+        private Label lblRecommended;
+        private Label lblRecommendedDesc;
+        private CourseCarouselControl carouselRecommended;
+        private Button btnViewAllRecommended;
         private Label lblPopular;
-        private FlowLayoutPanel flowPopular;
+        private CourseCarouselControl carouselPopular;
         private Button btnViewAll;
         private Label lblFlashcardSets;
         private Label lblFlashcardDesc;
@@ -41,8 +45,12 @@ namespace WinFormsApp1.View.User.Controls
             lblMotivationText = new Label();
             lblMotivationTitle = new Label();
             pictureBoxMotivation = new PictureBox();
+            lblRecommended = new Label();
+            lblRecommendedDesc = new Label();
+            carouselRecommended = new CourseCarouselControl();
+            btnViewAllRecommended = new Button();
             lblPopular = new Label();
-            flowPopular = new FlowLayoutPanel();
+            carouselPopular = new CourseCarouselControl();
             btnViewAll = new Button();
             lblFlashcardSets = new Label();
             lblFlashcardDesc = new Label();
@@ -128,33 +136,75 @@ namespace WinFormsApp1.View.User.Controls
             pictureBoxMotivation.TabIndex = 0;
             pictureBoxMotivation.TabStop = false;
             // 
+            // lblRecommended
+            // 
+            lblRecommended.AutoSize = true;
+            lblRecommended.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            lblRecommended.Location = new Point(25, 585);
+            lblRecommended.Name = "lblRecommended";
+            lblRecommended.Size = new Size(360, 48);
+            lblRecommended.TabIndex = 2;
+            lblRecommended.Text = "🎯 Gợi ý dành cho bạn";
+            // 
+            // lblRecommendedDesc
+            // 
+            lblRecommendedDesc.AutoSize = true;
+            lblRecommendedDesc.Font = new Font("Segoe UI", 11F);
+            lblRecommendedDesc.ForeColor = Color.Gray;
+            lblRecommendedDesc.Location = new Point(25, 635);
+            lblRecommendedDesc.Name = "lblRecommendedDesc";
+            lblRecommendedDesc.Size = new Size(450, 30);
+            lblRecommendedDesc.TabIndex = 3;
+            lblRecommendedDesc.Text = "Khóa học được chọn riêng dựa trên sở thích của bạn";
+            // 
+            // carouselRecommended
+            // 
+            carouselRecommended.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            carouselRecommended.Location = new Point(25, 675);
+            carouselRecommended.Name = "carouselRecommended";
+            carouselRecommended.Size = new Size(1695, 420);
+            carouselRecommended.TabIndex = 4;
+            // 
+            // btnViewAllRecommended
+            // 
+            btnViewAllRecommended.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnViewAllRecommended.Cursor = Cursors.Hand;
+            btnViewAllRecommended.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            btnViewAllRecommended.Location = new Point(1530, 580);
+            btnViewAllRecommended.Name = "btnViewAllRecommended";
+            btnViewAllRecommended.Size = new Size(190, 45);
+            btnViewAllRecommended.TabIndex = 5;
+            btnViewAllRecommended.Text = "Xem tất cả";
+            btnViewAllRecommended.UseVisualStyleBackColor = true;
+            btnViewAllRecommended.Click += btnViewAll_Click;
+            // 
             // lblPopular
             // 
             lblPopular.AutoSize = true;
             lblPopular.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            lblPopular.Location = new Point(25, 585);
+            lblPopular.Location = new Point(25, 1120);
             lblPopular.Name = "lblPopular";
             lblPopular.Size = new Size(396, 48);
-            lblPopular.TabIndex = 2;
+            lblPopular.TabIndex = 6;
             lblPopular.Text = "🔥 Khóa học phổ biến";
             // 
-            // flowPopular
+            // carouselPopular
             // 
-            flowPopular.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            flowPopular.Location = new Point(25, 640);
-            flowPopular.Name = "flowPopular";
-            flowPopular.Size = new Size(1695, 410);
-            flowPopular.TabIndex = 3;
+            carouselPopular.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            carouselPopular.Location = new Point(25, 1175);
+            carouselPopular.Name = "carouselPopular";
+            carouselPopular.Size = new Size(1695, 420);
+            carouselPopular.TabIndex = 7;
             // 
             // btnViewAll
             // 
             btnViewAll.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnViewAll.Cursor = Cursors.Hand;
             btnViewAll.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            btnViewAll.Location = new Point(1530, 580);
+            btnViewAll.Location = new Point(1530, 1115);
             btnViewAll.Name = "btnViewAll";
             btnViewAll.Size = new Size(190, 45);
-            btnViewAll.TabIndex = 4;
+            btnViewAll.TabIndex = 8;
             btnViewAll.Text = "Xem tất cả";
             btnViewAll.UseVisualStyleBackColor = true;
             btnViewAll.Click += btnViewAll_Click;
@@ -163,10 +213,10 @@ namespace WinFormsApp1.View.User.Controls
             // 
             lblFlashcardSets.AutoSize = true;
             lblFlashcardSets.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            lblFlashcardSets.Location = new Point(25, 1092);
+            lblFlashcardSets.Location = new Point(25, 1627);
             lblFlashcardSets.Name = "lblFlashcardSets";
             lblFlashcardSets.Size = new Size(432, 48);
-            lblFlashcardSets.TabIndex = 5;
+            lblFlashcardSets.TabIndex = 9;
             lblFlashcardSets.Text = "📚 Bộ flashcard nên học";
             // 
             // lblFlashcardDesc
@@ -174,29 +224,29 @@ namespace WinFormsApp1.View.User.Controls
             lblFlashcardDesc.AutoSize = true;
             lblFlashcardDesc.Font = new Font("Segoe UI", 11F);
             lblFlashcardDesc.ForeColor = Color.Gray;
-            lblFlashcardDesc.Location = new Point(25, 1142);
+            lblFlashcardDesc.Location = new Point(25, 1677);
             lblFlashcardDesc.Name = "lblFlashcardDesc";
             lblFlashcardDesc.Size = new Size(438, 30);
-            lblFlashcardDesc.TabIndex = 6;
+            lblFlashcardDesc.TabIndex = 10;
             lblFlashcardDesc.Text = "Học từ vựng và kiến thức một cách hiệu quả";
             // 
             // flowFlashcards
             // 
             flowFlashcards.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            flowFlashcards.Location = new Point(25, 1182);
+            flowFlashcards.Location = new Point(25, 1717);
             flowFlashcards.Name = "flowFlashcards";
             flowFlashcards.Size = new Size(1695, 280);
-            flowFlashcards.TabIndex = 7;
+            flowFlashcards.TabIndex = 11;
             // 
             // btnViewAllFlashcards
             // 
             btnViewAllFlashcards.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnViewAllFlashcards.Cursor = Cursors.Hand;
             btnViewAllFlashcards.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            btnViewAllFlashcards.Location = new Point(1530, 1087);
+            btnViewAllFlashcards.Location = new Point(1530, 1622);
             btnViewAllFlashcards.Name = "btnViewAllFlashcards";
             btnViewAllFlashcards.Size = new Size(190, 45);
-            btnViewAllFlashcards.TabIndex = 8;
+            btnViewAllFlashcards.TabIndex = 12;
             btnViewAllFlashcards.Text = "Xem tất cả";
             btnViewAllFlashcards.UseVisualStyleBackColor = true;
             btnViewAllFlashcards.Click += btnViewAllFlashcards_Click;
@@ -210,12 +260,16 @@ namespace WinFormsApp1.View.User.Controls
             Controls.Add(lblFlashcardDesc);
             Controls.Add(lblFlashcardSets);
             Controls.Add(btnViewAll);
-            Controls.Add(flowPopular);
+            Controls.Add(carouselPopular);
             Controls.Add(lblPopular);
+            Controls.Add(btnViewAllRecommended);
+            Controls.Add(carouselRecommended);
+            Controls.Add(lblRecommendedDesc);
+            Controls.Add(lblRecommended);
             Controls.Add(panelMotivation);
             Controls.Add(panelWelcomeBanner);
             Name = "HomeControl";
-            Size = new Size(1766, 1500);
+            Size = new Size(1766, 2050);
             Load += HomeControl_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBoxAvatar).EndInit();
             panelWelcomeBanner.ResumeLayout(false);
