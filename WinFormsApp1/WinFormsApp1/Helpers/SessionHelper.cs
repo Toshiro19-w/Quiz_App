@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using WinFormsApp1.Models.Entities;
 using File = System.IO.File;
@@ -17,11 +18,31 @@ namespace WinFormsApp1.Helpers
             public int UserId { get; set; }
             public string Username { get; set; }
             public string FullName { get; set; }
+            public string Password { get; set; }
             public DateTime LoginTime { get; set; }
             public bool RememberMe { get; set; }
         }
 
-        public static void SaveSession(User user, bool rememberMe = false)
+        private static string EncodePassword(string password)
+        {
+            var bytes = Encoding.UTF8.GetBytes(password);
+            return Convert.ToBase64String(bytes);
+        }
+
+        private static string DecodePassword(string encodedPassword)
+        {
+            try
+            {
+                var bytes = Convert.FromBase64String(encodedPassword);
+                return Encoding.UTF8.GetString(bytes);
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        public static void SaveSession(User user, bool rememberMe = false, string password = null)
         {
             try
             {
@@ -30,6 +51,7 @@ namespace WinFormsApp1.Helpers
                     UserId = user.UserId,
                     Username = user.Username,
                     FullName = user.FullName,
+                    Password = rememberMe && !string.IsNullOrEmpty(password) ? EncodePassword(password) : null,
                     LoginTime = DateTime.Now,
                     RememberMe = rememberMe
                 };
@@ -61,6 +83,12 @@ namespace WinFormsApp1.Helpers
                 {
                     ClearSession();
                     return null;
+                }
+
+                // Decode password if exists
+                if (sessionData != null && !string.IsNullOrEmpty(sessionData.Password))
+                {
+                    sessionData.Password = DecodePassword(sessionData.Password);
                 }
 
                 return sessionData;

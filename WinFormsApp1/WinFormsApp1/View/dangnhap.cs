@@ -15,8 +15,16 @@ namespace WinFormsApp1
         {
             InitializeComponent();
             SetupModernUI();
-            CheckExistingSession();
             SetupRealTimeValidation();
+            SetupShowPasswordToggle();
+        }
+
+        private void SetupShowPasswordToggle()
+        {
+            chkRememberMe.CheckedChanged += (s, e) =>
+            {
+                textBox2.UseSystemPasswordChar = !chkRememberMe.Checked;
+            };
         }
 
         private void SetupRealTimeValidation()
@@ -53,18 +61,6 @@ namespace WinFormsApp1
             bool isValid = textBox.Text.Length >= 6;
             textBox.BackColor = isValid ? Color.FromArgb(240, 253, 244) : Color.FromArgb(254, 242, 242);
             lblPasswordError.Text = isValid ? "" : "Mật khẩu phải có ít nhất 6 ký tự";
-        }
-
-        private void CheckExistingSession()
-        {
-            var session = SessionHelper.LoadSession();
-            if (session != null)
-            {
-                // Tự động điền thông tin đăng nhập
-                textTK.Text = session.Username;
-                chkRememberMe.Checked = session.RememberMe;
-                ToastHelper.Show(this, $"Chào mừng trở lại, {session.FullName}!");
-            }
         }
 
         private void SetupModernUI()
@@ -119,20 +115,12 @@ namespace WinFormsApp1
 
                 if (success)
                 {
-                    // Lưu session nếu có chọn ghi nhớ
-                    if (chkRememberMe.Checked)
-                    {
-                        SessionHelper.SaveSession(AuthHelper.CurrentUser, true);
-                    }
-
                     Hide();
 
                     if (AuthHelper.IsAdmin())
                     {
                         var adminDashboard = new AdminDashboard();
-                        // When admin dashboard closes, show login form again instead of closing the application
                         adminDashboard.FormClosed += (s, args) => {
-                            SessionHelper.ClearSession();
                             this.Show();
                         };
                         adminDashboard.Show();
@@ -140,9 +128,7 @@ namespace WinFormsApp1
                     else
                     {
                         var userDashboard = new MainContainer();
-                        // When user dashboard closes (logout or close), show login form again
                         userDashboard.FormClosed += (s, args) => {
-                            SessionHelper.ClearSession();
                             this.Show();
                         };
                         userDashboard.Show();
