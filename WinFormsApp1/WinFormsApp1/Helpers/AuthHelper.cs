@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
 
@@ -92,6 +93,80 @@ namespace WinFormsApp1.Helpers
             context.Users.Add(user);
             context.SaveChanges();
             return true;
+        }
+
+        /// <summary>
+        /// Kiểm tra người dùng hiện tại có subscription còn hiệu lực không
+        /// </summary>
+        public static bool HasActiveSubscription()
+        {
+            if (_currentUser == null) return false;
+
+            using var context = new LearningPlatformContext();
+            var activeSubscription = context.UserSubscriptions
+                .Where(s => s.UserId == _currentUser.UserId 
+                    && s.Status == "Active" 
+                    && s.ExpiresAt > DateTime.UtcNow)
+                .FirstOrDefault();
+
+            return activeSubscription != null;
+        }
+
+        /// <summary>
+        /// Kiểm tra người dùng có quyền truy cập khóa học không (đã mua hoặc có subscription)
+        /// </summary>
+        public static bool CanAccessCourse(int courseId)
+        {
+            if (_currentUser == null) return false;
+
+            using var context = new LearningPlatformContext();
+
+            // Kiểm tra người dùng là owner của khóa học
+            var course = context.Courses.Find(courseId);
+            if (course != null && course.OwnerId == _currentUser.UserId)
+                return true;
+
+            // Kiểm tra đã mua khóa học
+            var hasPurchased = context.CoursePurchases
+                .Any(p => p.BuyerId == _currentUser.UserId 
+                    && p.CourseId == courseId 
+                    && p.Status == "Paid");
+
+            if (hasPurchased) return true;
+
+            // Kiểm tra subscription còn hiệu lực
+            return HasActiveSubscription();
+        }
+
+        /// <summary>
+        /// Lấy thông tin subscription còn bao nhiêu ngày hết hạn
+        /// Trả về null nếu không có subscription hoặc đã hết hạn
+        /// </summary>
+        public static int? GetSubscriptionDaysRemaining()
+        {
+            if (_currentUser == null) return null;
+
+            using var context = new LearningPlatformContext();
+            var activeSubscription = context.UserSubscriptions
+                .Where(s => s.UserId == _currentUser.UserId 
+                    && s.Status == "Active" 
+                    && s.ExpiresAt > DateTime.UtcNow)
+                .OrderByDescending(s => s.ExpiresAt)
+                .FirstOrDefault();
+
+            if (activeSubscription == null) return null;
+
+            var timeRemaining = activeSubscription.ExpiresAt - DateTime.UtcNow;
+            return (int)Math.Ceiling(timeRemaining.TotalDays);
+        }
+
+        /// <summary>
+        /// Kiểm tra subscription có sắp hết hạn không (còn dưới X ngày)
+        /// </summary>
+        public static bool IsSubscriptionExpiringSoon(int daysThreshold = 3)
+        {
+            var daysRemaining = GetSubscriptionDaysRemaining();
+            return daysRemaining.HasValue && daysRemaining.Value <= daysThreshold && daysRemaining.Value > 0;
         }
     }
 }

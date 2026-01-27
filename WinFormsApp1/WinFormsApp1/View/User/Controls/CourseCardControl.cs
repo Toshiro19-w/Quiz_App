@@ -99,15 +99,21 @@ namespace WinFormsApp1.View.User.Controls
             {
                 using var context = new LearningPlatformContext();
                 bool purchased = await context.CoursePurchases.AnyAsync(cp => cp.CourseId == courseId && cp.BuyerId == userId);
+                
+                // Kiểm tra subscription còn hiệu lực
+                bool hasActiveSubscription = AuthHelper.HasActiveSubscription();
+
+                // Ẩn nút "Add to Cart" nếu đã mua hoặc có subscription
+                bool shouldHideButton = purchased || hasActiveSubscription;
 
                 // Update UI on the UI thread
                 if (this.IsHandleCreated && !this.Disposing && !this.IsDisposed)
                 {
-                    this.Invoke(() => btnAddToCart.Visible = !purchased);
+                    this.Invoke(() => btnAddToCart.Visible = !shouldHideButton);
                 }
                 else
                 {
-                    btnAddToCart.Visible = !purchased;
+                    btnAddToCart.Visible = !shouldHideButton;
                 }
             }
             catch

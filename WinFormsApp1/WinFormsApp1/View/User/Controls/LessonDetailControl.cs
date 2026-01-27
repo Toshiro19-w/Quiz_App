@@ -168,20 +168,52 @@ namespace WinFormsApp1.View.User.Controls
 		//    }
 		//}
 
-		public async Task LoadLessonAsync(string courseSlug, int lessonId, int? openContentId = null)
+	public async Task LoadLessonAsync(string courseSlug, int lessonId, int? openContentId = null)
+	{
+		try
 		{
-			try
+			// SỬA LỖI: Tách query và dùng AsNoTracking để tăng tốc độ
+			using var context = new LearningPlatformContext();
+
+			// BƯỚC 1: Load course cơ bản KHÔNG bao gồm lessons (tránh query quá sâu)
+			_currentCourse = await context.Courses
+				.AsNoTracking() // QUAN TRỌNG: Không tracking để nhanh hơn
+				.Include(c => c.CourseChapters) // Chỉ load chapters
+				.FirstOrDefaultAsync(c => c.Slug == courseSlug);
+
+			if (_currentCourse == null) return;
+
+			// BƯỚC 1.5: KIỂM TRA QUYỀN TRUY CẬP
+			var currentUser = AuthHelper.CurrentUser;
+			if (currentUser == null)
 			{
-				// SỬA LỖI: Tách query và dùng AsNoTracking để tăng tốc độ
-				using var context = new LearningPlatformContext();
+				MessageBox.Show("Vui lòng đăng nhập để xem bài học!", "Thông báo", 
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
 
-				// BƯỚC 1: Load course cơ bản KHÔNG bao gồm lessons (tránh query quá sâu)
-				_currentCourse = await context.Courses
-					.AsNoTracking() // QUAN TRỌNG: Không tracking để nhanh hơn
-					.Include(c => c.CourseChapters) // Chỉ load chapters
-					.FirstOrDefaultAsync(c => c.Slug == courseSlug);
+			// Kiểm tra quyền truy cập khóa học
+			if (!AuthHelper.CanAccessCourse(_currentCourse.CourseId))
+			{
+				var result = MessageBox.Show(
+					"Bạn chưa có quyền truy cập khóa học này.\n\n" +
+					"Bạn cần mua khóa học hoặc đăng ký gói Premium để truy cập.\n\n" +
+					"Bạn có muốn quay lại trang chi tiết khóa học?",
+					"Không có quyền truy cập",
+					MessageBoxButtons.YesNo,
+					MessageBoxIcon.Warning);
 
-				if (_currentCourse == null) return;
+				if (result == DialogResult.Yes)
+				{
+					// Navigate back to course detail
+					var form = this.FindForm();
+					if (form is MainContainer mainContainer)
+					{
+						mainContainer.NavigateToCourseDetail(_currentCourse.CourseId);
+					}
+				}
+				return;
+			}
 
 				// BƯỚC 2: Load lessons riêng biệt với AsNoTracking
 				var chapterIds = _currentCourse.CourseChapters.Select(ch => ch.ChapterId).ToList();
@@ -861,6 +893,14 @@ namespace WinFormsApp1.View.User.Controls
                 var content = _currentContents[_currentContentIndex];
                 var userId = AuthHelper.CurrentUser?.UserId;
                 if (!userId.HasValue) return;
+
+                // KIỂM TRA QUYỀN TRUY CẬP trước khi lưu tiến độ
+                if (!AuthHelper.CanAccessCourse(_currentCourse.CourseId))
+                {
+                    // Người dùng không còn quyền truy cập (ví dụ: subscription hết hạn)
+                    // Không lưu tiến độ mới
+                    return;
+                }
 
                 // Lấy tổng thời lượng (ms -> sec)
                 long lengthMs = _mediaPlayer.Length;
@@ -1544,6 +1584,18 @@ namespace WinFormsApp1.View.User.Controls
                 var userId = AuthHelper.CurrentUser?.UserId;
                 if (!userId.HasValue) return;
 
+                // KIỂM TRA QUYỀN TRUY CẬP trước khi lưu tiến độ
+                if (!AuthHelper.CanAccessCourse(_currentCourse.CourseId))
+                {
+                    MessageBox.Show(
+                        "Bạn không còn quyền truy cập khóa học này.\n\n" +
+                        "Tiến độ học của bạn đã được lưu trước đó và sẽ được khôi phục khi bạn mua khóa học hoặc gia hạn subscription.",
+                        "Không có quyền",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
                 using var context = new LearningPlatformContext();
 
                 var progress = await context.CourseProgresses
@@ -1641,6 +1693,18 @@ namespace WinFormsApp1.View.User.Controls
         {
             try
             {
+                // KIỂM TRA QUYỀN TRUY CẬP trước khi tạo chứng chỉ
+                if (!AuthHelper.CanAccessCourse(_currentCourse.CourseId))
+                {
+                    MessageBox.Show(
+                        "Bạn không thể nhận chứng chỉ do không còn quyền truy cập khóa học này.\n\n" +
+                        "Vui lòng mua khóa học hoặc gia hạn subscription để nhận chứng chỉ.",
+                        "Không có quyền",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
                 // Load user và instructor info
                 var user = await context.Users.FindAsync(userId);
                 var instructor = await context.Users.FindAsync(_currentCourse.OwnerId);
