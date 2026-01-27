@@ -98,6 +98,11 @@ public partial class LearningPlatformContext : DbContext
 
     public virtual DbSet<DiscountCourse> DiscountCourses { get; set; }
 
+    public virtual DbSet<UserSubscription> UserSubscriptions { get; set; }
+
+    public virtual DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+
+
 	//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
 	//        => optionsBuilder.UseSqlServer("Server=localhost,1434;Initial Catalog=LearningPlatform;Persist Security Info=True;User ID=solar;Password=@Abcd@1234;Encrypt=True;Trust Server Certificate=True");
@@ -872,6 +877,28 @@ public partial class LearningPlatformContext : DbContext
                 .HasForeignKey(d => d.CourseId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_DiscountCourse_Course");
+        });
+
+        modelBuilder.Entity<UserSubscription>(entity =>
+        {
+            entity.HasKey(e => e.SubscriptionId).HasName("PK__UserSubs__9A2B24BDC7E4F7A0");
+
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.SubscribedAt).HasDefaultValueSql("(sysutcdatetime())");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserSubscriptions)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_UserSubscriptions_User");
+        });
+
+        modelBuilder.Entity<SubscriptionPlan>(entity =>
+        {
+            entity.HasKey(e => e.PlanId).HasName("PK__Subscription__Plans");
+
+            entity.Property(e => e.Price).HasColumnType("decimal(12, 2)");
         });
 
         OnModelCreatingPartial(modelBuilder);

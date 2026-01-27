@@ -22,6 +22,7 @@ namespace WinFormsApp1.View.User.Components
         
         public event EventHandler? OnHocTapClick;
         public event EventHandler? OnGioHangClick;
+        public event EventHandler? OnYmeduPlusClick;
         public event EventHandler? OnBangDieuKhienClick;
         public event EventHandler? OnCaiDatClick;
         public event EventHandler? OnChinhSuaClick;
@@ -126,6 +127,11 @@ namespace WinFormsApp1.View.User.Components
 
             var btnGioHang = AddMenuItem($"🛒 {LanguageHelper.GetString("MyCart")}", ref yPos);
             btnGioHang.Click += (s, e) => OnGioHangClick?.Invoke(s, e);
+            
+            var btnYmeduPlus = AddMenuItem($"⭐ Ymedu Plus", ref yPos);
+            btnYmeduPlus.ForeColor = Color.FromArgb(255, 153, 51); // Màu cam nổi bật
+            btnYmeduPlus.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+            btnYmeduPlus.Click += (s, e) => OnYmeduPlusClick?.Invoke(s, e);
             
             // Separator for teacher/admin
             if (AuthHelper.CurrentUser != null && !AuthHelper.IsUser())

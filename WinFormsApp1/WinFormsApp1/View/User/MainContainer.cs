@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.View.User.Components;
 
@@ -93,6 +95,12 @@ namespace WinFormsApp1.View.User
                 profileDropdown.HideDropdown();
                 var checkoutForm = new Forms.frmCheckout();
                 checkoutForm.ShowDialog();
+            };
+
+            profileDropdown.OnYmeduPlusClick += async (s, e) =>
+            {
+                profileDropdown.HideDropdown();
+                await HandleYmeduPlusClickAsync();
             };
 
             profileDropdown.OnBangDieuKhienClick += (s, e) =>
@@ -374,6 +382,50 @@ namespace WinFormsApp1.View.User
                 var loginForm = new dangnhap();
                 loginForm.Show();
                 this.Close();
+            }
+        }
+
+        private async System.Threading.Tasks.Task HandleYmeduPlusClickAsync()
+        {
+            try
+            {
+                var currentUser = AuthHelper.CurrentUser;
+                if (currentUser == null)
+                {
+                    ToastHelper.Show(this, "Vui lòng đăng nhập để sử dụng tính năng này!");
+                    return;
+                }
+
+                // Kiểm tra xem user đã có subscription active chưa
+                using var context = new Models.EF.LearningPlatformContext();
+                var activeSubscription = await context.UserSubscriptions
+                    .Where(s => s.UserId == currentUser.UserId 
+                             && s.Status == "Active" 
+                             && s.ExpiresAt > DateTime.UtcNow)
+                    .OrderByDescending(s => s.ExpiresAt)
+                    .FirstOrDefaultAsync();
+
+                if (activeSubscription != null)
+                {
+                    // User đã có subscription active
+                    // TODO: Phát triển sau - hiển thị thông tin subscription
+                    MessageBox.Show(
+                        $"Bạn đang sử dụng Ymedu Plus!\nHạn sử dụng: {activeSubscription.ExpiresAt:dd/MM/yyyy}", 
+                        "Ymedu Plus", 
+                        MessageBoxButtons.OK, 
+                        MessageBoxIcon.Information);
+                }
+                else
+                {
+                    // User chưa có subscription -> mở form đăng ký
+                    using var subscriptionForm = new Forms.SubscriptionForm();
+                    subscriptionForm.StartPosition = FormStartPosition.CenterParent;
+                    subscriptionForm.ShowDialog(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

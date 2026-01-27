@@ -17,6 +17,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
         private PictureBox picCover;
         private Label lblPrice;
         private Button btnAddToCart;
+        private Button btnSubscribeMonthly;
         private Button btnBuyNow;
         private Button btnStartLearning;
         private Button btnEditCourse;
@@ -62,6 +63,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             picCover = new PictureBox();
             lblPrice = new Label();
             btnAddToCart = new Button();
+            btnSubscribeMonthly = new Button();
             btnBuyNow = new Button();
             btnStartLearning = new Button();
             btnEditCourse = new Button();
@@ -98,7 +100,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblBreadcrumb.ForeColor = Color.Gray;
             lblBreadcrumb.Location = new Point(77, 16);
             lblBreadcrumb.Name = "lblBreadcrumb";
-            lblBreadcrumb.Size = new Size(469, 25);
+            lblBreadcrumb.Size = new Size(389, 20);
             lblBreadcrumb.TabIndex = 0;
             lblBreadcrumb.Text = "Khóa học / Lập trình / SQL Server từ cơ bản đến nâng cao";
             // 
@@ -121,7 +123,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblRating.ForeColor = Color.Gold;
             lblRating.Location = new Point(53, 120);
             lblRating.Name = "lblRating";
-            lblRating.Size = new Size(83, 32);
+            lblRating.Size = new Size(69, 28);
             lblRating.TabIndex = 3;
             lblRating.Text = "rating";
             // 
@@ -133,7 +135,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblRatingCount.ForeColor = Color.White;
             lblRatingCount.Location = new Point(225, 122);
             lblRatingCount.Name = "lblRatingCount";
-            lblRatingCount.Size = new Size(69, 30);
+            lblRatingCount.Size = new Size(62, 25);
             lblRatingCount.TabIndex = 4;
             lblRatingCount.Text = "rating";
             // 
@@ -145,7 +147,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblStudents.ForeColor = Color.White;
             lblStudents.Location = new Point(349, 121);
             lblStudents.Name = "lblStudents";
-            lblStudents.Size = new Size(120, 30);
+            lblStudents.Size = new Size(107, 25);
             lblStudents.TabIndex = 5;
             lblStudents.Tag = "";
             lblStudents.Text = "so hoc sinh";
@@ -158,7 +160,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblInstructor.ForeColor = Color.White;
             lblInstructor.Location = new Point(53, 276);
             lblInstructor.Name = "lblInstructor";
-            lblInstructor.Size = new Size(250, 28);
+            lblInstructor.Size = new Size(221, 23);
             lblInstructor.TabIndex = 6;
             lblInstructor.Text = "Giảng viên: Trần Minh Khoa";
             // 
@@ -170,7 +172,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblLastUpdated.ForeColor = Color.White;
             lblLastUpdated.Location = new Point(53, 313);
             lblLastUpdated.Name = "lblLastUpdated";
-            lblLastUpdated.Size = new Size(173, 28);
+            lblLastUpdated.Size = new Size(150, 23);
             lblLastUpdated.TabIndex = 7;
             lblLastUpdated.Text = "Cập nhật: 11/2025";
             // 
@@ -210,6 +212,21 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             btnAddToCart.Text = "Thêm giỏ hàng";
             btnAddToCart.UseVisualStyleBackColor = false;
             // 
+            // btnSubscribeMonthly
+            // 
+            btnSubscribeMonthly.BackColor = Color.FromArgb(255, 153, 51);
+            btnSubscribeMonthly.Cursor = Cursors.Hand;
+            btnSubscribeMonthly.FlatStyle = FlatStyle.Flat;
+            btnSubscribeMonthly.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnSubscribeMonthly.ForeColor = Color.White;
+            btnSubscribeMonthly.Location = new Point(3, 179);
+            btnSubscribeMonthly.Name = "btnSubscribeMonthly";
+            btnSubscribeMonthly.Size = new Size(320, 45);
+            btnSubscribeMonthly.TabIndex = 13;
+            btnSubscribeMonthly.Text = "📅 Đăng ký Ymedu Plus";
+            btnSubscribeMonthly.UseVisualStyleBackColor = false;
+            btnSubscribeMonthly.Visible = false;
+            // 
             // btnBuyNow
             // 
             btnBuyNow.Cursor = Cursors.Hand;
@@ -228,7 +245,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             btnStartLearning.FlatStyle = FlatStyle.Flat;
             btnStartLearning.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             btnStartLearning.ForeColor = Color.White;
-            btnStartLearning.Location = new Point(3, 179);
+            btnStartLearning.Location = new Point(3, 230);
             btnStartLearning.Name = "btnStartLearning";
             btnStartLearning.Size = new Size(320, 50);
             btnStartLearning.TabIndex = 12;
@@ -294,12 +311,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             pnlActions.Controls.Add(lblPrice);
             pnlActions.Controls.Add(btnAddToCart);
             pnlActions.Controls.Add(btnBuyNow);
+            pnlActions.Controls.Add(btnSubscribeMonthly);
             pnlActions.Controls.Add(btnStartLearning);
             pnlActions.Controls.Add(pnlOwnerActions);
             pnlActions.FlowDirection = FlowDirection.TopDown;
             pnlActions.Location = new Point(1403, 262);
             pnlActions.Name = "pnlActions";
-            pnlActions.Size = new Size(320, 260);
+            pnlActions.Size = new Size(320, 300);
             pnlActions.TabIndex = 9;
             pnlActions.WrapContents = false;
             // 
@@ -309,7 +327,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             pnlOwnerActions.Controls.Add(btnViewCourse);
             pnlOwnerActions.Controls.Add(btnStatistics);
             pnlOwnerActions.FlowDirection = FlowDirection.TopDown;
-            pnlOwnerActions.Location = new Point(3, 235);
+            pnlOwnerActions.Location = new Point(3, 286);
             pnlOwnerActions.Name = "pnlOwnerActions";
             pnlOwnerActions.Size = new Size(320, 140);
             pnlOwnerActions.TabIndex = 13;
@@ -321,7 +339,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblContentTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             lblContentTitle.Location = new Point(77, 447);
             lblContentTitle.Name = "lblContentTitle";
-            lblContentTitle.Size = new Size(307, 45);
+            lblContentTitle.Size = new Size(259, 37);
             lblContentTitle.TabIndex = 13;
             lblContentTitle.Text = "Nội dung khóa học";
             // 
@@ -333,7 +351,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lnkExpandAll.LinkColor = Color.FromArgb(0, 153, 153);
             lnkExpandAll.Location = new Point(1603, 397);
             lnkExpandAll.Name = "lnkExpandAll";
-            lnkExpandAll.Size = new Size(130, 25);
+            lnkExpandAll.Size = new Size(107, 20);
             lnkExpandAll.TabIndex = 14;
             lnkExpandAll.TabStop = true;
             lnkExpandAll.Text = "Mở rộng tất cả";
@@ -345,7 +363,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblChapterStats.ForeColor = Color.Gray;
             lblChapterStats.Location = new Point(423, 463);
             lblChapterStats.Name = "lblChapterStats";
-            lblChapterStats.Size = new Size(108, 25);
+            lblChapterStats.Size = new Size(89, 20);
             lblChapterStats.TabIndex = 15;
             lblChapterStats.Text = "chapterstats";
             // 
@@ -355,7 +373,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblDescriptionTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             lblDescriptionTitle.Location = new Point(77, 715);
             lblDescriptionTitle.Name = "lblDescriptionTitle";
-            lblDescriptionTitle.Size = new Size(109, 45);
+            lblDescriptionTitle.Size = new Size(93, 37);
             lblDescriptionTitle.TabIndex = 17;
             lblDescriptionTitle.Text = "Mô tả";
             lblDescriptionTitle.Visible = false;
@@ -380,7 +398,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblRatingSectionTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             lblRatingSectionTitle.Location = new Point(77, 760);
             lblRatingSectionTitle.Name = "lblRatingSectionTitle";
-            lblRatingSectionTitle.Size = new Size(348, 45);
+            lblRatingSectionTitle.Size = new Size(296, 37);
             lblRatingSectionTitle.TabIndex = 22;
             lblRatingSectionTitle.Text = "Đánh giá của học viên";
             // 
@@ -391,7 +409,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblAvgRating.ForeColor = Color.FromArgb(0, 102, 102);
             lblAvgRating.Location = new Point(80, 821);
             lblAvgRating.Name = "lblAvgRating";
-            lblAvgRating.Size = new Size(0, 96);
+            lblAvgRating.Size = new Size(0, 81);
             lblAvgRating.TabIndex = 23;
             // 
             // lblTotalRatingCount
@@ -401,7 +419,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblTotalRatingCount.ForeColor = Color.Gray;
             lblTotalRatingCount.Location = new Point(80, 933);
             lblTotalRatingCount.Name = "lblTotalRatingCount";
-            lblTotalRatingCount.Size = new Size(0, 25);
+            lblTotalRatingCount.Size = new Size(0, 20);
             lblTotalRatingCount.TabIndex = 24;
             // 
             // lblStar1
@@ -410,7 +428,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblStar1.Font = new Font("Segoe UI", 9F);
             lblStar1.Location = new Point(426, 821);
             lblStar1.Name = "lblStar1";
-            lblStar1.Size = new Size(87, 25);
+            lblStar1.Size = new Size(74, 20);
             lblStar1.TabIndex = 25;
             lblStar1.Text = "★★★★★";
             lblStar1.Visible = false;
@@ -421,7 +439,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblStar2.Font = new Font("Segoe UI", 9F);
             lblStar2.Location = new Point(426, 849);
             lblStar2.Name = "lblStar2";
-            lblStar2.Size = new Size(87, 25);
+            lblStar2.Size = new Size(74, 20);
             lblStar2.TabIndex = 28;
             lblStar2.Text = "★★★★☆";
             lblStar2.Visible = false;
@@ -432,7 +450,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblStar3.Font = new Font("Segoe UI", 9F);
             lblStar3.Location = new Point(426, 877);
             lblStar3.Name = "lblStar3";
-            lblStar3.Size = new Size(87, 25);
+            lblStar3.Size = new Size(74, 20);
             lblStar3.TabIndex = 31;
             lblStar3.Text = "★★★☆☆";
             lblStar3.Visible = false;
@@ -443,7 +461,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblStar4.Font = new Font("Segoe UI", 9F);
             lblStar4.Location = new Point(426, 905);
             lblStar4.Name = "lblStar4";
-            lblStar4.Size = new Size(87, 25);
+            lblStar4.Size = new Size(74, 20);
             lblStar4.TabIndex = 34;
             lblStar4.Text = "★★☆☆☆";
             lblStar4.Visible = false;
@@ -454,7 +472,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblStar5.Font = new Font("Segoe UI", 9F);
             lblStar5.Location = new Point(426, 933);
             lblStar5.Name = "lblStar5";
-            lblStar5.Size = new Size(87, 25);
+            lblStar5.Size = new Size(74, 20);
             lblStar5.TabIndex = 37;
             lblStar5.Text = "★☆☆☆☆";
             lblStar5.Visible = false;
