@@ -254,57 +254,99 @@ namespace WinFormsApp1.View.User.Controls
             }
         }
 
-        private async void ViewCourse(Course course)
-        {
-            try
-            {
-                using var context = new LearningPlatformContext();
-                
-                var courseWithDetails = await context.Courses
-                    .Include(c => c.CourseChapters)
-                        .ThenInclude(ch => ch.Lessons)
-                    .FirstOrDefaultAsync(c => c.CourseId == course.CourseId);
+		//private async void ViewCourse(Course course)
+		//{
+		//    try
+		//    {
+		//        using var context = new LearningPlatformContext();
 
-                if (courseWithDetails == null)
-                {
-                    MessageBox.Show("Không tìm thấy khóa học!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+		//        var courseWithDetails = await context.Courses
+		//            .Include(c => c.CourseChapters)
+		//                .ThenInclude(ch => ch.Lessons)
+		//            .FirstOrDefaultAsync(c => c.CourseId == course.CourseId);
 
-                var firstLesson = courseWithDetails.CourseChapters
-                    .OrderBy(ch => ch.OrderIndex)
-                    .SelectMany(ch => ch.Lessons.OrderBy(l => l.OrderIndex))
-                    .FirstOrDefault();
+		//        if (courseWithDetails == null)
+		//        {
+		//            MessageBox.Show("Không tìm thấy khóa học!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		//            return;
+		//        }
 
-                if (firstLesson == null)
-                {
-                    MessageBox.Show("Khóa học chưa có bài học nào!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
+		//        var firstLesson = courseWithDetails.CourseChapters
+		//            .OrderBy(ch => ch.OrderIndex)
+		//            .SelectMany(ch => ch.Lessons.OrderBy(l => l.OrderIndex))
+		//            .FirstOrDefault();
 
-                var form = this.FindForm();
-                if (form is MainContainer mainContainer)
-                {
-                    var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
-                    if (mainPanel != null)
-                    {
-                        mainPanel.Controls.Clear();
+		//        if (firstLesson == null)
+		//        {
+		//            MessageBox.Show("Khóa học chưa có bài học nào!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+		//            return;
+		//        }
 
-                        var lessonDetailControl = new LessonDetailControl();
-                        lessonDetailControl.Dock = DockStyle.Fill;
-                        mainPanel.Controls.Add(lessonDetailControl);
+		//        var form = this.FindForm();
+		//        if (form is MainContainer mainContainer)
+		//        {
+		//            var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
+		//            if (mainPanel != null)
+		//            {
+		//                mainPanel.Controls.Clear();
 
-                        await lessonDetailControl.LoadLessonAsync(courseWithDetails.Slug, firstLesson.LessonId);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi mở khóa học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+		//                var lessonDetailControl = new LessonDetailControl();
+		//                lessonDetailControl.Dock = DockStyle.Fill;
+		//                mainPanel.Controls.Add(lessonDetailControl);
 
-        private async void EditCourse(Course course)
+		//                await lessonDetailControl.LoadLessonAsync(courseWithDetails.Slug, firstLesson.LessonId);
+		//            }
+		//        }
+		//    }
+		//    catch (Exception ex)
+		//    {
+		//        MessageBox.Show($"Lỗi khi mở khóa học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		//    }
+		//}
+		private async void ViewCourse(Course course)
+		{
+			try
+			{
+				// SỬA LỖI: Chỉ lấy lesson đầu tiên, không load toàn bộ course structure
+				using var context = new LearningPlatformContext();
+
+				var firstLesson = await context.Lessons
+					.AsNoTracking() // QUAN TRỌNG: Không tracking
+					.Include(l => l.Chapter)
+					.Where(l => l.Chapter.CourseId == course.CourseId)
+					.OrderBy(l => l.Chapter.OrderIndex)
+					.ThenBy(l => l.OrderIndex)
+					.FirstOrDefaultAsync();
+
+				if (firstLesson == null)
+				{
+					MessageBox.Show("Khóa học chưa có bài học nào!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					return;
+				}
+
+				var form = this.FindForm();
+				if (form is MainContainer mainContainer)
+				{
+					var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
+					if (mainPanel != null)
+					{
+						mainPanel.Controls.Clear();
+
+						var lessonDetailControl = new LessonDetailControl();
+						lessonDetailControl.Dock = DockStyle.Fill;
+						mainPanel.Controls.Add(lessonDetailControl);
+
+						// Truyền course.Slug (có sẵn từ tham số)
+						await lessonDetailControl.LoadLessonAsync(course.Slug, firstLesson.LessonId);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Lỗi khi mở khóa học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+		private async void EditCourse(Course course)
         {
             try
             {

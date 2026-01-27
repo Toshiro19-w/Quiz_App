@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinFormsApp1.View.User.Controls.TestControls;
 
 namespace WinFormsApp1.View.User.Controls
 {
@@ -27,20 +28,17 @@ namespace WinFormsApp1.View.User.Controls
         private int _currentFlashcardIndex = 0;
         private bool _isFlipped = false;
 
-        // --- FLASHCARD UI COMPONENTS (MỚI) ---
+        // --- FLASHCARD UI COMPONENTS ---
         private Panel _pnlCardFace;      
         private Label _lblCardContent;   
         private Label _lblCardSide;      
         private Label _lblCardCounter;   
         private Button _btnFlip;         
         private Button _btnPrev;         
-        private Button _btnNext;         
+        private Button _btnNext;
 
-        // Test state
-        private Test _currentTest;
-        private List<Question> _questions;
-        private Dictionary<int, List<int>> _selectedAnswers = new Dictionary<int, List<int>>();
-        private DateTime _testStartTime;
+        // Test state - SIMPLIFIED
+        private TestTakingControl _testTakingControl;
 
         // Video tracking
         private System.Windows.Forms.Timer _videoProgressTimer;
@@ -95,17 +93,11 @@ namespace WinFormsApp1.View.User.Controls
 
         private void InitializeEventHandlers()
         {
-            // Video events - comment out until WMP is properly configured
-            // videoPlayer.PlayStateChange += VideoPlayer_PlayStateChange;
-
             // Flashcard events
             btnFlipCard.Click += BtnFlipCard_Click;
             btnPrevCard.Click += BtnPrevCard_Click;
             btnNextCard.Click += BtnNextCard_Click;
             btnCompleteFlashcard.Click += BtnCompleteFlashcard_Click;
-
-            // Test events
-            btnSubmitTest.Click += BtnSubmitTest_Click;
 
             // Navigation events
             btnPrevLesson.Click += BtnPrevLesson_Click;
@@ -113,70 +105,142 @@ namespace WinFormsApp1.View.User.Controls
             btnMarkComplete.Click += BtnMarkComplete_Click;
         }
 
-        public async Task LoadLessonAsync(string courseSlug, int lessonId, int? openContentId = null)
-        {
-            try
-            {
-                using var context = new LearningPlatformContext();
+		//public async Task LoadLessonAsync(string courseSlug, int lessonId, int? openContentId = null)
+		//{
+		//    try
+		//    {
+		//        using var context = new LearningPlatformContext();
 
-                // Load course with full details
-                _currentCourse = await context.Courses
-                    .Include(c => c.CourseChapters)
-                        .ThenInclude(ch => ch.Lessons)
-                            .ThenInclude(l => l.LessonContents)
-                    .FirstOrDefaultAsync(c => c.Slug == courseSlug);
+		//        // Load course with full details
+		//        _currentCourse = await context.Courses
+		//            .Include(c => c.CourseChapters)
+		//                .ThenInclude(ch => ch.Lessons)
+		//                    .ThenInclude(l => l.LessonContents)
+		//            .FirstOrDefaultAsync(c => c.Slug == courseSlug);
 
-                if (_currentCourse == null) return;
+		//        if (_currentCourse == null) return;
 
-                // Sort chapters and lessons
-                _currentCourse.CourseChapters = _currentCourse.CourseChapters.OrderBy(ch => ch.OrderIndex).ToList();
-                foreach (var chapter in _currentCourse.CourseChapters)
-                {
-                    chapter.Lessons = chapter.Lessons.OrderBy(l => l.OrderIndex).ToList();
-                }
+		//        // Sort chapters and lessons
+		//        _currentCourse.CourseChapters = _currentCourse.CourseChapters.OrderBy(ch => ch.OrderIndex).ToList();
+		//        foreach (var chapter in _currentCourse.CourseChapters)
+		//        {
+		//            chapter.Lessons = chapter.Lessons.OrderBy(l => l.OrderIndex).ToList();
+		//        }
 
-                // Load specific lesson
-                _currentLesson = _currentCourse.CourseChapters
-                    .SelectMany(ch => ch.Lessons)
-                    .FirstOrDefault(l => l.LessonId == lessonId);
+		//        // Load specific lesson
+		//        _currentLesson = _currentCourse.CourseChapters
+		//            .SelectMany(ch => ch.Lessons)
+		//            .FirstOrDefault(l => l.LessonId == lessonId);
 
-                if (_currentLesson == null) return;
+		//        if (_currentLesson == null) return;
 
-                _currentContents = _currentLesson.LessonContents.OrderBy(lc => lc.OrderIndex).ToList();
-                
-                // Disable mark-complete if there are no contents in this lesson
-                try
-                {
-                    if (btnMarkComplete != null)
-                        btnMarkComplete.Enabled = _currentContents != null && _currentContents.Count > 0;
-                }
-                catch { }
+		//        _currentContents = _currentLesson.LessonContents.OrderBy(lc => lc.OrderIndex).ToList();
 
-                // Update UI
-                if (lblCourseTitle != null) lblCourseTitle.Text = _currentCourse.Title;
+		//        // Disable mark-complete if there are no contents in this lesson
+		//        try
+		//        {
+		//            if (btnMarkComplete != null)
+		//                btnMarkComplete.Enabled = _currentContents != null && _currentContents.Count > 0;
+		//        }
+		//        catch { }
 
-                await LoadSidebarAsync();
-                await UpdateProgressAsync();
+		//        // Update UI
+		//        if (lblCourseTitle != null) lblCourseTitle.Text = _currentCourse.Title;
 
-                // --- ĐOẠN CODE MỚI: XÁC ĐỊNH NỘI DUNG CẦN MỞ ---
-                int targetIndex = 0;
-                if (openContentId.HasValue)
-                {
-                    // Tìm vị trí của contentId được yêu cầu trong bài học này
-                    var index = _currentContents.FindIndex(c => c.ContentId == openContentId.Value);
-                    if (index >= 0) targetIndex = index;
-                }
+		//        await LoadSidebarAsync();
+		//        await UpdateProgressAsync();
 
-                await LoadContentAsync(targetIndex);
-                // ------------------------------------------------
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi tải bài học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+		//        // --- ĐOẠN CODE MỚI: XÁC ĐỊNH NỘI DUNG CẦN MỞ ---
+		//        int targetIndex = 0;
+		//        if (openContentId.HasValue)
+		//        {
+		//            // Tìm vị trí của contentId được yêu cầu trong bài học này
+		//            var index = _currentContents.FindIndex(c => c.ContentId == openContentId.Value);
+		//            if (index >= 0) targetIndex = index;
+		//        }
 
-        private async Task LoadSidebarAsync()
+		//        await LoadContentAsync(targetIndex);
+		//        // ------------------------------------------------
+		//    }
+		//    catch (Exception ex)
+		//    {
+		//        MessageBox.Show($"Lỗi tải bài học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		//    }
+		//}
+
+		public async Task LoadLessonAsync(string courseSlug, int lessonId, int? openContentId = null)
+		{
+			try
+			{
+				// SỬA LỖI: Tách query và dùng AsNoTracking để tăng tốc độ
+				using var context = new LearningPlatformContext();
+
+				// BƯỚC 1: Load course cơ bản KHÔNG bao gồm lessons (tránh query quá sâu)
+				_currentCourse = await context.Courses
+					.AsNoTracking() // QUAN TRỌNG: Không tracking để nhanh hơn
+					.Include(c => c.CourseChapters) // Chỉ load chapters
+					.FirstOrDefaultAsync(c => c.Slug == courseSlug);
+
+				if (_currentCourse == null) return;
+
+				// BƯỚC 2: Load lessons riêng biệt với AsNoTracking
+				var chapterIds = _currentCourse.CourseChapters.Select(ch => ch.ChapterId).ToList();
+
+				var allLessons = await context.Lessons
+					.AsNoTracking()
+					.Include(l => l.LessonContents) // Chỉ load contents cho lessons
+					.Where(l => chapterIds.Contains(l.ChapterId))
+					.OrderBy(l => l.OrderIndex)
+					.ToListAsync();
+
+				// BƯỚC 3: Gán lessons vào chapters (trong memory, không query DB)
+				_currentCourse.CourseChapters = _currentCourse.CourseChapters.OrderBy(ch => ch.OrderIndex).ToList();
+				foreach (var chapter in _currentCourse.CourseChapters)
+				{
+					chapter.Lessons = allLessons
+						.Where(l => l.ChapterId == chapter.ChapterId)
+						.OrderBy(l => l.OrderIndex)
+						.ToList();
+				}
+
+				// BƯỚC 4: Tìm lesson hiện tại
+				_currentLesson = allLessons.FirstOrDefault(l => l.LessonId == lessonId);
+
+				if (_currentLesson == null) return;
+
+				_currentContents = _currentLesson.LessonContents.OrderBy(lc => lc.OrderIndex).ToList();
+
+				// Disable mark-complete if there are no contents in this lesson
+				try
+				{
+					if (btnMarkComplete != null)
+						btnMarkComplete.Enabled = _currentContents != null && _currentContents.Count > 0;
+				}
+				catch { }
+
+				// Update UI
+				if (lblCourseTitle != null) lblCourseTitle.Text = _currentCourse.Title;
+
+				await LoadSidebarAsync();
+				await UpdateProgressAsync();
+
+				// Xác định nội dung cần mở
+			 int targetIndex = 0;
+				if (openContentId.HasValue)
+				{
+					var index = _currentContents.FindIndex(c => c.ContentId == openContentId.Value);
+					if (index >= 0) targetIndex = index;
+				}
+
+				await LoadContentAsync(targetIndex);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Lỗi tải bài học: {ex.Message}\n\nChi tiết: {ex.InnerException?.Message}",
+					"Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+		private async Task LoadSidebarAsync()
         {
             flowLessons.Controls.Clear();
 
@@ -1412,402 +1476,26 @@ namespace WinFormsApp1.View.User.Controls
         private async Task LoadTestContentAsync(LessonContent content)
         {
             pnlTest.Visible = true;
+            pnlTest.Controls.Clear();
 
             if (!content.RefId.HasValue) return;
 
             using var context = new LearningPlatformContext();
-            _currentTest = await context.Tests
+            var test = await context.Tests
                 .Include(t => t.Questions.OrderBy(q => q.OrderIndex))
                     .ThenInclude(q => q.QuestionOptions.OrderBy(o => o.OrderIndex))
                 .FirstOrDefaultAsync(t => t.TestId == content.RefId.Value);
 
-            if (_currentTest == null) return;
+            if (test == null) return;
 
-            lblTestTitle.Text = _currentTest.Title;
-            _questions = _currentTest.Questions.OrderBy(q => q.OrderIndex).ToList();
-            _selectedAnswers.Clear();
-            _testStartTime = DateTime.UtcNow;
-
-            // Kiểm tra số lần đã làm và hiển thị thông tin
-            await CheckAndDisplayTestInfoAsync();
-        }
-
-        private async Task CheckAndDisplayTestInfoAsync()
-        {
-            var userId = AuthHelper.CurrentUser?.UserId;
-            if (!userId.HasValue) return;
-
-            using var context = new LearningPlatformContext();
-            
-            // Đếm số lần đã làm
-            var attemptCount = await context.TestAttempts
-                .Where(ta => ta.TestId == _currentTest.TestId && ta.UserId == userId.Value)
-                .CountAsync();
-
-            // Lấy điểm cao nhất
-            var highestScore = await context.TestAttempts
-                .Where(ta => ta.TestId == _currentTest.TestId && ta.UserId == userId.Value)
-                .MaxAsync(ta => (decimal?)ta.Score) ?? 0;
-
-            // Tính tổng điểm từ câu hỏi nếu MaxScore = 0 hoặc null
-            decimal maxScore = _currentTest.MaxScore ?? 0;
-            if (maxScore == 0)
-                maxScore = _questions.Sum(q => q.Points);
-
-            // Tạo panel thông tin test
-            var infoPanel = new Panel
+            // Create and load TestTakingControl
+            _testTakingControl = new TestTakingControl
             {
-                Width = 1100,
-                Height = 80,
-                BackColor = Color.FromArgb(240, 248, 255),
-                Margin = new Padding(0, 0, 0, 20),
-                Padding = new Padding(20)
+                Dock = DockStyle.Fill
             };
 
-            var lblInfo = new Label
-            {
-                AutoSize = true,
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(0, 102, 153),
-                Location = new Point(20, 10)
-            };
-
-            int timeLimit = (_currentTest.TimeLimitSec ?? 0) / 60;
-            string infoText = $"⏱️ Thời gian: {timeLimit} phút\n";
-            infoText += $"🔄 Số lần làm: {attemptCount}/{_currentTest.MaxAttempts ?? 999}";
-            if (attemptCount > 0)
-                infoText += $"  |  🏆 Điểm cao nhất: {highestScore}/{maxScore}";
-
-            lblInfo.Text = infoText;
-            infoPanel.Controls.Add(lblInfo);
-
-            flowQuestions.Controls.Clear();
-            flowQuestions.Controls.Add(infoPanel);
-
-            // Kiểm tra hết lượt
-            if (_currentTest.MaxAttempts.HasValue && attemptCount >= _currentTest.MaxAttempts.Value)
-            {
-                var lockPanel = new Panel
-                {
-                    Width = 1100,
-                    Height = 300,
-                    BackColor = Color.White,
-                    Margin = new Padding(0)
-                };
-
-                var lblLock = new Label
-                {
-                    Text = "🔒",
-                    Font = new Font("Segoe UI", 72),
-                    Location = new Point(500, 50),
-                    AutoSize = true
-                };
-
-                var lblMessage = new Label
-                {
-                    Text = $"Bạn đã hết lượt làm bài\n\n🏆 Điểm cao nhất: {highestScore}/{maxScore}",
-                    Font = new Font("Segoe UI", 16, FontStyle.Bold),
-                    ForeColor = Color.FromArgb(220, 53, 69),
-                    Location = new Point(350, 150),
-                    AutoSize = true,
-                    TextAlign = ContentAlignment.MiddleCenter
-                };
-
-                lockPanel.Controls.Add(lblLock);
-                lockPanel.Controls.Add(lblMessage);
-                flowQuestions.Controls.Add(lockPanel);
-
-                btnSubmitTest.Enabled = false;
-                btnSubmitTest.Text = "Hết lượt làm bài";
-                btnSubmitTest.BackColor = Color.Gray;
-                return;
-            }
-
-            // Nếu còn lượt, hiển thị câu hỏi
-            btnSubmitTest.Enabled = true;
-            btnSubmitTest.Text = "Nộp bài";
-            btnSubmitTest.BackColor = ColorPalette.Primary;
-            LoadQuestions();
-        }
-
-        private void LoadQuestions()
-        {
-            for (int i = 0; i < _questions.Count; i++)
-            {
-                var question = _questions[i];
-                var questionPanel = CreateQuestionPanel(question, i + 1);
-                flowQuestions.Controls.Add(questionPanel);
-            }
-        }
-
-        private Panel CreateQuestionPanel(Question question, int number)
-        {
-            // 1. Panel chính của câu hỏi (Rộng hơn, thoáng hơn)
-            var panel = new Panel
-            {
-                Width = 1100, // Tăng chiều rộng để tận dụng màn hình
-                AutoSize = true,
-                BackColor = Color.White,
-                Margin = new Padding(0, 0, 0, 20), // Khoảng cách giữa các câu hỏi
-                Padding = new Padding(20) // Khoảng đệm bên trong
-            };
-
-            // 2. Tiêu đề câu hỏi (Ví dụ: "Câu 1: ...")
-            var lblQuestionNumber = new Label
-            {
-                Text = $"Câu {number}",
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                ForeColor = ColorPalette.Primary, // Màu xanh thương hiệu
-                AutoSize = true,
-                Location = new Point(20, 20)
-            };
-
-            var lblQuestionText = new Label
-            {
-                Text = question.StemText,
-                Font = new Font("Segoe UI", 12, FontStyle.Regular),
-                ForeColor = Color.Black,
-                AutoSize = true,
-                MaximumSize = new Size(1000, 0), // Tự xuống dòng nếu quá dài
-                Location = new Point(20, 50) // Nằm dưới số câu
-            };
-
-            panel.Controls.Add(lblQuestionNumber);
-            panel.Controls.Add(lblQuestionText);
-
-            int yPos = lblQuestionText.Bottom + 20;
-
-            // 3. Hiển thị hướng dẫn (nếu là câu chọn nhiều)
-            if (question.Type == "MCQ_Multi" || question.Type == "TrueFalse")
-            {
-                // Khởi tạo list nếu chưa có
-                if (!_selectedAnswers.ContainsKey(question.QuestionId))
-                    _selectedAnswers[question.QuestionId] = new List<int>();
-
-                string guideText = question.Type == "MCQ_Multi" ? "(Chọn nhiều đáp án)" : "";
-                if (!string.IsNullOrEmpty(guideText))
-                {
-                    var lblGuide = new Label
-                    {
-                        Text = guideText,
-                        Font = new Font("Segoe UI", 10, FontStyle.Italic),
-                        ForeColor = Color.Gray,
-                        Location = new Point(80, 23), // Nằm cạnh số câu
-                        AutoSize = true
-                    };
-                    panel.Controls.Add(lblGuide);
-                }
-
-                // Render Checkbox (Thiết kế phẳng, to dễ bấm)
-                foreach (var option in question.QuestionOptions.OrderBy(o => o.OrderIndex))
-                {
-                    CheckBox chk = new CheckBox
-                    {
-                        Text = option.OptionText,
-                        Font = new Font("Segoe UI", 11),
-                        AutoSize = false,
-                        Width = 1000,
-                        Height = 40, // Tăng chiều cao để dễ click
-                        Location = new Point(40, yPos),
-                        Tag = option.OptionId,
-                        Cursor = Cursors.Hand,
-                        Padding = new Padding(10, 0, 0, 0) // Cách lề chữ ra chút
-                    };
-
-                    // Hiệu ứng Hover
-                    chk.MouseEnter += (s, e) => chk.BackColor = Color.FromArgb(240, 248, 255); // Xanh nhạt
-                    chk.MouseLeave += (s, e) => chk.BackColor = Color.White;
-
-                    chk.CheckedChanged += (s, e) =>
-                    {
-                        if (chk.Checked)
-                        {
-                            if (!_selectedAnswers[question.QuestionId].Contains(option.OptionId))
-                                _selectedAnswers[question.QuestionId].Add(option.OptionId);
-                        }
-                        else
-                        {
-                            _selectedAnswers[question.QuestionId].Remove(option.OptionId);
-                        }
-                    };
-
-                    panel.Controls.Add(chk);
-                    yPos += 45; // Khoảng cách giữa các đáp án
-                }
-            }
-            else // Render RadioButton (Chọn 1)
-            {
-                if (!_selectedAnswers.ContainsKey(question.QuestionId))
-                    _selectedAnswers[question.QuestionId] = new List<int>();
-
-                foreach (var option in question.QuestionOptions.OrderBy(o => o.OrderIndex))
-                {
-                    RadioButton radio = new RadioButton
-                    {
-                        Text = option.OptionText,
-                        Font = new Font("Segoe UI", 11),
-                        AutoSize = false,
-                        Width = 1000,
-                        Height = 40,
-                        Location = new Point(40, yPos),
-                        Tag = option.OptionId,
-                        Cursor = Cursors.Hand,
-                        Padding = new Padding(10, 0, 0, 0)
-                    };
-
-                    // Hiệu ứng Hover
-                    radio.MouseEnter += (s, e) => radio.BackColor = Color.FromArgb(240, 248, 255);
-                    radio.MouseLeave += (s, e) => radio.BackColor = Color.White;
-
-                    radio.CheckedChanged += (s, e) =>
-                    {
-                        if (radio.Checked)
-                        {
-                            _selectedAnswers[question.QuestionId].Clear();
-                            _selectedAnswers[question.QuestionId].Add(option.OptionId);
-                        }
-                    };
-
-                    panel.Controls.Add(radio);
-                    yPos += 45;
-                }
-            }
-
-            // 4. Đường kẻ phân cách mờ bên dưới mỗi câu hỏi
-            Panel separator = new Panel
-            {
-                Height = 1,
-                Width = 1060,
-                BackColor = Color.FromArgb(230, 230, 230), // Màu xám rất nhạt
-                Location = new Point(20, yPos + 10)
-            };
-            panel.Controls.Add(separator);
-
-            return panel;
-        }
-
-        private async void BtnSubmitTest_Click(object sender, EventArgs e)
-        {
-            if (_selectedAnswers.Count < _questions.Count)
-            {
-                var result = MessageBox.Show(
-                    $"Bạn chưa trả lời {_selectedAnswers.Count}/{_questions.Count} câu. Bạn có chắc muốn nộp bài?",
-                    "Xác nhận",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (result != DialogResult.Yes) return;
-            }
-
-            await SubmitTestAsync();
-        }
-
-        private async Task SubmitTestAsync()
-        {
-            try
-            {
-                var userId = AuthHelper.CurrentUser?.UserId;
-                if (!userId.HasValue) return;
-
-                using var context = new LearningPlatformContext();
-                var timeSpent = (int)(DateTime.UtcNow - _testStartTime).TotalSeconds;
-
-                decimal totalScore = 0;
-                decimal maxScore = _currentTest.MaxScore ?? _questions.Sum(q => q.Points);
-
-                // --- LOGIC CHẤM ĐIỂM MỚI ---
-                foreach (var question in _questions)
-                {
-                    // Lấy danh sách các đáp án ĐÚNG trong DB của câu này
-                    var correctOptionIds = question.QuestionOptions
-                        .Where(o => o.IsCorrect)
-                        .Select(o => o.OptionId)
-                        .ToList();
-
-                    // Lấy danh sách đáp án NGƯỜI DÙNG chọn
-                    if (_selectedAnswers.TryGetValue(question.QuestionId, out List<int> userSelectedIds))
-                    {
-                        // Kiểm tra:
-                        // 1. Số lượng chọn phải bằng số lượng đáp án đúng
-                        // 2. Không được chứa đáp án sai
-                        // 3. Phải chứa tất cả đáp án đúng
-
-                        bool isCorrect = false;
-
-                        if (userSelectedIds.Count == correctOptionIds.Count &&
-                            !userSelectedIds.Except(correctOptionIds).Any())
-                        {
-                            isCorrect = true;
-                        }
-
-                        if (isCorrect)
-                        {
-                            totalScore += question.Points;
-                        }
-                    }
-                }
-                // -----------------------------
-
-                // Tạo lịch sử làm bài
-                var attempt = new TestAttempt
-                {
-                    TestId = _currentTest.TestId,
-                    UserId = userId.Value,
-                    StartedAt = _testStartTime,
-                    SubmittedAt = DateTime.UtcNow,
-                    Status = "Graded",
-                    TimeSpentSec = timeSpent,
-                    Score = totalScore,
-                    MaxScore = maxScore
-                };
-
-                context.TestAttempts.Add(attempt);
-                await context.SaveChangesAsync();
-
-                // Lưu chi tiết từng câu trả lời
-                foreach (var kvp in _selectedAnswers)
-                {
-                    if (kvp.Value != null && kvp.Value.Count > 0)
-                    {
-                        // Với câu nhiều đáp án, ta lưu dạng chuỗi JSON hoặc nối chuỗi: "1,5,9"
-                        string answerString = string.Join(",", kvp.Value);
-
-                        // Kiểm tra đúng sai để lưu vào DB
-                        var question = _questions.First(q => q.QuestionId == kvp.Key);
-                        var correctOptionIds = question.QuestionOptions.Where(o => o.IsCorrect).Select(o => o.OptionId).ToList();
-                        bool isCorrect = kvp.Value.Count == correctOptionIds.Count && !kvp.Value.Except(correctOptionIds).Any();
-
-                        var answer = new AttemptAnswer
-                        {
-                            AttemptId = attempt.AttemptId,
-                            QuestionId = kvp.Key,
-                            AnswerPayload = $"{{\"selectedOptions\": [{answerString}]}}", // Lưu dạng JSON cho chuyên nghiệp
-                            IsCorrect = isCorrect,
-                            Score = isCorrect ? question.Points : 0,
-                            GradedAt = DateTime.UtcNow
-                        };
-                        context.AttemptAnswers.Add(answer);
-                    }
-                }
-
-                await context.SaveChangesAsync();
-
-                // BƯỚC 1: Hiển thị kết quả test TRƯỚC
-                var percentage = maxScore > 0 ? (totalScore / maxScore) * 100 : 0;
-                MessageBox.Show(
-                    $"Hoàn thành bài kiểm tra!\n\n" +
-                    $"Điểm: {totalScore}/{maxScore} ({percentage:F1}%)\n" +
-                    $"Thời gian: {timeSpent / 60} phút {timeSpent % 60} giây",
-                    "Kết quả", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                // BƯỚC 2: SAU ĐÓ mới đánh dấu hoàn thành và kiểm tra khóa học
-                var content = _currentContents[_currentContentIndex];
-                await MarkContentCompleteAsync(content.ContentId, totalScore);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi nộp bài: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            pnlTest.Controls.Add(_testTakingControl);
+            await _testTakingControl.LoadTestAsync(test, content, _currentCourse);
         }
 
         #endregion
@@ -1918,7 +1606,7 @@ namespace WinFormsApp1.View.User.Controls
                                  cp.IsCompleted)
                     .CountAsync();
 
-                // Kiểm tra xem đã hoàn thành 100% chưa
+                // Kiểm tra đã hoàn thành 100% chưa
                 if (completedContents >= totalContents && totalContents > 0)
                 {
                     // Kiểm tra xem đã có certificate chưa
@@ -2048,10 +1736,9 @@ namespace WinFormsApp1.View.User.Controls
 
             using var context = new LearningPlatformContext();
 
-            // Get related courses from the same category - Fix LINQ
+            // SỬA LỖI: Dùng AsNoTracking và không Include quá sâu
             var relatedCourses = await context.Courses
-                .Include(c => c.CourseChapters)
-                    .ThenInclude(ch => ch.Lessons)
+                .AsNoTracking() // Thêm AsNoTracking
                 .Where(c => c.CategoryId == _currentCourse.CategoryId &&
                            c.CourseId != _currentCourse.CourseId &&
                            c.IsPublished)
@@ -2130,7 +1817,7 @@ namespace WinFormsApp1.View.User.Controls
             return panel;
         }
 
-        private void OnRelatedCourseClick(Course course)
+        private async void OnRelatedCourseClick(Course course)
         {
             var result = MessageBox.Show(
                 $"Bạn có muốn chuyển sang khóa học:\n\n{course.Title}?",
@@ -2140,97 +1827,99 @@ namespace WinFormsApp1.View.User.Controls
 
             if (result == DialogResult.Yes)
             {
-                // Navigate to course detail or first lesson
+                // SỬA LỖI: Dùng async/await và AsNoTracking
                 using var context = new LearningPlatformContext();
-                var firstLesson = context.Lessons
+                var firstLesson = await context.Lessons
+                    .AsNoTracking() // Thêm AsNoTracking
+                    .Include(l => l.Chapter) // Cần Include Chapter để lấy CourseId
                     .Where(l => l.Chapter.CourseId == course.CourseId)
                     .OrderBy(l => l.Chapter.OrderIndex)
                     .ThenBy(l => l.OrderIndex)
-                    .FirstOrDefault();
+                    .FirstOrDefaultAsync();
 
                 if (firstLesson != null)
                 {
-                    _ = LoadLessonAsync(course.Slug, firstLesson.LessonId);
+                    await LoadLessonAsync(course.Slug, firstLesson.LessonId);
                 }
             }
         }
 
-        private Panel CreateLessonItem(Lesson lesson, bool isCompleted, bool isCurrent)
-        {
-            var panel = new Panel
-            {
-                Width = 320,
-                Height = 80,
-                BackColor = isCurrent ? Color.FromArgb(225, 239, 254) : Color.White,
-                BorderStyle = BorderStyle.FixedSingle,
-                Margin = new Padding(5),
-                Cursor = Cursors.Hand,
-                Padding = new Padding(10)
-            };
+        //private Panel CreateLessonItem(Lesson lesson, bool isCompleted, bool isCurrent)
+        //{
+        //    var panel = new Panel
+        //    {
+        //        Width = 320,
+        //        Height = 80,
+        //        BackColor = isCurrent ? Color.FromArgb(225, 239, 254) : Color.White,
+        //        BorderStyle = BorderStyle.FixedSingle,
+        //        Margin = new Padding(5),
+        //        Cursor = Cursors.Hand,
+        //        Padding = new Padding(10)
+        //    };
 
-            // Status icon (left side)
-            var lblStatus = new Label
-            {
-                Text = isCompleted ? "✓" : "○",
-                Location = new Point(15, 15),
-                Size = new Size(30, 30),
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                ForeColor = isCompleted ? ColorPalette.Success : ColorPalette.TextSecondary,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
+        //    // Status icon (left side)
+        //    var lblStatus = new Label
+        //    {
+        //        Text = isCompleted ? "✓" : "○",
+        //        Location = new Point(15, 15),
+        //        Size = new Size(30, 30),
+        //        Font = new Font("Segoe UI", 14, FontStyle.Bold),
+        //        ForeColor = isCompleted ? ColorPalette.Success : ColorPalette.TextSecondary,
+        //        TextAlign = ContentAlignment.MiddleCenter
+        //    };
 
-            // Content type icon
-            var contentIcon = GetContentTypeIcon(lesson);
-            var lblContentIcon = new Label
-            {
-                Text = contentIcon.Icon,
-                Location = new Point(15, 50),
-                Size = new Size(30, 20),
-                Font = new Font("Segoe UI", 10),
-                ForeColor = contentIcon.Color,
-                TextAlign = ContentAlignment.MiddleLeft
-            };
+        //    // Content type icon
+        //    var contentIcon = GetContentTypeIcon(lesson);
+        //    var lblContentIcon = new Label
+        //    {
+        //        Text = contentIcon.Icon,
+        //        Location = new Point(15, 50),
+        //        Size = new Size(30, 20),
+        //        Font = new Font("Segoe UI", 10),
+        //        ForeColor = contentIcon.Color,
+        //        TextAlign = ContentAlignment.MiddleLeft
+        //    };
 
-            // Lesson title
-            var lblTitle = new Label
-            {
-                Text = lesson.Title,
-                Location = new Point(55, 15),
-                Size = new Size(250, 35),
-                Font = new Font("Segoe UI", 10, isCurrent ? FontStyle.Bold : FontStyle.Regular),
-                ForeColor = isCurrent ? ColorPalette.Primary : ColorPalette.TextPrimary
-            };
+        //    // Lesson title
+        //    var lblTitle = new Label
+        //    {
+        //        Text = lesson.Title,
+        //        Location = new Point(55, 15),
+        //        Size = new Size(250, 35),
+        //        Font = new Font("Segoe UI", 10, isCurrent ? FontStyle.Bold : FontStyle.Regular),
+        //        ForeColor = isCurrent ? ColorPalette.Primary : ColorPalette.TextPrimary
+        //    };
 
-            // Content type label
-            var lblContentType = new Label
-            {
-                Text = contentIcon.Label,
-                Location = new Point(55, 50),
-                Size = new Size(150, 20),
-                Font = new Font("Segoe UI", 8, FontStyle.Regular),
-                ForeColor = ColorPalette.TextSecondary
-            };
+        //    // Content type label
+        //    var lblContentType = new Label
+        //    {
+        //        Text = contentIcon.Label,
+        //        Location = new Point(55, 50),
+        //        Size = new Size(150, 20),
+        //        Font = new Font("Segoe UI", 8, FontStyle.Regular),
+        //        ForeColor = ColorPalette.TextSecondary
+        //    };
 
-            // Duration/Info label (if available)
-            var lblDuration = new Label
-            {
-                Text = GetLessonDuration(lesson),
-                Location = new Point(210, 50),
-                Size = new Size(95, 20),
-                Font = new Font("Segoe UI", 8),
-                ForeColor = ColorPalette.TextSecondary,
-                TextAlign = ContentAlignment.MiddleRight
-            };
+        //    // Duration/Info label (if available)
+        //    var lblDuration = new Label
+        //    {
+        //        Text = GetLessonDuration(lesson),
+        //        Location = new Point(210, 50),
+        //        Size = new Size(95, 20),
+        //        Font = new Font("Segoe UI", 8),
+        //        ForeColor = ColorPalette.TextSecondary,
+        //        TextAlign = ContentAlignment.MiddleRight
+        //    };
 
-            panel.Controls.AddRange(new Control[] {
-                lblStatus, lblContentIcon, lblTitle, lblContentType, lblDuration
-            });
+        //    panel.Controls.AddRange(new Control[] {
+        //        lblStatus, lblContentIcon, lblTitle, lblContentType, lblDuration
+        //    });
 
-            panel.Click += async (s, e) => await LoadLessonAsync(_currentCourse.Slug, lesson.LessonId);
-            lblTitle.Click += async (s, e) => await LoadLessonAsync(_currentCourse.Slug, lesson.LessonId);
+        //    panel.Click += async (s, e) => await LoadLessonAsync(_currentCourse.Slug, lesson.LessonId);
+        //    lblTitle.Click += async (s, e) => await LoadLessonAsync(_currentCourse.Slug, lesson.LessonId);
 
-            return panel;
-        }
+        //    return panel;
+        //}
 
         private (string Icon, Color Color, string Label) GetContentTypeIcon(Lesson lesson)
         {
@@ -2355,14 +2044,14 @@ namespace WinFormsApp1.View.User.Controls
                 {
                     CertId = certificate.CertId,
                     StudentName = certificate.User.FullName,
-                    CourseTitle = certificate.Course.Title,
+                    CourseTitle = _currentCourse.Title,
                     InstructorName = certificate.Course.Owner?.FullName ?? "Giảng viên",
                     IssuedDate = certificate.IssuedAt,
                     VerifyCode = certificate.VerifyCode,
                     Serial = certificate.Serial
                 };
 
-                // Mở form hiển thị report
+                // Mở form hiển thị reporth
                 var reportForm = new View.Dialogs.CertificateReportForm(reportData);
                 reportForm.ShowDialog();
             }
