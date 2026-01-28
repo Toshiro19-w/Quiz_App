@@ -161,12 +161,12 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 					
 					picCover.ImageLocation = fullPath;
 
-					MessageBox.Show(
-						$"Ảnh đã được lưu tại:\n{_coverImageRelativePath}\n\nFull path:\n{fullPath}", 
-						"Thành công", 
-						MessageBoxButtons.OK, 
-						MessageBoxIcon.Information
-					);
+					//MessageBox.Show(
+					//	$"Ảnh đã được lưu tại:\n{_coverImageRelativePath}\n\nFull path:\n{fullPath}", 
+					//	"Thành công", 
+					//	MessageBoxButtons.OK, 
+					//	MessageBoxIcon.Information
+					//);
 				}
 				else
 				{
