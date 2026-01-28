@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
 
@@ -16,16 +17,59 @@ namespace WinFormsApp1.View.User.Controls
         private int _pageSize = 10;
         private int _totalRecords = 0;
         private List<FlashcardSet> _allFlashcardSets = new List<FlashcardSet>();
-        private string _searchFilter = "Tất cả";
+        private string _searchFilter = "";
 
         public MyFlashcardsControl()
         {
             InitializeComponent();
+            LocalizeUI();
             cmbPageSize.SelectedIndex = 0;
             cbbSearch.SelectedIndex = 0;
             LoadFlashcardSets();
             
             flowFlashcards.Resize += (s, e) => RefreshRowWidths();
+        }
+
+        private void LocalizeUI()
+        {
+            // Header
+            lblTitle.Text = LanguageHelper.GetString("MyFlashcardSets");
+            
+            // Action buttons
+            btnCreateFlashcard.Text = LanguageHelper.GetString("CreateFlashcardSet");
+            btnMyCourse.Text = LanguageHelper.GetString("MyCourses");
+            btnBack.Text = LanguageHelper.GetString("GoBack");
+            
+            // Filter labels
+            lblShowLabel.Text = LanguageHelper.GetString("Show");
+            lblEntriesLabel.Text = LanguageHelper.GetString("Entries");
+            lblSearchLabel.Text = LanguageHelper.GetString("Search") + ":";
+            txtSearch.PlaceholderText = LanguageHelper.GetString("EnterSearch");
+            
+            // Search filter combobox
+            cbbSearch.Items.Clear();
+            cbbSearch.Items.AddRange(new object[] {
+                LanguageHelper.GetString("FilterAll"),
+                LanguageHelper.GetString("FilterTitle"),
+                LanguageHelper.GetString("FilterCardCount"),
+                LanguageHelper.GetString("FilterVisibility"),
+                LanguageHelper.GetString("FilterLanguage"),
+                LanguageHelper.GetString("FilterCreatedAt")
+            });
+            
+            // Table headers
+            lblHeaderTitle.Text = LanguageHelper.GetString("Title");
+            lblHeaderCardCount.Text = LanguageHelper.GetString("HeaderCardCount");
+            lblHeaderVisibility.Text = LanguageHelper.GetString("HeaderVisibility");
+            lblHeaderLanguage.Text = LanguageHelper.GetString("HeaderLanguage");
+            lblHeaderDate.Text = LanguageHelper.GetString("CreatedAt");
+            lblHeaderActions.Text = LanguageHelper.GetString("Actions");
+            
+            // Pagination buttons
+            btnFirstPage.Text = LanguageHelper.GetString("First");
+            btnPrevPage.Text = LanguageHelper.GetString("Previous");
+            btnNextPage.Text = LanguageHelper.GetString("Next");
+            btnLastPage.Text = LanguageHelper.GetString("Last");
         }
 
         private async void LoadFlashcardSets()
@@ -35,7 +79,7 @@ namespace WinFormsApp1.View.User.Controls
                 var userId = AuthHelper.CurrentUser?.UserId;
                 if (!userId.HasValue)
                 {
-                    MessageBox.Show("Vui lòng đăng nhập!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(LanguageHelper.GetString("PleaseLoginMessage"), LanguageHelper.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -53,7 +97,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("DataLoadError", ex.Message), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -65,42 +109,50 @@ namespace WinFormsApp1.View.User.Controls
             string searchText = txtSearch.Text.Trim().ToLower();
             if (!string.IsNullOrEmpty(searchText))
             {
+                var filterTitle = LanguageHelper.GetString("FilterTitle");
+                var filterCardCount = LanguageHelper.GetString("FilterCardCount");
+                var filterVisibility = LanguageHelper.GetString("FilterVisibility");
+                var filterLanguage = LanguageHelper.GetString("FilterLanguage");
+                var filterCreatedAt = LanguageHelper.GetString("FilterCreatedAt");
+                var visibilityPublic = LanguageHelper.GetString("VisibilityPublic");
+                var visibilityPrivate = LanguageHelper.GetString("VisibilityPrivate");
+
                 filteredSets = _searchFilter switch
                 {
-                    "Tiêu đề" => filteredSets.Where(fs =>
+                    var f when f == filterTitle => filteredSets.Where(fs =>
                         fs.Title.ToLower().Contains(searchText)),
                     
-                    "Số thẻ" => filteredSets.Where(fs =>
+                    var f when f == filterCardCount => filteredSets.Where(fs =>
                         fs.Flashcards.Count.ToString().Contains(searchText)),
                     
-                    "Hiển thị" => filteredSets.Where(fs =>
+                    var f when f == filterVisibility => filteredSets.Where(fs =>
                     {
-                        var visibility = fs.Visibility == "Public" ? "công khai" : "riêng tư";
+                        var visibility = fs.Visibility == "Public" ? visibilityPublic : visibilityPrivate;
                         return visibility.Contains(searchText);
                     }),
                     
-                    "Ngôn ngữ" => filteredSets.Where(fs =>
+                    var f when f == filterLanguage => filteredSets.Where(fs =>
                     {
                         var language = string.IsNullOrEmpty(fs.Language) ? "vi" : fs.Language;
                         return language.ToLower().Contains(searchText);
                     }),
                     
-                    "Tạo lúc" => filteredSets.Where(fs =>
-                        fs.CreatedAt.ToString("dd/MM/yyyy").Contains(searchText) ||
-                        fs.CreatedAt.ToString("dd-MM-yyyy").Contains(searchText) ||
-                        fs.CreatedAt.ToString("yyyy").Contains(searchText)),
+                    var f when f == filterCreatedAt => filteredSets.Where(fs =>
+                                fs.CreatedAt.ToString("dd/MM/yyyy").Contains(searchText) ||
+                                fs.CreatedAt.ToString("dd-MM-yyyy").Contains(searchText) ||
+                                fs.CreatedAt.ToString("yyyy").Contains(searchText)),
                     
-                    _ => filteredSets.Where(fs =>
-                        fs.Title.ToLower().Contains(searchText) ||
-                        (fs.Description != null && fs.Description.ToLower().Contains(searchText)) ||
-                        fs.Flashcards.Count.ToString().Contains(searchText) ||
-                        (fs.Visibility == "Public" ? "công khai" : "riêng tư").Contains(searchText) ||
-                        (string.IsNullOrEmpty(fs.Language) ? "vi" : fs.Language).ToLower().Contains(searchText) ||
-                        fs.CreatedAt.ToString("dd/MM/yyyy").Contains(searchText))
-                };
-            }
+                            _ => filteredSets.Where(fs =>
+                                fs.Title.ToLower().Contains(searchText) ||
+                                (fs.Description != null && fs.Description.ToLower().Contains(searchText)) ||
+                                fs.Flashcards.Count.ToString().Contains(searchText) ||
+                                (fs.Visibility == "Public" ? visibilityPublic : visibilityPrivate).Contains(searchText) ||
+                                (string.IsNullOrEmpty(fs.Language) ? "vi" : fs.Language).ToLower().Contains(searchText) ||
+                                fs.CreatedAt.ToString("dd/MM/yyyy").Contains(searchText))
+                        };
+                    }
 
-            _totalRecords = filteredSets.Count();
+                    _totalRecords = filteredSets.Count();
 
             // Calculate pagination
             int totalPages = (int)Math.Ceiling((double)_totalRecords / _pageSize);
@@ -124,7 +176,7 @@ namespace WinFormsApp1.View.User.Controls
             {
                 var lblEmpty = new Label
                 {
-                    Text = "Chưa có bộ flashcard nào",
+                    Text = LanguageHelper.GetString("NoFlashcardSetYet"),
                     Font = new Font("Segoe UI", 14, FontStyle.Bold),
                     ForeColor = ColorPalette.TextSecondary,
                     AutoSize = true,
@@ -186,7 +238,7 @@ namespace WinFormsApp1.View.User.Controls
         {
             if (flashcardSet.Flashcards == null || flashcardSet.Flashcards.Count == 0)
             {
-                MessageBox.Show("Bộ flashcard này chưa có thẻ nào để học!", "Thông báo",
+                MessageBox.Show(LanguageHelper.GetString("NoCardsToStudy"), LanguageHelper.GetString("Notification"),
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -219,8 +271,8 @@ namespace WinFormsApp1.View.User.Controls
         private async void DeleteFlashcardSet(FlashcardSet flashcardSet)
         {
             var result = MessageBox.Show(
-                $"Bạn có chắc chắn muốn xóa bộ flashcard '{flashcardSet.Title}'?\n\nHành động này không thể hoàn tác.",
-                "Xác nhận xóa",
+                LanguageHelper.GetString("DeleteFlashcardConfirm", flashcardSet.Title),
+                LanguageHelper.GetString("ConfirmDelete"),
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
 
@@ -236,20 +288,23 @@ namespace WinFormsApp1.View.User.Controls
                         setToDelete.IsDeleted = true;
                         await context.SaveChangesAsync();
 
-                        ToastHelper.Show(this.FindForm(), "Đã xóa bộ flashcard thành công!");
+                        ToastHelper.Show(this.FindForm(), LanguageHelper.GetString("FlashcardDeletedSuccess"));
                         LoadFlashcardSets();
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi xóa bộ flashcard: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(LanguageHelper.GetString("FlashcardDeleteError", ex.Message), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
         private void UpdatePaginationUI(int totalPages)
         {
-            lblPageInfo.Text = $"Hiển thị {(_currentPage - 1) * _pageSize + 1} tới {Math.Min(_currentPage * _pageSize, _totalRecords)} của {_totalRecords} dữ liệu";
+            lblPageInfo.Text = LanguageHelper.GetString("ShowingEntries", 
+                (_currentPage - 1) * _pageSize + 1, 
+                Math.Min(_currentPage * _pageSize, _totalRecords), 
+                _totalRecords);
 
             btnFirstPage.Enabled = _currentPage > 1;
             btnPrevPage.Enabled = _currentPage > 1;

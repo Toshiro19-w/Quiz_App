@@ -41,7 +41,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			// 
 			cboContentType.DropDownStyle = ComboBoxStyle.DropDownList;
 			cboContentType.Font = new Font("Segoe UI", 12F);
-			cboContentType.Items.AddRange(new object[] { "Lý thuyết", "Video", "Bộ thẻ ghi nhớ", "Bài kiểm tra" });
+			cboContentType.Items.AddRange(new object[] { "Theory", "Video", "Flashcard Set", "Quiz" });
 			cboContentType.Location = new Point(17, 85);
 			cboContentType.Name = "cboContentType";
 			cboContentType.Size = new Size(300, 40);
@@ -55,7 +55,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			lblType.Name = "lblType";
 			lblType.Size = new Size(166, 32);
 			lblType.TabIndex = 1;
-			lblType.Text = "Loại nội dung:";
+			lblType.Text = "Content Type:";
 			// 
 			// txtTitle
 			// 
@@ -74,7 +74,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(99, 32);
 			lblTitle.TabIndex = 2;
-			lblTitle.Text = "Tiêu đề:";
+			lblTitle.Text = "Title:";
 			// 
 			// txtVideoPath
 			// 
@@ -103,7 +103,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			btnBrowse.Name = "btnBrowse";
 			btnBrowse.Size = new Size(141, 40);
 			btnBrowse.TabIndex = 6;
-			btnBrowse.Text = "Chọn video";
+			btnBrowse.Text = "Select Video";
 			// 
 			// btnDelete
 			// 
@@ -116,7 +116,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			btnDelete.Name = "btnDelete";
 			btnDelete.Size = new Size(100, 35);
 			btnDelete.TabIndex = 7;
-			btnDelete.Text = "Xóa";
+			btnDelete.Text = "Delete";
 			btnDelete.UseVisualStyleBackColor = false;
 			btnDelete.Visible = false;
 			// 

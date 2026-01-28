@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,7 +41,7 @@ namespace WinFormsApp1.View.User.Components
             // Title
             lblTitle = new Label
             {
-                Text = "Giỏ hàng của bạn",
+                Text = LanguageHelper.GetString("YourCart"),
                 Location = new Point(20, 20),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 16, FontStyle.Bold),
@@ -69,7 +70,7 @@ namespace WinFormsApp1.View.User.Components
             // Total label
             lblTotal = new Label
             {
-                Text = "Tổng:",
+                Text = LanguageHelper.GetString("Total") + ":",
                 Location = new Point(20, 15),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 14, FontStyle.Bold),
@@ -91,7 +92,7 @@ namespace WinFormsApp1.View.User.Components
             // Checkout button
             btnCheckout = new Button
             {
-                Text = "Chuyển đến giỏ hàng",
+                Text = LanguageHelper.GetString("GoToCart"),
                 Location = new Point(20, 55),
                 Size = new Size(510, 45),
                 BackColor = Color.FromArgb(88, 56, 255),
@@ -207,7 +208,7 @@ namespace WinFormsApp1.View.User.Components
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải giỏ hàng: {ex.Message}", "Lỗi",
+                MessageBox.Show(LanguageHelper.GetString("CartLoadError", ex.Message), LanguageHelper.GetString("Error"),
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -231,7 +232,7 @@ namespace WinFormsApp1.View.User.Components
 
             var messageLabel = new Label
             {
-                Text = "Giỏ hàng trống",
+                Text = LanguageHelper.GetString("CartEmpty"),
                 Font = new Font("Segoe UI", 13),
                 ForeColor = Color.Gray,
                 Location = new Point(195, 120),

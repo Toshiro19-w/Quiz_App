@@ -32,7 +32,7 @@
 			cboContentType.DropDownStyle = ComboBoxStyle.DropDownList;
 			cboContentType.Font = new Font("Segoe UI", 12F);
 			cboContentType.FormattingEnabled = true;
-			cboContentType.Items.AddRange(new object[] { "Lý thuyết", "Video", "Bộ thẻ ghi nhớ", "Bài kiểm tra" });
+            cboContentType.Items.AddRange(new object[] { "Theory", "Video", "Flashcard Set", "Quiz" });
 			cboContentType.Location = new Point(16, 48);
 			cboContentType.Name = "cboContentType";
 			cboContentType.Size = new Size(250, 40);
@@ -46,7 +46,7 @@
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(166, 32);
 			lblTitle.TabIndex = 1;
-			lblTitle.Text = "Loại nội dung:";
+            lblTitle.Text = "Content Type:";
 			// 
 			// txtTitle
 			// 
@@ -64,7 +64,7 @@
 			lblInfoDesc.Name = "lblInfoDesc";
 			lblInfoDesc.Size = new Size(210, 32);
 			lblInfoDesc.TabIndex = 5;
-			lblInfoDesc.Text = "Mô tả bài kiểm tra";
+            lblInfoDesc.Text = "Quiz Description";
 			// 
 			// txtInfoDesc
 			// 
@@ -84,7 +84,7 @@
 			lblTime.Name = "lblTime";
 			lblTime.Size = new Size(190, 32);
 			lblTime.TabIndex = 7;
-			lblTime.Text = "Thời gian (phút):";
+            lblTime.Text = "Time (minutes):";
 			// 
 			// numTime
 			// 
@@ -105,7 +105,7 @@
 			lblMaxAttempts.Name = "lblMaxAttempts";
 			lblMaxAttempts.Size = new Size(177, 32);
 			lblMaxAttempts.TabIndex = 8;
-			lblMaxAttempts.Text = "Số lần làm bài: ";
+            lblMaxAttempts.Text = "Max Attempts: ";
 			// 
 			// numMaxAttempts
 			// 
@@ -140,7 +140,7 @@
 			btnAddQuestion.Name = "btnAddQuestion";
 			btnAddQuestion.Size = new Size(190, 40);
 			btnAddQuestion.TabIndex = 9;
-			btnAddQuestion.Text = "Thêm câu hỏi";
+            btnAddQuestion.Text = "Add Question";
 			btnAddQuestion.TextImageRelation = TextImageRelation.ImageBeforeText;
 			btnAddQuestion.UseVisualStyleBackColor = false;
 			// 
@@ -155,7 +155,7 @@
 			btnDeleteContent.Name = "btnDeleteContent";
 			btnDeleteContent.Size = new Size(96, 35);
 			btnDeleteContent.TabIndex = 10;
-			btnDeleteContent.Text = "Xóa";
+            btnDeleteContent.Text = "Delete";
 			btnDeleteContent.UseVisualStyleBackColor = false;
 			btnDeleteContent.Visible = false;
 			// 
@@ -167,7 +167,7 @@
 			label1.Name = "label1";
 			label1.Size = new Size(99, 32);
 			label1.TabIndex = 14;
-			label1.Text = "Tiêu đề:";
+            label1.Text = "Title:";
 			// 
 			// label2
 			// 
@@ -178,7 +178,7 @@
 			label2.Name = "label2";
 			label2.Size = new Size(148, 21);
 			label2.TabIndex = 15;
-			label2.Text = "(0 = Không giới hạn)";
+            label2.Text = "(0 = Unlimited)";
 			// 
 			// lblTitleError
 			// 
@@ -189,7 +189,7 @@
 			lblTitleError.Name = "lblTitleError";
 			lblTitleError.Size = new Size(199, 25);
 			lblTitleError.TabIndex = 16;
-			lblTitleError.Text = "* Không được bỏ trống";
+            lblTitleError.Text = "* Cannot be empty";
 			lblTitleError.Visible = false;
 			// 
 			// ContentTestControl

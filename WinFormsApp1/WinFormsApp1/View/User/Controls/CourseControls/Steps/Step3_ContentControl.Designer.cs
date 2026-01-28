@@ -65,7 +65,7 @@
 			btnAddContent.ShadowDecoration.CustomizableEdges = customizableEdges2;
 			btnAddContent.Size = new Size(150, 36);
 			btnAddContent.TabIndex = 1;
-			btnAddContent.Text = "Thêm bài học";
+            btnAddContent.Text = "Add Lesson";
 			// 
 			// lblHeader
 			// 
@@ -77,7 +77,7 @@
 			lblHeader.Name = "lblHeader";
 			lblHeader.Size = new Size(1794, 55);
 			lblHeader.TabIndex = 0;
-			lblHeader.Text = "Nội dung bài học";
+            lblHeader.Text = "Lesson Content";
 			lblHeader.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// cmbLessonSelector
@@ -134,7 +134,7 @@
 			lblLeftTitle.Name = "lblLeftTitle";
 			lblLeftTitle.Size = new Size(242, 32);
 			lblLeftTitle.TabIndex = 0;
-			lblLeftTitle.Text = "Danh sách nội dung";
+            lblLeftTitle.Text = "Content List";
 			// 
 			// flpContentList
 			// 
@@ -166,7 +166,7 @@
 			lblRightTitle.Name = "lblRightTitle";
 			lblRightTitle.Size = new Size(301, 32);
 			lblRightTitle.TabIndex = 0;
-			lblRightTitle.Text = "Chỉnh sửa nội dung (0/0)";
+            lblRightTitle.Text = "Edit Content (0/0)";
 			// 
 			// pnlEditor
 			// 
@@ -192,7 +192,7 @@
 			btnPrev.ShadowDecoration.CustomizableEdges = customizableEdges6;
 			btnPrev.Size = new Size(150, 40);
 			btnPrev.TabIndex = 3;
-			btnPrev.Text = "Quay lại";
+            btnPrev.Text = "Previous";
 			// 
 			// btnNext
 			// 
@@ -207,7 +207,7 @@
 			btnNext.ShadowDecoration.CustomizableEdges = customizableEdges6;
 			btnNext.Size = new Size(149, 40);
 			btnNext.TabIndex = 4;
-			btnNext.Text = "Xem trước";
+            btnNext.Text = "Preview";
 			btnNext.TextAlign = HorizontalAlignment.Left;
 			// 
 			// Step3_ContentControl

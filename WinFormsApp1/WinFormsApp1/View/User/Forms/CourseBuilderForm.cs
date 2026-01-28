@@ -6,6 +6,7 @@ using WinFormsApp1.View.User.Controls.CourseControls;
 using WinFormsApp1.ViewModels;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Controllers;
+using WinFormsApp1.Localization;
 
 namespace WinFormsApp1.View.User.Forms
 {
@@ -105,11 +106,11 @@ namespace WinFormsApp1.View.User.Forms
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi khi tải khóa học: " + ex.Message);
+                catch (Exception ex)
+                {
+                    MessageBox.Show(LanguageHelper.GetString("CourseLoadError", ex.Message));
+                }
             }
-        }
 
         private void InitSteps()
         {
@@ -268,19 +269,19 @@ namespace WinFormsApp1.View.User.Forms
             {
                 var title = vm.Title?.Trim() ?? string.Empty;
                 var slug = vm.Slug?.Trim() ?? string.Empty;
-                if (string.IsNullOrEmpty(title)) { MessageBox.Show("Tiêu đề là bắt buộc"); return false; }
-                if (string.IsNullOrEmpty(slug)) { MessageBox.Show("Slug bắt buộc"); return false; }
-                if (!System.Text.RegularExpressions.Regex.IsMatch(slug, "^[a-z0-9-]+$")) { MessageBox.Show("Slug không hợp lệ"); return false; }
+                if (string.IsNullOrEmpty(title)) { MessageBox.Show(LanguageHelper.GetString("TitleRequired")); return false; }
+                if (string.IsNullOrEmpty(slug)) { MessageBox.Show(LanguageHelper.GetString("SlugRequired")); return false; }
+                if (!System.Text.RegularExpressions.Regex.IsMatch(slug, "^[a-z0-9-]+$")) { MessageBox.Show(LanguageHelper.GetString("SlugInvalid")); return false; }
                 var ok = await _controller.IsSlugUniqueAsync(slug, editingCourseId);
-                if (!ok) { MessageBox.Show("Slug đã tồn tại"); return false; }
+                if (!ok) { MessageBox.Show(LanguageHelper.GetString("SlugExists")); return false; }
             }
 
             if (stepIndex == 1)
             {
-                if (vm.Chapters == null || vm.Chapters.Count == 0) { MessageBox.Show("Vui lòng thêm ít nhất một chương"); return false; }
+                if (vm.Chapters == null || vm.Chapters.Count == 0) { MessageBox.Show(LanguageHelper.GetString("AddAtLeastOneChapter")); return false; }
                 bool hasLesson = false;
                 foreach (var ch in vm.Chapters) { if (ch.Lessons != null && ch.Lessons.Count > 0) { hasLesson = true; break; } }
-                if (!hasLesson) { MessageBox.Show("Vui lòng thêm ít nhất một bài học"); return false; }
+                if (!hasLesson) { MessageBox.Show(LanguageHelper.GetString("AddAtLeastOneLesson")); return false; }
             }
 
             return true;
@@ -295,19 +296,19 @@ namespace WinFormsApp1.View.User.Forms
             }
 
             vm.IsPublished = publish;
-            try
-            {
-                var id = await _controller.SaveCourseAsync(vm, editingCourseId);
-                ToastHelper.Show(this, publish ? "Xuất bản khóa học thành công!" : "Lưu bản nháp thành công!");
-                await Task.Delay(1000);
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                        try
+                        {
+                            var id = await _controller.SaveCourseAsync(vm, editingCourseId);
+                            ToastHelper.Show(this, publish ? LanguageHelper.GetString("CoursePublishedSuccess") : LanguageHelper.GetString("DraftSavedSuccess"));
+                            await Task.Delay(1000);
+                            this.DialogResult = DialogResult.OK;
+                            this.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            var innerMsg = ex.InnerException != null ? "\n\nInner: " + ex.InnerException.Message : "";
+                            MessageBox.Show(LanguageHelper.GetString("SaveError", ex.Message + innerMsg + "\n\nStack: " + ex.StackTrace), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
             }
-            catch (Exception ex)
-            {
-                var innerMsg = ex.InnerException != null ? "\n\nInner: " + ex.InnerException.Message : "";
-                MessageBox.Show("Lỗi khi lưu: " + ex.Message + innerMsg + "\n\nStack: " + ex.StackTrace, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-    }
-}

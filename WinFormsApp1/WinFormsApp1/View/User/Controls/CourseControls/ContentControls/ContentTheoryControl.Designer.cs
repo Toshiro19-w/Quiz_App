@@ -39,7 +39,7 @@
 			cboContentType.DropDownStyle = ComboBoxStyle.DropDownList;
 			cboContentType.Font = new Font("Segoe UI", 12F);
 			cboContentType.FormattingEnabled = true;
-			cboContentType.Items.AddRange(new object[] { "Lý thuyết", "Video", "Bộ thẻ ghi nhớ", "Bài kiểm tra" });
+            cboContentType.Items.AddRange(new object[] { "Theory", "Video", "Flashcard Set", "Quiz" });
 			cboContentType.Location = new Point(20, 75);
 			cboContentType.Name = "cboContentType";
 			cboContentType.Size = new Size(301, 40);
@@ -53,7 +53,7 @@
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(99, 32);
 			lblTitle.TabIndex = 1;
-			lblTitle.Text = "Tiêu đề:";
+            lblTitle.Text = "Title:";
 			// 
 			// txtTitle
 			// 
@@ -72,7 +72,7 @@
 			label1.Name = "label1";
 			label1.Size = new Size(166, 32);
 			label1.TabIndex = 5;
-			label1.Text = "Loại nội dung:";
+            label1.Text = "Content Type:";
 			// 
 			// btnBrowsePdf
 			// 
@@ -85,7 +85,7 @@
 			btnBrowsePdf.Name = "btnBrowsePdf";
 			btnBrowsePdf.Size = new Size(150, 40);
 			btnBrowsePdf.TabIndex = 7;
-			btnBrowsePdf.Text = "📄 Chọn PDF";
+            btnBrowsePdf.Text = "📄 Select PDF";
 			btnBrowsePdf.UseVisualStyleBackColor = false;
 			// 
 			// txtPdfPath
@@ -106,7 +106,7 @@
 			lblPdfPath.Name = "lblPdfPath";
 			lblPdfPath.Size = new Size(142, 32);
 			lblPdfPath.TabIndex = 9;
-			lblPdfPath.Text = "Tài liệu PDF:";
+            lblPdfPath.Text = "PDF Document:";
 			// 
 			// btnPreviewPdf
 			// 
@@ -121,7 +121,7 @@
 			btnPreviewPdf.Name = "btnPreviewPdf";
 			btnPreviewPdf.Size = new Size(167, 40);
 			btnPreviewPdf.TabIndex = 10;
-			btnPreviewPdf.Text = " Xem trước";
+            btnPreviewPdf.Text = " Preview";
 			btnPreviewPdf.TextImageRelation = TextImageRelation.ImageBeforeText;
 			btnPreviewPdf.UseVisualStyleBackColor = false;
 			// 

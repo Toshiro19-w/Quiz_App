@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.View.Admin.Controls.ProfileTabs;
 
 namespace WinFormsApp1.View.Admin
@@ -13,6 +14,7 @@ namespace WinFormsApp1.View.Admin
         public AdminProfile()
         {
             InitializeComponent();
+            ApplyLocalization();
             LoadTab(new AdminAccountSettingsTab());
         }
 
@@ -20,7 +22,15 @@ namespace WinFormsApp1.View.Admin
         public AdminProfile(int tabIndex)
         {
             InitializeComponent();
+            ApplyLocalization();
             SwitchToTab(tabIndex);
+        }
+
+        private void ApplyLocalization()
+        {
+            titleLabel.Text = LanguageHelper.GetString("AdminAccount");
+            btnCaiDat.Text = LanguageHelper.GetString("AccountSettingsTab");
+            btnChinhSua.Text = LanguageHelper.GetString("EditProfileTab");
         }
 
         private void AdminProfile_Resize(object sender, EventArgs e)

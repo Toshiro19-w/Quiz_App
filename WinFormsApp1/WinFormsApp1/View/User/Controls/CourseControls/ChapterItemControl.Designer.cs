@@ -47,7 +47,7 @@
 			btnAddLesson.Name = "btnAddLesson";
 			btnAddLesson.Size = new Size(131, 35);
 			btnAddLesson.TabIndex = 1;
-			btnAddLesson.Text = "Thêm bài học";
+            btnAddLesson.Text = "Add Lesson";
 			btnAddLesson.UseVisualStyleBackColor = false;
 			// 
 			// btnRemoveChapter
@@ -61,7 +61,7 @@
 			btnRemoveChapter.Name = "btnRemoveChapter";
 			btnRemoveChapter.Size = new Size(134, 35);
 			btnRemoveChapter.TabIndex = 3;
-			btnRemoveChapter.Text = "Xóa chương";
+            btnRemoveChapter.Text = "Delete Chapter";
 			btnRemoveChapter.UseVisualStyleBackColor = false;
 			// 
 			// flpLessons

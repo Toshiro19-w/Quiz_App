@@ -209,7 +209,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             btnAddToCart.Name = "btnAddToCart";
             btnAddToCart.Size = new Size(320, 50);
             btnAddToCart.TabIndex = 10;
-            btnAddToCart.Text = "Thêm giỏ hàng";
+            btnAddToCart.Text = "Add to Cart";
             btnAddToCart.UseVisualStyleBackColor = false;
             // 
             // btnSubscribeMonthly
@@ -223,7 +223,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             btnSubscribeMonthly.Name = "btnSubscribeMonthly";
             btnSubscribeMonthly.Size = new Size(320, 45);
             btnSubscribeMonthly.TabIndex = 13;
-            btnSubscribeMonthly.Text = "📅 Đăng ký Ymedu Plus";
+            btnSubscribeMonthly.Text = "📅 Subscribe Ymedu Plus";
             btnSubscribeMonthly.UseVisualStyleBackColor = false;
             btnSubscribeMonthly.Visible = false;
             // 
@@ -236,7 +236,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             btnBuyNow.Name = "btnBuyNow";
             btnBuyNow.Size = new Size(320, 40);
             btnBuyNow.TabIndex = 11;
-            btnBuyNow.Text = " Mua khóa học";
+            btnBuyNow.Text = " Buy Course";
             // 
             // btnStartLearning
             // 
@@ -249,7 +249,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             btnStartLearning.Name = "btnStartLearning";
             btnStartLearning.Size = new Size(320, 50);
             btnStartLearning.TabIndex = 12;
-            btnStartLearning.Text = "Bắt đầu học";
+            btnStartLearning.Text = "Start Learning";
             btnStartLearning.UseVisualStyleBackColor = false;
             btnStartLearning.Visible = false;
             btnStartLearning.Click += btnStartLearning_Click;
@@ -267,7 +267,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             btnEditCourse.Name = "btnEditCourse";
             btnEditCourse.Size = new Size(320, 40);
             btnEditCourse.TabIndex = 41;
-            btnEditCourse.Text = "Chỉnh sửa khóa học";
+            btnEditCourse.Text = "Edit Course";
             btnEditCourse.UseVisualStyleBackColor = false;
             btnEditCourse.Visible = false;
             // 
@@ -284,7 +284,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             btnViewCourse.Name = "btnViewCourse";
             btnViewCourse.Size = new Size(320, 40);
             btnViewCourse.TabIndex = 42;
-            btnViewCourse.Text = "Xem khóa học";
+            btnViewCourse.Text = "View Course";
             btnViewCourse.UseVisualStyleBackColor = false;
             btnViewCourse.Visible = false;
             // 
@@ -301,7 +301,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             btnStatistics.Name = "btnStatistics";
             btnStatistics.Size = new Size(320, 40);
             btnStatistics.TabIndex = 43;
-            btnStatistics.Text = "Xem thống kê";
+            btnStatistics.Text = "View Statistics";
             btnStatistics.UseVisualStyleBackColor = false;
             btnStatistics.Visible = false;
             // 
@@ -341,7 +341,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblContentTitle.Name = "lblContentTitle";
             lblContentTitle.Size = new Size(259, 37);
             lblContentTitle.TabIndex = 13;
-            lblContentTitle.Text = "Nội dung khóa học";
+            lblContentTitle.Text = "Course Content";
             // 
             // lnkExpandAll
             // 
@@ -354,7 +354,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lnkExpandAll.Size = new Size(107, 20);
             lnkExpandAll.TabIndex = 14;
             lnkExpandAll.TabStop = true;
-            lnkExpandAll.Text = "Mở rộng tất cả";
+            lnkExpandAll.Text = "Expand All";
             // 
             // lblChapterStats
             // 
@@ -375,7 +375,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblDescriptionTitle.Name = "lblDescriptionTitle";
             lblDescriptionTitle.Size = new Size(93, 37);
             lblDescriptionTitle.TabIndex = 17;
-            lblDescriptionTitle.Text = "Mô tả";
+            lblDescriptionTitle.Text = "Description";
             lblDescriptionTitle.Visible = false;
             // 
             // rtbDescription
@@ -400,7 +400,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             lblRatingSectionTitle.Name = "lblRatingSectionTitle";
             lblRatingSectionTitle.Size = new Size(296, 37);
             lblRatingSectionTitle.TabIndex = 22;
-            lblRatingSectionTitle.Text = "Đánh giá của học viên";
+            lblRatingSectionTitle.Text = "Student Reviews";
             // 
             // lblAvgRating
             // 

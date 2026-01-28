@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -45,7 +46,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
 
             lblTitle = new Label
             {
-                Text = "📋 Lịch sử đơn hàng",
+                Text = "📋 " + LanguageHelper.GetString("OrderHistory"),
                 Location = new Point(25, 20),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 14, FontStyle.Bold),
@@ -166,9 +167,9 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                     var totalSpent = orders.Sum(o => o.TotalAmount);
                     var totalDiscount = orders.Sum(o => o.DiscountAmount ?? 0);
 
-                    lblPurchaseCount.Text = $"🛒 Tổng số đơn hàng: {orders.Count}";
-                    lblTotalSpent.Text = $"💰 Đã chi tiêu: {totalSpent:N0} VND" + 
-                        (totalDiscount > 0 ? $" (Tiết kiệm: {totalDiscount:N0} VND)" : "");
+                    lblPurchaseCount.Text = "🛒 " + LanguageHelper.GetString("TotalOrders", orders.Count);
+                    lblTotalSpent.Text = "💰 " + LanguageHelper.GetString("TotalSpent", totalSpent.ToString("N0")) + 
+                        (totalDiscount > 0 ? " (" + LanguageHelper.GetString("Saved") + ": " + totalDiscount.ToString("N0") + " VND)" : "");
 
                     if (orders.Count == 0)
                     {
@@ -188,7 +189,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải lịch sử mua hàng: {ex.Message}", "Lỗi",
+                MessageBox.Show(LanguageHelper.GetString("OrderLoadError", ex.Message), LanguageHelper.GetString("Error"),
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -218,7 +219,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
 
             var messageLabel = new Label
             {
-                Text = "Bạn chưa có đơn hàng nào",
+                Text = LanguageHelper.GetString("NoOrdersYet"),
                 Font = new Font("Segoe UI", 14),
                 ForeColor = Color.Gray,
                 AutoSize = true
@@ -227,7 +228,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
 
             var subLabel = new Label
             {
-                Text = "Hãy khám phá các khóa học của chúng tôi!",
+                Text = LanguageHelper.GetString("ExploreCourses"),
                 Font = new Font("Segoe UI", 10),
                 ForeColor = Color.FromArgb(150, 150, 150),
                 AutoSize = true
@@ -272,7 +273,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             // Order ID
             var lblOrderId = new Label
             {
-                Text = $"🧾 Đơn hàng #{order.OrderId}",
+                Text = "🧾 " + LanguageHelper.GetString("OrderNumber", order.OrderId),
                 Location = new Point(20, yPos),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 11, FontStyle.Bold),
@@ -299,7 +300,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             {
                 foreach (var item in order.OrderItems.Take(3))
                 {
-                    var courseName = item.Course?.Title ?? "Khóa học không xác định";
+                    var courseName = item.Course?.Title ?? LanguageHelper.GetString("UnknownCourse");
                     if (courseName.Length > 55) courseName = courseName.Substring(0, 52) + "...";
 
                     var lblCourse = new Label
@@ -330,7 +331,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                 {
                     var lblMore = new Label
                     {
-                        Text = $"  ... và {courseCount - 3} khóa học khác",
+                        Text = "  ... " + LanguageHelper.GetString("AndMoreCourses", courseCount - 3),
                         Location = new Point(25, yPos),
                         AutoSize = true,
                         Font = new Font("Segoe UI", 9, FontStyle.Italic),
@@ -348,7 +349,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
                 var discountCode = order.Discount?.Code ?? "";
                 var lblDiscount = new Label
                 {
-                    Text = $"🏷️ Mã giảm giá: {discountCode}",
+                    Text = "🏷️ " + LanguageHelper.GetString("DiscountCode") + ": " + discountCode,
                     Location = new Point(25, yPos),
                     AutoSize = true,
                     Font = new Font("Segoe UI", 9, FontStyle.Bold),
@@ -386,7 +387,7 @@ namespace WinFormsApp1.View.User.Controls.ProfileTabs
             // Status badge
             var lblStatus = new Label
             {
-                Text = " ✓ Đã thanh toán ",
+                Text = " ✓ " + LanguageHelper.GetString("Paid") + " ",
                 Location = new Point(25, footerY),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),

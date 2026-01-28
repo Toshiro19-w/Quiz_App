@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 
 namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
@@ -49,7 +50,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
             // Section title
             var lblSectionTitle = new Label
             {
-                Text = "🔐 Bảo mật tài khoản Admin",
+                Text = LanguageHelper.GetString("AdminAccountSecurity"),
                 Location = new Point(40, yPos),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 14, FontStyle.Bold),
@@ -61,7 +62,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
             // Role info
             var lblRole = new Label
             {
-                Text = $"Vai trò: {AuthHelper.GetRoleName()}",
+                Text = LanguageHelper.GetString("RoleLabel") + ": " + AuthHelper.GetRoleName(),
                 Location = new Point(40, yPos),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 10),
@@ -73,7 +74,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
             // Email section
             lblEmail = new Label
             {
-                Text = "Địa chỉ Email",
+                Text = LanguageHelper.GetString("EmailAddress"),
                 Location = new Point(40, yPos),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
@@ -106,7 +107,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             btnEditEmail = new Button
             {
-                Text = "Thay đổi",
+                Text = LanguageHelper.GetString("Change"),
                 Size = new Size(100, 35),
                 FlatStyle = FlatStyle.Flat,
                 BackColor = Color.FromArgb(45, 55, 72),
@@ -124,7 +125,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
             // Password section
             lblPassword = new Label
             {
-                Text = "Mật khẩu",
+                Text = LanguageHelper.GetString("Password"),
                 Location = new Point(40, yPos),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
@@ -159,8 +160,8 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             btnEditPassword = new Button
             {
-                Text = "Đổi mật khẩu",
-                Size = new Size(120, 35),
+                Text = LanguageHelper.GetString("ChangePassword"),
+                Size = new Size(140, 35),
                 FlatStyle = FlatStyle.Flat,
                 BackColor = Color.FromArgb(108, 117, 125),
                 ForeColor = Color.White,
@@ -177,7 +178,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
             // Info note
             var lblNote = new Label
             {
-                Text = "💡 Với vai trò quản trị viên, bạn nên sử dụng mật khẩu mạnh và bảo mật cao.",
+                Text = LanguageHelper.GetString("AdminSecurityNote"),
                 Location = new Point(40, yPos),
                 Font = new Font("Segoe UI", 9),
                 ForeColor = Color.FromArgb(108, 117, 125),
@@ -225,7 +226,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     LoadAccountData();
-                    ToastHelper.Show(this, "✓ Email đã được cập nhật thành công!");
+                    ToastHelper.Show(this, "✓ " + LanguageHelper.GetString("EmailUpdated"));
                 }
             }
         }
@@ -236,7 +237,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
             {
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    ToastHelper.Show(this, "✓ Mật khẩu đã được thay đổi thành công!");
+                    ToastHelper.Show(this, "✓ " + LanguageHelper.GetString("PasswordUpdated"));
                 }
             }
         }
@@ -257,7 +258,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
         private void InitializeComponent()
         {
-            this.Text = "Thay đổi Email - Admin";
+            this.Text = LanguageHelper.GetString("ChangeEmail") + " - Admin";
             this.Size = new Size(480, 320);
             this.StartPosition = FormStartPosition.CenterParent;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -267,7 +268,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             var lblTitle = new Label
             {
-                Text = "📧 Thay đổi địa chỉ Email",
+                Text = "📧 " + LanguageHelper.GetString("ChangeEmail"),
                 Location = new Point(30, 25),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 14, FontStyle.Bold)
@@ -276,7 +277,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             var lblNewEmail = new Label
             {
-                Text = "Email mới:",
+                Text = LanguageHelper.GetString("NewEmail") + ":",
                 Location = new Point(30, 75),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 10)
@@ -293,7 +294,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             var lblPassword = new Label
             {
-                Text = "Mật khẩu hiện tại:",
+                Text = LanguageHelper.GetString("CurrentPassword") + ":",
                 Location = new Point(30, 145),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 10)
@@ -311,7 +312,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             btnCancel = new Button
             {
-                Text = "Hủy",
+                Text = LanguageHelper.GetString("Cancel"),
                 Location = new Point(230, 225),
                 Size = new Size(95, 40),
                 FlatStyle = FlatStyle.Flat,
@@ -324,7 +325,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             btnSave = new Button
             {
-                Text = "Lưu thay đổi",
+                Text = LanguageHelper.GetString("SaveChanges"),
                 Location = new Point(335, 225),
                 Size = new Size(95, 40),
                 BackColor = Color.FromArgb(45, 55, 72),
@@ -343,13 +344,13 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
         {
             if (string.IsNullOrWhiteSpace(txtNewEmail.Text))
             {
-                MessageBox.Show("Vui lòng nhập email mới!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("PleaseEnterNewEmail"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(txtPassword.Text))
             {
-                MessageBox.Show("Vui lòng nhập mật khẩu hiện tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("PleaseEnterCurrentPassword"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -360,7 +361,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
                 {
                     if (!PasswordHelper.VerifyPassword(txtPassword.Text, user.PasswordHash))
                     {
-                        MessageBox.Show("Mật khẩu không chính xác!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(LanguageHelper.GetString("CurrentPasswordIncorrect"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
@@ -394,7 +395,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
         private void InitializeComponent()
         {
-            this.Text = "Thay đổi Mật khẩu - Admin";
+            this.Text = LanguageHelper.GetString("ChangePassword") + " - Admin";
             this.Size = new Size(480, 400);
             this.StartPosition = FormStartPosition.CenterParent;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -404,7 +405,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             var lblTitle = new Label
             {
-                Text = "🔒 Thay đổi mật khẩu",
+                Text = "🔒 " + LanguageHelper.GetString("ChangePassword"),
                 Location = new Point(30, 25),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 14, FontStyle.Bold)
@@ -415,7 +416,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             var lblCurrent = new Label
             {
-                Text = "Mật khẩu hiện tại:",
+                Text = LanguageHelper.GetString("CurrentPassword") + ":",
                 Location = new Point(30, yPos),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 10)
@@ -435,7 +436,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             var lblNew = new Label
             {
-                Text = "Mật khẩu mới:",
+                Text = LanguageHelper.GetString("NewPassword") + ":",
                 Location = new Point(30, yPos),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 10)
@@ -455,7 +456,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             var lblConfirm = new Label
             {
-                Text = "Xác nhận mật khẩu mới:",
+                Text = LanguageHelper.GetString("ConfirmNewPassword") + ":",
                 Location = new Point(30, yPos),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 10)
@@ -475,7 +476,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             btnCancel = new Button
             {
-                Text = "Hủy",
+                Text = LanguageHelper.GetString("Cancel"),
                 Location = new Point(230, yPos),
                 Size = new Size(95, 40),
                 FlatStyle = FlatStyle.Flat,
@@ -488,7 +489,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
 
             btnSave = new Button
             {
-                Text = "Lưu thay đổi",
+                Text = LanguageHelper.GetString("SaveChanges"),
                 Location = new Point(335, yPos),
                 Size = new Size(95, 40),
                 BackColor = Color.FromArgb(45, 55, 72),
@@ -509,19 +510,19 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
                 string.IsNullOrWhiteSpace(txtNewPassword.Text) ||
                 string.IsNullOrWhiteSpace(txtConfirmPassword.Text))
             {
-                MessageBox.Show("Vui lòng điền đầy đủ thông tin!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("PleaseEnterAllFields"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (txtNewPassword.Text != txtConfirmPassword.Text)
             {
-                MessageBox.Show("Mật khẩu mới không khớp!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("PasswordNotMatch"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (txtNewPassword.Text.Length < 8)
             {
-                MessageBox.Show("Mật khẩu admin phải có ít nhất 8 ký tự!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("AdminPasswordMinLength"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -532,7 +533,7 @@ namespace WinFormsApp1.View.Admin.Controls.ProfileTabs
                 {
                     if (!PasswordHelper.VerifyPassword(txtCurrentPassword.Text, user.PasswordHash))
                     {
-                        MessageBox.Show("Mật khẩu hiện tại không chính xác!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(LanguageHelper.GetString("CurrentPasswordIncorrect"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 

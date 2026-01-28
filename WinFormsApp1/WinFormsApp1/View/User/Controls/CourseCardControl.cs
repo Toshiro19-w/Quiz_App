@@ -39,8 +39,8 @@ namespace WinFormsApp1.View.User.Controls
             // Only set data properties — do not modify layout defined in Designer
             lblTitle.Text = course.Title;
             lblInstructor.Text = course.Owner?.FullName ?? "Trần Minh Khoa";
-            lblRating.Text = course.TotalReviews > 0 ? $"{course.AverageRating:0.0} ⭐ ({course.TotalReviews})" : "Chưa có đánh giá";
-            lblPrice.Text = course.Price > 0 ? $"{course.Price:N0} đ" : "Miễn phí";
+            lblRating.Text = course.TotalReviews > 0 ? $"{course.AverageRating:0.0} ⭐ ({course.TotalReviews})" : "No reviews yet";
+            lblPrice.Text = course.Price > 0 ? $"{course.Price:N0} đ" : "Free";
             btnView.Tag = course.CourseId;
 
             // By default show the AddToCart button; we'll hide it for owners or purchasers
@@ -166,13 +166,13 @@ namespace WinFormsApp1.View.User.Controls
             var userId = AuthHelper.CurrentUser?.UserId;
             if (!userId.HasValue)
             {
-                ToastHelper.Show(this.FindForm(), "Vui lòng đăng nhập để thêm vào giỏ hàng!");
+                ToastHelper.Show(this.FindForm(), "Please login to add to cart!");
                 return;
             }
 
             if (CourseId <= 0)
             {
-                ToastHelper.Show(this.FindForm(), "Không có khóa học để thêm.");
+                ToastHelper.Show(this.FindForm(), "No course to add.");
                 return;
             }
 
@@ -193,16 +193,16 @@ namespace WinFormsApp1.View.User.Controls
                     var item = new CartItem { CartId = cart.CartId, CourseId = CourseId, AddedAt = DateTime.Now };
                     context.CartItems.Add(item);
                     await context.SaveChangesAsync();
-                    ToastHelper.Show(this.FindForm(), "Đã thêm khóa học vào giỏ hàng!");
+                    ToastHelper.Show(this.FindForm(), "Course added to cart!");
                 }
                 else
                 {
-                    ToastHelper.Show(this.FindForm(), "Khóa học đã có trong giỏ hàng!");
+                    ToastHelper.Show(this.FindForm(), "Course already in cart!");
                 }
             }
             catch (Exception ex)
             {
-                ToastHelper.Show(this.FindForm(), $"Lỗi: {ex.Message}");
+                ToastHelper.Show(this.FindForm(), $"Error: {ex.Message}");
             }
         }
 

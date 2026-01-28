@@ -147,13 +147,15 @@ namespace WinFormsApp1.View.Admin
         private void FilterFlashcardsLocally()
         {
             var visibilityCombo = this.Controls.Find("cboVisibility", true).FirstOrDefault() as ComboBox;
-            var selectedVisibility = visibilityCombo?.SelectedItem?.ToString();
+            var selectedIndex = visibilityCombo?.SelectedIndex ?? 0;
 
             _filteredFlashcardSets = _allFlashcardSets.Where(f =>
             {
-                bool matchVisibility = string.IsNullOrEmpty(selectedVisibility) ||
-                                     selectedVisibility == "Tất cả" ||
-                                     f.Visibility == selectedVisibility;
+                // Index 0 = All, 1 = Public, 2 = Private, 3 = Unlisted
+                bool matchVisibility = selectedIndex == 0 ||
+                                     (selectedIndex == 1 && f.Visibility == "Public") ||
+                                     (selectedIndex == 2 && f.Visibility == "Private") ||
+                                     (selectedIndex == 3 && f.Visibility == "Unlisted");
 
                 return matchVisibility;
             }).ToList();
