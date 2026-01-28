@@ -68,7 +68,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             {
                 "MCQ_Single" => 0,
                 "MCQ_Multi" => 1,
-                "TrueFalse" => 2,
+                //"TrueFalse" => 2,
                 _ => 0
             };
 
