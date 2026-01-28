@@ -152,7 +152,7 @@
 			btnView.Name = "btnView";
 			btnView.Size = new Size(222, 35);
 			btnView.TabIndex = 0;
-			btnView.Text = "Xem chi tiết";
+            btnView.Text = "View Details";
 			btnView.UseVisualStyleBackColor = false;
 			// 
 			// CourseCardControl

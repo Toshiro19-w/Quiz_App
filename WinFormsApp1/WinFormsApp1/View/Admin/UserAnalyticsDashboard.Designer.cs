@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
+using WinFormsApp1.Localization;
 
 namespace WinFormsApp1.View.Admin
 {
@@ -50,7 +51,7 @@ namespace WinFormsApp1.View.Admin
             titleLabel.Name = "titleLabel";
             titleLabel.Size = new Size(398, 45);
             titleLabel.TabIndex = 0;
-            titleLabel.Text = "👥 Phân tích người dùng";
+            titleLabel.Text = LanguageHelper.GetString("UserAnalytics");
             // 
             // filterPanel
             // 
@@ -81,7 +82,7 @@ namespace WinFormsApp1.View.Admin
             resetButton.Name = "resetButton";
             resetButton.Size = new Size(79, 26);
             resetButton.TabIndex = 9;
-            resetButton.Text = "Đặt lại";
+            resetButton.Text = LanguageHelper.GetString("Reset");
             resetButton.UseVisualStyleBackColor = false;
             // 
             // applyButton
@@ -97,7 +98,7 @@ namespace WinFormsApp1.View.Admin
             applyButton.Name = "applyButton";
             applyButton.Size = new Size(79, 26);
             applyButton.TabIndex = 8;
-            applyButton.Text = "Áp dụng";
+            applyButton.Text = LanguageHelper.GetString("Apply");
             applyButton.UseVisualStyleBackColor = false;
             // 
             // endDatePicker
@@ -119,7 +120,7 @@ namespace WinFormsApp1.View.Admin
             toLabel.Name = "toLabel";
             toLabel.Size = new Size(60, 15);
             toLabel.TabIndex = 2;
-            toLabel.Text = "Đến ngày:";
+            toLabel.Text = LanguageHelper.GetString("ToDateLabel");
             // 
             // startDatePicker
             // 
@@ -140,7 +141,7 @@ namespace WinFormsApp1.View.Admin
             fromLabel.Name = "fromLabel";
             fromLabel.Size = new Size(53, 15);
             fromLabel.TabIndex = 0;
-            fromLabel.Text = "Từ ngày:";
+            fromLabel.Text = LanguageHelper.GetString("FromDateLabel");
             // 
             // statsFlowPanel
             // 

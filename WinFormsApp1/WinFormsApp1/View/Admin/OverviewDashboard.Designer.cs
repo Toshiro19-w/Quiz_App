@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
+using WinFormsApp1.Localization;
 
 namespace WinFormsApp1.View.Admin
 {
@@ -46,7 +47,7 @@ namespace WinFormsApp1.View.Admin
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(350, 45);
             this.titleLabel.TabIndex = 0;
-            this.titleLabel.Text = "📊 Tổng quan hệ thống";
+            this.titleLabel.Text = LanguageHelper.GetString("SystemOverview");
             // 
             // topPanel
             // 
@@ -71,10 +72,10 @@ namespace WinFormsApp1.View.Admin
             this.filterCombo.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.filterCombo.FormattingEnabled = true;
             this.filterCombo.Items.AddRange(new object[] {
-            "Hôm nay",
-            "Tuần này",
-            "Tháng này",
-            "Tùy chọn"});
+            LanguageHelper.GetString("Today"),
+            LanguageHelper.GetString("ThisWeek"),
+            LanguageHelper.GetString("ThisMonth"),
+            LanguageHelper.GetString("CustomDate")});
             this.filterCombo.Location = new System.Drawing.Point(1728, 25);
             this.filterCombo.Name = "filterCombo";
             this.filterCombo.Size = new System.Drawing.Size(150, 25);
@@ -116,7 +117,7 @@ namespace WinFormsApp1.View.Admin
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(80, 30);
             this.applyButton.TabIndex = 4;
-            this.applyButton.Text = "Áp dụng";
+            this.applyButton.Text = LanguageHelper.GetString("Apply");
             this.applyButton.UseVisualStyleBackColor = false;
             this.applyButton.Visible = false;
             // 

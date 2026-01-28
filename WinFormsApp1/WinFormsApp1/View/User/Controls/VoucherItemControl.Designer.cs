@@ -96,7 +96,7 @@
 			lblConditions.Name = "lblConditions";
 			lblConditions.Size = new Size(463, 35);
 			lblConditions.TabIndex = 4;
-			lblConditions.Text = "⚠️ Vui lòng chọn sản phẩm trong giỏ hàng để áp dụng Voucher này";
+            lblConditions.Text = "⚠️ Please select products in cart to apply this Voucher";
 			lblConditions.Click += panelMain_Click;
 			// 
 			// lblExpiryInfo
@@ -108,7 +108,7 @@
 			lblExpiryInfo.Name = "lblExpiryInfo";
 			lblExpiryInfo.Size = new Size(76, 23);
 			lblExpiryInfo.TabIndex = 3;
-			lblExpiryInfo.Text = "Đã dùng";
+            lblExpiryInfo.Text = "Used";
 			lblExpiryInfo.Click += panelMain_Click;
 			// 
 			// lblExpiry
@@ -131,7 +131,7 @@
 			lblMinOrder.Name = "lblMinOrder";
 			lblMinOrder.Size = new Size(148, 25);
 			lblMinOrder.TabIndex = 1;
-			lblMinOrder.Text = "Đơn Tối Thiểu 0₫";
+            lblMinOrder.Text = "Min Order 0₫";
 			lblMinOrder.Click += panelMain_Click;
 			// 
 			// lblDiscount
@@ -142,7 +142,7 @@
 			lblDiscount.Name = "lblDiscount";
 			lblDiscount.Size = new Size(164, 28);
 			lblDiscount.TabIndex = 0;
-			lblDiscount.Text = "Giảm tối đa 50k";
+            lblDiscount.Text = "Max discount 50k";
 			lblDiscount.Click += panelMain_Click;
 			// 
 			// panelLeft

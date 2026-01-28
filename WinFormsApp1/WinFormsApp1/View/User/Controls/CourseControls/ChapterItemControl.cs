@@ -32,7 +32,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
         private void BtnRemoveChapter_Click(object? sender, EventArgs e)
         {
-            var result = MessageBox.Show("Bạn có chắc muốn xóa chương này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var result = MessageBox.Show("Are you sure you want to delete this chapter?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
                 // raise event so parent can handle removal from data model
@@ -50,7 +50,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             if (vm == null) return;
             _originalViewModel = vm; // Store reference to preserve data
             ChapterId = vm.ChapterId;
-            _baseTitle = vm.Title ?? "(Không tên)";
+            _baseTitle = vm.Title ?? "(Untitled)";
             // keep title unchanged
             lblTitle.Text = _baseTitle;
             flpLessons.Controls.Clear();
@@ -58,7 +58,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             if (vm.Lessons != null && vm.Lessons.Count > 0)
             {
                 // show count label in the lessons area (do not modify the chapter title)
-                var countLabel = new Label { Text = $"({vm.Lessons.Count} bài)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "lesson-count" };
+                var countLabel = new Label { Text = $"({vm.Lessons.Count} lessons)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "lesson-count" };
                 flpLessons.Controls.Add(countLabel);
 
                 foreach (var ls in vm.Lessons)
@@ -70,7 +70,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
             else
             {
                 // show placeholder (no lessons)
-                var ph = new Label { Text = "(Chưa có bài học)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "placeholder" };
+                var ph = new Label { Text = "(No lessons yet)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "placeholder" };
                 flpLessons.Controls.Add(ph);
             }
 
@@ -81,7 +81,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
         private Control CreateLessonItem(string title)
         {
             var item = new LessonItemControl();
-            item.LessonTitle = title ?? "(Không tên)";
+            item.LessonTitle = title ?? "(Untitled)";
             item.DeleteRequested += (lessonItem) => { flpLessons.Controls.Remove(lessonItem); RefreshLessonCount(); };
             return item;
         }
@@ -95,7 +95,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
             // compute sequential number
             var currentCount = flpLessons.Controls.OfType<LessonItemControl>().Count();
-            var defaultTitle = title ?? $"Bài {currentCount + 1}";
+            var defaultTitle = title ?? $"Lesson {currentCount + 1}";
 
             var item = CreateLessonItem(defaultTitle);
             flpLessons.Controls.Add(item);
@@ -154,7 +154,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
                 var placeholder = flpLessons.Controls.OfType<Label>().FirstOrDefault(lbl => (lbl.Tag as string) == "placeholder");
                 if (placeholder == null)
                 {
-                    var ph = new Label { Text = "(Chưa có bài học)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "placeholder" };
+                    var ph = new Label { Text = "(No lessons yet)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "placeholder" };
                     flpLessons.Controls.Add(ph);
                 }
             }
@@ -165,7 +165,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
                 if (placeholder != null) flpLessons.Controls.Remove(placeholder);
 
                 // add/update count label at top
-                var countLabel = new Label { Text = $"({count} bài)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "lesson-count" };
+                var countLabel = new Label { Text = $"({count} lessons)", AutoSize = false, Width = 660, Height = 28, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.Gray, Tag = "lesson-count" };
                 flpLessons.Controls.Add(countLabel);
                 flpLessons.Controls.SetChildIndex(countLabel, 0);
             }

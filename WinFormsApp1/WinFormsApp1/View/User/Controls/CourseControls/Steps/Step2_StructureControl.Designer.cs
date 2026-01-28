@@ -48,7 +48,7 @@
 			lblHeader.Name = "lblHeader";
 			lblHeader.Size = new Size(1794, 55);
 			lblHeader.TabIndex = 0;
-			lblHeader.Text = "Cấu trúc khóa học";
+            lblHeader.Text = "Course Structure";
 			lblHeader.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// btnAddChapter
@@ -62,7 +62,7 @@
 			btnAddChapter.ShadowDecoration.CustomizableEdges = customizableEdges2;
 			btnAddChapter.Size = new Size(186, 40);
 			btnAddChapter.TabIndex = 1;
-			btnAddChapter.Text = "Thêm chương";
+            btnAddChapter.Text = "Add Chapter";
 			// 
 			// flpChapters
 			// 
@@ -84,7 +84,7 @@
 			btnPrev.ShadowDecoration.CustomizableEdges = customizableEdges4;
 			btnPrev.Size = new Size(150, 40);
 			btnPrev.TabIndex = 3;
-			btnPrev.Text = "Quay lại";
+            btnPrev.Text = "Previous";
 			// 
 			// btnNext
 			// 
@@ -97,7 +97,7 @@
 			btnNext.ShadowDecoration.CustomizableEdges = customizableEdges6;
 			btnNext.Size = new Size(150, 40);
 			btnNext.TabIndex = 4;
-			btnNext.Text = "Tiếp tục";
+            btnNext.Text = "Next";
 			// 
 			// Step2_StructureControl
 			// 

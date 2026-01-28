@@ -74,10 +74,10 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			return contentType switch
 			{
 				"Video" => ("\u25B6\uFE0F", Color.FromArgb(220, 53, 69), "Video"),
-				"Theory" => ("\uD83D\uDCD6", Color.FromArgb(52, 144, 220), "Lý thuyết"),
+				"Theory" => ("\uD83D\uDCD6", Color.FromArgb(52, 144, 220), "Theory"),
 				"FlashcardSet" => ("\uD83D\uDDC2\uFE0F", Color.FromArgb(255, 193, 7), "Flashcard"),
-				"Test" => ("\u270D\uFE0F", Color.FromArgb(40, 167, 69), "Kiểm tra"),
-				_ => ("\uD83D\uDCC4", ColorPalette.TextSecondary, "Nội dung")
+				"Test" => ("\u270D\uFE0F", Color.FromArgb(40, 167, 69), "Quiz"),
+				_ => ("\uD83D\uDCC4", ColorPalette.TextSecondary, "Content")
 			};
 		}
 

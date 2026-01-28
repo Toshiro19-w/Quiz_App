@@ -111,7 +111,7 @@ namespace WinFormsApp1.View.User.Forms
             lblCamKetTitle.Name = "lblCamKetTitle";
             lblCamKetTitle.Size = new Size(237, 25);
             lblCamKetTitle.TabIndex = 0;
-            lblCamKetTitle.Text = "🛡️ Cam kết của chúng tôi";
+            lblCamKetTitle.Text = "🛡️ Our Commitment";
             // 
             // lblCamKet1
             // 
@@ -121,7 +121,7 @@ namespace WinFormsApp1.View.User.Forms
             lblCamKet1.Name = "lblCamKet1";
             lblCamKet1.Size = new Size(141, 20);
             lblCamKet1.TabIndex = 1;
-            lblCamKet1.Text = "✓ Truy cập vĩnh viễn";
+            lblCamKet1.Text = "✓ Lifetime access";
             // 
             // lblCamKet2
             // 
@@ -131,7 +131,7 @@ namespace WinFormsApp1.View.User.Forms
             lblCamKet2.Name = "lblCamKet2";
             lblCamKet2.Size = new Size(145, 20);
             lblCamKet2.TabIndex = 2;
-            lblCamKet2.Text = "✓ Cập nhật miễn phí";
+            lblCamKet2.Text = "✓ Free updates";
             // 
             // lblCamKet3
             // 
@@ -141,7 +141,7 @@ namespace WinFormsApp1.View.User.Forms
             lblCamKet3.Name = "lblCamKet3";
             lblCamKet3.Size = new Size(101, 20);
             lblCamKet3.TabIndex = 3;
-            lblCamKet3.Text = "✓ Hỗ trợ 24/7";
+            lblCamKet3.Text = "✓ 24/7 Support";
             // 
             // lblCamKet4
             // 
@@ -151,7 +151,7 @@ namespace WinFormsApp1.View.User.Forms
             lblCamKet4.Name = "lblCamKet4";
             lblCamKet4.Size = new Size(168, 20);
             lblCamKet4.TabIndex = 4;
-            lblCamKet4.Text = "✓ Chứng chỉ hoàn thành";
+            lblCamKet4.Text = "✓ Completion certificate";
             // 
             // panelThanhToan
             // 
@@ -172,7 +172,7 @@ namespace WinFormsApp1.View.User.Forms
             lblChonPhuongThuc.Name = "lblChonPhuongThuc";
             lblChonPhuongThuc.Size = new Size(283, 25);
             lblChonPhuongThuc.TabIndex = 0;
-            lblChonPhuongThuc.Text = "Chọn phương thức thanh toán";
+            lblChonPhuongThuc.Text = "Select Payment Method";
             // 
             // btnThanhToanMoMo
             // 
@@ -188,7 +188,7 @@ namespace WinFormsApp1.View.User.Forms
             btnThanhToanMoMo.Name = "btnThanhToanMoMo";
             btnThanhToanMoMo.Size = new Size(183, 103);
             btnThanhToanMoMo.TabIndex = 1;
-            btnThanhToanMoMo.Text = "  Thanh toán \r\nMoMo";
+            btnThanhToanMoMo.Text = "  Pay with \r\nMoMo";
             btnThanhToanMoMo.TextImageRelation = TextImageRelation.ImageAboveText;
             btnThanhToanMoMo.UseVisualStyleBackColor = false;
             btnThanhToanMoMo.Click += btnThanhToanMoMo_Click;
@@ -217,7 +217,7 @@ namespace WinFormsApp1.View.User.Forms
             lblDiscountTitle.Name = "lblDiscountTitle";
             lblDiscountTitle.Size = new Size(146, 25);
             lblDiscountTitle.TabIndex = 0;
-            lblDiscountTitle.Text = "     Mã giảm giá";
+            lblDiscountTitle.Text = "     Discount Code";
             lblDiscountTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnSelectVoucher
@@ -233,7 +233,7 @@ namespace WinFormsApp1.View.User.Forms
             btnSelectVoucher.Name = "btnSelectVoucher";
             btnSelectVoucher.Size = new Size(360, 32);
             btnSelectVoucher.TabIndex = 1;
-            btnSelectVoucher.Text = "🎫 Chọn hoặc nhập mã giảm giá";
+            btnSelectVoucher.Text = "🎫 Select or enter discount code";
             btnSelectVoucher.UseVisualStyleBackColor = false;
             btnSelectVoucher.Click += btnSelectVoucher_Click;
             // 
@@ -270,7 +270,7 @@ namespace WinFormsApp1.View.User.Forms
             btnRemoveVoucher.Name = "btnRemoveVoucher";
             btnRemoveVoucher.Size = new Size(56, 24);
             btnRemoveVoucher.TabIndex = 3;
-            btnRemoveVoucher.Text = "Xóa";
+            btnRemoveVoucher.Text = "Remove";
             btnRemoveVoucher.UseVisualStyleBackColor = false;
             btnRemoveVoucher.Visible = false;
             btnRemoveVoucher.Click += btnRemoveVoucher_Click;
@@ -296,7 +296,7 @@ namespace WinFormsApp1.View.User.Forms
             lblThongBao.Name = "lblThongBao";
             lblThongBao.Size = new Size(331, 93);
             lblThongBao.TabIndex = 0;
-            lblThongBao.Text = "ℹ️ Sau khi thanh toán thành công, bạn sẽ có quyền truy cập vĩnh viễn vào các khóa học đã mua.";
+            lblThongBao.Text = "ℹ️ After successful payment, you will have lifetime access to the purchased courses.";
             // 
             // panelTongKet
             // 
@@ -326,7 +326,7 @@ namespace WinFormsApp1.View.User.Forms
             lblTongKet.Name = "lblTongKet";
             lblTongKet.Size = new Size(120, 28);
             lblTongKet.TabIndex = 0;
-            lblTongKet.Text = "    Tổng kết";
+            lblTongKet.Text = "    Summary";
             lblTongKet.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblSoKhoaHoc
@@ -337,7 +337,7 @@ namespace WinFormsApp1.View.User.Forms
             lblSoKhoaHoc.Name = "lblSoKhoaHoc";
             lblSoKhoaHoc.Size = new Size(108, 23);
             lblSoKhoaHoc.TabIndex = 1;
-            lblSoKhoaHoc.Text = "Số khóa học:";
+            lblSoKhoaHoc.Text = "Courses:";
             // 
             // lblSoKhoaHocValue
             // 
@@ -357,7 +357,7 @@ namespace WinFormsApp1.View.User.Forms
             lblTamTinh.Name = "lblTamTinh";
             lblTamTinh.Size = new Size(82, 23);
             lblTamTinh.TabIndex = 3;
-            lblTamTinh.Text = "Tạm tính:";
+            lblTamTinh.Text = "Subtotal:";
             // 
             // lblTamTinhValue
             // 
@@ -378,7 +378,7 @@ namespace WinFormsApp1.View.User.Forms
             lblGiamGia.Name = "lblGiamGia";
             lblGiamGia.Size = new Size(82, 23);
             lblGiamGia.TabIndex = 5;
-            lblGiamGia.Text = "Giảm giá:";
+            lblGiamGia.Text = "Discount:";
             lblGiamGia.Visible = false;
             // 
             // lblGiamGiaValue
@@ -401,7 +401,7 @@ namespace WinFormsApp1.View.User.Forms
             lblTongCong.Name = "lblTongCong";
             lblTongCong.Size = new Size(114, 25);
             lblTongCong.TabIndex = 7;
-            lblTongCong.Text = "Tổng cộng:";
+            lblTongCong.Text = "Total:";
             // 
             // lblTongCongValue
             // 
@@ -447,7 +447,7 @@ namespace WinFormsApp1.View.User.Forms
             lblGioHang.Padding = new Padding(0, 0, 0, 26);
             lblGioHang.Size = new Size(255, 58);
             lblGioHang.TabIndex = 0;
-            lblGioHang.Text = "\U0001f6d2 Giỏ hàng của bạn";
+            lblGioHang.Text = "\U0001f6d2 Your Cart";
             // 
             // frmCheckout
             // 
@@ -458,7 +458,7 @@ namespace WinFormsApp1.View.User.Forms
             Margin = new Padding(3, 4, 3, 4);
             Name = "frmCheckout";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Thanh toán - YMEDU";
+            Text = "Checkout - YMEDU";
             panelMain.ResumeLayout(false);
             panelRight.ResumeLayout(false);
             panelCamKet.ResumeLayout(false);

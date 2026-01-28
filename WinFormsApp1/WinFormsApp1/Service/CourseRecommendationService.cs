@@ -192,17 +192,17 @@ namespace WinFormsApp1.Service
             // Ưu tiên các lý do mạnh nhất
             if (score.HistoryScore > 50)
             {
-                reasons.Add("Phù hợp với lịch sử học tập");
+                reasons.Add("Matches your learning history");
             }
 
             if (score.BehaviorScore > 80)
             {
-                reasons.Add("Bạn đã thêm vào giỏ hàng");
+                reasons.Add("Added to your cart");
             }
 
             if (course.AverageRating >= 4.5m)
             {
-                reasons.Add("Đánh giá cao");
+                reasons.Add("Highly rated");
             }
             else if (course.AverageRating >= 4.0m && reasons.Count < 2)
             {
@@ -211,13 +211,13 @@ namespace WinFormsApp1.Service
 
             if (course.CoursePurchases?.Count > 50)
             {
-                reasons.Add("Phổ biến");
+                reasons.Add("Popular");
             }
 
             var daysSinceCreated = (DateTime.Now - course.CreatedAt).Days;
             if (daysSinceCreated <= 7)
             {
-                reasons.Add("Mới ra mắt");
+                reasons.Add("New release");
             }
             else if (daysSinceCreated <= 30 && reasons.Count < 2)
             {
@@ -226,7 +226,7 @@ namespace WinFormsApp1.Service
 
             if (course.Price == 0)
             {
-                reasons.Add("Miễn phí");
+                reasons.Add("Free");
             }
 
             // Nếu chưa có lý do nào, thêm tag mặc định dựa trên đặc điểm khóa học

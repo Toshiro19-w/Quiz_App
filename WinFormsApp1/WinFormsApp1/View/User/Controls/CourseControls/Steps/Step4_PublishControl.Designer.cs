@@ -66,7 +66,7 @@
 			lblHeader.Name = "lblHeader";
 			lblHeader.Size = new Size(1494, 60);
 			lblHeader.TabIndex = 0;
-			lblHeader.Text = "Xem trước xuất bản";
+            lblHeader.Text = "Publish Preview";
 			lblHeader.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// pnlPreview
@@ -104,7 +104,7 @@
 			lblCourseInfoHeader.Name = "lblCourseInfoHeader";
 			lblCourseInfoHeader.Size = new Size(273, 38);
 			lblCourseInfoHeader.TabIndex = 0;
-			lblCourseInfoHeader.Text = "Thông tin khóa học";
+            lblCourseInfoHeader.Text = "Course Information";
 			// 
 			// lblTitleLabel
 			// 
@@ -114,7 +114,7 @@
 			lblTitleLabel.Name = "lblTitleLabel";
 			lblTitleLabel.Size = new Size(99, 32);
 			lblTitleLabel.TabIndex = 1;
-			lblTitleLabel.Text = "Tiêu đề:";
+            lblTitleLabel.Text = "Title:";
 			// 
 			// lblTitleValue
 			// 
@@ -154,7 +154,7 @@
 			lblPriceLabel.Name = "lblPriceLabel";
 			lblPriceLabel.Size = new Size(53, 32);
 			lblPriceLabel.TabIndex = 5;
-			lblPriceLabel.Text = "Giá:";
+            lblPriceLabel.Text = "Price:";
 			// 
 			// lblPriceValue
 			// 
@@ -174,7 +174,7 @@
 			lblStatusLabel.Name = "lblStatusLabel";
 			lblStatusLabel.Size = new Size(125, 32);
 			lblStatusLabel.TabIndex = 7;
-			lblStatusLabel.Text = "Trạng thái:";
+            lblStatusLabel.Text = "Status:";
 			// 
 			// lblStatusValue
 			// 
@@ -194,7 +194,7 @@
 			lblStructureHeader.Name = "lblStructureHeader";
 			lblStructureHeader.Size = new Size(271, 38);
 			lblStructureHeader.TabIndex = 9;
-			lblStructureHeader.Text = "Tổng quan cấu trúc";
+            lblStructureHeader.Text = "Structure Overview";
 			// 
 			// lblChaptersLabel
 			// 
@@ -204,7 +204,7 @@
 			lblChaptersLabel.Name = "lblChaptersLabel";
 			lblChaptersLabel.Size = new Size(134, 32);
 			lblChaptersLabel.TabIndex = 10;
-			lblChaptersLabel.Text = "Số chương:";
+            lblChaptersLabel.Text = "Chapters:";
 			// 
 			// lblChaptersValue
 			// 
@@ -224,7 +224,7 @@
 			lblLessonsLabel.Name = "lblLessonsLabel";
 			lblLessonsLabel.Size = new Size(131, 32);
 			lblLessonsLabel.TabIndex = 12;
-			lblLessonsLabel.Text = "Số bài học:";
+            lblLessonsLabel.Text = "Lessons:";
 			// 
 			// lblLessonsValue
 			// 
@@ -244,7 +244,7 @@
 			lblContentsLabel.Name = "lblContentsLabel";
 			lblContentsLabel.Size = new Size(178, 32);
 			lblContentsLabel.TabIndex = 14;
-			lblContentsLabel.Text = "Tổng nội dung:";
+            lblContentsLabel.Text = "Total Contents:";
 			// 
 			// lblContentsValue
 			// 
@@ -264,7 +264,7 @@
 			lblCourseStructureHeader.Name = "lblCourseStructureHeader";
 			lblCourseStructureHeader.Size = new Size(254, 38);
 			lblCourseStructureHeader.TabIndex = 16;
-			lblCourseStructureHeader.Text = "Cấu trúc khóa học";
+            lblCourseStructureHeader.Text = "Course Structure";
 			// 
 			// pnlCourseStructure
 			// 
@@ -286,7 +286,7 @@
 			btnSaveDraft.ShadowDecoration.CustomizableEdges = customizableEdges2;
 			btnSaveDraft.Size = new Size(150, 40);
 			btnSaveDraft.TabIndex = 2;
-			btnSaveDraft.Text = "Lưu nháp";
+            btnSaveDraft.Text = "Save Draft";
 			// 
 			// btnPublish
 			// 
@@ -299,7 +299,7 @@
 			btnPublish.ShadowDecoration.CustomizableEdges = customizableEdges4;
 			btnPublish.Size = new Size(150, 40);
 			btnPublish.TabIndex = 3;
-			btnPublish.Text = "Xuất bản";
+            btnPublish.Text = "Publish";
 			// 
 			// btnPrev
 			// 
@@ -313,7 +313,7 @@
 			btnPrev.ShadowDecoration.CustomizableEdges = customizableEdges5;
 			btnPrev.Size = new Size(150, 40);
 			btnPrev.TabIndex = 4;
-			btnPrev.Text = "Quay lại";
+            btnPrev.Text = "Previous";
 			// 
 			// Step4_PublishControl
 			// 

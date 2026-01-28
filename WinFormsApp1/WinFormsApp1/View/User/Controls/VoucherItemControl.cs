@@ -87,25 +87,25 @@ namespace WinFormsApp1.View.User.Controls
             // Cập nhật thông tin giảm giá
             if (_discount.DiscountType == "Percentage")
             {
-                lblDiscount.Text = $"Giảm tối đa {_discount.DiscountValue}%";
+                lblDiscount.Text = $"Max discount {_discount.DiscountValue}%";
                 if (_discount.MaxDiscountAmount.HasValue)
                 {
-                    lblDiscount.Text = $"Giảm {_discount.DiscountValue}% tối đa {FormatMoney(_discount.MaxDiscountAmount.Value)}";
+                    lblDiscount.Text = $"Discount {_discount.DiscountValue}% up to {FormatMoney(_discount.MaxDiscountAmount.Value)}";
                 }
             }
             else
             {
-                lblDiscount.Text = $"Giảm {FormatMoney(_discount.DiscountValue)}";
+                lblDiscount.Text = $"Discount {FormatMoney(_discount.DiscountValue)}";
             }
 
             // Đơn tối thiểu
             if (_discount.MinOrderAmount.HasValue && _discount.MinOrderAmount.Value > 0)
             {
-                lblMinOrder.Text = $"Đơn Tối Thiểu {FormatMoney(_discount.MinOrderAmount.Value)}";
+                lblMinOrder.Text = $"Min Order {FormatMoney(_discount.MinOrderAmount.Value)}";
             }
             else
             {
-                lblMinOrder.Text = "Đơn Tối Thiểu 0₫";
+                lblMinOrder.Text = "Min Order 0₫";
             }
 
             // Hạn sử dụng
@@ -127,11 +127,11 @@ namespace WinFormsApp1.View.User.Controls
             if (_discount.UsageLimit.HasValue)
             {
                 var percentage = (_discount.UsageCount * 100.0) / _discount.UsageLimit.Value;
-                lblExpiryInfo.Text = $"Đã dùng {percentage:F0}%";
+                lblExpiryInfo.Text = $"Used {percentage:F0}%";
             }
             else
             {
-                lblExpiryInfo.Text = $"Đã dùng {_discount.UsageCount} lần";
+                lblExpiryInfo.Text = $"Used {_discount.UsageCount} times";
             }
 
             // Kiểm tra điều kiện
@@ -152,21 +152,21 @@ namespace WinFormsApp1.View.User.Controls
             if (_discount.MinOrderAmount.HasValue && _orderAmount < _discount.MinOrderAmount.Value)
             {
                 _canUse = false;
-                message = $"⚠️ Đơn hàng tối thiểu {FormatMoney(_discount.MinOrderAmount.Value)} để áp dụng Voucher này";
+                message = $"⚠️ Minimum order {FormatMoney(_discount.MinOrderAmount.Value)} to apply this Voucher";
             }
 
             // Kiểm tra hết lượt
             if (_discount.UsageLimit.HasValue && _discount.UsageCount >= _discount.UsageLimit.Value)
             {
                 _canUse = false;
-                message = "⚠️ Voucher đã hết lượt sử dụng";
+                message = "⚠️ Voucher has run out of uses";
             }
 
             // Kiểm tra hết hạn
             if (DateTime.Now > _discount.EndDate)
             {
                 _canUse = false;
-                message = "⚠️ Voucher đã hết hạn";
+                message = "⚠️ Voucher has expired";
             }
 
             if (_canUse)

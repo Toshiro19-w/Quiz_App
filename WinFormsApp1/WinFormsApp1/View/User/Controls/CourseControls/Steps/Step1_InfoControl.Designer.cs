@@ -66,7 +66,7 @@
 			pnlCard.TabIndex = 0;
 			pnlCard.Paint += pnlCard_Paint;
 			// 
-			// lblHeader
+            // lblHeader
 			// 
 			lblHeader.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			lblHeader.BackColor = Color.FromArgb(0, 172, 193);
@@ -77,17 +77,17 @@
 			lblHeader.Name = "lblHeader";
 			lblHeader.Size = new Size(1457, 57);
 			lblHeader.TabIndex = 0;
-			lblHeader.Text = "Thông tin khóa học";
+			lblHeader.Text = "Course Information";
 			lblHeader.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// lblTitleLabel
 			// 
-			lblTitleLabel.Font = new Font("Segoe UI", 12F);
+            lblTitleLabel.Font = new Font("Segoe UI", 12F);
 			lblTitleLabel.Location = new Point(39, 90);
 			lblTitleLabel.Name = "lblTitleLabel";
 			lblTitleLabel.Size = new Size(1457, 29);
 			lblTitleLabel.TabIndex = 1;
-			lblTitleLabel.Text = "Tiêu đề";
+			lblTitleLabel.Text = "Title";
 			// 
 			// txtTitle
 			// 
@@ -99,7 +99,7 @@
 			txtTitle.Location = new Point(40, 127);
 			txtTitle.Margin = new Padding(4, 5, 4, 5);
 			txtTitle.Name = "txtTitle";
-			txtTitle.PlaceholderText = "Tiêu đề khóa học";
+            txtTitle.PlaceholderText = "Course title";
 			txtTitle.SelectedText = "";
 			txtTitle.ShadowDecoration.CustomizableEdges = customizableEdges2;
 			txtTitle.Size = new Size(1457, 36);
@@ -132,12 +132,12 @@
 			// 
 			// lblSummaryLabel
 			// 
-			lblSummaryLabel.Font = new Font("Microsoft Sans Serif", 12F);
+            lblSummaryLabel.Font = new Font("Microsoft Sans Serif", 12F);
 			lblSummaryLabel.Location = new Point(38, 280);
 			lblSummaryLabel.Name = "lblSummaryLabel";
 			lblSummaryLabel.Size = new Size(739, 29);
 			lblSummaryLabel.TabIndex = 3;
-			lblSummaryLabel.Text = "Mô tả ngắn";
+			lblSummaryLabel.Text = "Summary";
 			// 
 			// txtSummary
 			// 
@@ -151,12 +151,12 @@
 			// 
 			// lblCategoryLabel
 			// 
-			lblCategoryLabel.Font = new Font("Microsoft Sans Serif", 12F);
+            lblCategoryLabel.Font = new Font("Microsoft Sans Serif", 12F);
 			lblCategoryLabel.Location = new Point(40, 456);
 			lblCategoryLabel.Name = "lblCategoryLabel";
 			lblCategoryLabel.Size = new Size(466, 28);
 			lblCategoryLabel.TabIndex = 4;
-			lblCategoryLabel.Text = "Danh mục";
+			lblCategoryLabel.Text = "Category";
 			// 
 			// cmbCategory
 			// 
@@ -176,12 +176,12 @@
 			// 
 			// lblPriceLabel
 			// 
-			lblPriceLabel.Font = new Font("Microsoft Sans Serif", 12F);
+            lblPriceLabel.Font = new Font("Microsoft Sans Serif", 12F);
 			lblPriceLabel.Location = new Point(38, 547);
 			lblPriceLabel.Name = "lblPriceLabel";
 			lblPriceLabel.Size = new Size(508, 28);
 			lblPriceLabel.TabIndex = 5;
-			lblPriceLabel.Text = "Giá (VNĐ)";
+			lblPriceLabel.Text = "Price (VND)";
 			// 
 			// txtPrice
 			// 
@@ -191,7 +191,7 @@
 			txtPrice.Location = new Point(38, 583);
 			txtPrice.Margin = new Padding(4, 5, 4, 5);
 			txtPrice.Name = "txtPrice";
-			txtPrice.PlaceholderText = "Giá (VNĐ)";
+            txtPrice.PlaceholderText = "Price (VND)";
 			txtPrice.SelectedText = "";
 			txtPrice.ShadowDecoration.CustomizableEdges = customizableEdges8;
 			txtPrice.Size = new Size(508, 36);
@@ -199,12 +199,12 @@
 			// 
 			// lblCoverLabel
 			// 
-			lblCoverLabel.Font = new Font("Microsoft Sans Serif", 12F);
+            lblCoverLabel.Font = new Font("Microsoft Sans Serif", 12F);
 			lblCoverLabel.Location = new Point(839, 455);
 			lblCoverLabel.Name = "lblCoverLabel";
 			lblCoverLabel.Size = new Size(98, 31);
 			lblCoverLabel.TabIndex = 6;
-			lblCoverLabel.Text = "Ảnh bìa";
+			lblCoverLabel.Text = "Cover Image";
 			// 
 			// btnUploadCover
 			// 
@@ -217,7 +217,7 @@
 			btnUploadCover.ShadowDecoration.CustomizableEdges = customizableEdges10;
 			btnUploadCover.Size = new Size(155, 40);
 			btnUploadCover.TabIndex = 6;
-			btnUploadCover.Text = "Upload ảnh";
+            btnUploadCover.Text = "Upload Image";
 			// 
 			// picCover
 			// 
@@ -240,7 +240,7 @@
 			btnNext.ShadowDecoration.CustomizableEdges = customizableEdges12;
 			btnNext.Size = new Size(140, 40);
 			btnNext.TabIndex = 0;
-			btnNext.Text = "Tiếp tục";
+            btnNext.Text = "Next";
 			// 
 			// Step1_InfoControl
 			// 

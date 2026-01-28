@@ -1,4 +1,4 @@
-﻿using System; using System.Windows.Forms; using System.Linq; using WinFormsApp1.ViewModels; using WinFormsApp1.View.User.Controls.CourseControls;
+﻿using System; using System.Windows.Forms; using System.Linq; using WinFormsApp1.ViewModels; using WinFormsApp1.View.User.Controls.CourseControls; using WinFormsApp1.Localization;
 
 namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 {
@@ -11,6 +11,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
             // Enable double buffering for smoother scrolling
             EnableDoubleBuffering(flpChapters);
             
+            LocalizeUI();
+            
             // Đảm bảo nút được kích hoạt
             btnAddChapter.Enabled = true;
             btnAddChapter.Visible = true;
@@ -19,6 +21,14 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
             btnAddChapter.Click += BtnAddChapter_Click;
             btnPrev.Click += (s,e)=> OnPrevRequested?.Invoke(this, EventArgs.Empty);
             btnNext.Click += (s,e)=> OnNextRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void LocalizeUI()
+        {
+            lblHeader.Text = LanguageHelper.GetString("CourseStructure");
+            btnAddChapter.Text = LanguageHelper.GetString("AddChapter");
+            btnPrev.Text = LanguageHelper.GetString("Back");
+            btnNext.Text = LanguageHelper.GetString("Continue");
         }
         
         /// <summary>
@@ -57,7 +67,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			{
 				chapterCounter++;
 				chVm = new ChapterBuilderViewModel { 
-					Title = $"Chương {chapterCounter}",
+					Title = LanguageHelper.GetString("ChapterTitle") + " " + chapterCounter,
 					OrderIndex = chapterCounter
 				};
 			}

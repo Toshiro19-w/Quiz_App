@@ -63,7 +63,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			catch (Exception ex)
 			{
 				_course = null;
-				ToastHelper.Show(this.FindForm(), $"Lỗi khi tải khóa học: {ex.Message}");
+				ToastHelper.Show(this.FindForm(), $"Error loading course: {ex.Message}");
 				return;
 			}
 
@@ -77,30 +77,30 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			}
 			else
 			{
-				ToastHelper.Show(this.FindForm(), "Không tìm thấy khóa học");
+				ToastHelper.Show(this.FindForm(), "Course not found");
 			}
 		}
 
 		private void DisplayCourseInfo()
 		{
 			lblTitle.Text = _course.Title;
-			lblBreadcrumb.Text = $"Khóa học / {_course.Category?.Name ?? "Chưa phân loại"} / {_course.Title}";
+			lblBreadcrumb.Text = $"Course / {_course.Category?.Name ?? "Uncategorized"} / {_course.Title}";
 
 			var stars = new string('★', (int)Math.Round(_course.AverageRating)) + new string('☆', 5 - (int)Math.Round(_course.AverageRating));
 			lblRating.Text = $"{stars} {_course.AverageRating:F1}";
-			lblRatingCount.Text = $"({_course.TotalReviews:N0} đánh giá)";
-			lblStudents.Text = $"{_course.CoursePurchases.Count:N0} học viên";
-			lblInstructor.Text = $"Giảng viên: {_course.Owner.FullName}";
-			lblLastUpdated.Text = $"Cập nhật: {_course.UpdatedAt?.ToString("MM/yyyy") ?? _course.CreatedAt.ToString("MM/yyyy")}";
+			lblRatingCount.Text = $"({_course.TotalReviews:N0} reviews)";
+			lblStudents.Text = $"{_course.CoursePurchases.Count:N0} students";
+			lblInstructor.Text = $"Instructor: {_course.Owner.FullName}";
+			lblLastUpdated.Text = $"Updated: {_course.UpdatedAt?.ToString("MM/yyyy") ?? _course.CreatedAt.ToString("MM/yyyy")}";
 			lblPrice.Text = $"{_course.Price:N0}đ";
 
 			var totalLessons = _course.CourseChapters.Sum(ch => ch.Lessons.Count);
-			lblChapterStats.Text = $"{_course.CourseChapters.Count} chương • {totalLessons} bài học";
+			lblChapterStats.Text = $"{_course.CourseChapters.Count} chapters • {totalLessons} lessons";
 
-			rtbDescription.Text = _course.Summary ?? "Chưa có mô tả";
+			rtbDescription.Text = _course.Summary ?? "No description yet";
 
 			lblAvgRating.Text = _course.AverageRating.ToString("F1");
-			lblTotalRatingCount.Text = $"({_course.TotalReviews:N0} đánh giá)";
+			lblTotalRatingCount.Text = $"({_course.TotalReviews:N0} reviews)";
 
 			if (!string.IsNullOrEmpty(_course.CoverUrl))
 			{
@@ -173,7 +173,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			foreach (var chapter in _course.CourseChapters.OrderBy(c => c.OrderIndex))
 			{
 				var pnl = new Panel { Width = 700, Height = 50, BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Margin = new Padding(0, 0, 0, 10) };
-				var lbl = new Label { Text = $"{chapter.Title} ({chapter.Lessons.Count} bài)", Location = new Point(10, 15), AutoSize = true, Font = new Font("Segoe UI", 10F, FontStyle.Bold) };
+				var lbl = new Label { Text = $"{chapter.Title} ({chapter.Lessons.Count} lessons)", Location = new Point(10, 15), AutoSize = true, Font = new Font("Segoe UI", 10F, FontStyle.Bold) };
 				pnl.Controls.Add(lbl);
 				pnlChapters.Controls.Add(pnl);
 			}
@@ -217,76 +217,76 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			var userId = AuthHelper.CurrentUser?.UserId;
 			if (!userId.HasValue)
 			{
-				MessageBox.Show("Vui lòng đăng nhập để thêm vào giỏ hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show("Please login to add to cart!", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
 			if (_course == null)
 			{
-				MessageBox.Show("Thông tin khóa học chưa được tải.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show("Course information not loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
-			}
+				}
 
-			try
-			{
+				try
+				{
 				using var context = new LearningPlatformContext();
 
 				var cart = await context.ShoppingCarts.FirstOrDefaultAsync(c => c.UserId == userId.Value);
 				if (cart == null)
 				{
-					cart = new ShoppingCart
-					{
-						UserId = userId.Value,
-						CreatedAt = DateTime.Now
-					};
-					context.ShoppingCarts.Add(cart);
-					await context.SaveChangesAsync();
+				cart = new ShoppingCart
+				{
+					UserId = userId.Value,
+					CreatedAt = DateTime.Now
+				};
+				context.ShoppingCarts.Add(cart);
+				await context.SaveChangesAsync();
 				}
 
 				var existingItem = await context.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cart.CartId && ci.CourseId == _course.CourseId);
 				if (existingItem == null)
 				{
-					var cartItem = new CartItem
-					{
-						CartId = cart.CartId,
-						CourseId = _course.CourseId,
-						AddedAt = DateTime.Now
-					};
-					context.CartItems.Add(cartItem);
-					await context.SaveChangesAsync();
+				var cartItem = new CartItem
+				{
+					CartId = cart.CartId,
+					CourseId = _course.CourseId,
+					AddedAt = DateTime.Now
+				};
+				context.CartItems.Add(cartItem);
+				await context.SaveChangesAsync();
 
-					ToastHelper.Show(this.FindForm(), "Đã thêm khóa học vào giỏ hàng!");
-					btnAddToCart.Text = "Trong giỏ hàng";
-					btnAddToCart.Enabled = false;
+				ToastHelper.Show(this.FindForm(), "Course added to cart!");
+				btnAddToCart.Text = "In Cart";
+				btnAddToCart.Enabled = false;
 				}
 				else
 				{
-					ToastHelper.Show(this.FindForm(), "Khóa học đã có trong giỏ hàng!");
+				ToastHelper.Show(this.FindForm(), "Course already in cart!");
 				}
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"Lỗi khi thêm vào giỏ hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-		}
+				}
+				catch (Exception ex)
+				{
+				MessageBox.Show($"Error adding to cart: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+				}
 
 		private async void btnBuyNow_Click(object sender, EventArgs e)
 		{
 			var userId = AuthHelper.CurrentUser?.UserId;
 			if (!userId.HasValue)
 			{
-				MessageBox.Show("Vui lòng đăng nhập để mua khóa học", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show("Please login to purchase the course", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
 			if (_course == null)
 			{
-				MessageBox.Show("Thông tin khóa học chưa được tải.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show("Course information not loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
-			}
+				}
 
-			try
-			{
+				try
+				{
 				using var context = new LearningPlatformContext();
 
 				var cart = await context.ShoppingCarts.FirstOrDefaultAsync(c => c.UserId == userId.Value);
@@ -294,8 +294,8 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 				{
 					cart = new ShoppingCart
 					{
-						UserId = userId.Value,
-						CreatedAt = DateTime.Now
+					UserId = userId.Value,
+					CreatedAt = DateTime.Now
 					};
 					context.ShoppingCarts.Add(cart);
 					await context.SaveChangesAsync();
@@ -306,9 +306,9 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 				{
 					var cartItem = new CartItem
 					{
-						CartId = cart.CartId,
-						CourseId = _course.CourseId,
-						AddedAt = DateTime.Now
+					CartId = cart.CartId,
+					CourseId = _course.CourseId,
+					AddedAt = DateTime.Now
 					};
 					context.CartItems.Add(cartItem);
 					await context.SaveChangesAsync();
@@ -331,18 +331,18 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 				{
 					try
 					{
-						await LoadCourseAsync(_courseId);
-						UpdateActionButtons();
-						ToastHelper.Show(this.FindForm(), "Thanh toán thành công! Bạn có thể bắt đầu học ngay.");
+					await LoadCourseAsync(_courseId);
+					UpdateActionButtons();
+					ToastHelper.Show(this.FindForm(), "Payment successful! You can start learning now.");
 					}
 					catch { }
 				}
-		}
-		catch (Exception ex)
-		{
-			MessageBox.Show($"Lỗi khi thêm vào giỏ hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-		}
-	}
+				}
+				catch (Exception ex)
+				{
+				MessageBox.Show($"Error adding to cart: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+				}
 
 	private void btnSubscribeMonthly_Click(object sender, EventArgs e)
 	{
@@ -363,7 +363,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 		}
 		catch (Exception ex)
 		{
-			MessageBox.Show($"Lỗi khi mở form đăng ký: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			MessageBox.Show($"Error opening subscription form: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 	}
 
@@ -384,13 +384,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 				var userId = AuthHelper.CurrentUser?.UserId;
 				if (!userId.HasValue)
 				{
-					MessageBox.Show("Vui lòng đăng nhập để xem bài học!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBox.Show("Please login to view the lesson!", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
 				}
 
 				if (_course == null)
 				{
-					MessageBox.Show("Thông tin khóa học chưa được tải.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show("Course information not loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 				}
 
@@ -402,7 +402,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
 				if (firstLesson == null)
 				{
-					MessageBox.Show("Khóa học chưa có bài học.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBox.Show("This course has no lessons yet.", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return;
 				}
 
@@ -410,14 +410,14 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 				var mainContainer = FindMainContainer();
 				if (mainContainer == null)
 				{
-					MessageBox.Show("Không thể điều hướng. Vui lòng thử lại từ trang chủ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show("Cannot navigate. Please try again from the home page.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 				}
 
 				var mainPanel = FindControlRecursive(mainContainer, "mainContentPanel") as Panel;
 				if (mainPanel == null)
 				{
-					MessageBox.Show("Không tìm thấy panel chính để điều hướng.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show("Main panel not found for navigation.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 				}
 
@@ -431,7 +431,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Lỗi khi điều hướng:\n{ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show($"Navigation error:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
@@ -488,7 +488,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 					}
 				}
 
-				ToastHelper.Show(this.FindForm(), "Đã mở rộng tất cả chương");
+				ToastHelper.Show(this.FindForm(), "Expanded all chapters");
 			}
 			catch { }
 		}
@@ -499,7 +499,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			{
 				if (_courseId <= 0)
 				{
-					MessageBox.Show("Không có khóa học để chỉnh sửa", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBox.Show("No course to edit", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
 				}
 
@@ -508,7 +508,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 					_course = await _controller.GetCourseDetailAsync(_courseId);
 					if (_course == null)
 					{
-						MessageBox.Show("Không tìm thấy khóa học", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						MessageBox.Show("Course not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 						return;
 					}
 				}
@@ -518,7 +518,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
 				if (vm == null)
 				{
-					MessageBox.Show("Không thể nạp dữ liệu chỉnh sửa", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show("Cannot load edit data", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 				}
 
@@ -530,20 +530,20 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Lỗi khi mở trình chỉnh sửa: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show($"Error opening editor: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
 		private void BtnStatistics_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("Hiển thị thống kê khóa học (lượt mua, tiến độ)", "Thống kê", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			MessageBox.Show("Display course statistics (purchases, progress)", "Statistics", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private Panel CreateReviewPrompt()
 		{
 			var pnl = new Panel { Width = 700, Height = 80, BackColor = ColorTranslator.FromHtml("#D1F2EB"), Padding = new Padding(15), Margin = new Padding(0, 0, 0, 15) };
-			var lbl = new Label { Text = "★ Bạn đã mua khóa học này. Hãy chia sẻ trải nghiệm của bạn!", AutoSize = true, Font = new Font("Segoe UI", 10F), Location = new Point(0, 15) };
-			var btn = new Button { Text = "Viết đánh giá", Size = new Size(120, 35), BackColor = ColorTranslator.FromHtml("#007BFF"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Location = new Point(550, 20), Cursor = Cursors.Hand };
+			var lbl = new Label { Text = "★ You purchased this course. Share your experience!", AutoSize = true, Font = new Font("Segoe UI", 10F), Location = new Point(0, 15) };
+			var btn = new Button { Text = "Write Review", Size = new Size(120, 35), BackColor = ColorTranslator.FromHtml("#007BFF"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Location = new Point(550, 20), Cursor = Cursors.Hand };
 			btn.FlatAppearance.BorderSize = 0;
 			btn.Click += (s, e) => ShowReviewDialog(null);
 			pnl.Controls.Add(lbl);
@@ -554,11 +554,11 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 		private Panel CreateUserReviewPanel(CourseReview review)
 		{
 			var pnl = new Panel { Width = 700, Height = 120, BackColor = ColorTranslator.FromHtml("#D4EDDA"), Padding = new Padding(15), Margin = new Padding(0, 0, 0, 15) };
-			var lblTitle = new Label { Text = "✓ Đánh giá của bạn:", AutoSize = true, Font = new Font("Segoe UI", 10F, FontStyle.Bold), Location = new Point(0, 0) };
+			var lblTitle = new Label { Text = "✓ Your review:", AutoSize = true, Font = new Font("Segoe UI", 10F, FontStyle.Bold), Location = new Point(0, 0) };
 			var lblStars = new Label { Text = new string('★', (int)review.Rating) + new string('☆', 5 - (int)review.Rating), AutoSize = true, Font = new Font("Segoe UI", 14F), ForeColor = ColorTranslator.FromHtml("#FFA500"), Location = new Point(0, 25) };
 			var lblComment = new Label { Text = review.Comment ?? "", AutoSize = true, MaximumSize = new Size(500, 0), Location = new Point(0, 55) };
-			var btnEdit = new Button { Text = "✏ Sửa", Size = new Size(80, 30), BackColor = ColorTranslator.FromHtml("#FFC107"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Location = new Point(550, 15), Cursor = Cursors.Hand };
-			var btnDelete = new Button { Text = "🗑 Xóa", Size = new Size(80, 30), BackColor = ColorTranslator.FromHtml("#DC3545"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Location = new Point(550, 55), Cursor = Cursors.Hand };
+			var btnEdit = new Button { Text = "✏ Edit", Size = new Size(80, 30), BackColor = ColorTranslator.FromHtml("#FFC107"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Location = new Point(550, 15), Cursor = Cursors.Hand };
+			var btnDelete = new Button { Text = "🗑 Delete", Size = new Size(80, 30), BackColor = ColorTranslator.FromHtml("#DC3545"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Location = new Point(550, 55), Cursor = Cursors.Hand };
 			btnEdit.FlatAppearance.BorderSize = 0;
 			btnDelete.FlatAppearance.BorderSize = 0;
 			btnEdit.Click += (s, e) => ShowReviewDialog(review);
@@ -569,13 +569,13 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 
 		private void ShowReviewDialog(CourseReview existingReview)
 		{
-			using var form = new Form { Text = existingReview == null ? "Viết đánh giá" : "Sửa đánh giá", Size = new Size(450, 350), StartPosition = FormStartPosition.CenterParent, FormBorderStyle = FormBorderStyle.FixedDialog, MaximizeBox = false };
-			var lblRating = new Label { Text = "Xếp hạng:", Location = new Point(20, 20), AutoSize = true };
+			using var form = new Form { Text = existingReview == null ? "Write Review" : "Edit Review", Size = new Size(450, 350), StartPosition = FormStartPosition.CenterParent, FormBorderStyle = FormBorderStyle.FixedDialog, MaximizeBox = false };
+			var lblRating = new Label { Text = "Rating:", Location = new Point(20, 20), AutoSize = true };
 			var numRating = new NumericUpDown { Location = new Point(120, 18), Width = 60, Minimum = 1, Maximum = 5, Value = existingReview?.Rating ?? 5 };
-			var lblComment = new Label { Text = "Nhận xét:", Location = new Point(20, 60), AutoSize = true };
+			var lblComment = new Label { Text = "Comment:", Location = new Point(20, 60), AutoSize = true };
 			var txtComment = new TextBox { Location = new Point(20, 85), Size = new Size(390, 120), Multiline = true, Text = existingReview?.Comment ?? "" };
-			var btnSave = new Button { Text = "Lưu", Location = new Point(250, 230), Size = new Size(80, 35), BackColor = ColorTranslator.FromHtml("#28A745"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
-			var btnCancel = new Button { Text = "Hủy", Location = new Point(340, 230), Size = new Size(70, 35), DialogResult = DialogResult.Cancel };
+			var btnSave = new Button { Text = "Save", Location = new Point(250, 230), Size = new Size(80, 35), BackColor = ColorTranslator.FromHtml("#28A745"), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+			var btnCancel = new Button { Text = "Cancel", Location = new Point(340, 230), Size = new Size(70, 35), DialogResult = DialogResult.Cancel };
 			btnSave.Click += async (s, e) => { await SaveReview(existingReview, (int)numRating.Value, txtComment.Text); form.DialogResult = DialogResult.OK; };
 			form.Controls.AddRange(new Control[] { lblRating, numRating, lblComment, txtComment, btnSave, btnCancel });
 			if (form.ShowDialog() == DialogResult.OK) LoadReviews();
@@ -598,22 +598,22 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 				}
 				await context.SaveChangesAsync();
 				await LoadCourseAsync(_courseId);
-				ToastHelper.Show(this.FindForm(), "Đánh giá thành công!");
+				ToastHelper.Show(this.FindForm(), "Review submitted successfully!");
 			}
 			catch (Exception ex) { MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 		}
 
 		private async System.Threading.Tasks.Task DeleteReview(int reviewId)
 		{
-			if (MessageBox.Show("Xóa đánh giá?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+			if (MessageBox.Show("Delete review?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
 			{
-				try
-				{
-					using var context = new LearningPlatformContext();
-					var review = await context.CourseReviews.FindAsync(reviewId);
-					if (review != null) { context.CourseReviews.Remove(review); await context.SaveChangesAsync(); }
-					await LoadCourseAsync(_courseId);
-					ToastHelper.Show(this.FindForm(), "Đã xóa đánh giá");
+			try
+			{
+			using var context = new LearningPlatformContext();
+			var review = await context.CourseReviews.FindAsync(reviewId);
+			if (review != null) { context.CourseReviews.Remove(review); await context.SaveChangesAsync(); }
+			await LoadCourseAsync(_courseId);
+			ToastHelper.Show(this.FindForm(), "Review deleted");
 				}
 				catch (Exception ex) { MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 			}

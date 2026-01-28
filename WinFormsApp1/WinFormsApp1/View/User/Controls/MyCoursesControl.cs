@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
 using WinFormsApp1.View.User.Forms;
@@ -19,16 +20,61 @@ namespace WinFormsApp1.View.User.Controls
         private int _pageSize = 10;
         private int _totalRecords = 0;
         private List<Course> _allCourses = new List<Course>();
-        private string _searchFilter = "Tất cả";
+        private string _searchFilter = "";
 		
-		public MyCoursesControl()
+        public MyCoursesControl()
         {
             InitializeComponent();
+            LocalizeUI();
             cmbPageSize.SelectedIndex = 0;
             cbbSearch.SelectedIndex = 0;
             LoadCourses();
             
             flowCourses.Resize += (s, e) => RefreshRowWidths();
+        }
+
+        private void LocalizeUI()
+        {
+            // Header
+            lblTitle.Text = LanguageHelper.GetString("MyCourses");
+            
+            // Action buttons
+            btnCreateCourse.Text = "➕ " + LanguageHelper.GetString("CreateCourse");
+            btnRevenue.Text = "📊 " + LanguageHelper.GetString("Revenue");
+            btnFlashcards.Text = "🗂️ " + LanguageHelper.GetString("MyFlashcards");
+            
+            // Filter labels
+            lblShowLabel.Text = LanguageHelper.GetString("Show");
+            lblEntriesLabel.Text = LanguageHelper.GetString("Entries");
+            lblSearchLabel.Text = LanguageHelper.GetString("Search") + ":";
+            
+            // Search filter combobox
+            cbbSearch.Items.Clear();
+            cbbSearch.Items.AddRange(new object[] {
+                LanguageHelper.GetString("FilterAll"),
+                LanguageHelper.GetString("FilterTitle"),
+                LanguageHelper.GetString("FilterCategory"),
+                LanguageHelper.GetString("FilterPrice"),
+                LanguageHelper.GetString("FilterCreatedAt"),
+                LanguageHelper.GetString("FilterStatus"),
+                LanguageHelper.GetString("FilterPublished")
+            });
+            
+            // Table headers
+            lblHeaderCover.Text = LanguageHelper.GetString("Image");
+            lblHeaderTitle.Text = LanguageHelper.GetString("Title");
+            lblHeaderCategory.Text = LanguageHelper.GetString("Category");
+            lblHeaderPrice.Text = LanguageHelper.GetString("Price");
+            lblHeaderDate.Text = LanguageHelper.GetString("CreatedAt");
+            lblHeaderModeration.Text = LanguageHelper.GetString("Status");
+            lblHeaderStatus.Text = LanguageHelper.GetString("Published");
+            lblHeaderActions.Text = LanguageHelper.GetString("Actions");
+            
+            // Pagination buttons
+            btnFirstPage.Text = LanguageHelper.GetString("First");
+            btnPrevPage.Text = LanguageHelper.GetString("Previous");
+            btnNextPage.Text = LanguageHelper.GetString("Next");
+            btnLastPage.Text = LanguageHelper.GetString("Last");
         }
         
         private void RefreshRowWidths()
@@ -49,7 +95,7 @@ namespace WinFormsApp1.View.User.Controls
                 var userId = AuthHelper.CurrentUser?.UserId;
                 if (!userId.HasValue)
                 {
-                    MessageBox.Show("Vui lòng đăng nhập!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(LanguageHelper.GetString("PleaseLoginMessage"), LanguageHelper.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -65,7 +111,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("DataLoadError", ex.Message), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -77,31 +123,40 @@ namespace WinFormsApp1.View.User.Controls
             string searchText = txtSearch.Text.Trim().ToLower();
             if (!string.IsNullOrEmpty(searchText))
             {
+                var filterTitle = LanguageHelper.GetString("FilterTitle");
+                var filterCategory = LanguageHelper.GetString("FilterCategory");
+                var filterPrice = LanguageHelper.GetString("FilterPrice");
+                var filterCreatedAt = LanguageHelper.GetString("FilterCreatedAt");
+                var filterStatus = LanguageHelper.GetString("FilterStatus");
+                var filterPublished = LanguageHelper.GetString("FilterPublished");
+                var statusPublished = LanguageHelper.GetString("StatusPublished");
+                var statusDraft = LanguageHelper.GetString("StatusDraft");
+
                 filteredCourses = _searchFilter switch
                 {
-                    "Tiêu đề" => filteredCourses.Where(c => 
+                    var f when f == filterTitle => filteredCourses.Where(c => 
                         c.Title.ToLower().Contains(searchText)),
                     
-                    "Danh mục" => filteredCourses.Where(c => 
+                    var f when f == filterCategory => filteredCourses.Where(c => 
                         c.Category?.Name?.ToLower().Contains(searchText) == true),
                     
-                    "Giá" => filteredCourses.Where(c => 
+                    var f when f == filterPrice => filteredCourses.Where(c => 
                         c.Price.ToString().Contains(searchText)),
                     
-                    "Tạo lúc" => filteredCourses.Where(c => 
+                    var f when f == filterCreatedAt => filteredCourses.Where(c => 
                         c.CreatedAt.ToString("dd/MM/yyyy").Contains(searchText) ||
                         c.CreatedAt.ToString("dd-MM-yyyy").Contains(searchText) ||
                         c.CreatedAt.ToString("yyyy").Contains(searchText)),
                     
-                    "Trạng thái" => filteredCourses.Where(c =>
+                    var f when f == filterStatus => filteredCourses.Where(c =>
                     {
                         var status = GetModerationStatusText(c.ModerationStatus);
                         return status.ToLower().Contains(searchText);
                     }),
                     
-                    "Xuất bản" => filteredCourses.Where(c =>
+                    var f when f == filterPublished => filteredCourses.Where(c =>
                     {
-                        var publishStatus = c.IsPublished ? "đã xuất bản" : "nháp";
+                        var publishStatus = c.IsPublished ? statusPublished : statusDraft;
                         return publishStatus.Contains(searchText);
                     }),
                     
@@ -112,7 +167,7 @@ namespace WinFormsApp1.View.User.Controls
                         c.Price.ToString().Contains(searchText) ||
                         c.CreatedAt.ToString("dd/MM/yyyy").Contains(searchText) ||
                         GetModerationStatusText(c.ModerationStatus).ToLower().Contains(searchText) ||
-                        (c.IsPublished ? "đã xuất bản" : "nháp").Contains(searchText))
+                        (c.IsPublished ? statusPublished : statusDraft).Contains(searchText))
                 };
             }
 
@@ -140,7 +195,7 @@ namespace WinFormsApp1.View.User.Controls
             {
                 var lblEmpty = new Label
                 {
-                    Text = "Chưa có khóa học nào",
+                    Text = LanguageHelper.GetString("NoCourseYet"),
                     Font = new Font("Segoe UI", 14, FontStyle.Bold),
                     ForeColor = ColorPalette.TextSecondary,
                     AutoSize = true,
@@ -189,7 +244,7 @@ namespace WinFormsApp1.View.User.Controls
                 
                 if (fullCourse == null)
                 {
-                    MessageBox.Show("Không tìm thấy khóa học!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(LanguageHelper.GetString("CourseNotFound"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 
@@ -200,57 +255,57 @@ namespace WinFormsApp1.View.User.Controls
                 var errorCount = autoCheckResults.Count(r => r.Severity == "Error" && !r.Passed);
                 var warningCount = autoCheckResults.Count(r => r.Severity == "Warning" && !r.Passed);
                 
-                var message = $"Kết quả kiểm tra tự động:\n\n";
-                message += $"Điểm: {autoScore}/100\n";
-                message += $"Lỗi: {errorCount}\n";
-                message += $"Cảnh báo: {warningCount}\n\n";
+                var message = LanguageHelper.GetString("AutoCheckResult") + "\n\n";
+                message += LanguageHelper.GetString("Score") + $": {autoScore}/100\n";
+                message += LanguageHelper.GetString("Errors") + $": {errorCount}\n";
+                message += LanguageHelper.GetString("Warnings") + $": {warningCount}\n\n";
                 
                 if (!canPublish)
                 {
-                    message += "❌ Khóa học chưa đủ điều kiện gửi duyệt.\n\n";
-                    message += "Các lỗi cần sửa:\n";
+                    message += "❌ " + LanguageHelper.GetString("CourseNotEligible") + "\n\n";
+                    message += LanguageHelper.GetString("ErrorsToFix") + ":\n";
                     foreach (var result in autoCheckResults.Where(r => r.Severity == "Error" && !r.Passed))
                     {
                         message += $"• {result.Message}\n";
                     }
                     
-                    MessageBox.Show(message, "Không thể gửi duyệt", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(message, LanguageHelper.GetString("CannotSubmit"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
                 
                 if (warningCount > 0)
                 {
-                    message += "⚠️ Có một số cảnh báo. Bạn có muốn tiếp tục gửi duyệt?\n\n";
-                    message += "Các cảnh báo:\n";
+                    message += "⚠️ " + LanguageHelper.GetString("HasWarnings") + "\n\n";
+                    message += LanguageHelper.GetString("Warnings") + ":\n";
                     foreach (var checkResult in autoCheckResults.Where(r => r.Severity == "Warning" && !r.Passed))
                     {
                         message += $"• {checkResult.Message}\n";
                     }
                     
-                    var confirmResult = MessageBox.Show(message, "Xác nhận gửi duyệt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    var confirmResult = MessageBox.Show(message, LanguageHelper.GetString("ConfirmSubmit"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (confirmResult != DialogResult.Yes) return;
                 }
                 else
                 {
-                    message += "✅ Khóa học đã sẵn sàng để gửi duyệt.\n\nBạn có muốn gửi khóa học để admin kiểm duyệt?";
-                    var confirmResult = MessageBox.Show(message, "Xác nhận gửi duyệt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    message += "✅ " + LanguageHelper.GetString("CourseReady") + "\n\n" + LanguageHelper.GetString("ConfirmSubmitCourse");
+                    var confirmResult = MessageBox.Show(message, LanguageHelper.GetString("ConfirmSubmit"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (confirmResult != DialogResult.Yes) return;
                 }
                 
                 if (Services.CourseModerationService.SubmitForReview(course.CourseId, context))
                 {
-                    MessageBox.Show("Đã gửi khóa học để kiểm duyệt!\n\nAdmin sẽ xem xét và phản hồi trong thời gian sớm nhất.", 
-                        "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageHelper.GetString("CourseSubmitted"), 
+                        LanguageHelper.GetString("Success"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadCourses();
                 }
                 else
                 {
-                    MessageBox.Show("Không thể gửi khóa học!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(LanguageHelper.GetString("CannotSubmitCourse"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("GenericError", ex.Message), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -320,7 +375,7 @@ namespace WinFormsApp1.View.User.Controls
 
 				if (firstLesson == null)
 				{
-					MessageBox.Show("Khóa học chưa có bài học nào!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBox.Show(LanguageHelper.GetString("NoLessonsYet"), LanguageHelper.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return;
 				}
 
@@ -343,7 +398,7 @@ namespace WinFormsApp1.View.User.Controls
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Lỗi khi mở khóa học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(LanguageHelper.GetString("CourseOpenError", ex.Message), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 		private async void EditCourse(Course course)
@@ -355,7 +410,7 @@ namespace WinFormsApp1.View.User.Controls
                 
                 if (vm == null)
                 {
-                    MessageBox.Show("Không thể tải dữ liệu khóa học", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(LanguageHelper.GetString("CannotLoadCourseData"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 
@@ -368,15 +423,15 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi mở trình chỉnh sửa: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("EditorOpenError", ex.Message), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private async void DeleteCourse(Course course)
         {
             var result = MessageBox.Show(
-                $"Bạn có chắc chắn muốn xóa khóa học '{course.Title}'?\n\nHành động này không thể hoàn tác.",
-                "Xác nhận xóa",
+                LanguageHelper.GetString("DeleteCourseConfirm", course.Title),
+                LanguageHelper.GetString("ConfirmDelete"),
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
 
@@ -391,20 +446,23 @@ namespace WinFormsApp1.View.User.Controls
                         context.Courses.Remove(courseToDelete);
                         await context.SaveChangesAsync();
 
-                        ToastHelper.Show(this.FindForm(), "Đã xóa khóa học thành công!");
+                        ToastHelper.Show(this.FindForm(), LanguageHelper.GetString("CourseDeletedSuccess"));
                         LoadCourses();
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi xóa khóa học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(LanguageHelper.GetString("CourseDeleteError", ex.Message), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
         private void UpdatePaginationUI(int totalPages)
         {
-            lblPageInfo.Text = $"Hiển thị {(_currentPage - 1) * _pageSize + 1} tới {Math.Min(_currentPage * _pageSize, _totalRecords)} của {_totalRecords} dữ liệu";
+            lblPageInfo.Text = LanguageHelper.GetString("ShowingEntries", 
+                (_currentPage - 1) * _pageSize + 1, 
+                Math.Min(_currentPage * _pageSize, _totalRecords), 
+                _totalRecords);
 
             btnFirstPage.Enabled = _currentPage > 1;
             btnPrevPage.Enabled = _currentPage > 1;
@@ -549,11 +607,11 @@ namespace WinFormsApp1.View.User.Controls
         {
             return status switch
             {
-                "Pending" => "Chờ duyệt",
-                "Approved" => "Đã duyệt",
-                "Rejected" => "Từ chối",
-                "NeedsRevision" => "Cần sửa",
-                _ => "Chưa gửi"
+                "Pending" => LanguageHelper.GetString("StatusPending"),
+                "Approved" => LanguageHelper.GetString("StatusApproved"),
+                "Rejected" => LanguageHelper.GetString("StatusRejected"),
+                "NeedsRevision" => LanguageHelper.GetString("StatusNeedsRevision"),
+                _ => LanguageHelper.GetString("StatusNotSubmitted")
             };
         }
     }

@@ -24,7 +24,7 @@
 			cboContentType.DropDownStyle = ComboBoxStyle.DropDownList;
 			cboContentType.Font = new Font("Segoe UI", 12F);
 			cboContentType.FormattingEnabled = true;
-			cboContentType.Items.AddRange(new object[] { "Lý thuyết", "Video", "Bộ thẻ ghi nhớ", "Bài kiểm tra" });
+            cboContentType.Items.AddRange(new object[] { "Theory", "Video", "Flashcard Set", "Quiz" });
 			cboContentType.Location = new Point(20, 48);
 			cboContentType.Name = "cboContentType";
 			cboContentType.Size = new Size(213, 40);
@@ -38,7 +38,7 @@
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(99, 32);
 			lblTitle.TabIndex = 1;
-			lblTitle.Text = "Tiêu đề:";
+            lblTitle.Text = "Title:";
 			// 
 			// txtTitle
 			// 
@@ -57,7 +57,7 @@
 			lblDesc.Name = "lblDesc";
 			lblDesc.Size = new Size(82, 32);
 			lblDesc.TabIndex = 3;
-			lblDesc.Text = "Mô tả:";
+            lblDesc.Text = "Description:";
 			// 
 			// txtDesc
 			// 
@@ -89,7 +89,7 @@
 			btnAddFlashcard.Name = "btnAddFlashcard";
 			btnAddFlashcard.Size = new Size(170, 40);
 			btnAddFlashcard.TabIndex = 6;
-			btnAddFlashcard.Text = "+ Thêm thẻ";
+            btnAddFlashcard.Text = "+ Add Card";
 			btnAddFlashcard.UseVisualStyleBackColor = false;
 			// 
 			// label1
@@ -100,7 +100,7 @@
 			label1.Name = "label1";
 			label1.Size = new Size(166, 32);
 			label1.TabIndex = 7;
-			label1.Text = "Loại nội dung:";
+            label1.Text = "Content Type:";
 			// 
 			// ContentFlashcardControl
 			// 
