@@ -117,7 +117,7 @@
 			lblHighScore.AutoSize = true;
 			lblHighScore.Font = new Font("Segoe UI", 10F);
 			lblHighScore.ForeColor = Color.FromArgb(40, 167, 69);
-			lblHighScore.Location = new Point(320, 42);
+			lblHighScore.Location = new Point(357, 42);
 			lblHighScore.Name = "lblHighScore";
 			lblHighScore.Size = new Size(209, 28);
 			lblHighScore.TabIndex = 2;

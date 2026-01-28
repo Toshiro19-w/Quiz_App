@@ -92,60 +92,83 @@ namespace WinFormsApp1.View.User.Controls
                     // Kiểm tra subscription còn hiệu lực
                     var hasActiveSubscription = AuthHelper.HasActiveSubscription();
 
-                    if (hasActiveSubscription)
-                    {
-                        // Nếu có subscription, hiển thị TẤT CẢ khóa học đã xuất bản
-                        var allCourses = context.Courses
-                            .Include(c => c.Owner)
-                            .Where(c => c.IsPublished)
-                            .OrderByDescending(c => c.CreatedAt)
-                            .ToList();
+                    //if (hasActiveSubscription)
+                    //{
+                    //    // Nếu có subscription, hiển thị TẤT CẢ khóa học đã xuất bản
+                    //    var allCourses = context.Courses
+                    //        .Include(c => c.Owner)
+                    //        .Where(c => c.IsPublished)
+                    //        .OrderByDescending(c => c.CreatedAt)
+                    //        .ToList();
 
-                        if (allCourses.Count == 0)
-                        {
-                            ShowEmptyState(
-                                "Chưa có khóa học nào",
-                                "Hệ thống chưa có khóa học nào."
-                            );
-                            return;
-                        }
+                    //    if (allCourses.Count == 0)
+                    //    {
+                    //        ShowEmptyState(
+                    //            "Chưa có khóa học nào",
+                    //            "Hệ thống chưa có khóa học nào."
+                    //        );
+                    //        return;
+                    //    }
 
-                        // Hiển thị thông báo subscription
-                        var subscriptionBanner = CreateSubscriptionBanner();
-                        coursesPanel.Controls.Add(subscriptionBanner);
+                    //    // Hiển thị thông báo subscription
+                    //    var subscriptionBanner = CreateSubscriptionBanner();
+                    //    coursesPanel.Controls.Add(subscriptionBanner);
 
-                        foreach (var course in allCourses)
-                        {
-                            var courseCard = CreateCourseCard(course);
-                            coursesPanel.Controls.Add(courseCard);
-                        }
-                    }
-                    else
-                    {
-                        // Nếu không có subscription, chỉ hiển thị khóa học đã mua
-                        var purchases = context.CoursePurchases
-                            .Include(cp => cp.Course)
-                            .ThenInclude(c => c.Owner)
-                            .Where(cp => cp.BuyerId == user.UserId && cp.Status == "Paid")
-                            .Select(cp => cp.Course)
-                            .ToList();
+                    //    foreach (var course in allCourses)
+                    //    {
+                    //        var courseCard = CreateCourseCard(course);
+                    //        coursesPanel.Controls.Add(courseCard);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    // Nếu không có subscription, chỉ hiển thị khóa học đã mua
+                    //    var purchases = context.CoursePurchases
+                    //        .Include(cp => cp.Course)
+                    //        .ThenInclude(c => c.Owner)
+                    //        .Where(cp => cp.BuyerId == user.UserId && cp.Status == "Paid")
+                    //        .Select(cp => cp.Course)
+                    //        .ToList();
 
-                        if (purchases.Count == 0)
-                        {
-                            ShowEmptyState(
-                                "Chưa có khóa học nào",
-                                "Bạn chưa mua khóa học nào. Hãy bắt đầu học ngay hôm nay!"
-                            );
-                            return;
-                        }
+                    //    if (purchases.Count == 0)
+                    //    {
+                    //        ShowEmptyState(
+                    //            "Chưa có khóa học nào",
+                    //            "Bạn chưa mua khóa học nào. Hãy bắt đầu học ngay hôm nay!"
+                    //        );
+                    //        return;
+                    //    }
 
-                        foreach (var course in purchases)
-                        {
-                            var courseCard = CreateCourseCard(course);
-                            coursesPanel.Controls.Add(courseCard);
-                        }
-                    }
-                }
+                    //    foreach (var course in purchases)
+                    //    {
+                    //        var courseCard = CreateCourseCard(course);
+                    //        coursesPanel.Controls.Add(courseCard);
+                    //    }
+                    //}
+
+					// Nếu không có subscription, chỉ hiển thị khóa học đã mua
+					var purchases = context.CoursePurchases
+						.Include(cp => cp.Course)
+						.ThenInclude(c => c.Owner)
+						.Where(cp => cp.BuyerId == user.UserId && cp.Status == "Paid")
+						.Select(cp => cp.Course)
+						.ToList();
+
+					if (purchases.Count == 0)
+					{
+						ShowEmptyState(
+							"Chưa có khóa học nào",
+							"Bạn chưa mua khóa học nào. Hãy bắt đầu học ngay hôm nay!"
+						);
+						return;
+					}
+
+					foreach (var course in purchases)
+					{
+						var courseCard = CreateCourseCard(course);
+						coursesPanel.Controls.Add(courseCard);
+					}
+				}
             }
             catch (Exception ex)
             {
