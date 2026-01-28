@@ -36,7 +36,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
 			btnDelete.Name = "btnDelete";
 			btnDelete.Size = new Size(122, 35);
 			btnDelete.TabIndex = 1;
-			btnDelete.Text = "Xóa bài học";
+            btnDelete.Text = "Delete Lesson";
 			btnDelete.UseVisualStyleBackColor = false;
 			// 
 			// LessonItemControl

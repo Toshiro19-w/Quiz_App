@@ -25,7 +25,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls
         public string LessonTitle
         {
             get => txtTitle.Text;
-            set => txtTitle.Text = value ?? "(Không tên)";
+            set => txtTitle.Text = value ?? "(Untitled)";
         }
     }
 }

@@ -258,7 +258,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				var cats = await ctx.CourseCategories.OrderBy(c => c.DisplayOrder).ThenBy(c => c.Name).ToListAsync();
 				if (cats == null || cats.Count == 0)
 				{
-					this.BeginInvoke((Action)(() => MessageBox.Show("Không tìm thấy danh mục khóa học.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information)));
+					this.BeginInvoke((Action)(() => MessageBox.Show("No course categories found.", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Information)));
 					return;
 				}
 
@@ -281,7 +281,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			}
 			catch (Exception ex)
 			{
-				this.BeginInvoke((Action)(() => MessageBox.Show("Lỗi khi tải danh mục: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error)));
+				this.BeginInvoke((Action)(() => MessageBox.Show("Error loading categories: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)));
 			}
 		}
 

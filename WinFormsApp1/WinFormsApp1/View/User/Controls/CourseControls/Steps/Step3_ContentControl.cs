@@ -222,7 +222,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			_currentEditor = null;
 			pnlEditor.Controls.Clear();
 			var lblRightTitle = (Label)splitContainer.Panel2.Controls.OfType<Panel>().First().Controls[0];
-			lblRightTitle.Text = $"Chỉnh sửa nội dung (0/{lesson.Contents.Count})";
+			lblRightTitle.Text = $"Edit Content (0/{lesson.Contents.Count})";
 
 			// Tự động chọn content đầu tiên nếu có
 			if (lesson.Contents.Count > 0)
@@ -267,7 +267,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				var lesson = comboItem.Lesson ?? _vm.Chapters[comboItem.ChapterIndex].Lessons[comboItem.LessonIndex];
 				int index = lesson.Contents.IndexOf(contentVm) + 1;
 				var lblRightTitle = (Label)splitContainer.Panel2.Controls.OfType<Panel>().First().Controls[0];
-				lblRightTitle.Text = $"Chỉnh sửa nội dung ({index}/{lesson.Contents.Count})";
+				lblRightTitle.Text = $"Edit Content ({index}/{lesson.Contents.Count})";
 			}
 		}
 

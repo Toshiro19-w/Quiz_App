@@ -73,7 +73,7 @@
 			lblTitle.Name = "lblTitle";
 			lblTitle.Size = new Size(200, 38);
 			lblTitle.TabIndex = 0;
-			lblTitle.Text = "Chọn Voucher";
+            lblTitle.Text = "Select Voucher";
 			// 
 			// panelCenter
 			// 
@@ -121,7 +121,7 @@
 			lblVoucherListTitle.Padding = new Padding(0, 0, 0, 10);
 			lblVoucherListTitle.Size = new Size(272, 40);
 			lblVoucherListTitle.TabIndex = 0;
-			lblVoucherListTitle.Text = "Mã Miễn Phí Vận Chuyển";
+            lblVoucherListTitle.Text = "Available Discount Codes";
 			// 
 			// panelVoucherInput
 			// 
@@ -149,7 +149,7 @@
 			btnApplyCode.Name = "btnApplyCode";
 			btnApplyCode.Size = new Size(120, 50);
 			btnApplyCode.TabIndex = 2;
-			btnApplyCode.Text = "Áp dụng";
+            btnApplyCode.Text = "Apply";
 			btnApplyCode.UseVisualStyleBackColor = false;
 			btnApplyCode.Click += btnApplyCode_Click;
 			// 
@@ -161,7 +161,7 @@
 			txtVoucherCode.Font = new Font("Segoe UI", 11F);
 			txtVoucherCode.Location = new Point(156, 15);
 			txtVoucherCode.Name = "txtVoucherCode";
-			txtVoucherCode.PlaceholderText = "Nhập mã voucher...";
+            txtVoucherCode.PlaceholderText = "Enter voucher code...";
 			txtVoucherCode.Size = new Size(350, 37);
 			txtVoucherCode.TabIndex = 1;
 			// 
@@ -175,7 +175,7 @@
 			lblVoucherCode.Padding = new Padding(0, 5, 20, 0);
 			lblVoucherCode.Size = new Size(136, 33);
 			lblVoucherCode.TabIndex = 0;
-			lblVoucherCode.Text = "Mã Voucher";
+            lblVoucherCode.Text = "Voucher Code";
 			lblVoucherCode.TextAlign = ContentAlignment.TopCenter;
 			// 
 			// panelBottom
@@ -204,7 +204,7 @@
 			btnConfirm.Name = "btnConfirm";
 			btnConfirm.Size = new Size(148, 48);
 			btnConfirm.TabIndex = 1;
-			btnConfirm.Text = "Đồng ý";
+            btnConfirm.Text = "Confirm";
 			btnConfirm.UseVisualStyleBackColor = false;
 			btnConfirm.Click += btnConfirm_Click;
 			// 
@@ -220,7 +220,7 @@
 			btnCancel.Name = "btnCancel";
 			btnCancel.Size = new Size(150, 48);
 			btnCancel.TabIndex = 0;
-			btnCancel.Text = "Trở lại";
+            btnCancel.Text = "Back";
 			btnCancel.UseVisualStyleBackColor = false;
 			btnCancel.Click += btnCancel_Click;
 			// 
@@ -235,7 +235,7 @@
 			FormBorderStyle = FormBorderStyle.None;
 			Name = "frmVoucherSelector";
 			StartPosition = FormStartPosition.CenterParent;
-			Text = "Chọn Voucher";
+            Text = "Select Voucher";
 			panelTop.ResumeLayout(false);
 			panelTop.PerformLayout();
 			panelCenter.ResumeLayout(false);

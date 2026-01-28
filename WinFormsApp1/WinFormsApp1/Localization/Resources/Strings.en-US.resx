@@ -2691,4 +2691,252 @@ This action cannot be undone.</value>
   <data name="CannotApply" xml:space="preserve">
     <value>Cannot Apply</value>
   </data>
+  
+  <!-- Subscription Form Strings -->
+  <data name="YmeduPlus" xml:space="preserve">
+    <value>📅 YMEDU PLUS</value>
+  </data>
+  <data name="SubscriptionRenewal" xml:space="preserve">
+    <value>SUBSCRIPTION RENEWAL</value>
+  </data>
+  <data name="PremiumCurrentlyRemaining" xml:space="preserve">
+    <value>Current Premium subscription has {0} days remaining (until {1})</value>
+  </data>
+  <data name="RenewNowBtn" xml:space="preserve">
+    <value>💳 RENEW NOW</value>
+  </data>
+  <data name="PayNowBtn" xml:space="preserve">
+    <value>💳 PAY NOW</value>
+  </data>
+  <data name="SubscriptionBenefitsTitle" xml:space="preserve">
+    <value>🎁 Premium Benefits</value>
+  </data>
+  <data name="SubscriptionBenefit1" xml:space="preserve">
+    <value>✅ UNLIMITED access to all courses on the platform</value>
+  </data>
+  <data name="SubscriptionBenefit2" xml:space="preserve">
+    <value>✅ Learn anytime, anywhere on any device</value>
+  </data>
+  <data name="SubscriptionBenefit3" xml:space="preserve">
+    <value>✅ Continuous new content updates</value>
+  </data>
+  <data name="SubscriptionBenefit4" xml:space="preserve">
+    <value>✅ Download materials and watch offline</value>
+  </data>
+  <data name="SubscriptionBenefit5" xml:space="preserve">
+    <value>✅ 24/7 support from instructor team</value>
+  </data>
+  <data name="ChooseYourPlan" xml:space="preserve">
+    <value>📋 Choose Your Plan</value>
+  </data>
+  <data name="OneMonth" xml:space="preserve">
+    <value>1 MONTH</value>
+  </data>
+  <data name="SixMonths" xml:space="preserve">
+    <value>6 MONTHS</value>
+  </data>
+  <data name="OneYear" xml:space="preserve">
+    <value>1 YEAR</value>
+  </data>
+  <data name="PerMonth" xml:space="preserve">
+    <value>~{0}/month</value>
+  </data>
+  <data name="SavePercent" xml:space="preserve">
+    <value>🎉 Save {0}%</value>
+  </data>
+  <data name="AfterRenewalValidUntil" xml:space="preserve">
+    <value>📅 After renewal, your Premium subscription will be valid until:</value>
+  </data>
+  <data name="PleaseLoginToSubscribe" xml:space="preserve">
+    <value>Please login to subscribe to Premium</value>
+  </data>
+  <data name="PlanOneMonth" xml:space="preserve">
+    <value>1 month</value>
+  </data>
+  <data name="PlanSixMonths" xml:space="preserve">
+    <value>6 months</value>
+  </data>
+  <data name="PlanOneYear" xml:space="preserve">
+    <value>1 year</value>
+  </data>
+  <data name="PlanMonths" xml:space="preserve">
+    <value>{0} months</value>
+  </data>
+  <data name="PremiumPlan" xml:space="preserve">
+    <value>Premium {0}</value>
+  </data>
+  <data name="PremiumPlanRenewal" xml:space="preserve">
+    <value>Premium {0} (Renewal)</value>
+  </data>
+  
+  <!-- Voucher Selector Strings -->
+  <data name="SelectVoucher" xml:space="preserve">
+    <value>Select Voucher</value>
+  </data>
+  <data name="AvailableDiscountCodes" xml:space="preserve">
+    <value>Available Discount Codes</value>
+  </data>
+  <data name="VoucherCode" xml:space="preserve">
+    <value>Voucher Code</value>
+  </data>
+  <data name="NoVouchersAvailable" xml:space="preserve">
+    <value>No vouchers available</value>
+  </data>
+  <data name="VoucherLoadError" xml:space="preserve">
+    <value>Error loading voucher list: {0}</value>
+  </data>
+  <data name="EnterVoucherCode" xml:space="preserve">
+    <value>Please enter a voucher code</value>
+  </data>
+  <data name="Notice" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="ApplyBtn" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="ConfirmBtn" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  
+  <!-- Voucher Item Control Strings -->
+  <data name="MaxDiscount" xml:space="preserve">
+    <value>Max discount {0}%</value>
+  </data>
+  <data name="DiscountUpTo" xml:space="preserve">
+    <value>Discount {0}% up to {1}</value>
+  </data>
+  <data name="DiscountAmount" xml:space="preserve">
+    <value>Discount {0}</value>
+  </data>
+  <data name="MinOrderLabel" xml:space="preserve">
+    <value>Min Order {0}</value>
+  </data>
+  <data name="ExpiryDate" xml:space="preserve">
+    <value>Exp: {0}</value>
+  </data>
+  <data name="UsedPercent" xml:space="preserve">
+    <value>Used {0}%</value>
+  </data>
+  <data name="UsedTimes" xml:space="preserve">
+    <value>Used {0} times</value>
+  </data>
+  <data name="VoucherMinOrderWarning" xml:space="preserve">
+    <value>⚠️ Minimum order {0} to apply this Voucher</value>
+  </data>
+  <data name="VoucherExhausted" xml:space="preserve">
+    <value>⚠️ Voucher has run out of uses</value>
+  </data>
+  <data name="VoucherExpired" xml:space="preserve">
+    <value>⚠️ Voucher has expired</value>
+  </data>
+  
+  <!-- Home Control Strings -->
+  <data name="WelcomeBackUser" xml:space="preserve">
+    <value>Welcome back!</value>
+  </data>
+  <data name="LearnWhatInterestsYou" xml:space="preserve">
+    <value>Learn what interests you</value>
+  </data>
+  <data name="SkillsForPresent" xml:space="preserve">
+    <value>Skills for your present (and your future). Start learning with us.</value>
+  </data>
+  <data name="RecommendedForYouTitle" xml:space="preserve">
+    <value>🎯 Recommended for you</value>
+  </data>
+  <data name="RecommendedCoursesDesc" xml:space="preserve">
+    <value>Courses selected based on your interests</value>
+  </data>
+  <data name="PopularCoursesTitle" xml:space="preserve">
+    <value>🔥 Popular courses</value>
+  </data>
+  <data name="FlashcardSetsTitle" xml:space="preserve">
+    <value>📚 Flashcard sets to learn</value>
+  </data>
+  <data name="FlashcardSetsDesc" xml:space="preserve">
+    <value>Learn vocabulary and knowledge effectively</value>
+  </data>
+  <data name="ViewAllBtn" xml:space="preserve">
+    <value>View all ▸</value>
+  </data>
+  
+  <!-- My Courses Control (Instructor) Strings -->
+  <data name="MyCoursesTitle" xml:space="preserve">
+    <value>My Courses</value>
+  </data>
+  <data name="CreateCourseBtn" xml:space="preserve">
+    <value>➕ Create Course</value>
+  </data>
+  <data name="RevenueBtn" xml:space="preserve">
+    <value>📊 Revenue</value>
+  </data>
+  <data name="MyFlashcardsBtn" xml:space="preserve">
+    <value>🗂️ My Flashcards</value>
+  </data>
+  <data name="ShowLabel" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="EntriesLabel" xml:space="preserve">
+    <value>entries</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Search:</value>
+  </data>
+  <data name="HeaderId" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="HeaderCover" xml:space="preserve">
+    <value>Cover</value>
+  </data>
+  <data name="HeaderTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="HeaderCategory" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="HeaderPrice" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="HeaderModeration" xml:space="preserve">
+    <value>Moderation</value>
+  </data>
+  <data name="HeaderStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="HeaderDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="HeaderActions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  
+  <!-- Library Control Strings -->
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="AllCoursesTabBtn" xml:space="preserve">
+    <value>📚 All Courses</value>
+  </data>
+  <data name="FlashcardsTabBtn" xml:space="preserve">
+    <value>📇 Flashcards</value>
+  </data>
+  <data name="CertificatesTabBtn" xml:space="preserve">
+    <value>🎓 Certificates</value>
+  </data>
+  
+  <!-- Main Container Strings -->
+  <data name="ExploreBtn" xml:space="preserve">
+    <value>Explore</value>
+  </data>
+  <data name="InstructorBtn" xml:space="preserve">
+    <value>Instructor</value>
+  </data>
+  <data name="LearningBtn" xml:space="preserve">
+    <value>Learning</value>
+  </data>
+  <data name="SearchCoursesPlaceholder" xml:space="preserve">
+    <value>Search courses...</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>User Name</value>
+  </data>
 </root>

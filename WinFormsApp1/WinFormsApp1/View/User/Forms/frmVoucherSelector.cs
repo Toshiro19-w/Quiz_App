@@ -54,7 +54,7 @@ namespace WinFormsApp1.View.User.Forms
                 {
                     var lblNoVoucher = new Label
                     {
-                        Text = "Không có voucher khả dụng",
+                        Text = "No vouchers available",
                         Font = new Font("Segoe UI", 11F),
                         ForeColor = Color.Gray,
                         AutoSize = true,
@@ -95,8 +95,8 @@ namespace WinFormsApp1.View.User.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách voucher: {ex.Message}",
-                    "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error loading voucher list: {ex.Message}",
+                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -119,8 +119,8 @@ namespace WinFormsApp1.View.User.Forms
             var code = txtVoucherCode.Text.Trim();
             if (string.IsNullOrEmpty(code))
             {
-                MessageBox.Show("Vui lòng nhập mã voucher", "Thông báo",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter a voucher code", "Notice",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -162,19 +162,19 @@ namespace WinFormsApp1.View.User.Forms
                         flowLayoutVouchers.Controls.SetChildIndex(voucherItem, 0);
                     }
 
-                    MessageBox.Show(result.Message, "Thành công",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(result.Message, "Success",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show(result.Message, "Không thể áp dụng",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(result.Message, "Cannot Apply",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}", "Error",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

@@ -247,18 +247,18 @@ namespace WinFormsApp1.View.User.Forms
 
                     var paymentForm = new PaymentForm(tempCourse, isCartPayment: true);
                     if (paymentForm.ShowDialog() == DialogResult.OK)
-                    {
-                        this.DialogResult = DialogResult.OK;
-                        this.Close();
+                                {
+                                    this.DialogResult = DialogResult.OK;
+                                    this.Close();
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Error: {ex.Message}", "Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
 
         private void panelMain_Paint(object sender, PaintEventArgs e)
         {
@@ -312,17 +312,17 @@ namespace WinFormsApp1.View.User.Forms
                         else
                         {
                             MessageBox.Show(result.Message, LanguageHelper.GetString("CannotApply"),
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+                                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show($"Error: {ex.Message}", "Error",
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                            }
 
         private void btnRemoveVoucher_Click(object sender, EventArgs e)
         {
