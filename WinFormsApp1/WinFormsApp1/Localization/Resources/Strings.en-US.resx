@@ -2278,10 +2278,374 @@ This action cannot be undone.</value>
     <value>draft</value>
   </data>
   <data name="GenericError" xml:space="preserve">
-    <value>Error: {0}</value>
-  </data>
+      <value>Error: {0}</value>
+    </data>
   
-  <!-- Cart/Checkout Strings -->
+    <!-- Revenue Control Strings -->
+    <data name="RevenueStatistics" xml:space="preserve">
+      <value>Revenue Statistics</value>
+    </data>
+    <data name="TotalPurchases" xml:space="preserve">
+      <value>Total Purchases</value>
+    </data>
+    <data name="GrossRevenue" xml:space="preserve">
+      <value>Gross Revenue</value>
+    </data>
+    <data name="InstructorRevenue" xml:space="preserve">
+      <value>Your Revenue (60%)</value>
+    </data>
+    <data name="PlatformFee" xml:space="preserve">
+      <value>Platform Fee (40%)</value>
+    </data>
+    <data name="HeaderCourse" xml:space="preserve">
+      <value>Course</value>
+    </data>
+    <data name="HeaderPurchases" xml:space="preserve">
+      <value>Purchases</value>
+    </data>
+    <data name="HeaderInstructorRevenue" xml:space="preserve">
+      <value>Revenue (60%)</value>
+    </data>
+    <data name="HeaderPlatformFee" xml:space="preserve">
+      <value>Platform Fee (40%)</value>
+    </data>
+    <data name="NoRevenueYet" xml:space="preserve">
+      <value>No revenue yet</value>
+    </data>
+    <data name="GoBack" xml:space="preserve">
+      <value>⬅️ Go Back</value>
+    </data>
+    <data name="EnterSearch" xml:space="preserve">
+      <value>Enter search...</value>
+    </data>
+  
+    <!-- My Flashcards Strings -->
+    <data name="MyFlashcardSets" xml:space="preserve">
+      <value>My Flashcard Sets</value>
+    </data>
+    <data name="CreateFlashcardSet" xml:space="preserve">
+      <value>➕ Create Flashcard Set</value>
+    </data>
+    <data name="NoFlashcardSetYet" xml:space="preserve">
+      <value>No flashcard sets yet</value>
+    </data>
+    <data name="FilterCardCount" xml:space="preserve">
+      <value>Card Count</value>
+    </data>
+    <data name="FilterVisibility" xml:space="preserve">
+      <value>Visibility</value>
+    </data>
+    <data name="FilterLanguage" xml:space="preserve">
+      <value>Language</value>
+    </data>
+    <data name="VisibilityPublic" xml:space="preserve">
+      <value>public</value>
+    </data>
+    <data name="VisibilityPrivate" xml:space="preserve">
+      <value>private</value>
+    </data>
+    <data name="NoCardsToStudy" xml:space="preserve">
+      <value>This flashcard set has no cards to study!</value>
+    </data>
+    <data name="DeleteFlashcardConfirm" xml:space="preserve">
+      <value>Are you sure you want to delete the flashcard set '{0}'?
+
+  This action cannot be undone.</value>
+    </data>
+    <data name="FlashcardDeletedSuccess" xml:space="preserve">
+      <value>Flashcard set deleted successfully!</value>
+    </data>
+    <data name="FlashcardDeleteError" xml:space="preserve">
+      <value>Error deleting flashcard set: {0}</value>
+    </data>
+      <data name="HeaderCardCount" xml:space="preserve">
+        <value>Cards</value>
+      </data>
+      <data name="HeaderVisibility" xml:space="preserve">
+        <value>Visibility</value>
+      </data>
+      <data name="HeaderLanguage" xml:space="preserve">
+        <value>Language</value>
+      </data>
+  
+    <!-- Course Builder Strings -->
+    <data name="CourseLoadError" xml:space="preserve">
+      <value>Error loading course: {0}</value>
+    </data>
+    <data name="TitleRequired" xml:space="preserve">
+      <value>Title is required</value>
+    </data>
+    <data name="SlugRequired" xml:space="preserve">
+      <value>Slug is required</value>
+    </data>
+    <data name="SlugInvalid" xml:space="preserve">
+      <value>Invalid slug format</value>
+    </data>
+    <data name="SlugExists" xml:space="preserve">
+      <value>Slug already exists</value>
+    </data>
+    <data name="AddAtLeastOneChapter" xml:space="preserve">
+      <value>Please add at least one chapter</value>
+    </data>
+    <data name="AddAtLeastOneLesson" xml:space="preserve">
+      <value>Please add at least one lesson</value>
+    </data>
+    <data name="CoursePublishedSuccess" xml:space="preserve">
+      <value>Course published successfully!</value>
+    </data>
+    <data name="DraftSavedSuccess" xml:space="preserve">
+      <value>Draft saved successfully!</value>
+    </data>
+    <data name="SaveError" xml:space="preserve">
+      <value>Error saving: {0}</value>
+        </data>
+  
+      <!-- Flashcard Builder Strings -->
+      <data name="FlashcardSetInfo" xml:space="preserve">
+        <value>Flashcard Set Information</value>
+      </data>
+      <data name="TitleRequired2" xml:space="preserve">
+        <value>Title *</value>
+      </data>
+      <data name="TitlePlaceholder" xml:space="preserve">
+        <value>E.g.: Basic English Vocabulary</value>
+      </data>
+      <data name="Description" xml:space="preserve">
+        <value>Description</value>
+      </data>
+      <data name="DescriptionPlaceholder" xml:space="preserve">
+        <value>Brief description of the flashcard set content</value>
+      </data>
+      <data name="VisibilityMode" xml:space="preserve">
+        <value>Visibility *</value>
+      </data>
+      <data name="Language" xml:space="preserve">
+        <value>Language</value>
+      </data>
+      <data name="FlashcardCards" xml:space="preserve">
+        <value>📋 Flashcard Cards ({0})</value>
+      </data>
+      <data name="CardNumber" xml:space="preserve">
+        <value>= Card #{0}</value>
+      </data>
+      <data name="DeleteBtn" xml:space="preserve">
+        <value>🗑️ Delete</value>
+      </data>
+      <data name="FrontSide" xml:space="preserve">
+        <value>Front *</value>
+      </data>
+      <data name="FrontPlaceholder" xml:space="preserve">
+        <value>Enter question or vocabulary</value>
+      </data>
+      <data name="BackSide" xml:space="preserve">
+        <value>Back *</value>
+      </data>
+      <data name="BackPlaceholder" xml:space="preserve">
+        <value>Enter answer or meaning</value>
+      </data>
+      <data name="HintOptional" xml:space="preserve">
+        <value>Hint (optional)</value>
+      </data>
+      <data name="HintPlaceholder" xml:space="preserve">
+        <value>Enter hint to help memorize</value>
+      </data>
+      <data name="PageOf" xml:space="preserve">
+        <value>Page {0} / {1}</value>
+      </data>
+      <data name="PrevPage" xml:space="preserve">
+        <value>◄ Previous</value>
+      </data>
+      <data name="NextPage" xml:space="preserve">
+        <value>Next ►</value>
+      </data>
+      <data name="AddCard" xml:space="preserve">
+        <value>➕ Add Card</value>
+      </data>
+      <data name="Cancel" xml:space="preserve">
+        <value>✖ Cancel</value>
+      </data>
+      <data name="CardCount" xml:space="preserve">
+        <value>📄 {0} cards</value>
+      </data>
+      <data name="CreateFlashcardSetBtn" xml:space="preserve">
+        <value>✓ Create Flashcard Set</value>
+      </data>
+      <data name="UpdateFlashcardSetBtn" xml:space="preserve">
+        <value>💾 Update Flashcard Set</value>
+      </data>
+      <data name="EditFlashcardSet" xml:space="preserve">
+        <value>Edit Flashcard Set</value>
+      </data>
+      <data name="AtLeastOneCard" xml:space="preserve">
+        <value>Must have at least 1 flashcard!</value>
+      </data>
+      <data name="Warning" xml:space="preserve">
+        <value>Warning</value>
+        </data>
+        <data name="FlashcardSetNotFound" xml:space="preserve">
+          <value>Flashcard set not found!</value>
+        </data>
+        <data name="CancelConfirm" xml:space="preserve">
+        <value>Are you sure you want to cancel? Changes will not be saved.</value>
+      </data>
+      <data name="Confirm" xml:space="preserve">
+        <value>Confirm</value>
+      </data>
+      <data name="EnterTitle" xml:space="preserve">
+        <value>Please enter a title!</value>
+      </data>
+      <data name="EnterAtLeastOneValidCard" xml:space="preserve">
+        <value>Please enter at least 1 card with both front and back!</value>
+      </data>
+      <data name="Creating" xml:space="preserve">
+        <value>Creating...</value>
+      </data>
+      <data name="Updating" xml:space="preserve">
+        <value>Updating...</value>
+      </data>
+      <data name="FlashcardCreateSuccess" xml:space="preserve">
+        <value>Flashcard set created successfully!</value>
+      </data>
+      <data name="FlashcardUpdateSuccess" xml:space="preserve">
+        <value>Flashcard set updated successfully!</value>
+      </data>
+      <data name="FlashcardCreateError" xml:space="preserve">
+        <value>Error creating flashcard: {0}</value>
+      </data>
+      <data name="FlashcardUpdateError" xml:space="preserve">
+        <value>Error updating flashcard: {0}</value>
+              </data>
+  
+          <!-- Course Builder Steps Strings -->
+          <data name="CourseInfo" xml:space="preserve">
+            <value>Course Information</value>
+          </data>
+          <data name="TitleLabel" xml:space="preserve">
+            <value>Title</value>
+          </data>
+          <data name="TitleRequired3" xml:space="preserve">
+            <value>Title (Required)</value>
+          </data>
+          <data name="CourseTitlePlaceholder" xml:space="preserve">
+            <value>Course title</value>
+          </data>
+          <data name="UrlSlug" xml:space="preserve">
+            <value>URL Slug</value>
+          </data>
+          <data name="UrlSlugRequired" xml:space="preserve">
+            <value>URL Slug (Required)</value>
+          </data>
+          <data name="UrlSlugExists" xml:space="preserve">
+            <value>URL Slug (Already exists)</value>
+          </data>
+          <data name="ShortDescription" xml:space="preserve">
+            <value>Short Description</value>
+          </data>
+          <data name="PriceVND" xml:space="preserve">
+            <value>Price (VND)</value>
+          </data>
+          <data name="PriceRequired" xml:space="preserve">
+            <value>Price (VND) - Required</value>
+          </data>
+          <data name="PriceMinimum" xml:space="preserve">
+            <value>Price (VND) - Must be greater than 2000</value>
+          </data>
+          <data name="PricePlaceholder" xml:space="preserve">
+            <value>Price (VND)</value>
+          </data>
+          <data name="CoverImage" xml:space="preserve">
+            <value>Cover Image</value>
+          </data>
+          <data name="UploadImage" xml:space="preserve">
+            <value>Upload Image</value>
+          </data>
+          <data name="SelectCoverImage" xml:space="preserve">
+            <value>Select course cover image</value>
+          </data>
+          <data name="ImageSaved" xml:space="preserve">
+            <value>Image saved at:
+        {0}
+
+        Full path:
+        {1}</value>
+          </data>
+          <data name="ImageUploadError" xml:space="preserve">
+            <value>Error uploading image: {0}</value>
+          </data>
+          <data name="Continue" xml:space="preserve">
+            <value>Continue</value>
+          </data>
+          <data name="CourseStructure" xml:space="preserve">
+            <value>Course Structure</value>
+          </data>
+          <data name="AddChapter" xml:space="preserve">
+            <value>+ Add Chapter</value>
+          </data>
+          <data name="ChapterTitle" xml:space="preserve">
+            <value>Chapter title</value>
+          </data>
+          <data name="AddLesson" xml:space="preserve">
+            <value>+ Lesson</value>
+          </data>
+          <data name="DeleteChapter" xml:space="preserve">
+            <value>Delete Chapter</value>
+          </data>
+          <data name="DeleteChapterConfirm" xml:space="preserve">
+            <value>Are you sure you want to delete chapter '{0}'?</value>
+          </data>
+          <data name="LessonContent" xml:space="preserve">
+            <value>Lesson Content</value>
+          </data>
+          <data name="SelectLesson" xml:space="preserve">
+            <value>Please select a lesson from the left tree</value>
+          </data>
+          <data name="LessonTitle" xml:space="preserve">
+            <value>Lesson title</value>
+          </data>
+          <data name="ContentType" xml:space="preserve">
+            <value>Content type:</value>
+          </data>
+          <data name="VideoContent" xml:space="preserve">
+            <value>Video</value>
+          </data>
+          <data name="TextContent" xml:space="preserve">
+            <value>Rich text</value>
+          </data>
+          <data name="QuizContent" xml:space="preserve">
+            <value>Quiz</value>
+          </data>
+          <data name="VideoUrl" xml:space="preserve">
+            <value>Video URL (YouTube/Vimeo)</value>
+          </data>
+          <data name="RichTextContent" xml:space="preserve">
+            <value>Rich text content</value>
+          </data>
+          <data name="PublishSettings" xml:space="preserve">
+            <value>Publish Settings</value>
+          </data>
+          <data name="PublishSettingsDesc" xml:space="preserve">
+            <value>Review course information before publishing</value>
+          </data>
+          <data name="CourseSummary" xml:space="preserve">
+            <value>Course summary:</value>
+          </data>
+          <data name="ChaptersCount" xml:space="preserve">
+            <value>Chapters: {0}</value>
+          </data>
+          <data name="LessonsCount" xml:space="preserve">
+            <value>Lessons: {0}</value>
+          </data>
+          <data name="SaveDraft" xml:space="preserve">
+            <value>💾 Save Draft</value>
+          </data>
+          <data name="PublishCourse" xml:space="preserve">
+            <value>🚀 Publish Course</value>
+          </data>
+          <data name="Back" xml:space="preserve">
+            <value>Back</value>
+          </data>
+    
+                  <!-- Cart/Checkout Strings -->
   <data name="YourCart" xml:space="preserve">
     <value>Your Cart</value>
   </data>

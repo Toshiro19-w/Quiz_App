@@ -2262,10 +2262,374 @@ Hành động này không thể hoàn tác.</value>
     <value>nháp</value>
   </data>
   <data name="GenericError" xml:space="preserve">
-    <value>Lỗi: {0}</value>
-  </data>
+      <value>Lỗi: {0}</value>
+    </data>
   
-  <!-- Cart/Checkout Strings -->
+    <!-- Revenue Control Strings -->
+    <data name="RevenueStatistics" xml:space="preserve">
+      <value>Thống kê doanh thu</value>
+    </data>
+    <data name="TotalPurchases" xml:space="preserve">
+      <value>Tổng số lượt mua</value>
+    </data>
+    <data name="GrossRevenue" xml:space="preserve">
+      <value>Tổng doanh thu</value>
+    </data>
+    <data name="InstructorRevenue" xml:space="preserve">
+      <value>Thu nhập của bạn (60%)</value>
+    </data>
+    <data name="PlatformFee" xml:space="preserve">
+      <value>Phí nền tảng (40%)</value>
+    </data>
+    <data name="HeaderCourse" xml:space="preserve">
+      <value>Khóa học</value>
+    </data>
+    <data name="HeaderPurchases" xml:space="preserve">
+      <value>Số lượt mua</value>
+    </data>
+    <data name="HeaderInstructorRevenue" xml:space="preserve">
+      <value>Thu nhập (60%)</value>
+    </data>
+    <data name="HeaderPlatformFee" xml:space="preserve">
+      <value>Phí nền tảng (40%)</value>
+    </data>
+    <data name="NoRevenueYet" xml:space="preserve">
+      <value>Chưa có doanh thu nào</value>
+    </data>
+    <data name="GoBack" xml:space="preserve">
+      <value>⬅️ Quay lại</value>
+    </data>
+    <data name="EnterSearch" xml:space="preserve">
+      <value>Nhập tìm kiếm...</value>
+    </data>
+  
+    <!-- My Flashcards Strings -->
+    <data name="MyFlashcardSets" xml:space="preserve">
+      <value>Bộ Flashcard của tôi</value>
+    </data>
+    <data name="CreateFlashcardSet" xml:space="preserve">
+      <value>➕ Tạo bộ Flashcard</value>
+    </data>
+    <data name="NoFlashcardSetYet" xml:space="preserve">
+      <value>Chưa có bộ flashcard nào</value>
+    </data>
+    <data name="FilterCardCount" xml:space="preserve">
+      <value>Số thẻ</value>
+    </data>
+    <data name="FilterVisibility" xml:space="preserve">
+      <value>Hiển thị</value>
+    </data>
+    <data name="FilterLanguage" xml:space="preserve">
+      <value>Ngôn ngữ</value>
+    </data>
+    <data name="VisibilityPublic" xml:space="preserve">
+      <value>công khai</value>
+    </data>
+    <data name="VisibilityPrivate" xml:space="preserve">
+      <value>riêng tư</value>
+    </data>
+    <data name="NoCardsToStudy" xml:space="preserve">
+      <value>Bộ flashcard này chưa có thẻ nào để học!</value>
+    </data>
+    <data name="DeleteFlashcardConfirm" xml:space="preserve">
+      <value>Bạn có chắc chắn muốn xóa bộ flashcard '{0}'?
+
+  Hành động này không thể hoàn tác.</value>
+    </data>
+    <data name="FlashcardDeletedSuccess" xml:space="preserve">
+      <value>Đã xóa bộ flashcard thành công!</value>
+    </data>
+    <data name="FlashcardDeleteError" xml:space="preserve">
+      <value>Lỗi khi xóa bộ flashcard: {0}</value>
+    </data>
+    <data name="HeaderCardCount" xml:space="preserve">
+        <value>Số thẻ</value>
+      </data>
+      <data name="HeaderVisibility" xml:space="preserve">
+        <value>Hiển thị</value>
+      </data>
+      <data name="HeaderLanguage" xml:space="preserve">
+        <value>Ngôn ngữ</value>
+      </data>
+  
+    <!-- Course Builder Strings -->
+    <data name="CourseLoadError" xml:space="preserve">
+      <value>Lỗi khi tải khóa học: {0}</value>
+    </data>
+    <data name="TitleRequired" xml:space="preserve">
+      <value>Tiêu đề là bắt buộc</value>
+    </data>
+    <data name="SlugRequired" xml:space="preserve">
+      <value>Slug bắt buộc</value>
+    </data>
+    <data name="SlugInvalid" xml:space="preserve">
+      <value>Slug không hợp lệ</value>
+    </data>
+    <data name="SlugExists" xml:space="preserve">
+      <value>Slug đã tồn tại</value>
+    </data>
+    <data name="AddAtLeastOneChapter" xml:space="preserve">
+      <value>Vui lòng thêm ít nhất một chương</value>
+    </data>
+    <data name="AddAtLeastOneLesson" xml:space="preserve">
+      <value>Vui lòng thêm ít nhất một bài học</value>
+    </data>
+    <data name="CoursePublishedSuccess" xml:space="preserve">
+      <value>Xuất bản khóa học thành công!</value>
+    </data>
+    <data name="DraftSavedSuccess" xml:space="preserve">
+      <value>Lưu bản nháp thành công!</value>
+    </data>
+    <data name="SaveError" xml:space="preserve">
+      <value>Lỗi khi lưu: {0}</value>
+    </data>
+    
+    <!-- Flashcard Builder Strings -->
+    <data name="FlashcardSetInfo" xml:space="preserve">
+      <value>Thông tin bộ Flashcard</value>
+    </data>
+    <data name="TitleRequired2" xml:space="preserve">
+      <value>Tiêu đề *</value>
+    </data>
+    <data name="TitlePlaceholder" xml:space="preserve">
+      <value>Ví dụ: Từ vựng tiếng Anh cơ bản</value>
+    </data>
+    <data name="Description" xml:space="preserve">
+      <value>Mô tả</value>
+    </data>
+    <data name="DescriptionPlaceholder" xml:space="preserve">
+      <value>Mô tả ngắn gọn về nội dung bộ flashcard</value>
+    </data>
+    <data name="VisibilityMode" xml:space="preserve">
+      <value>Chế độ hiển thị *</value>
+    </data>
+    <data name="Language" xml:space="preserve">
+      <value>Ngôn ngữ</value>
+    </data>
+    <data name="FlashcardCards" xml:space="preserve">
+      <value>📋 Các thẻ Flashcard ({0})</value>
+    </data>
+    <data name="CardNumber" xml:space="preserve">
+      <value>= Thẻ #{0}</value>
+    </data>
+    <data name="DeleteBtn" xml:space="preserve">
+      <value>🗑️ Xóa</value>
+    </data>
+    <data name="FrontSide" xml:space="preserve">
+      <value>Mặt trước *</value>
+    </data>
+    <data name="FrontPlaceholder" xml:space="preserve">
+      <value>Nhập câu hỏi hoặc từ vựng</value>
+    </data>
+    <data name="BackSide" xml:space="preserve">
+      <value>Mặt sau *</value>
+    </data>
+    <data name="BackPlaceholder" xml:space="preserve">
+      <value>Nhập câu trả lời hoặc nghĩa</value>
+    </data>
+    <data name="HintOptional" xml:space="preserve">
+      <value>Gợi ý (tùy chọn)</value>
+    </data>
+    <data name="HintPlaceholder" xml:space="preserve">
+      <value>Nhập gợi ý giúp ghi nhớ</value>
+    </data>
+    <data name="PageOf" xml:space="preserve">
+      <value>Trang {0} / {1}</value>
+    </data>
+    <data name="PrevPage" xml:space="preserve">
+      <value>◄ Trước</value>
+    </data>
+    <data name="NextPage" xml:space="preserve">
+      <value>Sau ►</value>
+    </data>
+    <data name="AddCard" xml:space="preserve">
+      <value>➕ Thêm thẻ</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+      <value>✖ Hủy</value>
+    </data>
+    <data name="CardCount" xml:space="preserve">
+      <value>📄 {0} thẻ</value>
+    </data>
+    <data name="CreateFlashcardSetBtn" xml:space="preserve">
+      <value>✓ Tạo bộ Flashcard</value>
+    </data>
+    <data name="UpdateFlashcardSetBtn" xml:space="preserve">
+      <value>💾 Cập nhật bộ Flashcard</value>
+    </data>
+    <data name="EditFlashcardSet" xml:space="preserve">
+      <value>Chỉnh sửa bộ Flashcard</value>
+    </data>
+    <data name="AtLeastOneCard" xml:space="preserve">
+      <value>Phải có ít nhất 1 thẻ flashcard!</value>
+    </data>
+    <data name="Warning" xml:space="preserve">
+      <value>Cảnh báo</value>
+      </data>
+      <data name="FlashcardSetNotFound" xml:space="preserve">
+        <value>Không tìm thấy bộ flashcard!</value>
+      </data>
+      <data name="CancelConfirm" xml:space="preserve">
+      <value>Bạn có chắc muốn hủy? Các thay đổi sẽ không được lưu.</value>
+    </data>
+    <data name="Confirm" xml:space="preserve">
+      <value>Xác nhận</value>
+    </data>
+    <data name="EnterTitle" xml:space="preserve">
+      <value>Vui lòng nhập tiêu đề!</value>
+    </data>
+    <data name="EnterAtLeastOneValidCard" xml:space="preserve">
+      <value>Vui lòng nhập ít nhất 1 thẻ với đầy đủ mặt trước và mặt sau!</value>
+    </data>
+    <data name="Creating" xml:space="preserve">
+      <value>Đang tạo...</value>
+    </data>
+    <data name="Updating" xml:space="preserve">
+      <value>Đang cập nhật...</value>
+    </data>
+    <data name="FlashcardCreateSuccess" xml:space="preserve">
+      <value>Tạo bộ flashcard thành công!</value>
+    </data>
+    <data name="FlashcardUpdateSuccess" xml:space="preserve">
+      <value>Cập nhật bộ flashcard thành công!</value>
+    </data>
+    <data name="FlashcardCreateError" xml:space="preserve">
+      <value>Lỗi khi tạo flashcard: {0}</value>
+    </data>
+    <data name="FlashcardUpdateError" xml:space="preserve">
+      <value>Lỗi khi cập nhật flashcard: {0}</value>
+        </data>
+  
+        <!-- Course Builder Steps Strings -->
+        <data name="CourseInfo" xml:space="preserve">
+          <value>Thông tin khóa học</value>
+        </data>
+        <data name="TitleLabel" xml:space="preserve">
+          <value>Tiêu đề</value>
+        </data>
+        <data name="TitleRequired3" xml:space="preserve">
+          <value>Tiêu đề (Bắt buộc)</value>
+        </data>
+        <data name="CourseTitlePlaceholder" xml:space="preserve">
+          <value>Tiêu đề khóa học</value>
+        </data>
+        <data name="UrlSlug" xml:space="preserve">
+          <value>URL Slug</value>
+        </data>
+        <data name="UrlSlugRequired" xml:space="preserve">
+          <value>URL Slug (Bắt buộc)</value>
+        </data>
+        <data name="UrlSlugExists" xml:space="preserve">
+          <value>URL Slug (Đã tồn tại)</value>
+        </data>
+        <data name="ShortDescription" xml:space="preserve">
+          <value>Mô tả ngắn</value>
+        </data>
+        <data name="PriceVND" xml:space="preserve">
+          <value>Giá (VNĐ)</value>
+        </data>
+        <data name="PriceRequired" xml:space="preserve">
+          <value>Giá (VNĐ) - Bắt buộc nhập</value>
+        </data>
+        <data name="PriceMinimum" xml:space="preserve">
+          <value>Giá (VNĐ) - Phải lớn hơn 2000</value>
+        </data>
+        <data name="PricePlaceholder" xml:space="preserve">
+          <value>Giá (VNĐ)</value>
+        </data>
+        <data name="CoverImage" xml:space="preserve">
+          <value>Ảnh bìa</value>
+        </data>
+        <data name="UploadImage" xml:space="preserve">
+          <value>Upload ảnh</value>
+        </data>
+        <data name="SelectCoverImage" xml:space="preserve">
+          <value>Chọn ảnh bìa khóa học</value>
+        </data>
+        <data name="ImageSaved" xml:space="preserve">
+          <value>Ảnh đã được lưu tại:
+      {0}
+
+      Full path:
+      {1}</value>
+        </data>
+        <data name="ImageUploadError" xml:space="preserve">
+          <value>Lỗi khi upload ảnh: {0}</value>
+        </data>
+        <data name="Continue" xml:space="preserve">
+          <value>Tiếp tục</value>
+        </data>
+        <data name="CourseStructure" xml:space="preserve">
+          <value>Cấu trúc khóa học</value>
+        </data>
+        <data name="AddChapter" xml:space="preserve">
+          <value>+ Thêm chương</value>
+        </data>
+        <data name="ChapterTitle" xml:space="preserve">
+          <value>Tiêu đề chương</value>
+        </data>
+        <data name="AddLesson" xml:space="preserve">
+          <value>+ Bài học</value>
+        </data>
+        <data name="DeleteChapter" xml:space="preserve">
+          <value>Xóa chương</value>
+        </data>
+        <data name="DeleteChapterConfirm" xml:space="preserve">
+          <value>Bạn có chắc muốn xóa chương '{0}'?</value>
+        </data>
+        <data name="LessonContent" xml:space="preserve">
+          <value>Nội dung bài học</value>
+        </data>
+        <data name="SelectLesson" xml:space="preserve">
+          <value>Vui lòng chọn một bài học từ cây bên trái</value>
+        </data>
+        <data name="LessonTitle" xml:space="preserve">
+          <value>Tiêu đề bài học</value>
+        </data>
+        <data name="ContentType" xml:space="preserve">
+          <value>Loại nội dung:</value>
+        </data>
+        <data name="VideoContent" xml:space="preserve">
+          <value>Video</value>
+        </data>
+        <data name="TextContent" xml:space="preserve">
+          <value>Rich text</value>
+        </data>
+        <data name="QuizContent" xml:space="preserve">
+          <value>Quiz</value>
+        </data>
+        <data name="VideoUrl" xml:space="preserve">
+          <value>URL Video (YouTube/Vimeo)</value>
+        </data>
+        <data name="RichTextContent" xml:space="preserve">
+          <value>Nội dung rich text</value>
+        </data>
+        <data name="PublishSettings" xml:space="preserve">
+          <value>Cài đặt xuất bản</value>
+        </data>
+        <data name="PublishSettingsDesc" xml:space="preserve">
+          <value>Xem lại thông tin khóa học trước khi xuất bản</value>
+        </data>
+        <data name="CourseSummary" xml:space="preserve">
+          <value>Tóm tắt khóa học:</value>
+        </data>
+        <data name="ChaptersCount" xml:space="preserve">
+          <value>Số chương: {0}</value>
+        </data>
+        <data name="LessonsCount" xml:space="preserve">
+          <value>Số bài học: {0}</value>
+        </data>
+        <data name="SaveDraft" xml:space="preserve">
+          <value>💾 Lưu nháp</value>
+        </data>
+        <data name="PublishCourse" xml:space="preserve">
+          <value>🚀 Xuất bản khóa học</value>
+        </data>
+        <data name="Back" xml:space="preserve">
+          <value>Quay lại</value>
+        </data>
+    
+            <!-- Cart/Checkout Strings -->
   <data name="YourCart" xml:space="preserve">
     <value>Giỏ hàng của bạn</value>
   </data>

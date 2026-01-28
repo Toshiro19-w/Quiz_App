@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.ViewModels;
 
@@ -21,8 +22,46 @@ namespace WinFormsApp1.View.User.Controls
         public RevenueControl()
         {
             InitializeComponent();
+            LocalizeUI();
             cmbPageSize.SelectedIndex = 0;
             LoadRevenueData();
+        }
+
+        private void LocalizeUI()
+        {
+            // Header
+            lblTitle.Text = LanguageHelper.GetString("RevenueStatistics");
+            
+            // Action buttons
+            btnMyCourse.Text = LanguageHelper.GetString("MyCourses");
+            btnFlashcards.Text = LanguageHelper.GetString("MyFlashcards");
+            btnBack.Text = LanguageHelper.GetString("GoBack");
+            
+            // Overview cards labels
+            lblPurchasesLabel.Text = LanguageHelper.GetString("TotalPurchases");
+            lblGrossRevenueLabel.Text = LanguageHelper.GetString("GrossRevenue");
+            lblInstructorRevenueLabel.Text = LanguageHelper.GetString("InstructorRevenue");
+            lblPlatformFeeLabel.Text = LanguageHelper.GetString("PlatformFee");
+            
+            // Filter labels
+            lblShowLabel.Text = LanguageHelper.GetString("Show");
+            lblEntriesLabel.Text = LanguageHelper.GetString("Entries");
+            lblSearchLabel.Text = LanguageHelper.GetString("Search") + ":";
+            txtSearch.PlaceholderText = LanguageHelper.GetString("EnterSearch");
+            
+            // Table headers
+            lblHeaderCourse.Text = LanguageHelper.GetString("HeaderCourse");
+            lblHeaderPrice.Text = LanguageHelper.GetString("Price");
+            lblHeaderPurchases.Text = LanguageHelper.GetString("HeaderPurchases");
+            lblHeaderGrossRevenue.Text = LanguageHelper.GetString("GrossRevenue");
+            lblHeaderInstructorRevenue.Text = LanguageHelper.GetString("HeaderInstructorRevenue");
+            lblHeaderPlatformFee.Text = LanguageHelper.GetString("HeaderPlatformFee");
+            
+            // Pagination buttons
+            btnFirstPage.Text = LanguageHelper.GetString("First");
+            btnPrevPage.Text = LanguageHelper.GetString("Previous");
+            btnNextPage.Text = LanguageHelper.GetString("Next");
+            btnLastPage.Text = LanguageHelper.GetString("Last");
         }
 
         private async void LoadRevenueData()
@@ -32,7 +71,7 @@ namespace WinFormsApp1.View.User.Controls
                 var userId = AuthHelper.CurrentUser?.UserId;
                 if (!userId.HasValue)
                 {
-                    MessageBox.Show("Vui lòng đăng nhập!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(LanguageHelper.GetString("PleaseLoginMessage"), LanguageHelper.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -78,14 +117,14 @@ namespace WinFormsApp1.View.User.Controls
 
                 _totalRecords = _allRevenues.Count;
 
-                UpdateOverviewCards();
-                ApplyFiltersAndLoadPage();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+                        UpdateOverviewCards();
+                        ApplyFiltersAndLoadPage();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(LanguageHelper.GetString("DataLoadError", ex.Message), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
 
         private void UpdateOverviewCards()
         {
@@ -132,7 +171,7 @@ namespace WinFormsApp1.View.User.Controls
             {
                 var lblEmpty = new Label
                 {
-                    Text = "Chưa có doanh thu nào",
+                    Text = LanguageHelper.GetString("NoRevenueYet"),
                     Font = new Font("Segoe UI", 14, FontStyle.Bold),
                     ForeColor = ColorPalette.TextSecondary,
                     AutoSize = true,
@@ -250,9 +289,10 @@ namespace WinFormsApp1.View.User.Controls
 
         private void UpdatePaginationUI(int totalPages)
         {
-            int start = (_currentPage - 1) * _pageSize + 1;
-            int end = Math.Min(_currentPage * _pageSize, _totalRecords);
-            lblPageInfo.Text = $"Hiển thị {start} tới {end} của {_totalRecords} mục dữ liệu";
+            lblPageInfo.Text = LanguageHelper.GetString("ShowingEntries", 
+                (_currentPage - 1) * _pageSize + 1, 
+                Math.Min(_currentPage * _pageSize, _totalRecords), 
+                _totalRecords);
 
             btnFirstPage.Enabled = _currentPage > 1;
             btnPrevPage.Enabled = _currentPage > 1;

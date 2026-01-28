@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.ViewModels;
 using System.Threading.Tasks;
 using WinFormsApp1.Models.EF;
@@ -54,12 +55,12 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			if (string.IsNullOrWhiteSpace(txtTitle.Text))
 			{
 				lblTitleLabel.ForeColor = Color.Red;
-				lblTitleLabel.Text = "Tiêu đề (Bắt buộc)";
+				lblTitleLabel.Text = LanguageHelper.GetString("TitleRequired3");
 			}
 			else
 			{
 				lblTitleLabel.ForeColor = Color.Black;
-				lblTitleLabel.Text = "Tiêu đề";
+				lblTitleLabel.Text = LanguageHelper.GetString("TitleLabel");
 			}
 		}
 
@@ -68,7 +69,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			if (string.IsNullOrWhiteSpace(txtSlug.Text))
 			{
 				lblSlugLabel.ForeColor = Color.Red;
-				lblSlugLabel.Text = "URL Slug (Bắt buộc)";
+				lblSlugLabel.Text = LanguageHelper.GetString("UrlSlugRequired");
 				return;
 			}
 
@@ -76,12 +77,12 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			if (!isUnique)
 			{
 				lblSlugLabel.ForeColor = Color.Red;
-				lblSlugLabel.Text = "URL Slug (Đã tồn tại)";
+				lblSlugLabel.Text = LanguageHelper.GetString("UrlSlugExists");
 			}
 			else
 			{
 				lblSlugLabel.ForeColor = Color.Black;
-				lblSlugLabel.Text = "URL Slug";
+				lblSlugLabel.Text = LanguageHelper.GetString("UrlSlug");
 			}
 		}
 
@@ -90,19 +91,19 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 			if (string.IsNullOrWhiteSpace(txtPrice.Text) || !decimal.TryParse(txtPrice.Text, out var price))
 			{
 				lblPriceLabel.ForeColor = Color.Red;
-				lblPriceLabel.Text = "Giá (VNĐ) - Bắt buộc nhập";
+				lblPriceLabel.Text = LanguageHelper.GetString("PriceRequired");
 				return;
 			}
 
 			if (price < 2000)
 			{
 				lblPriceLabel.ForeColor = Color.Red;
-				lblPriceLabel.Text = "Giá (VNĐ) - Phải lớn hơn 2000";
+				lblPriceLabel.Text = LanguageHelper.GetString("PriceMinimum");
 			}
-			else
+		else
 			{
 				lblPriceLabel.ForeColor = Color.Black;
-				lblPriceLabel.Text = "Giá (VNĐ)";
+				lblPriceLabel.Text = LanguageHelper.GetString("PriceVND");
 			}
 		}
 
@@ -132,7 +133,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				
 				using var dlg = new OpenFileDialog();
 				dlg.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
-				dlg.Title = "Chọn ảnh bìa khóa học";
+				dlg.Title = LanguageHelper.GetString("SelectCoverImage");
 				
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -162,10 +163,10 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 					picCover.ImageLocation = fullPath;
 
 					MessageBox.Show(
-						$"Ảnh đã được lưu tại:\n{_coverImageRelativePath}\n\nFull path:\n{fullPath}", 
-						"Thành công", 
-						MessageBoxButtons.OK, 
-						MessageBoxIcon.Information
+					LanguageHelper.GetString("ImageSaved", _coverImageRelativePath, fullPath), 
+					LanguageHelper.GetString("Success"), 
+					MessageBoxButtons.OK, 
+					MessageBoxIcon.Information
 					);
 				}
 				else
@@ -179,10 +180,10 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.Steps
 				System.Diagnostics.Debug.WriteLine($"[Step1_InfoControl] Stack trace: {ex.StackTrace}");
 				
 				MessageBox.Show(
-					$"Lỗi khi upload ảnh: {ex.Message}\n\nStack trace:\n{ex.StackTrace}", 
-					"Lỗi", 
-					MessageBoxButtons.OK, 
-					MessageBoxIcon.Error
+				LanguageHelper.GetString("ImageUploadError", ex.Message), 
+				LanguageHelper.GetString("Error"), 
+				MessageBoxButtons.OK, 
+				MessageBoxIcon.Error
 				);
 			}
 		}
