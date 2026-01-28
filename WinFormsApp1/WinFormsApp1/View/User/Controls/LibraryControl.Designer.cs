@@ -31,6 +31,7 @@
 			headerPanel = new Panel();
 			tabPanel = new Panel();
 			tabUnderline = new Panel();
+			btnCertificates = new Button();
 			btnFlashcards = new Button();
 			btnAllCourses = new Button();
 			lblTitle = new Label();
@@ -55,11 +56,12 @@
 			// 
 			tabPanel.BackColor = Color.Transparent;
 			tabPanel.Controls.Add(tabUnderline);
+			tabPanel.Controls.Add(btnCertificates);
 			tabPanel.Controls.Add(btnFlashcards);
 			tabPanel.Controls.Add(btnAllCourses);
 			tabPanel.Location = new Point(100, 90);
 			tabPanel.Name = "tabPanel";
-			tabPanel.Size = new Size(400, 60);
+			tabPanel.Size = new Size(600, 60);
 			tabPanel.TabIndex = 1;
 			// 
 			// tabUnderline
@@ -69,6 +71,22 @@
 			tabUnderline.Name = "tabUnderline";
 			tabUnderline.Size = new Size(200, 4);
 			tabUnderline.TabIndex = 2;
+			// 
+			// btnCertificates
+			// 
+			btnCertificates.BackColor = Color.Transparent;
+			btnCertificates.Cursor = Cursors.Hand;
+			btnCertificates.FlatAppearance.BorderSize = 0;
+			btnCertificates.FlatStyle = FlatStyle.Flat;
+			btnCertificates.Font = new Font("Segoe UI", 12F);
+			btnCertificates.ForeColor = Color.FromArgb(200, 200, 255);
+			btnCertificates.Location = new Point(400, 0);
+			btnCertificates.Name = "btnCertificates";
+			btnCertificates.Size = new Size(200, 50);
+			btnCertificates.TabIndex = 2;
+			btnCertificates.Text = "🎓 Chứng chỉ";
+			btnCertificates.UseVisualStyleBackColor = false;
+			btnCertificates.Click += BtnCertificates_Click;
 			// 
 			// btnFlashcards
 			// 
@@ -150,5 +168,6 @@
         private System.Windows.Forms.Button btnFlashcards;
         private System.Windows.Forms.Panel tabUnderline;
         private System.Windows.Forms.FlowLayoutPanel coursesPanel;
+        private System.Windows.Forms.Button btnCertificates;
     }
 }
