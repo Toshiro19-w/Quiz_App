@@ -55,9 +55,9 @@ namespace WinFormsApp1.Helpers
 
         private static void ShowInternal(Control owner, string message, int durationMs, Color backgroundColor)
         {
-            if (owner == null)
+            if (owner == null || owner.IsDisposed || !owner.IsHandleCreated)
             {
-                // fallback to simple message if no owner
+                // fallback to simple message if no owner or owner is disposed
                 MessageBox.Show(message);
                 return;
             }
@@ -90,8 +90,17 @@ namespace WinFormsApp1.Helpers
             toast.Controls.Add(lbl);
 
             // position: bottom-right of owner client area
-            var ownerRect = owner.RectangleToScreen(owner.ClientRectangle);
-            toast.Location = new Point(ownerRect.Right - toast.Width - 20, ownerRect.Bottom - toast.Height - 20);
+            try
+            {
+                var ownerRect = owner.RectangleToScreen(owner.ClientRectangle);
+                toast.Location = new Point(ownerRect.Right - toast.Width - 20, ownerRect.Bottom - toast.Height - 20);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Owner was disposed before we could get position, use screen center
+                var screen = Screen.PrimaryScreen.WorkingArea;
+                toast.Location = new Point(screen.Right - toast.Width - 20, screen.Bottom - toast.Height - 20);
+            }
 
             // Add fade in animation
             var fadeInTimer = new System.Windows.Forms.Timer { Interval = 20 };

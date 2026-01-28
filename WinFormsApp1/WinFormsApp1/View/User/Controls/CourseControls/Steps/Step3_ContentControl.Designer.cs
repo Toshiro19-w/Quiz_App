@@ -84,7 +84,7 @@
 			// 
 			cmbLessonSelector.BackColor = Color.Transparent;
 			cmbLessonSelector.CustomizableEdges = customizableEdges3;
-			cmbLessonSelector.DrawMode = DrawMode.OwnerDrawFixed;
+			cmbLessonSelector.DrawMode = DrawMode.Normal;
 			cmbLessonSelector.DropDownStyle = ComboBoxStyle.DropDownList;
 			cmbLessonSelector.FocusedColor = Color.Empty;
 			cmbLessonSelector.Font = new Font("Segoe UI", 12F);
