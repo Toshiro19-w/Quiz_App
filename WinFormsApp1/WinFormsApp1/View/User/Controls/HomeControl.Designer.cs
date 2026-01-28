@@ -89,7 +89,7 @@ namespace WinFormsApp1.View.User.Controls
             lblWelcomeText.ForeColor = Color.FromArgb(218, 165, 32);
             lblWelcomeText.Location = new Point(150, 55);
             lblWelcomeText.Name = "lblWelcomeText";
-            lblWelcomeText.Size = new Size(302, 45);
+            lblWelcomeText.Size = new Size(258, 37);
             lblWelcomeText.TabIndex = 2;
             lblWelcomeText.Text = "Chào mừng trở lại!";
             // 
@@ -123,7 +123,7 @@ namespace WinFormsApp1.View.User.Controls
             lblMotivationTitle.Location = new Point(40, 90);
             lblMotivationTitle.MaximumSize = new Size(850, 0);
             lblMotivationTitle.Name = "lblMotivationTitle";
-            lblMotivationTitle.Size = new Size(722, 65);
+            lblMotivationTitle.Size = new Size(601, 54);
             lblMotivationTitle.TabIndex = 1;
             lblMotivationTitle.Text = "Học những gì bạn có hứng thú";
             // 
@@ -142,7 +142,7 @@ namespace WinFormsApp1.View.User.Controls
             lblRecommended.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             lblRecommended.Location = new Point(25, 585);
             lblRecommended.Name = "lblRecommended";
-            lblRecommended.Size = new Size(360, 48);
+            lblRecommended.Size = new Size(339, 41);
             lblRecommended.TabIndex = 2;
             lblRecommended.Text = "🎯 Gợi ý dành cho bạn";
             // 
@@ -153,16 +153,17 @@ namespace WinFormsApp1.View.User.Controls
             lblRecommendedDesc.ForeColor = Color.Gray;
             lblRecommendedDesc.Location = new Point(25, 635);
             lblRecommendedDesc.Name = "lblRecommendedDesc";
-            lblRecommendedDesc.Size = new Size(450, 30);
+            lblRecommendedDesc.Size = new Size(453, 25);
             lblRecommendedDesc.TabIndex = 3;
             lblRecommendedDesc.Text = "Khóa học được chọn riêng dựa trên sở thích của bạn";
             // 
             // carouselRecommended
             // 
             carouselRecommended.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            carouselRecommended.Location = new Point(25, 675);
+            carouselRecommended.BackColor = Color.Transparent;
+            carouselRecommended.Location = new Point(3, 675);
             carouselRecommended.Name = "carouselRecommended";
-            carouselRecommended.Size = new Size(1695, 420);
+            carouselRecommended.Size = new Size(1760, 420);
             carouselRecommended.TabIndex = 4;
             // 
             // btnViewAllRecommended
@@ -184,16 +185,17 @@ namespace WinFormsApp1.View.User.Controls
             lblPopular.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             lblPopular.Location = new Point(25, 1120);
             lblPopular.Name = "lblPopular";
-            lblPopular.Size = new Size(396, 48);
+            lblPopular.Size = new Size(330, 41);
             lblPopular.TabIndex = 6;
             lblPopular.Text = "🔥 Khóa học phổ biến";
             // 
             // carouselPopular
             // 
             carouselPopular.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            carouselPopular.Location = new Point(25, 1175);
+            carouselPopular.BackColor = Color.Transparent;
+            carouselPopular.Location = new Point(3, 1175);
             carouselPopular.Name = "carouselPopular";
-            carouselPopular.Size = new Size(1695, 420);
+            carouselPopular.Size = new Size(1760, 420);
             carouselPopular.TabIndex = 7;
             // 
             // btnViewAll
@@ -215,7 +217,7 @@ namespace WinFormsApp1.View.User.Controls
             lblFlashcardSets.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             lblFlashcardSets.Location = new Point(25, 1627);
             lblFlashcardSets.Name = "lblFlashcardSets";
-            lblFlashcardSets.Size = new Size(432, 48);
+            lblFlashcardSets.Size = new Size(360, 41);
             lblFlashcardSets.TabIndex = 9;
             lblFlashcardSets.Text = "📚 Bộ flashcard nên học";
             // 
@@ -226,7 +228,7 @@ namespace WinFormsApp1.View.User.Controls
             lblFlashcardDesc.ForeColor = Color.Gray;
             lblFlashcardDesc.Location = new Point(25, 1677);
             lblFlashcardDesc.Name = "lblFlashcardDesc";
-            lblFlashcardDesc.Size = new Size(438, 30);
+            lblFlashcardDesc.Size = new Size(381, 25);
             lblFlashcardDesc.TabIndex = 10;
             lblFlashcardDesc.Text = "Học từ vựng và kiến thức một cách hiệu quả";
             // 
