@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using System.Runtime.InteropServices;
+using WinFormsApp1.Helpers;
 using WinFormsApp1.Localization;
 
 namespace WinFormsApp1
@@ -24,11 +25,14 @@ namespace WinFormsApp1
                 SetProcessDPIAware();
             }
 
-			Configuration = new ConfigurationBuilder()
-				.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-				.AddJsonFile("appsettings.Development.json", optional: true)
-				.Build();
+		Configuration = new ConfigurationBuilder()
+			.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+			.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+			.AddJsonFile("appsettings.Development.json", optional: true)
+			.Build();
+
+		// Initialize Azure Blob Storage
+		MediaHelper.InitializeAzureStorage(Configuration);
 
             // Configure application for high DPI
             Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);

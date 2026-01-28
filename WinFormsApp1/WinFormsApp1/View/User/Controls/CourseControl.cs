@@ -215,7 +215,7 @@ namespace WinFormsApp1.View.User.Controls
             var query = context.Courses
                 .Include(c => c.Owner)
                 .Include(c => c.Category)
-                .Where(c => c.IsPublished)
+                .Where(c => c.IsPublished && c.ModerationStatus == "Approved")
                 .AsQueryable();
 
             // Apply search query
