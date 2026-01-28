@@ -12,7 +12,8 @@ namespace WinFormsApp1.View.User.Controls
 {
     public partial class LibraryControl : UserControl
     {
-		private bool showingCourses = true;
+        private bool showingCourses = true;
+        private bool showingCertificates = false;
         private readonly FlashcardController _flashcardController;
 
 		public LibraryControl(bool showFlashcards = false)
@@ -50,17 +51,30 @@ namespace WinFormsApp1.View.User.Controls
 
 		private void BtnFlashcards_Click(object sender, EventArgs e)
 		{
-			if (!showingCourses) return;
+			if (!showingCourses && !showingCertificates) return;
 			ShowFlashcardsTab();
+		}
+
+		private void BtnCertificates_Click(object sender, EventArgs e)
+		{
+			if (showingCertificates) return;
+			ShowCertificatesTab();
 		}
 
 		private void ShowCoursesTab()
 		{
 			showingCourses = true;
+			showingCertificates = false;
+
 			btnAllCourses.Font = new Font("Segoe UI", 12, FontStyle.Bold);
 			btnAllCourses.ForeColor = Color.White;
+
 			btnFlashcards.Font = new Font("Segoe UI", 12);
 			btnFlashcards.ForeColor = Color.FromArgb(200, 200, 255);
+
+			btnCertificates.Font = new Font("Segoe UI", 12);
+			btnCertificates.ForeColor = Color.FromArgb(200, 200, 255);
+
 			tabUnderline.Location = new Point(0, 50);
 
 			LoadPurchasedCourses();
@@ -69,13 +83,39 @@ namespace WinFormsApp1.View.User.Controls
 		private void ShowFlashcardsTab()
 		{
 			showingCourses = false;
+			showingCertificates = false;
+
 			btnFlashcards.Font = new Font("Segoe UI", 12, FontStyle.Bold);
 			btnFlashcards.ForeColor = Color.White;
+
 			btnAllCourses.Font = new Font("Segoe UI", 12);
 			btnAllCourses.ForeColor = Color.FromArgb(200, 200, 255);
+
+			btnCertificates.Font = new Font("Segoe UI", 12);
+			btnCertificates.ForeColor = Color.FromArgb(200, 200, 255);
+
 			tabUnderline.Location = new Point(200, 50);
 
 			LoadFlashcards();
+		}
+
+		private void ShowCertificatesTab()
+		{
+			showingCourses = false;
+			showingCertificates = true;
+
+			btnCertificates.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+			btnCertificates.ForeColor = Color.White;
+
+			btnAllCourses.Font = new Font("Segoe UI", 12);
+			btnAllCourses.ForeColor = Color.FromArgb(200, 200, 255);
+
+			btnFlashcards.Font = new Font("Segoe UI", 12);
+			btnFlashcards.ForeColor = Color.FromArgb(200, 200, 255);
+
+			tabUnderline.Location = new Point(400, 50);
+
+			LoadCertificates();
 		}
 
         private void LoadPurchasedCourses()
@@ -232,9 +272,13 @@ namespace WinFormsApp1.View.User.Controls
                 {
                     Location = new Point(0, 0),
                     Size = new Size(350, 180),
-                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    BackColor = Color.White,
                     Image = Image.FromFile(course.CoverUrl)
                 };
+
+                pictureBox.Disposed += (s, e) => pictureBox.Image?.Dispose();
+
                 pictureBox.Click += (s, e) => NavigateToCourseDetail(course.CourseId);
                 card.Controls.Add(pictureBox);
             }
@@ -414,6 +458,174 @@ namespace WinFormsApp1.View.User.Controls
                     flashcardDetail.Dock = DockStyle.Fill;
                     mainPanel.Controls.Add(flashcardDetail);
                 }
+            }
+        }
+
+        private async void LoadCertificates()
+        {
+            coursesPanel.Controls.Clear();
+
+            try
+            {
+                var user = AuthHelper.CurrentUser;
+                if (user == null) return;
+
+                using var context = new LearningPlatformContext();
+
+                var certs = await context.Certificates
+                    .AsNoTracking()
+                    .Include(c => c.User)
+                    .Include(c => c.Course)
+                        .ThenInclude(co => co.Owner)
+                    .Where(c => c.UserId == user.UserId)
+                    .OrderByDescending(c => c.IssuedAt)
+                    .ToListAsync();
+
+                if (certs.Count == 0)
+                {
+                    ShowEmptyState(
+                        "Chưa có chứng chỉ nào",
+                        "Bạn chưa nhận chứng chỉ. Hãy hoàn thành khóa học để nhận chứng chỉ!"
+                    );
+                    return;
+                }
+
+                foreach (var cert in certs)
+                {
+                    var card = CreateCertificateCourseCard(cert);
+                    coursesPanel.Controls.Add(card);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải chứng chỉ: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private Panel CreateCertificateCourseCard(Models.Entities.Certificate cert)
+        {
+            var course = cert.Course;
+            var card = new Panel
+            {
+                Size = new Size(350, 340),
+                BackColor = Color.White,
+                Margin = new Padding(15),
+                Cursor = Cursors.Hand
+            };
+
+            // Course image (reuse existing behavior)
+            if (!string.IsNullOrEmpty(course.CoverUrl) && System.IO.File.Exists(course.CoverUrl))
+            {
+                var pictureBox = new PictureBox
+                {
+                    Location = new Point(0, 0),
+                    Size = new Size(350, 180),
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    BackColor = Color.FromArgb(245, 245, 245),
+                    Image = Image.FromFile(course.CoverUrl)
+                };
+
+                pictureBox.Disposed += (s, e) => pictureBox.Image?.Dispose();
+
+                pictureBox.Click += (s, e) => ViewCertificate(cert);
+                card.Controls.Add(pictureBox);
+            }
+            else
+            {
+                var imgPanel = new Panel
+                {
+                    Location = new Point(0, 0),
+                    Size = new Size(350, 180),
+                    BackColor = Color.FromArgb(245, 245, 245)
+                };
+                imgPanel.Paint += (s, e) =>
+                {
+                    using (var font = new Font("Segoe UI", 48))
+                    {
+                        e.Graphics.DrawString("🎓", font, Brushes.Gray, new PointF(130, 50));
+                    }
+                };
+                imgPanel.Click += (s, e) => ViewCertificate(cert);
+                card.Controls.Add(imgPanel);
+            }
+
+            var lblTitle = new Label
+            {
+                Text = course.Title,
+                Location = new Point(15, 195),
+                Size = new Size(320, 30),
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                ForeColor = ColorPalette.TextPrimary
+            };
+            card.Controls.Add(lblTitle);
+
+            var lblInstructor = new Label
+            {
+                Text = $"👤 {course.Owner?.FullName ?? "N/A"}",
+                Location = new Point(15, 230),
+                Size = new Size(320, 20),
+                Font = new Font("Segoe UI", 9),
+                ForeColor = Color.Gray
+            };
+            card.Controls.Add(lblInstructor);
+
+            var lblIssued = new Label
+            {
+                Text = $"🗓️ Cấp ngày: {cert.IssuedAt:dd/MM/yyyy}",
+                Location = new Point(15, 255),
+                Size = new Size(320, 20),
+                Font = new Font("Segoe UI", 8),
+                ForeColor = Color.Gray
+            };
+            card.Controls.Add(lblIssued);
+
+            var btnViewCert = new Button
+            {
+                Text = "📄 Xem chứng chỉ",
+                Location = new Point(15, 285),
+                Size = new Size(320, 40),
+                BackColor = Color.FromArgb(88, 56, 255),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
+            };
+            btnViewCert.FlatAppearance.BorderSize = 0;
+            btnViewCert.Click += (s, e) => ViewCertificate(cert);
+            card.Controls.Add(btnViewCert);
+
+            card.Click += (s, e) => ViewCertificate(cert);
+            lblTitle.Click += (s, e) => ViewCertificate(cert);
+
+            card.MouseEnter += (s, e) => card.BackColor = ColorPalette.Background;
+            card.MouseLeave += (s, e) => card.BackColor = Color.White;
+
+            return card;
+        }
+
+        private void ViewCertificate(Models.Entities.Certificate cert)
+        {
+            try
+            {
+                var reportData = new ViewModels.CertificateReportViewModel
+                {
+                    CertId = cert.CertId,
+                    StudentName = cert.User?.FullName ?? AuthHelper.CurrentUser?.FullName ?? string.Empty,
+                    CourseTitle = cert.Course?.Title ?? string.Empty,
+                    InstructorName = cert.Course?.Owner?.FullName ?? "Giảng viên",
+                    IssuedDate = cert.IssuedAt,
+                    VerifyCode = cert.VerifyCode,
+                    Serial = cert.Serial ?? string.Empty
+                };
+
+                var reportForm = new View.Dialogs.CertificateReportForm(reportData);
+                reportForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở chứng chỉ: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
