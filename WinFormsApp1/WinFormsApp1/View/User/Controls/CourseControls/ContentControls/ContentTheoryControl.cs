@@ -49,7 +49,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
             btnPreviewPdf.Enabled = false;
         }
 
-        private void BtnBrowsePdf_Click(object? sender, EventArgs e)
+        private async void BtnBrowsePdf_Click(object? sender, EventArgs e)
         {
             using var ofd = new OpenFileDialog();
             ofd.Filter = "PDF files|*.pdf";
@@ -57,55 +57,162 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                var relativePath = MediaHelper.CopyPdfToLibrary(ofd.FileName);
-                
-                if (relativePath != null)
+                // Tạo Progress Form
+                Form progressForm = null;
+                ProgressBar progressBar = null;
+                Label lblStatus = null;
+
+                try
                 {
-                    txtPdfPath.Text = relativePath;
-                    btnPreviewPdf.Enabled = true; // Enable preview button
-                    MessageBox.Show("Đã tải lên file PDF thành công!", "Thành công", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Tạo form hiển thị tiến trình
+                    progressForm = new Form
+                    {
+                        Text = "Đang upload document...",
+                        Size = new Size(400, 150),
+                        FormBorderStyle = FormBorderStyle.FixedDialog,
+                        StartPosition = FormStartPosition.CenterParent,
+                        MaximizeBox = false,
+                        MinimizeBox = false,
+                        ControlBox = false
+                    };
+
+                    progressBar = new ProgressBar
+                    {
+                        Location = new Point(20, 30),
+                        Size = new Size(340, 30),
+                        Style = ProgressBarStyle.Continuous,
+                        Minimum = 0,
+                        Maximum = 100
+                    };
+
+                    lblStatus = new Label
+                    {
+                        Location = new Point(20, 70),
+                        Size = new Size(340, 40),
+                        Text = "Đang chuẩn bị upload...",
+                        TextAlign = ContentAlignment.MiddleCenter
+                    };
+
+                    progressForm.Controls.Add(progressBar);
+                    progressForm.Controls.Add(lblStatus);
+                    progressForm.Show();
+
+                    // Disable button
+                    btnBrowsePdf.Enabled = false;
+
+                    // Progress reporter
+                    var progress = new Progress<int>(percent =>
+                    {
+                        if (progressForm != null && !progressForm.IsDisposed)
+                        {
+                            progressForm.Invoke((MethodInvoker)delegate
+                            {
+                                progressBar.Value = percent;
+                                lblStatus.Text = $"Đang upload: {percent}%";
+                            });
+                        }
+                    });
+
+                    // Upload PDF lên Azure
+                    var documentUrl = await MediaHelper.CopyPdfToLibraryAsync(ofd.FileName, progress);
+
+                    if (documentUrl != null)
+                    {
+                        txtPdfPath.Text = documentUrl;
+                        btnPreviewPdf.Enabled = true;
+
+                        MessageBox.Show("Upload tài liệu thành công!", "Thành công",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi upload tài liệu: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    // Enable button
+                    btnBrowsePdf.Enabled = true;
+
+                    // Close progress form
+                    if (progressForm != null && !progressForm.IsDisposed)
+                    {
+                        progressForm.Close();
+                        progressForm.Dispose();
+                    }
                 }
             }
         }
 
-        private void BtnPreviewPdf_Click(object? sender, EventArgs e)
+        private async void BtnPreviewPdf_Click(object? sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtPdfPath.Text))
             {
-                MessageBox.Show("Chưa có file PDF để xem!", "Thông báo", 
+                MessageBox.Show("Chưa có file PDF để xem!", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
-                // Tạo đường dẫn đầy đủ
-                string fullPath = Path.Combine(MediaHelper.GetProjectRoot(), txtPdfPath.Text.Replace("/", "\\"));
+                string filePath = txtPdfPath.Text;
+                string localPath;
 
-                if (!File.Exists(fullPath))
+                if (MediaHelper.IsAzureUrl(filePath))
                 {
-                    MessageBox.Show($"Không tìm thấy file PDF:\n{fullPath}", "Lỗi", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    // Download về temp để mở
+                    localPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
+
+                    btnPreviewPdf.Enabled = false;
+                    btnPreviewPdf.Text = "Đang tải...";
+
+                    // Download from Azure
+                    using (var httpClient = new System.Net.Http.HttpClient())
+                    {
+                        var response = await httpClient.GetAsync(filePath);
+                        response.EnsureSuccessStatusCode();
+
+                        using (var fs = new FileStream(localPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                        {
+                            await response.Content.CopyToAsync(fs);
+                        }
+                    }
+                }
+                else
+                {
+                    // Local file
+                    localPath = Path.Combine(MediaHelper.GetProjectRoot(), filePath.Replace("/", "\\"));
                 }
 
-                // Mở PDF bằng ứng dụng mặc định
-                var psi = new ProcessStartInfo
+                if (File.Exists(localPath))
                 {
-                    FileName = fullPath,
-                    UseShellExecute = true // Quan trọng: cho phép Windows chọn app mặc định
-                };
-                Process.Start(psi);
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = localPath,
+                        UseShellExecute = true
+                    };
+                    Process.Start(psi);
+                }
+                else
+                {
+                    MessageBox.Show($"Không tìm thấy file: {localPath}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi mở PDF:\n{ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi mở PDF: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnPreviewPdf.Enabled = true;
+                btnPreviewPdf.Text = "Xem trước";
             }
         }
 
-		private void OnContentTypeChanged()
+        private void OnContentTypeChanged()
 		{
 			var vietnameseType = cboContentType.SelectedItem?.ToString();
 
