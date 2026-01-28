@@ -51,7 +51,7 @@ namespace WinFormsApp1.View.User.Controls.CourseControls.ContentControls
 			cboQuestionType.DropDownStyle = ComboBoxStyle.DropDownList;
 			cboQuestionType.Font = new Font("Segoe UI", 12F);
 			cboQuestionType.FormattingEnabled = true;
-			cboQuestionType.Items.AddRange(new object[] { "Trắc nghiệm (1 đáp án)", "Trắc nghiệm (nhiều đáp án)", "Đúng/Sai" });
+			cboQuestionType.Items.AddRange(new object[] { "Trắc nghiệm (1 đáp án)", "Trắc nghiệm (nhiều đáp án)" });
 			cboQuestionType.Location = new Point(172, 39);
 			cboQuestionType.Name = "cboQuestionType";
 			cboQuestionType.Size = new Size(322, 40);
