@@ -29,12 +29,12 @@ namespace WinFormsApp1.View.User.Controls
         private bool _isFlipped = false;
 
         // --- FLASHCARD UI COMPONENTS ---
-        private Panel _pnlCardFace;      
-        private Label _lblCardContent;   
-        private Label _lblCardSide;      
-        private Label _lblCardCounter;   
-        private Button _btnFlip;         
-        private Button _btnPrev;         
+        private Panel _pnlCardFace;
+        private Label _lblCardContent;
+        private Label _lblCardSide;
+        private Label _lblCardCounter;
+        private Button _btnFlip;
+        private Button _btnPrev;
         private Button _btnNext;
 
         // Test state - SIMPLIFIED
@@ -105,174 +105,174 @@ namespace WinFormsApp1.View.User.Controls
             btnMarkComplete.Click += BtnMarkComplete_Click;
         }
 
-		//public async Task LoadLessonAsync(string courseSlug, int lessonId, int? openContentId = null)
-		//{
-		//    try
-		//    {
-		//        using var context = new LearningPlatformContext();
+        //public async Task LoadLessonAsync(string courseSlug, int lessonId, int? openContentId = null)
+        //{
+        //    try
+        //    {
+        //        using var context = new LearningPlatformContext();
 
-		//        // Load course with full details
-		//        _currentCourse = await context.Courses
-		//            .Include(c => c.CourseChapters)
-		//                .ThenInclude(ch => ch.Lessons)
-		//                    .ThenInclude(l => l.LessonContents)
-		//            .FirstOrDefaultAsync(c => c.Slug == courseSlug);
+        //        // Load course with full details
+        //        _currentCourse = await context.Courses
+        //            .Include(c => c.CourseChapters)
+        //                .ThenInclude(ch => ch.Lessons)
+        //                    .ThenInclude(l => l.LessonContents)
+        //            .FirstOrDefaultAsync(c => c.Slug == courseSlug);
 
-		//        if (_currentCourse == null) return;
+        //        if (_currentCourse == null) return;
 
-		//        // Sort chapters and lessons
-		//        _currentCourse.CourseChapters = _currentCourse.CourseChapters.OrderBy(ch => ch.OrderIndex).ToList();
-		//        foreach (var chapter in _currentCourse.CourseChapters)
-		//        {
-		//            chapter.Lessons = chapter.Lessons.OrderBy(l => l.OrderIndex).ToList();
-		//        }
+        //        // Sort chapters and lessons
+        //        _currentCourse.CourseChapters = _currentCourse.CourseChapters.OrderBy(ch => ch.OrderIndex).ToList();
+        //        foreach (var chapter in _currentCourse.CourseChapters)
+        //        {
+        //            chapter.Lessons = chapter.Lessons.OrderBy(l => l.OrderIndex).ToList();
+        //        }
 
-		//        // Load specific lesson
-		//        _currentLesson = _currentCourse.CourseChapters
-		//            .SelectMany(ch => ch.Lessons)
-		//            .FirstOrDefault(l => l.LessonId == lessonId);
+        //        // Load specific lesson
+        //        _currentLesson = _currentCourse.CourseChapters
+        //            .SelectMany(ch => ch.Lessons)
+        //            .FirstOrDefault(l => l.LessonId == lessonId);
 
-		//        if (_currentLesson == null) return;
+        //        if (_currentLesson == null) return;
 
-		//        _currentContents = _currentLesson.LessonContents.OrderBy(lc => lc.OrderIndex).ToList();
+        //        _currentContents = _currentLesson.LessonContents.OrderBy(lc => lc.OrderIndex).ToList();
 
-		//        // Disable mark-complete if there are no contents in this lesson
-		//        try
-		//        {
-		//            if (btnMarkComplete != null)
-		//                btnMarkComplete.Enabled = _currentContents != null && _currentContents.Count > 0;
-		//        }
-		//        catch { }
+        //        // Disable mark-complete if there are no contents in this lesson
+        //        try
+        //        {
+        //            if (btnMarkComplete != null)
+        //                btnMarkComplete.Enabled = _currentContents != null && _currentContents.Count > 0;
+        //        }
+        //        catch { }
 
-		//        // Update UI
-		//        if (lblCourseTitle != null) lblCourseTitle.Text = _currentCourse.Title;
+        //        // Update UI
+        //        if (lblCourseTitle != null) lblCourseTitle.Text = _currentCourse.Title;
 
-		//        await LoadSidebarAsync();
-		//        await UpdateProgressAsync();
+        //        await LoadSidebarAsync();
+        //        await UpdateProgressAsync();
 
-		//        // --- ĐOẠN CODE MỚI: XÁC ĐỊNH NỘI DUNG CẦN MỞ ---
-		//        int targetIndex = 0;
-		//        if (openContentId.HasValue)
-		//        {
-		//            // Tìm vị trí của contentId được yêu cầu trong bài học này
-		//            var index = _currentContents.FindIndex(c => c.ContentId == openContentId.Value);
-		//            if (index >= 0) targetIndex = index;
-		//        }
+        //        // --- ĐOẠN CODE MỚI: XÁC ĐỊNH NỘI DUNG CẦN MỞ ---
+        //        int targetIndex = 0;
+        //        if (openContentId.HasValue)
+        //        {
+        //            // Tìm vị trí của contentId được yêu cầu trong bài học này
+        //            var index = _currentContents.FindIndex(c => c.ContentId == openContentId.Value);
+        //            if (index >= 0) targetIndex = index;
+        //        }
 
-		//        await LoadContentAsync(targetIndex);
-		//        // ------------------------------------------------
-		//    }
-		//    catch (Exception ex)
-		//    {
-		//        MessageBox.Show($"Lỗi tải bài học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-		//    }
-		//}
+        //        await LoadContentAsync(targetIndex);
+        //        // ------------------------------------------------
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Lỗi tải bài học: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
 
-	public async Task LoadLessonAsync(string courseSlug, int lessonId, int? openContentId = null)
-	{
-		try
-		{
-			// SỬA LỖI: Tách query và dùng AsNoTracking để tăng tốc độ
-			using var context = new LearningPlatformContext();
+        public async Task LoadLessonAsync(string courseSlug, int lessonId, int? openContentId = null)
+        {
+            try
+            {
+                // SỬA LỖI: Tách query và dùng AsNoTracking để tăng tốc độ
+                using var context = new LearningPlatformContext();
 
-			// BƯỚC 1: Load course cơ bản KHÔNG bao gồm lessons (tránh query quá sâu)
-			_currentCourse = await context.Courses
-				.AsNoTracking() // QUAN TRỌNG: Không tracking để nhanh hơn
-				.Include(c => c.CourseChapters) // Chỉ load chapters
-				.FirstOrDefaultAsync(c => c.Slug == courseSlug);
+                // BƯỚC 1: Load course cơ bản KHÔNG bao gồm lessons (tránh query quá sâu)
+                _currentCourse = await context.Courses
+                    .AsNoTracking() // QUAN TRỌNG: Không tracking để nhanh hơn
+                    .Include(c => c.CourseChapters) // Chỉ load chapters
+                    .FirstOrDefaultAsync(c => c.Slug == courseSlug);
 
-			if (_currentCourse == null) return;
+                if (_currentCourse == null) return;
 
-			// BƯỚC 1.5: KIỂM TRA QUYỀN TRUY CẬP
-			var currentUser = AuthHelper.CurrentUser;
-			if (currentUser == null)
-			{
-				MessageBox.Show("Vui lòng đăng nhập để xem bài học!", "Thông báo", 
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
-			}
+                // BƯỚC 1.5: KIỂM TRA QUYỀN TRUY CẬP
+                var currentUser = AuthHelper.CurrentUser;
+                if (currentUser == null)
+                {
+                    MessageBox.Show("Vui lòng đăng nhập để xem bài học!", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-			// Kiểm tra quyền truy cập khóa học
-			if (!AuthHelper.CanAccessCourse(_currentCourse.CourseId))
-			{
-				var result = MessageBox.Show(
-					"Bạn chưa có quyền truy cập khóa học này.\n\n" +
-					"Bạn cần mua khóa học hoặc đăng ký gói Premium để truy cập.\n\n" +
-					"Bạn có muốn quay lại trang chi tiết khóa học?",
-					"Không có quyền truy cập",
-					MessageBoxButtons.YesNo,
-					MessageBoxIcon.Warning);
+                // Kiểm tra quyền truy cập khóa học
+                if (!AuthHelper.CanAccessCourse(_currentCourse.CourseId))
+                {
+                    var result = MessageBox.Show(
+                        "Bạn chưa có quyền truy cập khóa học này.\n\n" +
+                        "Bạn cần mua khóa học hoặc đăng ký gói Premium để truy cập.\n\n" +
+                        "Bạn có muốn quay lại trang chi tiết khóa học?",
+                        "Không có quyền truy cập",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning);
 
-				if (result == DialogResult.Yes)
-				{
-					// Navigate back to course detail
-					var form = this.FindForm();
-					if (form is MainContainer mainContainer)
-					{
-						mainContainer.NavigateToCourseDetail(_currentCourse.CourseId);
-					}
-				}
-				return;
-			}
+                    if (result == DialogResult.Yes)
+                    {
+                        // Navigate back to course detail
+                        var form = this.FindForm();
+                        if (form is MainContainer mainContainer)
+                        {
+                            mainContainer.NavigateToCourseDetail(_currentCourse.CourseId);
+                        }
+                    }
+                    return;
+                }
 
-				// BƯỚC 2: Load lessons riêng biệt với AsNoTracking
-				var chapterIds = _currentCourse.CourseChapters.Select(ch => ch.ChapterId).ToList();
+                // BƯỚC 2: Load lessons riêng biệt với AsNoTracking
+                var chapterIds = _currentCourse.CourseChapters.Select(ch => ch.ChapterId).ToList();
 
-				var allLessons = await context.Lessons
-					.AsNoTracking()
-					.Include(l => l.LessonContents) // Chỉ load contents cho lessons
-					.Where(l => chapterIds.Contains(l.ChapterId))
-					.OrderBy(l => l.OrderIndex)
-					.ToListAsync();
+                var allLessons = await context.Lessons
+                    .AsNoTracking()
+                    .Include(l => l.LessonContents) // Chỉ load contents cho lessons
+                    .Where(l => chapterIds.Contains(l.ChapterId))
+                    .OrderBy(l => l.OrderIndex)
+                    .ToListAsync();
 
-				// BƯỚC 3: Gán lessons vào chapters (trong memory, không query DB)
-				_currentCourse.CourseChapters = _currentCourse.CourseChapters.OrderBy(ch => ch.OrderIndex).ToList();
-				foreach (var chapter in _currentCourse.CourseChapters)
-				{
-					chapter.Lessons = allLessons
-						.Where(l => l.ChapterId == chapter.ChapterId)
-						.OrderBy(l => l.OrderIndex)
-						.ToList();
-				}
+                // BƯỚC 3: Gán lessons vào chapters (trong memory, không query DB)
+                _currentCourse.CourseChapters = _currentCourse.CourseChapters.OrderBy(ch => ch.OrderIndex).ToList();
+                foreach (var chapter in _currentCourse.CourseChapters)
+                {
+                    chapter.Lessons = allLessons
+                        .Where(l => l.ChapterId == chapter.ChapterId)
+                        .OrderBy(l => l.OrderIndex)
+                        .ToList();
+                }
 
-				// BƯỚC 4: Tìm lesson hiện tại
-				_currentLesson = allLessons.FirstOrDefault(l => l.LessonId == lessonId);
+                // BƯỚC 4: Tìm lesson hiện tại
+                _currentLesson = allLessons.FirstOrDefault(l => l.LessonId == lessonId);
 
-				if (_currentLesson == null) return;
+                if (_currentLesson == null) return;
 
-				_currentContents = _currentLesson.LessonContents.OrderBy(lc => lc.OrderIndex).ToList();
+                _currentContents = _currentLesson.LessonContents.OrderBy(lc => lc.OrderIndex).ToList();
 
-				// Disable mark-complete if there are no contents in this lesson
-				try
-				{
-					if (btnMarkComplete != null)
-						btnMarkComplete.Enabled = _currentContents != null && _currentContents.Count > 0;
-				}
-				catch { }
+                // Disable mark-complete if there are no contents in this lesson
+                try
+                {
+                    if (btnMarkComplete != null)
+                        btnMarkComplete.Enabled = _currentContents != null && _currentContents.Count > 0;
+                }
+                catch { }
 
-				// Update UI
-				if (lblCourseTitle != null) lblCourseTitle.Text = _currentCourse.Title;
+                // Update UI
+                if (lblCourseTitle != null) lblCourseTitle.Text = _currentCourse.Title;
 
-				await LoadSidebarAsync();
-				await UpdateProgressAsync();
+                await LoadSidebarAsync();
+                await UpdateProgressAsync();
 
-				// Xác định nội dung cần mở
-			 int targetIndex = 0;
-				if (openContentId.HasValue)
-				{
-					var index = _currentContents.FindIndex(c => c.ContentId == openContentId.Value);
-					if (index >= 0) targetIndex = index;
-				}
+                // Xác định nội dung cần mở
+                int targetIndex = 0;
+                if (openContentId.HasValue)
+                {
+                    var index = _currentContents.FindIndex(c => c.ContentId == openContentId.Value);
+                    if (index >= 0) targetIndex = index;
+                }
 
-				await LoadContentAsync(targetIndex);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"Lỗi tải bài học: {ex.Message}\n\nChi tiết: {ex.InnerException?.Message}",
-					"Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-		}
-		private async Task LoadSidebarAsync()
+                await LoadContentAsync(targetIndex);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tải bài học: {ex.Message}\n\nChi tiết: {ex.InnerException?.Message}",
+                    "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private async Task LoadSidebarAsync()
         {
             flowLessons.Controls.Clear();
 
@@ -800,37 +800,92 @@ namespace WinFormsApp1.View.User.Controls
             // 4. Xử lý đường dẫn và phát video
             if (!string.IsNullOrEmpty(content.VideoUrl))
             {
-                // --- SỬ DỤNG MEDIAHELPER ĐỂ LẤY ĐƯỜNG DẪN GỐC ---
-                string projectRoot = MediaHelper.GetProjectRoot();
-
-                // Xử lý đường dẫn từ DB (chuyển dấu / thành \ cho đúng chuẩn Windows)
-                string relativePath = content.VideoUrl.Replace("/", "\\").TrimStart('\\');
-
-                // Ghép đường dẫn gốc + đường dẫn tương đối
-                // Ví dụ: D:\...\WinFormsApp1 + Library\Video\abc.mp4
-                string fullPath = Path.Combine(projectRoot, relativePath);
-
-                if (System.IO.File.Exists(fullPath))
+                // Kiểm tra xem có phải Azure URL không
+                if (MediaHelper.IsAzureUrl(content.VideoUrl))
                 {
-                    // Tìm thấy file -> Phát video
-                    using var media = new Media(_libVLC, fullPath, FromType.FromPath);
-                    _mediaPlayer.Play(media);
-
-                    // Resume lại đoạn đã xem (nếu có)
-                    int watchedSec = await GetWatchedDurationAsync(content.ContentId);
-                    if (watchedSec > 0)
+                    // Download video từ Azure về temp folder rồi play
+                    try
                     {
-                        _mediaPlayer.Time = (long)watchedSec * 1000;
+                        // Hiển thị thông báo đang tải
+                        _btnPlayPause.Text = "⏳";
+                        _btnPlayPause.Enabled = false;
+
+                        // Tạo temp file path
+                        string fileName = Path.GetFileName(new Uri(content.VideoUrl).LocalPath);
+                        string tempPath = Path.Combine(Path.GetTempPath(), $"video_{content.ContentId}_{fileName}");
+
+                        // Kiểm tra nếu đã download trước đó thì không cần download lại
+                        if (!System.IO.File.Exists(tempPath))
+                        {
+                            // Download video từ Azure
+                            using (var httpClient = new System.Net.Http.HttpClient())
+                            {
+                                httpClient.Timeout = TimeSpan.FromMinutes(10); // Timeout 10 phút cho video lớn
+                                var response = await httpClient.GetAsync(content.VideoUrl);
+                                response.EnsureSuccessStatusCode();
+
+                                using (var fs = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                                {
+                                    await response.Content.CopyToAsync(fs);
+                                }
+                            }
+                        }
+
+                        // Play video từ temp file
+                        if (System.IO.File.Exists(tempPath))
+                        {
+                            var media = new Media(_libVLC, tempPath, FromType.FromPath);
+                            _mediaPlayer.Play(media);
+
+                            // Resume lại đoạn đã xem (nếu có)
+                            int watchedSec = await GetWatchedDurationAsync(content.ContentId);
+                            if (watchedSec > 0)
+                            {
+                                // Wait một chút để media load
+                                await Task.Delay(1000);
+                                _mediaPlayer.Time = (long)watchedSec * 1000;
+                            }
+                        }
+
+                        _btnPlayPause.Enabled = true;
+                        _btnPlayPause.Text = "⏸";
+                    }
+                    catch (Exception ex)
+                    {
+                        _btnPlayPause.Enabled = true;
+                        _btnPlayPause.Text = "▶";
+                        MessageBox.Show(
+                            $"Không thể tải video từ Azure.\nLỗi: {ex.Message}\n\nVui lòng kiểm tra kết nối internet.",
+                            "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
                 {
-                    // Không tìm thấy file -> Báo lỗi chi tiết
-                    MessageBox.Show(
-                        $"Không tìm thấy video!\n\n" +
-                        $"Hệ thống đang tìm tại:\n{fullPath}\n\n" +
-                        "Vui lòng kiểm tra lại thư mục Library/Video.",
-                        "Lỗi File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Local file - giữ nguyên logic cũ
+                    string projectRoot = MediaHelper.GetProjectRoot();
+                    string relativePath = content.VideoUrl.Replace("/", "\\").TrimStart('\\');
+                    string fullPath = Path.Combine(projectRoot, relativePath);
+
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        var media = new Media(_libVLC, fullPath, FromType.FromPath);
+                        _mediaPlayer.Play(media);
+
+                        // Resume lại đoạn đã xem
+                        int watchedSec = await GetWatchedDurationAsync(content.ContentId);
+                        if (watchedSec > 0)
+                        {
+                            _mediaPlayer.Time = (long)watchedSec * 1000;
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            $"Không tìm thấy video!\n\n" +
+                            $"Hệ thống đang tìm tại:\n{fullPath}\n\n" +
+                            "Vui lòng kiểm tra lại thư mục Library/Video.",
+                            "Lỗi File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -1138,27 +1193,54 @@ namespace WinFormsApp1.View.User.Controls
             pnlTheory.Visible = true;
 
             // Kiểm tra xem có đường dẫn PDF không
-            if (!string.IsNullOrEmpty(content.VideoUrl) && content.VideoUrl.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(content.VideoUrl))
             {
                 // Load PDF file
                 try
                 {
-                    string projectRoot = MediaHelper.GetProjectRoot();
-                    string relativePath = content.VideoUrl.Replace("/", "\\").TrimStart('\\');
-                    string fullPath = Path.Combine(projectRoot, relativePath);
+                    string pdfPath = content.VideoUrl;
 
-                    if (System.IO.File.Exists(fullPath))
+                    // Kiểm tra xem có phải Azure URL không
+                    if (MediaHelper.IsAzureUrl(pdfPath))
                     {
-                        var document = PdfiumViewer.PdfDocument.Load(fullPath);
+                        // Download PDF từ Azure về temp folder
+                        string tempPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.pdf");
+
+                        using (var httpClient = new System.Net.Http.HttpClient())
+                        {
+                            var response = await httpClient.GetAsync(pdfPath);
+                            response.EnsureSuccessStatusCode();
+
+                            using (var fs = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                            {
+                                await response.Content.CopyToAsync(fs);
+                            }
+                        }
+
+                        // Load PDF từ temp file
+                        var document = PdfiumViewer.PdfDocument.Load(tempPath);
                         pdfViewer.Document = document;
                     }
                     else
                     {
-                        MessageBox.Show(
-                            $"Không tìm thấy file PDF!\n\n" +
-                            $"Hệ thống đang tìm tại:\n{fullPath}\n\n" +
-                            "Vui lòng kiểm tra lại thư mục Library/Theory.",
-                            "Lỗi File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        // Local file - giữ nguyên logic cũ
+                        string projectRoot = MediaHelper.GetProjectRoot();
+                        string relativePath = pdfPath.Replace("/", "\\").TrimStart('\\');
+                        string fullPath = Path.Combine(projectRoot, relativePath);
+
+                        if (System.IO.File.Exists(fullPath))
+                        {
+                            var document = PdfiumViewer.PdfDocument.Load(fullPath);
+                            pdfViewer.Document = document;
+                        }
+                        else
+                        {
+                            MessageBox.Show(
+                                $"Không tìm thấy file PDF!\n\n" +
+                                $"Hệ thống đang tìm tại:\n{fullPath}\n\n" +
+                                "Vui lòng kiểm tra lại thư mục Library/Theory.",
+                                "Lỗi File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -1169,7 +1251,7 @@ namespace WinFormsApp1.View.User.Controls
             else if (!string.IsNullOrEmpty(content.Body))
             {
                 // Nếu không có PDF, hiển thị nội dung HTML trong message box hoặc tạo PDF tạm
-                MessageBox.Show("Nội dung lý thuyết phải là file PDF. Vui lòng cập nhật đường dẫn PDF trong VideoUrl.", 
+                MessageBox.Show("Nội dung lý thuyết phải là file PDF. Vui lòng cập nhật đường dẫn PDF trong VideoUrl.",
                     "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
@@ -1253,8 +1335,8 @@ namespace WinFormsApp1.View.User.Controls
             _isFlipped = false;
 
             // --- 1. TẠO UI THẺ (CARD)
-            int cardWidth = 1000; 
-            int cardHeight = 550; 
+            int cardWidth = 1000;
+            int cardHeight = 550;
 
             _pnlCardFace = new Panel
             {
@@ -2059,7 +2141,7 @@ namespace WinFormsApp1.View.User.Controls
                 }
 
                 using var context = new LearningPlatformContext();
-                
+
                 // Kiểm tra xem đã có chứng chỉ chưa
                 var existingCertificate = await context.Certificates
                     .Include(c => c.User)
@@ -2072,7 +2154,7 @@ namespace WinFormsApp1.View.User.Controls
                 if (existingCertificate != null)
                 {
                     certificate = existingCertificate;
-                    MessageBox.Show($"Bạn đã nhận chứng chỉ cho khóa học này!\n\nMã xác thực: {existingCertificate.VerifyCode}", 
+                    MessageBox.Show($"Bạn đã nhận chứng chỉ cho khóa học này!\n\nMã xác thực: {existingCertificate.VerifyCode}",
                         "Chứng chỉ đã tồn tại", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
@@ -2099,7 +2181,7 @@ namespace WinFormsApp1.View.User.Controls
 
                     MessageBox.Show($"🎉 Chúc mừng! Bạn đã hoàn thành khóa học!\n\n" +
                                    $"Chứng chỉ của bạn đã được cấp.\n" +
-                                   $"Mã xác thực: {certificate.VerifyCode}", 
+                                   $"Mã xác thực: {certificate.VerifyCode}",
                                    "Chúc mừng!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 

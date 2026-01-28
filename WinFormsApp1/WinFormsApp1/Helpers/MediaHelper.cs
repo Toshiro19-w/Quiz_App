@@ -1,6 +1,9 @@
+using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinFormsApp1.Services;
 
 namespace WinFormsApp1.Helpers
 {
@@ -8,6 +11,45 @@ namespace WinFormsApp1.Helpers
 	{
 		private const long MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
 		private const long MAX_PDF_SIZE = 50 * 1024 * 1024; // 50MB
+
+		private static AzureBlobStorageService? _blobService;
+		private static bool _useAzureStorage = true; // Default: sử dụng Azure
+
+		// ============================================================
+		// INITIALIZE AZURE STORAGE
+		// ============================================================
+		public static void InitializeAzureStorage(IConfiguration configuration)
+		{
+			try
+			{
+				var connectionString = configuration.GetConnectionString("AzureBlobConnectionString");
+				if (!string.IsNullOrEmpty(connectionString))
+				{
+					_blobService = new AzureBlobStorageService(connectionString);
+					_useAzureStorage = true;
+				}
+				else
+				{
+					_useAzureStorage = false;
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Không thể kết nối Azure Storage: {ex.Message}\nSử dụng local storage.", 
+					"Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				_useAzureStorage = false;
+			}
+		}
+
+		// ============================================================
+		// CHECK IF PATH IS AZURE URL
+		// ============================================================
+		public static bool IsAzureUrl(string pathOrUrl)
+		{
+			return !string.IsNullOrEmpty(pathOrUrl) &&
+				   pathOrUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase) &&
+				   pathOrUrl.Contains("blob.core.windows.net", StringComparison.OrdinalIgnoreCase);
+		}
 
 		// ============================================================
 		// GET PROJECT ROOT (3 cấp lên từ bin/Debug/net8.0-windows)
@@ -41,41 +83,80 @@ namespace WinFormsApp1.Helpers
 			if (!Directory.Exists(video))
 				Directory.CreateDirectory(video);
 
-			if (!Directory.Exists(pdf))
-				Directory.CreateDirectory(pdf);
-		}
+		if (!Directory.Exists(pdf))
+			Directory.CreateDirectory(pdf);
+	}
 
-		// ============================================================
-		// COPY VIDEO
-		// ============================================================
-		public static string? CopyVideoToLibrary(string sourcePath)
+	// ============================================================
+	// COPY VIDEO - ASYNC với Azure support
+	// ============================================================
+	public static async Task<string?> CopyVideoToLibraryAsync(string sourcePath, IProgress<int> progress = null)
+	{
+		try
 		{
-			try
+			var fileInfo = new FileInfo(sourcePath);
+
+			// Kiểm tra kích thước
+			if (fileInfo.Length > MAX_VIDEO_SIZE)
 			{
-				var fileInfo = new FileInfo(sourcePath);
+				MessageBox.Show(
+					$"Video quá lớn! Tối đa 100MB, file: {fileInfo.Length / (1024 * 1024)}MB",
+					"Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-				// Kiểm tra kích thước
-				if (fileInfo.Length > MAX_VIDEO_SIZE)
-				{
-					MessageBox.Show(
-						$"Video quá lớn! Tối đa 100MB, file: {fileInfo.Length / (1024 * 1024)}MB",
-						"Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return null;
+			}
 
-					return null;
-				}
+			// Nếu sử dụng Azure Storage
+			if (_useAzureStorage && _blobService != null)
+			{
+				string azureUrl = await _blobService.UploadVideoAsync(sourcePath, progress);
+				return azureUrl;
+			}
+			else
+			{
+				// Fallback: Local storage (không có progress)
+				return CopyVideoToLibrary(sourcePath);
+			}
+		}
+		catch (Exception ex)
+		{
+			MessageBox.Show($"Lỗi upload video: {ex.Message}", "Lỗi",
+				MessageBoxButtons.OK, MessageBoxIcon.Error);
+			return null;
+		}
+	}
 
-				// Đảm bảo đủ thư mục
-				EnsureLibraryStructure();
+	// ============================================================
+	// COPY VIDEO - SYNC (backward compatibility)
+	// ============================================================
+	public static string? CopyVideoToLibrary(string sourcePath)
+	{
+		try
+		{
+			var fileInfo = new FileInfo(sourcePath);
 
-				string root = GetProjectRoot();
-				string videoDir = Path.Combine(root, "Library", "Video");
+			// Kiểm tra kích thước
+			if (fileInfo.Length > MAX_VIDEO_SIZE)
+			{
+				MessageBox.Show(
+					$"Video quá lớn! Tối đa 100MB, file: {fileInfo.Length / (1024 * 1024)}MB",
+					"Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-				// Tạo file name
-				string fileName = $"{Guid.NewGuid()}{fileInfo.Extension}";
-				string destPath = Path.Combine(videoDir, fileName);
+				return null;
+			}
 
-				// Copy
-				File.Copy(sourcePath, destPath, true);
+			// Đảm bảo đủ thư mục
+			EnsureLibraryStructure();
+
+			string root = GetProjectRoot();
+			string videoDir = Path.Combine(root, "Library", "Video");
+
+			// Tạo file name
+			string fileName = $"{Guid.NewGuid()}{fileInfo.Extension}";
+			string destPath = Path.Combine(videoDir, fileName);
+
+			// Copy
+			File.Copy(sourcePath, destPath, true);
 
 				// Trả về path lưu DB (relative)
 				return Path.Combine("Library", "Video", fileName);
@@ -121,32 +202,79 @@ namespace WinFormsApp1.Helpers
 			}
 		}
 
-		// ============================================================
-		// COPY PDF
-		// ============================================================
-		public static string? CopyPdfToLibrary(string sourcePath)
+	// ============================================================
+	// COPY PDF - ASYNC với Azure support
+	// ============================================================
+	public static async Task<string?> CopyPdfToLibraryAsync(string sourcePath, IProgress<int> progress = null)
+	{
+		try
 		{
-			try
+			var fileInfo = new FileInfo(sourcePath);
+
+			// Kiểm tra kích thước
+			if (fileInfo.Length > MAX_PDF_SIZE)
 			{
-				var fileInfo = new FileInfo(sourcePath);
+				MessageBox.Show(
+					$"File PDF quá lớn! Tối đa 50MB, file: {fileInfo.Length / (1024 * 1024)}MB",
+					"Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-				// Kiểm tra kích thước
-				if (fileInfo.Length > MAX_PDF_SIZE)
-				{
-					MessageBox.Show(
-						$"File PDF quá lớn! Tối đa 50MB, file: {fileInfo.Length / (1024 * 1024)}MB",
-						"Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return null;
+			}
 
-					return null;
-				}
+			// Kiểm tra extension
+			if (!fileInfo.Extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+			{
+				MessageBox.Show("Chỉ chấp nhận file PDF!", "Lỗi",
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return null;
+			}
 
-				// Kiểm tra extension
-				if (!fileInfo.Extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
-				{
-					MessageBox.Show("Chỉ chấp nhận file PDF!", "Lỗi",
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					return null;
-				}
+			// Nếu sử dụng Azure Storage
+			if (_useAzureStorage && _blobService != null)
+			{
+				string azureUrl = await _blobService.UploadDocumentAsync(sourcePath, progress);
+				return azureUrl;
+			}
+			else
+			{
+				// Fallback: Local storage
+				return CopyPdfToLibrary(sourcePath);
+			}
+		}
+		catch (Exception ex)
+		{
+			MessageBox.Show($"Lỗi upload PDF: {ex.Message}", "Lỗi",
+				MessageBoxButtons.OK, MessageBoxIcon.Error);
+			return null;
+		}
+	}
+
+	// ============================================================
+	// COPY PDF - SYNC (backward compatibility)
+	// ============================================================
+	public static string? CopyPdfToLibrary(string sourcePath)
+	{
+		try
+		{
+			var fileInfo = new FileInfo(sourcePath);
+
+			// Kiểm tra kích thước
+			if (fileInfo.Length > MAX_PDF_SIZE)
+			{
+				MessageBox.Show(
+					$"File PDF quá lớn! Tối đa 50MB, file: {fileInfo.Length / (1024 * 1024)}MB",
+					"Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+				return null;
+			}
+
+			// Kiểm tra extension
+			if (!fileInfo.Extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+			{
+				MessageBox.Show("Chỉ chấp nhận file PDF!", "Lỗi",
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return null;
+			}
 
 				// Đảm bảo đủ thư mục
 				EnsureLibraryStructure();
