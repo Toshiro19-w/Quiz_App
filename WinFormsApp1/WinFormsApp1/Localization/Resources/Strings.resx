@@ -280,6 +280,41 @@
     <value>Không liệt kê</value>
   </data>
   
+  <!-- Dashboard Titles -->
+  <data name="SystemOverview" xml:space="preserve">
+    <value>📊 Tổng quan hệ thống</value>
+  </data>
+  <data name="LearningAnalytics" xml:space="preserve">
+    <value>🎓 Phân tích học tập</value>
+  </data>
+  <data name="UserAnalytics" xml:space="preserve">
+    <value>👥 Phân tích người dùng</value>
+  </data>
+  <data name="RevenueAnalytics" xml:space="preserve">
+    <value>💰 Phân tích doanh thu</value>
+  </data>
+  <data name="FromDateLabel" xml:space="preserve">
+    <value>Từ ngày:</value>
+  </data>
+  <data name="ToDateLabel" xml:space="preserve">
+    <value>Đến ngày:</value>
+  </data>
+  <data name="CategoryFilterLabel" xml:space="preserve">
+    <value>Danh mục:</value>
+  </data>
+  <data name="ProviderLabel" xml:space="preserve">
+    <value>NCC:</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Đặt lại</value>
+  </data>
+  <data name="CustomDate" xml:space="preserve">
+    <value>Tùy chọn</value>
+  </data>
+  <data name="MonthlyRevenue" xml:space="preserve">
+    <value>Doanh thu theo tháng</value>
+  </data>
+  
   <!-- User Management -->
   <data name="UserManagement" xml:space="preserve">
     <value>Quản lý người dùng</value>
@@ -1205,5 +1240,1075 @@
   </data>
   <data name="SearchCodeName" xml:space="preserve">
     <value>Tìm theo mã, tên...</value>
+  </data>
+  
+  <!-- User Home Control -->
+  <data name="WelcomeUser" xml:space="preserve">
+    <value>Chào mừng {0} trở lại!</value>
+  </data>
+  <data name="RecommendedCourses" xml:space="preserve">
+    <value>Khóa học đề xuất</value>
+  </data>
+  <data name="PopularCourses" xml:space="preserve">
+    <value>Khóa học phổ biến</value>
+  </data>
+  <data name="ViewAll" xml:space="preserve">
+    <value>Xem tất cả</value>
+  </data>
+  <data name="FlashcardSets" xml:space="preserve">
+    <value>Bộ Flashcard</value>
+  </data>
+  <data name="StartLearningNow" xml:space="preserve">
+    <value>Bắt đầu học ngay</value>
+  </data>
+  
+  <!-- Course Filter -->
+  <data name="AllCategories" xml:space="preserve">
+    <value>Tất cả</value>
+  </data>
+  <data name="AllRatings" xml:space="preserve">
+    <value>Tất cả</value>
+  </data>
+  <data name="FiveStars" xml:space="preserve">
+    <value>5 sao</value>
+  </data>
+  <data name="FourStarsAndAbove" xml:space="preserve">
+    <value>4 sao trở lên</value>
+  </data>
+  <data name="ThreeStarsAndAbove" xml:space="preserve">
+    <value>3 sao trở lên</value>
+  </data>
+  <data name="TwoStarsAndAbove" xml:space="preserve">
+    <value>2 sao trở lên</value>
+  </data>
+  <data name="OneStarAndAbove" xml:space="preserve">
+    <value>1 sao trở lên</value>
+  </data>
+  <data name="FromPrice" xml:space="preserve">
+    <value>Từ giá</value>
+  </data>
+  <data name="ToPrice" xml:space="preserve">
+    <value>Đến giá</value>
+  </data>
+  <data name="FromPriceCannotBeGreater" xml:space="preserve">
+    <value>'Từ giá' không được lớn hơn 'Đến giá'</value>
+  </data>
+  <data name="PriceCannotBeNegative" xml:space="preserve">
+    <value>Giá không được âm</value>
+  </data>
+  <data name="CategoryLoadError" xml:space="preserve">
+    <value>Lỗi tải danh mục: {0}</value>
+  </data>
+  <data name="FilterBy" xml:space="preserve">
+    <value>Lọc theo</value>
+  </data>
+  <data name="SortBy" xml:space="preserve">
+    <value>Sắp xếp theo</value>
+  </data>
+  <data name="Newest" xml:space="preserve">
+    <value>Mới nhất</value>
+  </data>
+  <data name="MostPopular" xml:space="preserve">
+    <value>Phổ biến nhất</value>
+  </data>
+  <data name="HighestRated" xml:space="preserve">
+    <value>Đánh giá cao nhất</value>
+  </data>
+  <data name="PriceLowToHigh" xml:space="preserve">
+    <value>Giá: Thấp đến Cao</value>
+  </data>
+  <data name="PriceHighToLow" xml:space="preserve">
+    <value>Giá: Cao đến Thấp</value>
+  </data>
+  <data name="ClearFilter" xml:space="preserve">
+    <value>Xóa bộ lọc</value>
+  </data>
+  
+  <!-- Checkout -->
+  <data name="PleaseLoginToContinue" xml:space="preserve">
+    <value>Vui lòng đăng nhập để tiếp tục</value>
+  </data>
+  <data name="Notification" xml:space="preserve">
+    <value>Thông báo</value>
+  </data>
+  <data name="CartLoadError" xml:space="preserve">
+    <value>Lỗi khi tải giỏ hàng: {0}</value>
+  </data>
+  <data name="EmptyCartMessage" xml:space="preserve">
+    <value>Giỏ hàng của bạn đang trống</value>
+  </data>
+  <data name="BrowseCourses" xml:space="preserve">
+    <value>Duyệt khóa học</value>
+  </data>
+  <data name="OrderSummary" xml:space="preserve">
+    <value>Tóm tắt đơn hàng</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>sản phẩm</value>
+  </data>
+  <data name="Subtotal" xml:space="preserve">
+    <value>Tạm tính</value>
+  </data>
+  <data name="Discount" xml:space="preserve">
+    <value>Giảm giá</value>
+  </data>
+  <data name="ApplyVoucher" xml:space="preserve">
+    <value>Áp dụng Voucher</value>
+  </data>
+  <data name="RemoveVoucher" xml:space="preserve">
+    <value>Xóa</value>
+  </data>
+  <data name="VoucherApplied" xml:space="preserve">
+    <value>Đã áp dụng voucher: {0}</value>
+  </data>
+  <data name="ProceedToPayment" xml:space="preserve">
+    <value>Tiến hành thanh toán</value>
+  </data>
+  <data name="SecurePayment" xml:space="preserve">
+    <value>🔒 Thanh toán an toàn</value>
+  </data>
+  
+  <!-- Course Detail -->
+  <data name="CourseLoadError" xml:space="preserve">
+    <value>Lỗi khi tải khóa học: {0}</value>
+  </data>
+  <data name="CourseNotFound" xml:space="preserve">
+    <value>Không tìm thấy khóa học</value>
+  </data>
+  <data name="CourseBreadcrumb" xml:space="preserve">
+    <value>Khóa học / {0} / {1}</value>
+  </data>
+  <data name="Reviews" xml:space="preserve">
+    <value>đánh giá</value>
+  </data>
+  <data name="StudentsCount" xml:space="preserve">
+    <value>{0} học viên</value>
+  </data>
+  <data name="InstructorLabel" xml:space="preserve">
+    <value>Giảng viên: {0}</value>
+  </data>
+  <data name="LastUpdated" xml:space="preserve">
+    <value>Cập nhật: {0}</value>
+  </data>
+  <data name="ChapterStats" xml:space="preserve">
+    <value>{0} chương • {1} bài học</value>
+  </data>
+  <data name="NoDescriptionYet" xml:space="preserve">
+    <value>Chưa có mô tả</value>
+  </data>
+  <data name="NotCategorizedYet" xml:space="preserve">
+    <value>Chưa phân loại</value>
+  </data>
+  <data name="ExpandAll" xml:space="preserve">
+    <value>Mở rộng tất cả</value>
+  </data>
+  <data name="CollapseAll" xml:space="preserve">
+    <value>Thu gọn tất cả</value>
+  </data>
+  <data name="SubscribeMonthly" xml:space="preserve">
+    <value>Đăng ký tháng</value>
+  </data>
+  <data name="ViewStatistics" xml:space="preserve">
+    <value>Xem thống kê</value>
+  </data>
+  
+  <!-- Flashcard -->
+  <data name="CardCountLabel" xml:space="preserve">
+    <value>📄 {0} thẻ</value>
+  </data>
+  <data name="FlashcardCardsHeader" xml:space="preserve">
+    <value>📄 Các thẻ Flashcard ({0})</value>
+  </data>
+  <data name="MustHaveAtLeastOneCard" xml:space="preserve">
+    <value>Phải có ít nhất 1 thẻ flashcard!</value>
+  </data>
+  <data name="PageInfo" xml:space="preserve">
+    <value>Trang {0} / {1}</value>
+  </data>
+  <data name="AddCard" xml:space="preserve">
+    <value>Thêm thẻ</value>
+  </data>
+  <data name="Term" xml:space="preserve">
+    <value>Thuật ngữ</value>
+  </data>
+  <data name="Definition" xml:space="preserve">
+    <value>Định nghĩa</value>
+  </data>
+  <data name="Front" xml:space="preserve">
+    <value>Mặt trước</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Mặt sau</value>
+  </data>
+  <data name="StudyNow" xml:space="preserve">
+    <value>Học ngay</value>
+  </data>
+  <data name="CreateSet" xml:space="preserve">
+    <value>Tạo bộ</value>
+  </data>
+  <data name="EnterTitle" xml:space="preserve">
+    <value>Nhập tiêu đề</value>
+  </data>
+  <data name="EnterTerm" xml:space="preserve">
+    <value>Nhập thuật ngữ</value>
+  </data>
+  <data name="EnterDefinition" xml:space="preserve">
+    <value>Nhập định nghĩa</value>
+  </data>
+  <data name="FlashcardSaveSuccess" xml:space="preserve">
+    <value>Lưu bộ flashcard thành công!</value>
+  </data>
+  <data name="FlashcardSaveFailed" xml:space="preserve">
+    <value>Lưu bộ flashcard thất bại!</value>
+  </data>
+  
+  <!-- Account Settings -->
+  <data name="AccountSecurity" xml:space="preserve">
+    <value>🔐 Bảo mật tài khoản</value>
+  </data>
+  <data name="EmailAddress" xml:space="preserve">
+    <value>Địa chỉ Email</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>Thay đổi</value>
+  </data>
+  <data name="CurrentPasswordPlaceholder" xml:space="preserve">
+    <value>Nhập mật khẩu hiện tại</value>
+  </data>
+  <data name="NewPasswordPlaceholder" xml:space="preserve">
+    <value>Nhập mật khẩu mới</value>
+  </data>
+  <data name="ConfirmNewPassword" xml:space="preserve">
+    <value>Xác nhận mật khẩu mới</value>
+  </data>
+  <data name="ConfirmNewPasswordPlaceholder" xml:space="preserve">
+    <value>Xác nhận mật khẩu mới</value>
+  </data>
+  <data name="UpdatePassword" xml:space="preserve">
+    <value>Cập nhật mật khẩu</value>
+  </data>
+  <data name="PasswordUpdated" xml:space="preserve">
+    <value>Cập nhật mật khẩu thành công!</value>
+  </data>
+  <data name="PasswordUpdateFailed" xml:space="preserve">
+    <value>Cập nhật mật khẩu thất bại!</value>
+  </data>
+  <data name="CurrentPasswordIncorrect" xml:space="preserve">
+    <value>Mật khẩu hiện tại không đúng!</value>
+  </data>
+  <data name="EmailUpdated" xml:space="preserve">
+    <value>Cập nhật email thành công!</value>
+  </data>
+  <data name="EmailUpdateFailed" xml:space="preserve">
+    <value>Cập nhật email thất bại!</value>
+  </data>
+  
+  <!-- Profile -->
+  <data name="ProfileUpdated" xml:space="preserve">
+    <value>Cập nhật hồ sơ thành công!</value>
+  </data>
+  <data name="ProfileUpdateFailed" xml:space="preserve">
+    <value>Cập nhật hồ sơ thất bại!</value>
+  </data>
+  <data name="ChangeAvatar" xml:space="preserve">
+    <value>Đổi ảnh đại diện</value>
+  </data>
+  <data name="RemoveAvatar" xml:space="preserve">
+    <value>Xóa ảnh đại diện</value>
+  </data>
+  <data name="Bio" xml:space="preserve">
+    <value>Giới thiệu</value>
+  </data>
+  <data name="EnterBio" xml:space="preserve">
+    <value>Giới thiệu về bản thân...</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>Ngày sinh</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Giới tính</value>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>Nam</value>
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value>Nữ</value>
+  </data>
+  <data name="OtherGender" xml:space="preserve">
+    <value>Khác</value>
+  </data>
+  <data name="PreferNotToSay" xml:space="preserve">
+    <value>Không muốn nói</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Địa chỉ</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Lưu thay đổi</value>
+  </data>
+  
+  <!-- Order History -->
+  <data name="OrderHistory" xml:space="preserve">
+    <value>Lịch sử đơn hàng</value>
+  </data>
+  <data name="OrderId" xml:space="preserve">
+    <value>Mã đơn hàng</value>
+  </data>
+  <data name="OrderDate" xml:space="preserve">
+    <value>Ngày đặt</value>
+  </data>
+  <data name="OrderStatus" xml:space="preserve">
+    <value>Trạng thái</value>
+  </data>
+  <data name="OrderAmount" xml:space="preserve">
+    <value>Số tiền</value>
+  </data>
+  <data name="ViewOrderDetails" xml:space="preserve">
+    <value>Xem chi tiết</value>
+  </data>
+  <data name="NoOrdersYet" xml:space="preserve">
+    <value>Bạn chưa có đơn hàng nào</value>
+  </data>
+  
+  <!-- Learning Progress -->
+  <data name="LearningProgress" xml:space="preserve">
+    <value>Tiến độ học tập</value>
+  </data>
+  <data name="Progress" xml:space="preserve">
+    <value>Tiến độ</value>
+  </data>
+  <data name="ProgressPercent" xml:space="preserve">
+    <value>Đã hoàn thành {0}%</value>
+  </data>
+  <data name="CompletedLessons" xml:space="preserve">
+    <value>Đã hoàn thành {0}/{1} bài học</value>
+  </data>
+  <data name="Certificate" xml:space="preserve">
+    <value>Chứng chỉ</value>
+  </data>
+  <data name="GetCertificate" xml:space="preserve">
+    <value>Nhận chứng chỉ</value>
+  </data>
+  <data name="NotEligibleForCertificate" xml:space="preserve">
+    <value>Hoàn thành khóa học để nhận chứng chỉ</value>
+  </data>
+  
+  <!-- Course Learning -->
+  <data name="MarkAsComplete" xml:space="preserve">
+    <value>Đánh dấu hoàn thành</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Đã hoàn thành</value>
+  </data>
+  <data name="NextLesson" xml:space="preserve">
+    <value>Bài tiếp theo</value>
+  </data>
+  <data name="PreviousLesson" xml:space="preserve">
+    <value>Bài trước</value>
+  </data>
+  <data name="LessonCompleted" xml:space="preserve">
+    <value>Hoàn thành bài học!</value>
+  </data>
+  <data name="CourseCompleted" xml:space="preserve">
+    <value>Chúc mừng! Bạn đã hoàn thành khóa học này!</value>
+  </data>
+  
+  <!-- Rating and Review -->
+  <data name="RateThisCourse" xml:space="preserve">
+    <value>Đánh giá khóa học này</value>
+  </data>
+  <data name="WriteReview" xml:space="preserve">
+    <value>Viết đánh giá</value>
+  </data>
+  <data name="YourRating" xml:space="preserve">
+    <value>Đánh giá của bạn</value>
+  </data>
+  <data name="YourReview" xml:space="preserve">
+    <value>Nhận xét của bạn</value>
+  </data>
+  <data name="SubmitReview" xml:space="preserve">
+    <value>Gửi đánh giá</value>
+  </data>
+  <data name="ReviewSubmitted" xml:space="preserve">
+    <value>Cảm ơn bạn đã đánh giá!</value>
+  </data>
+  <data name="ReviewSubmitFailed" xml:space="preserve">
+    <value>Gửi đánh giá thất bại!</value>
+  </data>
+  <data name="EditReview" xml:space="preserve">
+    <value>Sửa đánh giá</value>
+  </data>
+  <data name="DeleteReview" xml:space="preserve">
+    <value>Xóa đánh giá</value>
+  </data>
+  <data name="ReviewPlaceholder" xml:space="preserve">
+    <value>Chia sẻ trải nghiệm của bạn với khóa học này...</value>
+  </data>
+  
+  <!-- Quiz/Test -->
+  <data name="StartQuiz" xml:space="preserve">
+    <value>Bắt đầu kiểm tra</value>
+  </data>
+  <data name="SubmitQuiz" xml:space="preserve">
+    <value>Nộp bài</value>
+  </data>
+  <data name="QuizResult" xml:space="preserve">
+    <value>Kết quả kiểm tra</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Điểm</value>
+  </data>
+  <data name="CorrectAnswers" xml:space="preserve">
+    <value>Câu đúng</value>
+  </data>
+  <data name="WrongAnswers" xml:space="preserve">
+    <value>Câu sai</value>
+  </data>
+  <data name="Passed" xml:space="preserve">
+    <value>Đạt</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Không đạt</value>
+  </data>
+  <data name="RetryQuiz" xml:space="preserve">
+    <value>Làm lại</value>
+  </data>
+  <data name="ViewAnswers" xml:space="preserve">
+    <value>Xem đáp án</value>
+  </data>
+  <data name="TimeRemaining" xml:space="preserve">
+    <value>Thời gian còn lại</value>
+  </data>
+  <data name="QuestionNumber" xml:space="preserve">
+    <value>Câu {0} / {1}</value>
+  </data>
+  
+  <!-- Subscription -->
+  <data name="Subscription" xml:space="preserve">
+    <value>Gói đăng ký</value>
+  </data>
+  <data name="MonthlySubscription" xml:space="preserve">
+    <value>Gói tháng</value>
+  </data>
+  <data name="YearlySubscription" xml:space="preserve">
+    <value>Gói năm</value>
+  </data>
+  <data name="SubscriptionBenefits" xml:space="preserve">
+    <value>Quyền lợi gói đăng ký</value>
+  </data>
+  <data name="UnlimitedAccess" xml:space="preserve">
+    <value>Truy cập không giới hạn tất cả khóa học</value>
+  </data>
+  <data name="DownloadOffline" xml:space="preserve">
+    <value>Tải xuống xem ngoại tuyến</value>
+  </data>
+  <data name="CertificateIncluded" xml:space="preserve">
+    <value>Bao gồm chứng chỉ</value>
+  </data>
+  <data name="CancelAnytime" xml:space="preserve">
+    <value>Hủy bất cứ lúc nào</value>
+  </data>
+  <data name="Subscribe" xml:space="preserve">
+    <value>Đăng ký</value>
+  </data>
+  <data name="CurrentPlan" xml:space="preserve">
+    <value>Gói hiện tại</value>
+  </data>
+  <data name="UpgradePlan" xml:space="preserve">
+    <value>Nâng cấp gói</value>
+  </data>
+  <data name="RenewsOn" xml:space="preserve">
+    <value>Gia hạn vào {0}</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Hết hạn vào {0}</value>
+  </data>
+  
+  <!-- Notifications -->
+  <data name="Notifications" xml:space="preserve">
+    <value>Thông báo</value>
+  </data>
+  <data name="MarkAllAsRead" xml:space="preserve">
+    <value>Đánh dấu đã đọc tất cả</value>
+  </data>
+  <data name="NoNotifications" xml:space="preserve">
+    <value>Không có thông báo</value>
+  </data>
+  <data name="NewCourseAvailable" xml:space="preserve">
+    <value>Khóa học mới: {0}</value>
+  </data>
+  <data name="CourseUpdated" xml:space="preserve">
+    <value>Khóa học đã cập nhật: {0}</value>
+  </data>
+  <data name="PaymentReceived" xml:space="preserve">
+    <value>Đã nhận thanh toán cho {0}</value>
+  </data>
+  <data name="CertificateReady" xml:space="preserve">
+    <value>Chứng chỉ của bạn đã sẵn sàng!</value>
+  </data>
+  
+  <!-- Search -->
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Tìm kiếm khóa học, giảng viên...</value>
+  </data>
+  <data name="SearchResults" xml:space="preserve">
+    <value>Kết quả tìm kiếm</value>
+  </data>
+  <data name="NoResultsFound" xml:space="preserve">
+    <value>Không tìm thấy kết quả</value>
+  </data>
+  <data name="ResultsFor" xml:space="preserve">
+    <value>Kết quả cho "{0}"</value>
+  </data>
+  <data name="ShowingResults" xml:space="preserve">
+    <value>Hiển thị {0} kết quả</value>
+  </data>
+  
+  <!-- Common User Messages -->
+  <data name="SessionExpired" xml:space="preserve">
+    <value>Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.</value>
+  </data>
+  <data name="NetworkError" xml:space="preserve">
+    <value>Lỗi mạng. Vui lòng kiểm tra kết nối.</value>
+  </data>
+  <data name="SomethingWentWrong" xml:space="preserve">
+    <value>Đã có lỗi xảy ra. Vui lòng thử lại.</value>
+  </data>
+  <data name="FeatureComingSoon" xml:space="preserve">
+    <value>Tính năng này sắp ra mắt!</value>
+  </data>
+  <data name="PleaseWait" xml:space="preserve">
+    <value>Vui lòng chờ...</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Đang xử lý...</value>
+  </data>
+  
+  <!-- Additional Profile/Settings Strings -->
+  <data name="SecurityNote" xml:space="preserve">
+    <value>💡 Để bảo mật tài khoản, bạn nên sử dụng mật khẩu mạnh và thay đổi định kỳ.</value>
+  </data>
+  <data name="NewEmail" xml:space="preserve">
+    <value>Email mới</value>
+  </data>
+  <data name="PleaseEnterNewEmail" xml:space="preserve">
+    <value>Vui lòng nhập email mới!</value>
+  </data>
+  <data name="PleaseEnterCurrentPassword" xml:space="preserve">
+    <value>Vui lòng nhập mật khẩu hiện tại!</value>
+  </data>
+  <data name="PersonalInfo" xml:space="preserve">
+    <value>👤 Thông tin cá nhân</value>
+  </data>
+  <data name="Avatar" xml:space="preserve">
+    <value>Ảnh đại diện</value>
+  </data>
+  <data name="AvatarAutoGenerated" xml:space="preserve">
+    <value>Ảnh đại diện được tạo tự động từ tên của bạn</value>
+  </data>
+  <data name="CannotChangeUsername" xml:space="preserve">
+    <value>🔒 Không thể thay đổi</value>
+  </data>
+  <data name="EnterPhone" xml:space="preserve">
+    <value>Nhập số điện thoại...</value>
+  </data>
+  
+  <!-- Purchase History Strings -->
+  <data name="TotalOrders" xml:space="preserve">
+    <value>Tổng số đơn hàng: {0}</value>
+  </data>
+  <data name="TotalSpent" xml:space="preserve">
+    <value>Đã chi tiêu: {0} VND</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Tiết kiệm</value>
+  </data>
+  <data name="OrderLoadError" xml:space="preserve">
+    <value>Lỗi khi tải lịch sử mua hàng: {0}</value>
+  </data>
+  <data name="ExploreCourses" xml:space="preserve">
+    <value>Hãy khám phá các khóa học của chúng tôi!</value>
+  </data>
+  <data name="OrderNumber" xml:space="preserve">
+    <value>Đơn hàng #{0}</value>
+  </data>
+  <data name="UnknownCourse" xml:space="preserve">
+    <value>Khóa học không xác định</value>
+  </data>
+  <data name="AndMoreCourses" xml:space="preserve">
+    <value>và {0} khóa học khác</value>
+  </data>
+  
+  <!-- Admin Profile Strings -->
+  <data name="AdminAccountSecurity" xml:space="preserve">
+    <value>🔐 Bảo mật tài khoản Admin</value>
+  </data>
+  <data name="AdminPersonalInfo" xml:space="preserve">
+    <value>👤 Thông tin cá nhân Admin</value>
+  </data>
+  <data name="RoleLabel" xml:space="preserve">
+    <value>Vai trò</value>
+  </data>
+  <data name="AdminSecurityNote" xml:space="preserve">
+    <value>💡 Với vai trò quản trị viên, bạn nên sử dụng mật khẩu mạnh và bảo mật cao.</value>
+  </data>
+  <data name="AdminPasswordMinLength" xml:space="preserve">
+    <value>Mật khẩu admin phải có ít nhất 8 ký tự!</value>
+  </data>
+  <data name="AdminAccount" xml:space="preserve">
+    <value>Tài khoản Admin</value>
+  </data>
+  <data name="AccountSettingsTab" xml:space="preserve">
+    <value>Cài đặt tài khoản</value>
+  </data>
+  <data name="EditProfileTab" xml:space="preserve">
+    <value>Chỉnh sửa hồ sơ</value>
+  </data>
+  
+  <!-- Home Page Strings -->
+  <data name="WelcomeBack" xml:space="preserve">
+    <value>Chào mừng {0} trở lại!</value>
+  </data>
+  <data name="MotivationTitle" xml:space="preserve">
+    <value>Học những gì bạn có hứng thú</value>
+  </data>
+  <data name="MotivationText" xml:space="preserve">
+    <value>Các kỹ năng cho hiện tại (và tương lai của bạn). Hãy bắt đầu học với chúng tôi.</value>
+  </data>
+  <data name="RecommendedForYou" xml:space="preserve">
+    <value>🎯 Gợi ý dành cho bạn</value>
+  </data>
+  <data name="RecommendedDesc" xml:space="preserve">
+    <value>Khóa học được chọn riêng dựa trên sở thích của bạn</value>
+  </data>
+  <data name="PopularCourses" xml:space="preserve">
+    <value>🔥 Khóa học phổ biến</value>
+  </data>
+  <data name="FlashcardSets" xml:space="preserve">
+    <value>📚 Bộ flashcard nên học</value>
+  </data>
+  <data name="FlashcardDesc" xml:space="preserve">
+    <value>Học từ vựng và kiến thức một cách hiệu quả</value>
+  </data>
+  <data name="ViewAll" xml:space="preserve">
+    <value>Xem tất cả</value>
+  </data>
+  <data name="Cards" xml:space="preserve">
+    <value>thẻ</value>
+  </data>
+  
+  <!-- Header/Navigation Strings -->
+  <data name="Explore" xml:space="preserve">
+    <value>Khám phá</value>
+  </data>
+  <data name="Instructor" xml:space="preserve">
+    <value>Giảng viên</value>
+  </data>
+  <data name="Learning" xml:space="preserve">
+    <value>Học tập</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Tìm kiếm khóa học...</value>
+  </data>
+  <data name="LogoutConfirm" xml:space="preserve">
+    <value>Bạn có chắc chắn muốn đăng xuất?</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Xác nhận</value>
+  </data>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>Bạn không có quyền truy cập!</value>
+  </data>
+  <data name="FilterCategory" xml:space="preserve">
+    <value>Lọc danh mục: {0}</value>
+  </data>
+  <data name="PleaseLogin" xml:space="preserve">
+    <value>Vui lòng đăng nhập để sử dụng tính năng này!</value>
+  </data>
+  
+  <!-- Premium/Subscription Strings -->
+  <data name="PremiumExpireIn1Day" xml:space="preserve">
+    <value>Gói Premium của bạn sẽ hết hạn sau 1 ngày! Gia hạn ngay để không bị gián đoạn.</value>
+  </data>
+  <data name="PremiumExpireInDays" xml:space="preserve">
+    <value>Gói Premium của bạn sẽ hết hạn sau {0} ngày. Đừng quên gia hạn!</value>
+  </data>
+  <data name="PremiumExpireWarning1Day" xml:space="preserve">
+    <value>⚠️ Gói Premium của bạn sẽ hết hạn sau 1 ngày!
+
+Hãy gia hạn ngay để tiếp tục truy cập không giới hạn tất cả khóa học.</value>
+  </data>
+  <data name="PremiumExpireWarning2Days" xml:space="preserve">
+    <value>⚠️ Gói Premium của bạn sẽ hết hạn sau 2 ngày!
+
+Đừng quên gia hạn để tiếp tục học tập không bị gián đoạn.</value>
+  </data>
+  <data name="PremiumExpireWarningDays" xml:space="preserve">
+    <value>⚠️ Gói Premium của bạn sẽ hết hạn sau {0} ngày!
+
+Gia hạn sớm để được giảm giá đặc biệt!</value>
+  </data>
+  <data name="PremiumRenewalReminder" xml:space="preserve">
+    <value>Nhắc nhở gia hạn Premium</value>
+  </data>
+  <data name="RenewNow" xml:space="preserve">
+    <value>Gia hạn ngay</value>
+  </data>
+  <data name="UsingPremium" xml:space="preserve">
+    <value>Bạn đang sử dụng gói Premium</value>
+  </data>
+  <data name="UnlimitedAccess" xml:space="preserve">
+    <value>Bạn có quyền truy cập không giới hạn vào tất cả các khóa học!</value>
+  </data>
+  
+  <!-- Course Control/Filter Strings -->
+  <data name="Filter" xml:space="preserve">
+    <value>Bộ lọc</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Danh mục</value>
+  </data>
+  <data name="Rating" xml:space="preserve">
+    <value>Đánh giá</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Giá</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Áp dụng</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Làm mới</value>
+  </data>
+  <data name="FromPrice" xml:space="preserve">
+    <value>Từ giá</value>
+  </data>
+  <data name="ToPrice" xml:space="preserve">
+    <value>Đến giá</value>
+  </data>
+  <data name="AllCourses" xml:space="preserve">
+    <value>Tất cả khóa học</value>
+  </data>
+  <data name="SortBy" xml:space="preserve">
+    <value>Sắp xếp theo</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>Tất cả</value>
+  </data>
+  <data name="FiveStars" xml:space="preserve">
+    <value>5 sao</value>
+  </data>
+  <data name="FourStarsAndUp" xml:space="preserve">
+    <value>4 sao trở lên</value>
+  </data>
+  <data name="ThreeStarsAndUp" xml:space="preserve">
+    <value>3 sao trở lên</value>
+  </data>
+  <data name="TwoStarsAndUp" xml:space="preserve">
+    <value>2 sao trở lên</value>
+  </data>
+  <data name="OneStarAndUp" xml:space="preserve">
+    <value>1 sao trở lên</value>
+  </data>
+  <data name="CategoryLoadError" xml:space="preserve">
+    <value>Lỗi tải danh mục: {0}</value>
+  </data>
+  <data name="FromPriceGreaterThanToPrice" xml:space="preserve">
+    <value>'Từ giá' không được lớn hơn 'Đến giá'</value>
+  </data>
+  <data name="PriceCannotBeNegative" xml:space="preserve">
+    <value>Giá không được âm</value>
+  </data>
+  <data name="CourseCount" xml:space="preserve">
+    <value>{0} khóa học</value>
+  </data>
+  <data name="NoCoursesFound" xml:space="preserve">
+    <value>Không tìm thấy khóa học phù hợp
+Thử điều chỉnh bộ lọc của bạn</value>
+  </data>
+  <data name="NavigationError" xml:space="preserve">
+    <value>Không thể điều hướng đến trang chi tiết</value>
+  </data>
+  
+  <!-- Library Control Strings -->
+  <data name="MyLibrary" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="AllCoursesTab" xml:space="preserve">
+    <value>📚 Tất cả khóa học</value>
+  </data>
+  <data name="CertificatesTab" xml:space="preserve">
+    <value>🎓 Chứng chỉ</value>
+  </data>
+  <data name="NoCourseYet" xml:space="preserve">
+    <value>Chưa có khóa học nào</value>
+  </data>
+  <data name="NoCourseYetDesc" xml:space="preserve">
+    <value>Bạn chưa học khóa học nào. Hãy bắt đầu học ngay hôm nay!</value>
+  </data>
+  <data name="NoCourseYetDescPurchased" xml:space="preserve">
+    <value>Bạn chưa mua khóa học nào. Hãy bắt đầu học ngay hôm nay!</value>
+  </data>
+  <data name="CourseLoadError" xml:space="preserve">
+    <value>Lỗi khi tải khóa học: {0}</value>
+  </data>
+  <data name="ComprehensiveCourse" xml:space="preserve">
+    <value>Khóa học toàn diện</value>
+  </data>
+  <data name="ContinueLearning" xml:space="preserve">
+    <value>Tiếp tục học</value>
+  </data>
+  <data name="NoFlashcardsYet" xml:space="preserve">
+    <value>Chưa có flashcard nào</value>
+  </data>
+  <data name="NoFlashcardsYetDesc" xml:space="preserve">
+    <value>Bạn chưa tạo flashcard nào. Hãy bắt đầu tạo ngay hôm nay!</value>
+  </data>
+  <data name="FlashcardLoadError" xml:space="preserve">
+    <value>Lỗi khi tải flashcards: {0}</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Mở</value>
+  </data>
+  <data name="NoCertificatesYet" xml:space="preserve">
+    <value>Chưa có chứng chỉ nào</value>
+  </data>
+  <data name="NoCertificatesYetDesc" xml:space="preserve">
+    <value>Bạn chưa nhận chứng chỉ. Hãy hoàn thành khóa học để nhận chứng chỉ!</value>
+  </data>
+  <data name="CertificateLoadError" xml:space="preserve">
+    <value>Lỗi khi tải chứng chỉ: {0}</value>
+  </data>
+  
+  <!-- MyCoursesControl (Instructor) Strings -->
+  <data name="MyCourses" xml:space="preserve">
+    <value>Khóa học của tôi</value>
+  </data>
+  <data name="CreateCourse" xml:space="preserve">
+    <value>Tạo khóa học</value>
+  </data>
+  <data name="Revenue" xml:space="preserve">
+    <value>Doanh thu</value>
+  </data>
+  <data name="MyFlashcards" xml:space="preserve">
+    <value>Flashcard của tôi</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Hiển thị</value>
+  </data>
+  <data name="Entries" xml:space="preserve">
+    <value>dữ liệu</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Tìm kiếm</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Tiêu đề</value>
+  </data>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>Tạo lúc</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Trạng thái</value>
+  </data>
+  <data name="Published" xml:space="preserve">
+    <value>Xuất bản</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Ảnh</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Hành động</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>Đầu tiên</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Trước</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Sau</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>Cuối cùng</value>
+  </data>
+  <data name="PleaseLoginMessage" xml:space="preserve">
+    <value>Vui lòng đăng nhập!</value>
+  </data>
+  <data name="Notification" xml:space="preserve">
+    <value>Thông báo</value>
+  </data>
+  <data name="DataLoadError" xml:space="preserve">
+    <value>Lỗi khi tải dữ liệu: {0}</value>
+  </data>
+  <data name="CourseNotFound" xml:space="preserve">
+    <value>Không tìm thấy khóa học!</value>
+  </data>
+  <data name="AutoCheckResult" xml:space="preserve">
+    <value>Kết quả kiểm tra tự động:</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Điểm</value>
+  </data>
+  <data name="Errors" xml:space="preserve">
+    <value>Lỗi</value>
+  </data>
+  <data name="Warnings" xml:space="preserve">
+    <value>Cảnh báo</value>
+  </data>
+  <data name="CourseNotEligible" xml:space="preserve">
+    <value>Khóa học chưa đủ điều kiện gửi duyệt.</value>
+  </data>
+  <data name="ErrorsToFix" xml:space="preserve">
+    <value>Các lỗi cần sửa</value>
+  </data>
+  <data name="CannotSubmit" xml:space="preserve">
+    <value>Không thể gửi duyệt</value>
+  </data>
+  <data name="HasWarnings" xml:space="preserve">
+    <value>Có một số cảnh báo. Bạn có muốn tiếp tục gửi duyệt?</value>
+  </data>
+  <data name="ConfirmSubmit" xml:space="preserve">
+    <value>Xác nhận gửi duyệt</value>
+  </data>
+  <data name="CourseReady" xml:space="preserve">
+    <value>Khóa học đã sẵn sàng để gửi duyệt.</value>
+  </data>
+  <data name="ConfirmSubmitCourse" xml:space="preserve">
+    <value>Bạn có muốn gửi khóa học để admin kiểm duyệt?</value>
+  </data>
+  <data name="CourseSubmitted" xml:space="preserve">
+    <value>Đã gửi khóa học để kiểm duyệt!
+
+Admin sẽ xem xét và phản hồi trong thời gian sớm nhất.</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Thành công</value>
+  </data>
+  <data name="CannotSubmitCourse" xml:space="preserve">
+    <value>Không thể gửi khóa học!</value>
+  </data>
+  <data name="NoLessonsYet" xml:space="preserve">
+    <value>Khóa học chưa có bài học nào!</value>
+  </data>
+  <data name="CourseOpenError" xml:space="preserve">
+    <value>Lỗi khi mở khóa học: {0}</value>
+  </data>
+  <data name="CannotLoadCourseData" xml:space="preserve">
+    <value>Không thể tải dữ liệu khóa học</value>
+  </data>
+  <data name="EditorOpenError" xml:space="preserve">
+    <value>Lỗi khi mở trình chỉnh sửa: {0}</value>
+  </data>
+  <data name="DeleteCourseConfirm" xml:space="preserve">
+    <value>Bạn có chắc chắn muốn xóa khóa học '{0}'?
+
+Hành động này không thể hoàn tác.</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Xác nhận xóa</value>
+  </data>
+  <data name="CourseDeletedSuccess" xml:space="preserve">
+    <value>Đã xóa khóa học thành công!</value>
+  </data>
+  <data name="CourseDeleteError" xml:space="preserve">
+    <value>Lỗi khi xóa khóa học: {0}</value>
+  </data>
+  <data name="ShowingEntries" xml:space="preserve">
+    <value>Hiển thị {0} tới {1} của {2} dữ liệu</value>
+  </data>
+  <data name="StatusPending" xml:space="preserve">
+    <value>Chờ duyệt</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Đã duyệt</value>
+  </data>
+  <data name="StatusRejected" xml:space="preserve">
+    <value>Từ chối</value>
+  </data>
+  <data name="StatusNeedsRevision" xml:space="preserve">
+    <value>Cần sửa</value>
+  </data>
+  <data name="StatusNotSubmitted" xml:space="preserve">
+    <value>Chưa gửi</value>
+  </data>
+  
+  <!-- Search Filter Keys -->
+  <data name="FilterAll" xml:space="preserve">
+    <value>Tất cả</value>
+  </data>
+  <data name="FilterTitle" xml:space="preserve">
+    <value>Tiêu đề</value>
+  </data>
+  <data name="FilterCategory" xml:space="preserve">
+    <value>Danh mục</value>
+  </data>
+  <data name="FilterPrice" xml:space="preserve">
+    <value>Giá</value>
+  </data>
+  <data name="FilterCreatedAt" xml:space="preserve">
+    <value>Tạo lúc</value>
+  </data>
+  <data name="FilterStatus" xml:space="preserve">
+    <value>Trạng thái</value>
+  </data>
+  <data name="FilterPublished" xml:space="preserve">
+    <value>Xuất bản</value>
+  </data>
+  <data name="StatusPublished" xml:space="preserve">
+    <value>đã xuất bản</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>nháp</value>
+  </data>
+  <data name="GenericError" xml:space="preserve">
+    <value>Lỗi: {0}</value>
+  </data>
+  
+  <!-- Cart/Checkout Strings -->
+  <data name="YourCart" xml:space="preserve">
+    <value>Giỏ hàng của bạn</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Tổng</value>
+  </data>
+  <data name="GoToCart" xml:space="preserve">
+    <value>Chuyển đến giỏ hàng</value>
+  </data>
+  <data name="CartEmpty" xml:space="preserve">
+    <value>Giỏ hàng trống</value>
+  </data>
+  <data name="CartLoadError" xml:space="preserve">
+    <value>Lỗi khi tải giỏ hàng: {0}</value>
+  </data>
+  <data name="PleaseLoginToContinue" xml:space="preserve">
+    <value>Vui lòng đăng nhập để tiếp tục</value>
+  </data>
+  <data name="RemoveCourseConfirm" xml:space="preserve">
+    <value>Bạn có chắc muốn xóa khóa học này?</value>
+  </data>
+  <data name="DeleteError" xml:space="preserve">
+    <value>Lỗi khi xóa: {0}</value>
+  </data>
+  <data name="PleaseLoginToPayment" xml:space="preserve">
+    <value>Vui lòng đăng nhập để thanh toán</value>
+  </data>
+  <data name="MoMoPaymentSuccess" xml:space="preserve">
+    <value>Thanh toán MoMo thành công!</value>
+  </data>
+  <data name="MoMoPaymentIncomplete" xml:space="preserve">
+    <value>Thanh toán MoMo không hoàn tất.</value>
+  </data>
+  <data name="MoMoPaymentError" xml:space="preserve">
+    <value>Lỗi khi khởi tạo thanh toán MoMo: {0}</value>
+  </data>
+  <data name="PaymentForCourses" xml:space="preserve">
+    <value>Thanh toán {0} khóa học</value>
+  </data>
+  <data name="PleaseLoginForVoucher" xml:space="preserve">
+    <value>Vui lòng đăng nhập để sử dụng voucher</value>
+  </data>
+  <data name="CannotApply" xml:space="preserve">
+    <value>Không thể áp dụng</value>
   </data>
 </root>

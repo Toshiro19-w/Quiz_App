@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.Controllers;
@@ -20,6 +21,7 @@ namespace WinFormsApp1.View.User.Controls
 		{
 			InitializeComponent();
 			_flashcardController = new FlashcardController();
+			ApplyLocalization();
 			if (showFlashcards)
 			{
 				ShowFlashcardsTab();
@@ -28,6 +30,14 @@ namespace WinFormsApp1.View.User.Controls
 			{
 				ShowCoursesTab();
 			}
+		}
+
+		private void ApplyLocalization()
+		{
+			lblTitle.Text = LanguageHelper.GetString("MyLibrary");
+			btnAllCourses.Text = LanguageHelper.GetString("AllCoursesTab");
+			btnFlashcards.Text = "📇 Flashcards";
+			btnCertificates.Text = LanguageHelper.GetString("CertificatesTab");
 		}
 
         private void HeaderPanel_Paint(object sender, PaintEventArgs e)
@@ -163,8 +173,8 @@ namespace WinFormsApp1.View.User.Controls
                         if (merged.Count == 0)
                         {
                             ShowEmptyState(
-                                "Chưa có khóa học nào",
-                                "Bạn chưa học khóa học nào. Hãy bắt đầu học ngay hôm nay!"
+                                LanguageHelper.GetString("NoCourseYet"),
+                                LanguageHelper.GetString("NoCourseYetDesc")
                             );
                             return;
                         }
@@ -192,8 +202,8 @@ namespace WinFormsApp1.View.User.Controls
                     if (purchases.Count == 0)
                     {
                         ShowEmptyState(
-                            "Chưa có khóa học nào",
-                            "Bạn chưa mua khóa học nào. Hãy bắt đầu học ngay hôm nay!"
+                            LanguageHelper.GetString("NoCourseYet"),
+                            LanguageHelper.GetString("NoCourseYetDescPurchased")
                         );
                         return;
                     }
@@ -207,7 +217,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải khóa học: {ex.Message}", "Lỗi",
+                MessageBox.Show(LanguageHelper.GetString("CourseLoadError", ex.Message), LanguageHelper.GetString("Error"),
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -232,7 +242,7 @@ namespace WinFormsApp1.View.User.Controls
 
             var titleLabel = new Label
             {
-                Text = "Bạn đang sử dụng gói Premium",
+                Text = LanguageHelper.GetString("UsingPremium"),
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = Color.FromArgb(46, 125, 50),
                 Location = new Point(60, 10),
@@ -241,7 +251,7 @@ namespace WinFormsApp1.View.User.Controls
 
             var descLabel = new Label
             {
-                Text = "Bạn có quyền truy cập không giới hạn vào tất cả các khóa học!",
+                Text = LanguageHelper.GetString("UnlimitedAccess"),
                 Font = new Font("Segoe UI", 10),
                 ForeColor = Color.FromArgb(46, 125, 50),
                 Location = new Point(60, 35),
@@ -327,7 +337,7 @@ namespace WinFormsApp1.View.User.Controls
             // Course description
             var lblDescription = new Label
             {
-                Text = course.Summary ?? "Khóa học toàn diện",
+                Text = course.Summary ?? LanguageHelper.GetString("ComprehensiveCourse"),
                 Location = new Point(15, 255),
                 Size = new Size(320, 20),
                 Font = new Font("Segoe UI", 8),
@@ -338,7 +348,7 @@ namespace WinFormsApp1.View.User.Controls
             // Continue button
             var btnContinue = new Button
             {
-                Text = "🎓 Tiếp tục học",
+                Text = "🎓 " + LanguageHelper.GetString("ContinueLearning"),
                 Location = new Point(15, 280),
                 Size = new Size(320, 35),
                 BackColor = Color.FromArgb(88, 56, 255),
@@ -414,8 +424,8 @@ namespace WinFormsApp1.View.User.Controls
                 if (flashcardSets.Count == 0)
                 {
                     ShowEmptyState(
-                        "Chưa có flashcard nào",
-                        "Bạn chưa tạo flashcard nào. Hãy bắt đầu tạo ngay hôm nay!"
+                        LanguageHelper.GetString("NoFlashcardsYet"),
+                        LanguageHelper.GetString("NoFlashcardsYetDesc")
                     );
                     return;
                 }
@@ -428,7 +438,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải flashcards: {ex.Message}", "Lỗi",
+                MessageBox.Show(LanguageHelper.GetString("FlashcardLoadError", ex.Message), LanguageHelper.GetString("Error"),
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -437,7 +447,7 @@ namespace WinFormsApp1.View.User.Controls
 		{
 				var card = new FlashcardSetCardControl
 				{
-					DetailButtonText = " Mở",
+					DetailButtonText = " " + LanguageHelper.GetString("Open"),
 					ShowStudyButton = false
 				};
 			card.Bind(set);
@@ -484,8 +494,8 @@ namespace WinFormsApp1.View.User.Controls
                 if (certs.Count == 0)
                 {
                     ShowEmptyState(
-                        "Chưa có chứng chỉ nào",
-                        "Bạn chưa nhận chứng chỉ. Hãy hoàn thành khóa học để nhận chứng chỉ!"
+                        LanguageHelper.GetString("NoCertificatesYet"),
+                        LanguageHelper.GetString("NoCertificatesYetDesc")
                     );
                     return;
                 }
@@ -498,7 +508,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải chứng chỉ: {ex.Message}", "Lỗi",
+                MessageBox.Show(LanguageHelper.GetString("CertificateLoadError", ex.Message), LanguageHelper.GetString("Error"),
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -28,8 +29,26 @@ namespace WinFormsApp1.View.User.Controls
             paginationControl1.Initialize(12);
             paginationControl1.PageChanged += PaginationControl_PageChanged;
             
+            ApplyLocalization();
             InitializeFilters();
             LoadCourses();
+        }
+
+        private void ApplyLocalization()
+        {
+            // Filter panel
+            lblFilterHeader.Text = LanguageHelper.GetString("Filter");
+            label1.Text = LanguageHelper.GetString("Category");
+            lblRatingHeader.Text = LanguageHelper.GetString("Rating");
+            lblPriceHeader.Text = LanguageHelper.GetString("Price");
+            btnApply.Text = LanguageHelper.GetString("Apply");
+            btnClear.Text = LanguageHelper.GetString("Reset");
+            txtFilterFromPrice.PlaceholderText = LanguageHelper.GetString("FromPrice");
+            txtFilterToPrice.PlaceholderText = LanguageHelper.GetString("ToPrice");
+            
+            // Header
+            lblHeader.Text = LanguageHelper.GetString("AllCourses");
+            lblSortLabel.Text = LanguageHelper.GetString("SortBy");
         }
 
         private void PaginationControl_PageChanged(object sender, int newPage)
@@ -44,12 +63,12 @@ namespace WinFormsApp1.View.User.Controls
             
             // Setup rating filter
             cbbFilterRate.Items.Clear();
-            cbbFilterRate.Items.Add("Tất cả");
-            cbbFilterRate.Items.Add("5 sao");
-            cbbFilterRate.Items.Add("4 sao trở lên");
-            cbbFilterRate.Items.Add("3 sao trở lên");
-            cbbFilterRate.Items.Add("2 sao trở lên");
-            cbbFilterRate.Items.Add("1 sao trở lên");
+            cbbFilterRate.Items.Add(LanguageHelper.GetString("All"));
+            cbbFilterRate.Items.Add(LanguageHelper.GetString("FiveStars"));
+            cbbFilterRate.Items.Add(LanguageHelper.GetString("FourStarsAndUp"));
+            cbbFilterRate.Items.Add(LanguageHelper.GetString("ThreeStarsAndUp"));
+            cbbFilterRate.Items.Add(LanguageHelper.GetString("TwoStarsAndUp"));
+            cbbFilterRate.Items.Add(LanguageHelper.GetString("OneStarAndUp"));
             cbbFilterRate.SelectedIndex = 0;
             
             // Only allow numbers in price textboxes
@@ -89,7 +108,7 @@ namespace WinFormsApp1.View.User.Controls
             {
                 if (fromPrice > toPrice)
                 {
-                    MessageBox.Show("'Từ giá' không được lớn hơn 'Đến giá'", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(LanguageHelper.GetString("FromPriceGreaterThanToPrice"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     
                     // Swap values
                     var temp = txtFilterFromPrice.Text;
@@ -110,7 +129,7 @@ namespace WinFormsApp1.View.User.Controls
                     .ToListAsync();
 
                 cbbFilterCategory.Items.Clear();
-                cbbFilterCategory.Items.Add("Tất cả");
+                cbbFilterCategory.Items.Add(LanguageHelper.GetString("All"));
                 
                 foreach (var category in categories)
                 {
@@ -122,7 +141,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải danh mục: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("CategoryLoadError", ex.Message), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -159,13 +178,13 @@ namespace WinFormsApp1.View.User.Controls
                 {
                     if (fromPrice > toPrice)
                     {
-                        MessageBox.Show("'Từ giá' không được lớn hơn 'Đến giá'", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show(LanguageHelper.GetString("FromPriceGreaterThanToPrice"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
                     
                     if (fromPrice < 0 || toPrice < 0)
                     {
-                        MessageBox.Show("Giá không được âm", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show(LanguageHelper.GetString("PriceCannotBeNegative"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
                 }
@@ -282,7 +301,7 @@ namespace WinFormsApp1.View.User.Controls
                 _allFilteredCourses = await query.ToListAsync();
 
                 // Update course count with total
-                lblCourseCount.Text = $"{_allFilteredCourses.Count} khóa học";
+                lblCourseCount.Text = LanguageHelper.GetString("CourseCount", _allFilteredCourses.Count);
 
                 // Update pagination
                 paginationControl1.UpdatePagination(_allFilteredCourses.Count);
@@ -292,7 +311,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("Error") + ": " + ex.Message, LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -304,7 +323,7 @@ namespace WinFormsApp1.View.User.Controls
             {
                 var noResultLabel = new Label
                 {
-                    Text = "Không tìm thấy khóa học phù hợp\nThử điều chỉnh bộ lọc của bạn",
+                    Text = LanguageHelper.GetString("NoCoursesFound"),
                     Font = new Font("Segoe UI", 14F),
                     ForeColor = Color.FromArgb(108, 117, 125),
                     TextAlign = ContentAlignment.MiddleCenter,
@@ -345,7 +364,7 @@ namespace WinFormsApp1.View.User.Controls
             }
             else
             {
-                MessageBox.Show("Không thể điều hướng đến trang chi tiết", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("NavigationError"), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
+using WinFormsApp1.Localization;
 
 namespace WinFormsApp1.View.Admin
 {
@@ -60,7 +61,7 @@ namespace WinFormsApp1.View.Admin
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(350, 45);
             this.titleLabel.TabIndex = 0;
-            this.titleLabel.Text = "💰 Phân tích doanh thu";
+            this.titleLabel.Text = LanguageHelper.GetString("RevenueAnalytics");
             // 
             // filterPanel
             // 
@@ -90,7 +91,7 @@ namespace WinFormsApp1.View.Admin
             this.fromLabel.Name = "fromLabel";
             this.fromLabel.Size = new System.Drawing.Size(53, 15);
             this.fromLabel.TabIndex = 0;
-            this.fromLabel.Text = "Từ ngày:";
+            this.fromLabel.Text = LanguageHelper.GetString("FromDateLabel");
             // 
             // startDatePicker
             // 
@@ -110,7 +111,7 @@ namespace WinFormsApp1.View.Admin
             this.toLabel.Name = "toLabel";
             this.toLabel.Size = new System.Drawing.Size(60, 15);
             this.toLabel.TabIndex = 2;
-            this.toLabel.Text = "Đến ngày:";
+            this.toLabel.Text = LanguageHelper.GetString("ToDateLabel");
             // 
             // endDatePicker
             // 
@@ -130,7 +131,7 @@ namespace WinFormsApp1.View.Admin
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(62, 15);
             this.statusLabel.TabIndex = 4;
-            this.statusLabel.Text = "Trạng thái:";
+            this.statusLabel.Text = LanguageHelper.GetString("FilterStatus");
             // 
             // statusCombo
             // 
@@ -150,7 +151,7 @@ namespace WinFormsApp1.View.Admin
             this.providerLabel.Name = "providerLabel";
             this.providerLabel.Size = new System.Drawing.Size(34, 15);
             this.providerLabel.TabIndex = 6;
-            this.providerLabel.Text = "NCC:";
+            this.providerLabel.Text = LanguageHelper.GetString("ProviderLabel");
             // 
             // providerCombo
             // 
@@ -174,7 +175,7 @@ namespace WinFormsApp1.View.Admin
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(90, 35);
             this.applyButton.TabIndex = 8;
-            this.applyButton.Text = "Áp dụng";
+            this.applyButton.Text = LanguageHelper.GetString("Apply");
             this.applyButton.UseVisualStyleBackColor = false;
             // 
             // resetButton
@@ -189,7 +190,7 @@ namespace WinFormsApp1.View.Admin
             this.resetButton.Name = "resetButton";
             this.resetButton.Size = new System.Drawing.Size(90, 35);
             this.resetButton.TabIndex = 9;
-            this.resetButton.Text = "Đặt lại";
+            this.resetButton.Text = LanguageHelper.GetString("Reset");
             this.resetButton.UseVisualStyleBackColor = false;
             // 
             // statsFlowPanel

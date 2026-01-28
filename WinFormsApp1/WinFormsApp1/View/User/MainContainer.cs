@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.View.User.Components;
 
 namespace WinFormsApp1.View.User
@@ -20,6 +21,7 @@ namespace WinFormsApp1.View.User
         {
             InitializeComponent();
             SetupUI();
+            ApplyLocalization();
             /*SetupEventHandlers();*/
             SetupProfileDropdown();
             SetupCartDropdown();
@@ -74,8 +76,8 @@ namespace WinFormsApp1.View.User
             var messageLabel = new Label
             {
                 Text = daysRemaining == 1 
-                    ? "Gói Premium của bạn sẽ hết hạn sau 1 ngày! Gia hạn ngay để không bị gián đoạn."
-                    : $"Gói Premium của bạn sẽ hết hạn sau {daysRemaining} ngày. Đừng quên gia hạn!",
+                    ? LanguageHelper.GetString("PremiumExpireIn1Day")
+                    : LanguageHelper.GetString("PremiumExpireInDays", daysRemaining),
                 Font = new Font("Segoe UI", 11F, FontStyle.Bold),
                 ForeColor = Color.White,
                 AutoSize = true,
@@ -85,7 +87,7 @@ namespace WinFormsApp1.View.User
             // Button gia hạn
             var renewButton = new Button
             {
-                Text = "Gia hạn ngay",
+                Text = LanguageHelper.GetString("RenewNow"),
                 Size = new Size(120, 35),
                 FlatStyle = FlatStyle.Flat,
                 BackColor = Color.White,
@@ -137,17 +139,14 @@ namespace WinFormsApp1.View.User
         {
             string message = daysRemaining switch
             {
-                1 => "⚠️ Gói Premium của bạn sẽ hết hạn sau 1 ngày!\n\n" +
-                     "Hãy gia hạn ngay để tiếp tục truy cập không giới hạn tất cả khóa học.",
-                2 => "⚠️ Gói Premium của bạn sẽ hết hạn sau 2 ngày!\n\n" +
-                     "Đừng quên gia hạn để tiếp tục học tập không bị gián đoạn.",
-                _ => $"⚠️ Gói Premium của bạn sẽ hết hạn sau {daysRemaining} ngày!\n\n" +
-                     "Gia hạn sớm để được giảm giá đặc biệt!"
+                1 => LanguageHelper.GetString("PremiumExpireWarning1Day"),
+                2 => LanguageHelper.GetString("PremiumExpireWarning2Days"),
+                _ => LanguageHelper.GetString("PremiumExpireWarningDays", daysRemaining)
             };
 
             var result = MessageBox.Show(
                 message,
-                "Nhắc nhở gia hạn Premium",
+                LanguageHelper.GetString("PremiumRenewalReminder"),
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning,
                 MessageBoxDefaultButton.Button1);
@@ -181,6 +180,17 @@ namespace WinFormsApp1.View.User
 
             // Navigate to home by default
             NavigateToControl(new Controls.HomeControl());
+        }
+
+        private void ApplyLocalization()
+        {
+            // Header buttons
+            btnKhamPha.Text = LanguageHelper.GetString("Explore");
+            btnGiangVien.Text = LanguageHelper.GetString("Instructor");
+            btnHocTap.Text = LanguageHelper.GetString("Learning");
+            
+            // Search placeholder
+            txtSearch.PlaceholderText = LanguageHelper.GetString("SearchPlaceholder");
         }
 
         private void SetupCartDropdown()
@@ -249,7 +259,7 @@ namespace WinFormsApp1.View.User
                 }
                 else
                 {
-                    ToastHelper.Show(this, "Bạn không có quyền truy cập!");
+                    ToastHelper.Show(this, LanguageHelper.GetString("AccessDenied"));
                 }
             };
 
@@ -306,7 +316,7 @@ namespace WinFormsApp1.View.User
                 NavigateToControl(courseControl);
                 // fire-and-forget filter
                 _ = courseControl.FilterByCategory(cat.Slug);
-                ToastHelper.Show(this, $"Lọc danh mục: {cat.Name}");
+                ToastHelper.Show(this, LanguageHelper.GetString("FilterCategory", cat.Name));
             };
 
             this.Controls.Add(categoriesDropdown);
@@ -507,7 +517,7 @@ namespace WinFormsApp1.View.User
 
         private void Logout()
         {
-            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận",
+            var result = MessageBox.Show(LanguageHelper.GetString("LogoutConfirm"), LanguageHelper.GetString("Confirm"),
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
@@ -526,7 +536,7 @@ namespace WinFormsApp1.View.User
                 var currentUser = AuthHelper.CurrentUser;
                 if (currentUser == null)
                 {
-                    ToastHelper.Show(this, "Vui lòng đăng nhập để sử dụng tính năng này!");
+                    ToastHelper.Show(this, LanguageHelper.GetString("PleaseLogin"));
                     return;
                 }
 

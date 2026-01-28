@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.View.User.Controls.CourseControls;
 using WinFormsApp1.View.User.Controls.FlashcardControls;
@@ -20,7 +21,29 @@ namespace WinFormsApp1.View.User.Controls
         {
             InitializeComponent();
 			_context = new CourseController();
+            ApplyLocalization();
 		}
+
+        private void ApplyLocalization()
+        {
+            // Motivation section
+            lblMotivationTitle.Text = LanguageHelper.GetString("MotivationTitle");
+            lblMotivationText.Text = LanguageHelper.GetString("MotivationText");
+            
+            // Recommended section
+            lblRecommended.Text = LanguageHelper.GetString("RecommendedForYou");
+            lblRecommendedDesc.Text = LanguageHelper.GetString("RecommendedDesc");
+            btnViewAllRecommended.Text = LanguageHelper.GetString("ViewAll");
+            
+            // Popular courses section
+            lblPopular.Text = LanguageHelper.GetString("PopularCourses");
+            btnViewAll.Text = LanguageHelper.GetString("ViewAll");
+            
+            // Flashcards section
+            lblFlashcardSets.Text = LanguageHelper.GetString("FlashcardSets");
+            lblFlashcardDesc.Text = LanguageHelper.GetString("FlashcardDesc");
+            btnViewAllFlashcards.Text = LanguageHelper.GetString("ViewAll");
+        }
 
         private void HomeControl_Load(object sender, EventArgs e)
         {
@@ -78,10 +101,10 @@ namespace WinFormsApp1.View.User.Controls
         private void SetupWelcomeBanner()
         {
             // Set user name with dynamic text
-            var userName = AuthHelper.CurrentUser?.FullName ?? "Trần Minh Khoa";
+            var userName = AuthHelper.CurrentUser?.FullName ?? "User";
 
             // Update welcome text
-            lblWelcomeText.Text = $"Chào mừng {userName} trở lại!";
+            lblWelcomeText.Text = LanguageHelper.GetString("WelcomeBack", userName);
             lblWelcomeText.ForeColor = Color.FromArgb(218, 165, 32); // Gold color
 
             // Load and set circular avatar image
@@ -300,7 +323,7 @@ namespace WinFormsApp1.View.User.Controls
             // Card count badge
             var lblCount = new Label
             {
-                Text = $"⊕ {flashcardSet.Flashcards.Count} thẻ",
+                Text = $"⊕ {flashcardSet.Flashcards.Count} " + LanguageHelper.GetString("Cards"),
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                 ForeColor = Color.White,
                 BackColor = Color.FromArgb(80, 0, 0, 0),

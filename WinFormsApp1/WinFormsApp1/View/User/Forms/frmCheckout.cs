@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
+using WinFormsApp1.Localization;
 using WinFormsApp1.Models.EF;
 using WinFormsApp1.View.User.Components;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,7 @@ namespace WinFormsApp1.View.User.Forms
                     var user = AuthHelper.CurrentUser;
                     if (user == null)
                     {
-                        MessageBox.Show("Vui lòng đăng nhập để tiếp tục", "Thông báo",
+                        MessageBox.Show(LanguageHelper.GetString("PleaseLoginToContinue"), LanguageHelper.GetString("Notification"),
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         this.Close();
                         return;
@@ -84,7 +85,7 @@ namespace WinFormsApp1.View.User.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải giỏ hàng: {ex.Message}", "Lỗi",
+                MessageBox.Show(LanguageHelper.GetString("CartLoadError", ex.Message), LanguageHelper.GetString("Error"),
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -109,7 +110,7 @@ namespace WinFormsApp1.View.User.Forms
 
             var messageLabel = new Label
             {
-                Text = "Giỏ hàng trống",
+                Text = LanguageHelper.GetString("CartEmpty"),
                 Font = new Font("Segoe UI", 16),
                 ForeColor = Color.Gray,
                 Location = new Point(100, 130),
@@ -125,8 +126,8 @@ namespace WinFormsApp1.View.User.Forms
         {
             try
             {
-                var result = MessageBox.Show("Bạn có chắc muốn xóa khóa học này?",
-                    "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                var result = MessageBox.Show(LanguageHelper.GetString("RemoveCourseConfirm"),
+                    LanguageHelper.GetString("Confirm"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                 {
@@ -151,7 +152,7 @@ namespace WinFormsApp1.View.User.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi xóa: {ex.Message}", "Lỗi",
+                MessageBox.Show(LanguageHelper.GetString("DeleteError", ex.Message), LanguageHelper.GetString("Error"),
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -185,7 +186,7 @@ namespace WinFormsApp1.View.User.Forms
                 var user = AuthHelper.CurrentUser;
                 if (user == null)
                 {
-                    MessageBox.Show("Vui lòng đăng nhập để thanh toán", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(LanguageHelper.GetString("PleaseLoginToPayment"), LanguageHelper.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -200,19 +201,19 @@ namespace WinFormsApp1.View.User.Forms
 
                 if (success)
                 {
-                    MessageBox.Show("Thanh toán MoMo thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(LanguageHelper.GetString("MoMoPaymentSuccess"), LanguageHelper.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("Thanh toán MoMo không hoàn tất.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(LanguageHelper.GetString("MoMoPaymentIncomplete"), LanguageHelper.GetString("Notification"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     LoadCartItems();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi khởi tạo thanh toán MoMo: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(LanguageHelper.GetString("MoMoPaymentError", ex.Message), LanguageHelper.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -232,14 +233,14 @@ namespace WinFormsApp1.View.User.Forms
 
                     if (cart == null || !cart.CartItems.Any())
                     {
-                        MessageBox.Show("Giỏ hàng trống", "Thông báo",
+                        MessageBox.Show(LanguageHelper.GetString("CartEmpty"), LanguageHelper.GetString("Notification"),
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
                     var tempCourse = new Course
                     {
-                        Title = $"Thanh toán {cart.CartItems.Count} khóa học",
+                        Title = LanguageHelper.GetString("PaymentForCourses", cart.CartItems.Count),
                         Price = _finalAmount, // Use final amount with discount
                         CourseId = 0
                     };
@@ -270,7 +271,7 @@ namespace WinFormsApp1.View.User.Forms
                 var user = AuthHelper.CurrentUser;
                 if (user == null)
                 {
-                    MessageBox.Show("Vui lòng đăng nhập để sử dụng voucher", "Thông báo",
+                    MessageBox.Show(LanguageHelper.GetString("PleaseLoginForVoucher"), LanguageHelper.GetString("Notification"),
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -305,12 +306,12 @@ namespace WinFormsApp1.View.User.Forms
                             // Update summary
                             UpdateSummary(_courseIds.Count, _originalTotal, _discountAmount, _finalAmount);
 
-                            MessageBox.Show(result.Message, "Thành công",
+                            MessageBox.Show(result.Message, LanguageHelper.GetString("Success"),
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         else
                         {
-                            MessageBox.Show(result.Message, "Không thể áp dụng",
+                            MessageBox.Show(result.Message, LanguageHelper.GetString("CannotApply"),
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
