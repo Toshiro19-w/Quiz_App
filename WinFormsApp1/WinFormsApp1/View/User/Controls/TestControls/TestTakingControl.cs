@@ -143,7 +143,7 @@ namespace WinFormsApp1.View.User.Controls.TestControls
                 await LoadTestQuestionsAsync();
 
                 // Start timer
-                _testStartTime = DateTime.UtcNow;
+                _testStartTime = DateTime.Now;
                 StartCountdownTimer();
 
                 // Scroll to top
@@ -393,7 +393,7 @@ namespace WinFormsApp1.View.User.Controls.TestControls
                 if (!userId.HasValue) return;
 
                 using var context = new LearningPlatformContext();
-                var timeSpent = (int)(DateTime.UtcNow - _testStartTime).TotalSeconds;
+                var timeSpent = (int)(DateTime.Now - _testStartTime).TotalSeconds;
 
                 decimal totalScore = 0;
                 decimal maxScore = _currentTest.MaxScore ?? _questions.Sum(q => q.Points);
@@ -424,7 +424,7 @@ namespace WinFormsApp1.View.User.Controls.TestControls
                     TestId = _currentTest.TestId,
                     UserId = userId.Value,
                     StartedAt = _testStartTime,
-                    SubmittedAt = DateTime.UtcNow,
+                    SubmittedAt = DateTime.Now,
                     Status = "Graded",
                     TimeSpentSec = timeSpent,
                     Score = totalScore,
@@ -452,7 +452,7 @@ namespace WinFormsApp1.View.User.Controls.TestControls
                             AnswerPayload = $"{{\"selectedOptions\": [{answerString}]}}",
                             IsCorrect = isCorrect,
                             Score = isCorrect ? question.Points : 0,
-                            GradedAt = DateTime.UtcNow,
+                            GradedAt = DateTime.Now,
                             AutoGraded = true
                         };
                         context.AttemptAnswers.Add(answer);
@@ -514,8 +514,8 @@ namespace WinFormsApp1.View.User.Controls.TestControls
                         ContentType = _lessonContent.ContentType,
                         ContentId = _lessonContent.ContentId,
                         IsCompleted = true,
-                        CompletionAt = DateTime.UtcNow,
-                        LastViewedAt = DateTime.UtcNow,
+                        CompletionAt = DateTime.Now,
+                        LastViewedAt = DateTime.Now,
                         Score = score
                     };
                     context.CourseProgresses.Add(progress);
@@ -523,7 +523,7 @@ namespace WinFormsApp1.View.User.Controls.TestControls
                 else if (!progress.IsCompleted)
                 {
                     progress.IsCompleted = true;
-                    progress.CompletionAt = DateTime.UtcNow;
+                    progress.CompletionAt = DateTime.Now;
                     progress.Score = score;
                 }
 

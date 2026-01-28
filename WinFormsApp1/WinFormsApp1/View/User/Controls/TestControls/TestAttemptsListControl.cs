@@ -82,7 +82,7 @@ namespace WinFormsApp1.View.User.Controls.TestControls
             {
                 var attempt = attempts[i];
                 var attemptCard = new TestAttemptCard();
-                attemptCard.LoadAttempt(attempt, i + 1);
+                attemptCard.LoadAttempt(attempt, attempts.Count - i);
                 attemptCard.ViewDetailsClicked += (s, attemptId) => ViewAttemptDetails(attemptId);
                 
                 flowAttempts.Controls.Add(attemptCard);
@@ -157,3 +157,4 @@ namespace WinFormsApp1.View.User.Controls.TestControls
         }
     }
 }
+
