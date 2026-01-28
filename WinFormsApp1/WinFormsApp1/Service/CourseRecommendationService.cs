@@ -189,6 +189,7 @@ namespace WinFormsApp1.Service
         {
             var reasons = new List<string>();
 
+            // Ưu tiên các lý do mạnh nhất
             if (score.HistoryScore > 50)
             {
                 reasons.Add("Matches your learning history");
@@ -203,6 +204,10 @@ namespace WinFormsApp1.Service
             {
                 reasons.Add("Highly rated");
             }
+            else if (course.AverageRating >= 4.0m && reasons.Count < 2)
+            {
+                reasons.Add("Đánh giá tốt");
+            }
 
             if (course.CoursePurchases?.Count > 50)
             {
@@ -214,13 +219,31 @@ namespace WinFormsApp1.Service
             {
                 reasons.Add("New release");
             }
+            else if (daysSinceCreated <= 30 && reasons.Count < 2)
+            {
+                reasons.Add("Khóa học mới");
+            }
 
             if (course.Price == 0)
             {
                 reasons.Add("Free");
             }
 
-            return reasons;
+            // Nếu chưa có lý do nào, thêm tag mặc định dựa trên đặc điểm khóa học
+            if (reasons.Count == 0)
+            {
+                // Thêm tag dựa trên category
+                if (course.Category != null)
+                {
+                    reasons.Add($"Chủ đề {course.Category.Name}");
+                }
+                else
+                {
+                    reasons.Add("Đề xuất cho bạn");
+                }
+            }
+
+            return reasons.Take(2).ToList(); // Chỉ hiển thị tối đa 2 tag
         }
 
         private string CalculateConfidenceLevel(decimal totalScore)
